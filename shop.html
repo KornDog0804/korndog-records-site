@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KoRnDoG Records – Shop</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h1 { text-align: center; }
+    .record {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .record img {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    .record p {
+      line-height: 1.6;
+    }
+    .paypal-button {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>KoRnDoG Records – Shop</h1>
+
+  <div class="record">
+    <h3>Black Label Society – Doom Crew Inc.</h3>
+    <img src="images/doomcrew-cover.jpg" alt="Doom Crew Inc. Cover">
+    <img src="images/doomcrew-vinyl.jpg" alt="Doom Crew Vinyl">
+    <p><strong>Format:</strong> Vinyl LP (Limited Edition)<br>
+    <strong>Condition:</strong> NM Sleeve / NM Vinyl<br>
+    <strong>Price:</strong> $34.99<br>
+    Includes download card and custom target-pressed vinyl.</p>
+
+    <form class="paypal-button" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+      <input type="hidden" name="cmd" value="_xclick">
+      <input type="hidden" name="business" value="@KoRnDoGRecords">
+      <input type="hidden" name="item_name" value="Black Label Society – Doom Crew Inc. (Vinyl)">
+      <input type="hidden" name="amount" value="34.99">
+      <input type="hidden" name="currency_code" value="USD">
+      <input type="submit" value="Buy Now with PayPal">
+    </form>
+  </div>
+
+</body>
+</html>
