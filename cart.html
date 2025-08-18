@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cart - Korndog Records</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- ✅ Your live PayPal client code goes here -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_REAL_CLIENT_ID&currency=USD" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <header>
+    <img src="images/logo.png" class="logo">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="cart.html">Cart</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Your Cart</h1>
+    <div id="cart"></div>
+    <p id="cart-total"></p>
+    <button onclick="clearCart()">Clear Cart</button>
+    <div id="paypal-button-container"></div>
+  </main>
+</body>
+</html>
