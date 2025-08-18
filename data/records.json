@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Red Hot Chili Peppers - Californication",
+    "price": "30",
+    "grade": "NM/NM",
+    "image": "californication.jpg"
+  },
+  {
+    "title": "Sleep Token - Even in Arcadia",
+    "price": "65",
+    "grade": "NM/NM",
+    "image": "sleep-token.jpg"
+  },
+  {
+    "title": "Random Record $10 Dolla Holla",
+    "price": "10",
+    "grade": "VG+/VG+",
+    "image": "bobross.jpg"
+  }
+]
