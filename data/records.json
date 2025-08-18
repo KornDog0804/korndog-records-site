@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Red Hot Chili Peppers - Californication",
+    "price": "30",
+    "grade": "NM/NM",
+    "image": "1000042083.png"
+  },
+  {
+    "title": "Sleep Token - Even in Arcadia",
+    "price": "65",
+    "grade": "NM/NM",
+    "image": "1000042083.png"
+  },
+  {
+    "title": "Sevendust - Home",
+    "price": "35",
+    "grade": "NM/NM",
+    "image": "1000042083.png"
+  },
+  {
+    "title": "Bullet For My Valentine - The Poison",
+    "price": "25",
+    "grade": "NM/NM",
+    "image": "1000042083.png"
+  },
+  {
+    "title": "Random Record $10 Dolla Holla",
+    "price": "10",
+    "grade": "VG+/VG+",
+    "image": "1000042083.png"
+  }
+]
