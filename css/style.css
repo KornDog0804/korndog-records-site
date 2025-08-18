@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: url('/images/1000042082.png') no-repeat center center fixed;
+  background-size: cover;   /* ✅ full screen, no tiling */
+  background-attachment: fixed;
+  color: white;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: black;
+}
+
+nav a {
+  margin: 0 1rem;
+  color: white;
+  text-decoration: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.record {
+  background: rgba(0,0,0,0.6);
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.record img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+.logo {
+  height: 60px;
+}
