@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>KornDog Records</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="nav">
+    <b onclick="showPage('home')">KornDog Records</b>
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('shop')">Shop</a>
+    <a href="#" onclick="showPage('collectibles')">Collectibles</a>
+    <a href="#" onclick="showPage('about')">About</a>
+    <a href="#" onclick="showPage('cart')">Cart <span id="cartCount"></span></a>
+    <a href="#" onclick="showPage('admin')">Admin</a>
+  </div>
+  
+  <!-- Home Page -->
+  <div id="homePage" class="page active">
+    <div class="hero">
+      <div class="wrap">
+        <h1>Welcome to KornDog Records</h1>
+        <p>Wax, weirdness, and mystery kitties that pop when you add to cart</p>
+        <div class="logo-container">
+          <img src="assets/korndog_logo_teal_v3.png" alt="KornDog Records" class="logo" onclick="showPage('shop')">
+        </div>
+        <p>Click the logo to enter the shop</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Shop Page -->
+  <div id="shopPage" class="page">
+    <div class="wrap">
+      <h1>Vinyl Records</h1>
+      <div id="shopGrid" class="grid"></div>
+    </div>
+  </div>
+  
+  <!-- Collectibles Page -->
+  <div id="collectiblesPage" class="page">
+    <div class="wrap">
+      <h1>Collectibles & Funkos</h1>
+      <div id="collectiblesGrid" class="grid"></div>
+    </div>
+  </div>
+  
+  <!-- About Page -->
+  <div id="aboutPage" class="page">
+    <div class="wrap">
+      <div class="card">
+        <h1>About KornDog Records</h1>
+        
+        <div style="margin: 30px 0;">
+          <h2>About Me</h2>
+          <p style="font-style: italic; line-height: 1.6; margin-bottom: 20px;">
+            Music's always been in my blood — thanks to my mom and dad — but vinyl didn't hit me 'til after my mom's wreck. She didn't make it. That moment split my world in two. Records became therapy. No therapist. No pills. Just needle to groove. It grounded me. Every spin pulls me back — riding shotgun with my old man, laughing with my kids, slow dancing with my wife. This site? It's not about algorithms, trends, or fake hype. It's about soul. About stories. About memories you can hear. Every record here means something. It's not just wax — it's a vibe. A scar. A time machine. If you get it, you get it. Welcome to KornDog Records — where vinyl therapy is always on deck.
+          </p>
+        </div>
+
+        <div style="margin: 30px 0; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px; border-left: 4px solid var(--primary-green);">
+          <h2>Zombie Kitty Lore</h2>
+          <p style="line-height: 1.6;">
+            Zombie Kitty was born on Friday the 13th as a tattoo idea with my daughter. She's the spirit of every scar and every spin — stitched together from music, memories, and a little bit of chaos. When you add a record to your cart, she pops up with her blurbs — reminding you this isn't just shopping, it's resurrection. Every scratch, every groove is survival. Zombie Kitty lives in the vinyl, and she's never leaving.
+          </p>
+        </div>
+        
+        <h3>Grading Standards</h3>
+        <ul>
+          <li><strong>M (Mint)</strong> - Perfect condition, never played</li>
+          <li><strong>NM (Near Mint)</strong> - Excellent condition, minimal handling</li>
+          <li><strong>VG+ (Very Good Plus)</strong> - Light wear, great sound quality</li>
+          <li><strong>VG (Very Good)</strong> - Some wear, good sound quality</li>
+          <li><strong>G+ (Good Plus)</strong> - Moderate wear, acceptable sound</li>
+          <li><strong>G (Good)</strong> - Considerable wear, still playable</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Cart Page -->
+  <div id="cartPage" class="page">
+    <div class="wrap">
+      <h1>Your Cart</h1>
+      <div id="cartItems"></div>
+    </div>
+  </div>
+  
+  <!-- Admin Login -->
+  <div id="adminLoginPage" class="page">
+    <div class="admin-login">
+      <h2>Admin Access</h2>
+      <div id="loginError" class="error" style="display:none;">Incorrect password. Try again.</div>
+      <form id="adminLoginForm">
+        <input type="password" id="adminPassword" placeholder="Enter admin password" required>
+        <button type="submit" class="btn">Enter Admin Panel</button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Admin Page -->
+  <div id="adminPage" class="page">
+    <div class="wrap">
+      <h1>Mobile Admin Panel</h1>
+      
+      <div class="card admin-form">
+        <h3>Quick Add (Whatnot Style)</h3>
+        <form id="quickAddForm">
+          <div class="form-row">
+            <div class="form-col">
+              <label>Category</label>
+              <select id="newCategory" required>
+                <option value="">Select Category</option>
+                <option value="record">Vinyl Record</option>
+                <option value="funko">Funko/Collectible</option>
+              </select>
+            </div>
+            <div class="form-col">
+              <label>Title/Name</label>
+              <input type="text" id="newTitle" placeholder="Album/Item Title" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-col">
+              <label>Price ($)</label>
+              <input type="number" id="newPrice" placeholder="0.00" step="0.01" required>
+            </div>
+            <div class="form-col">
+              <label>Condition/Grade</label>
+              <input type="text" id="newGrade" placeholder="NM, VG+, etc.">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-col">
+              <label>Image</label>
+              <select id="newImage">
+                <option value="">Use default image</option>
+                <option value="assets/zombie_kitty_green.png">Zombie Kitty Green</option>
+                <option value="assets/korndog_logo_teal_v3.png">KornDog Logo</option>
+                <option value="assets/bob_ross.png">Bob Ross Art</option>
+                <option value="assets/zombie_kitty_white.png">Zombie Kitty White</option>
+              </select>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn add-btn">Add to Shop Instantly</button>
+        </form>
+      </div>
+      
+      <div class="card">
+        <h3>Current Inventory</h3>
+        <div id="adminGrid" class="grid"></div>
+      </div>
+      
+      <div class="card">
+        <button class="btn secondary" onclick="logoutAdmin()">Logout</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Kitty Popup -->
+  <div class="kitty-popup" id="kittyPopup">
+    <img id="kittyImage" class="kitty-image" src="" alt="Kitty">
+    <div class="speech-bubble" id="kittyMessage"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
