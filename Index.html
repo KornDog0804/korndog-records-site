@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>KornDog Records • Premium Media & Collectibles</title>
+  <meta name="description" content="KornDog Records - Premium vinyl records, CDs, Funkos, movies, and collectibles. Experience our revolutionary 3D store on desktop or browse our collection on mobile.">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="KornDog Records • Premium Media & Collectibles">
+  <meta property="og:description" content="Premium vinyl records, CDs, Funkos, movies, and collectibles. Revolutionary 3D store experience.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/korndog_social_preview.jpg">
+  <meta property="og:url" content="https://korndogrecords.com">
+  
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Permanent+Marker&display=swap" rel="stylesheet">
+  
+  <!-- Three.js for 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <!-- PayPal SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AcU9sSdlnQlq_dsilwLNL2Kw5YQczqtoEpuYmoADtbJ7be3JaMUXpignQu2RiUcnBEuH_e-edGgSnYv8&currency=USD"></script>
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">KornDog Records</div>
+    <div class="loading-text">Loading your media experience...</div>
+    <div class="loading-bar">
+      <div class="loading-progress" id="loadingProgress"></div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-brand" onclick="goHome()">
+      <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png" alt="KornDog Records">
+      KornDog Records
+    </div>
+    <div class="nav-controls">
+      <button class="admin-btn" id="adminBtn" onclick="toggleAdmin()">
+        <i class="fas fa-cog"></i>
+      </button>
+      <button class="btn-cart" id="cartBtn" onclick="showCart()">
+        <i class="fas fa-shopping-cart"></i>
+        Cart
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 3D Store Interface (Desktop Only) -->
+  <div class="store-3d" id="store3D">
+    <!-- 3D Canvas -->
+    <canvas id="canvas3D"></canvas>
+    
+    <!-- 3D UI Overlay -->
+    <div class="ui-3d-overlay">
+      <!-- 3D Navigation Controls -->
+      <div class="hud-3d" id="hud3D">
+        <div class="hud-title">Navigation</div>
+        <div class="controls-grid">
+          <div><strong>W/A/S/D:</strong> Move</div>
+          <div><strong>Mouse:</strong> Look</div>
+          <div><strong>Click:</strong> Interact</div>
+          <div><strong>Space:</strong> Jump</div>
+        </div>
+      </div>
+
+      <!-- Mode Toggle -->
+      <div class="mode-toggle-3d">
+        <button class="mode-btn active" id="exploreMode" title="Explore Mode">
+          <i class="fas fa-walking"></i>
+        </button>
+        <button class="mode-btn" id="flyMode" title="Fly Mode">
+          <i class="fas fa-plane"></i>
+        </button>
+        <button class="mode-btn" id="overviewMode" title="Overview">
+          <i class="fas fa-eye"></i>
+        </button>
+      </div>
+
+      <!-- 3D Product Panel -->
+      <div class="product-panel-3d" id="productPanel3D">
+        <img class="panel-image" id="panelImage3D" src="" alt="">
+        <div class="panel-title" id="panelTitle3D"></div>
+        <div class="panel-price" id="panelPrice3D"></div>
+        <div class="panel-description" id="panelDescription3D"></div>
+        <div class="panel-actions">
+          <button class="btn btn-primary" id="addToCart3D">
+            <i class="fas fa-cart-plus"></i>
+            Add to Cart
+          </button>
+          <button class="btn btn-secondary" id="closePanel3D">
+            <i class="fas fa-times"></i>
+            Close
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D Character Popup -->
+      <div class="character-popup-3d" id="characterPopup3D">
+        <div class="character-header">
+          <div class="character-avatar">
+            <img id="characterAvatar3D" src="" alt="Character">
+          </div>
+          <div>
+            <div class="character-name" id="characterName3D">Guide</div>
+            <div class="character-role" id="characterRole3D">Shop Assistant</div>
+          </div>
+        </div>
+        <div class="character-message" id="characterMessage3D">
+          Welcome to our 3D record store!
+        </div>
+        <div class="character-actions">
+          <button class="btn btn-primary" id="dismissCharacter3D">Got it!</button>
+        </div>
+      </div>
+
+      <!-- Exit 3D Button -->
+      <button class="exit-3d-btn" id="exit3DBtn" onclick="exit3DStore()">
+        <i class="fas fa-desktop"></i>
+        Exit 3D Store
+      </button>
+    </div>
+  </div>
+
+  <!-- HOME SECTION -->
+  <section class="content-area active" id="homeSection">
+    <div class="hero-section">
+      <div class="hero-content">
+        <div class="hero-logo" id="adminAccess">
+          <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png" alt="KornDog Records">
+        </div>
+        <h1 class="hero-title">Premium Media & Collectibles</h1>
+        <p class="hero-subtitle">Discover rare vinyl records, classic CDs, exclusive movies, limited edition Funkos, and unique collectibles</p>
+        
+        <div class="hero-actions">
+          <button class="btn-large btn-primary" onclick="showStore()">
+            <i class="fas fa-store"></i>
+            Browse Collection
+          </button>
+          <button class="btn-large btn-secondary desktop-only" onclick="enter3DStore()" id="enter3DBtn">
+            <i class="fas fa-cube"></i>
+            3D Experience
+          </button>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-item" onclick="showStoreCategory('vinyl')">
+            <i class="fas fa-record-vinyl"></i>
+            <span>Vinyl</span>
+          </div>
+          <div class="feature-item" onclick="showStoreCategory('cd')">
+            <i class="fas fa-compact-disc"></i>
+            <span>CDs</span>
+          </div>
+          <div class="feature-item" onclick="showStoreCategory('funko')">
+            <i class="fas fa-robot"></i>
+            <span>Funkos</span>
+          </div>
+          <div class="feature-item" onclick="showStoreCategory('movie')">
+            <i class="fas fa-film"></i>
+            <span>Movies</span>
+          </div>
+          <div class="feature-item" onclick="showStoreCategory('collectible')">
+            <i class="fas fa-gem"></i>
+            <span>Collectibles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2D STORE SECTION -->
+  <section class="content-area" id="store2d">
+    <div class="store-2d">
+      <button class="back-btn" onclick="goHome()">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+      </button>
+      
+      <div class="store-header">
+        <h2>Our Collection</h2>
+        <p style="color: var(--muted);">Browse by category</p>
+        <button class="btn-3d-toggle desktop-only" onclick="enter3DStore()" id="toggle3DFromStore">
+          <i class="fas fa-cube"></i>
+          Switch to 3D Store
+        </button>
+      </div>
+
+      <!-- Shopify-Style Category Tabs -->
+      <div class="category-tabs">
+        <button class="tab-btn" onclick="filterProducts('all', this)">
+          <i class="fas fa-th"></i>
+          All
+        </button>
+        <button class="tab-btn" onclick="filterProducts('vinyl', this)">
+          <i class="fas fa-record-vinyl"></i>
+          Vinyl
+        </button>
+        <button class="tab-btn" onclick="filterProducts('cd', this)">
+          <i class="fas fa-compact-disc"></i>
+          CDs
+        </button>
+        <button class="tab-btn" onclick="filterProducts('funko', this)">
+          <i class="fas fa-robot"></i>
+          Funkos
+        </button>
+        <button class="tab-btn" onclick="filterProducts('movie', this)">
+          <i class="fas fa-film"></i>
+          Movies
+        </button>
+        <button class="tab-btn" onclick="filterProducts('collectible', this)">
+          <i class="fas fa-gem"></i>
+          Collectibles
+        </button>
+      </div>
+
+      <!-- Shopify-Style Product Grid (2x2 on mobile, 4x4 on desktop) -->
+      <div class="products-grid shopify-grid" id="productsGrid">
+        <!-- Products load here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+      <div class="admin-title">Store Admin</div>
+      <button class="close-admin" onclick="toggleAdmin()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <form id="productForm">
+      <input type="hidden" id="productId">
+      <div class="form-group">
+        <label for="productTitle">Product Title</label>
+        <input type="text" id="productTitle" class="form-input" placeholder="Enter product name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="productPrice">Price ($)</label>
+        <input type="number" id="productPrice" class="form-input" placeholder="27.99" step="0.01" required>
+      </div>
+
+      <div class="form-group">
+        <label for="productImageFront">Front Image</label>
+        <div class="file-input-wrapper">
+          <div class="file-input-button">
+            <i class="fas fa-upload"></i> Choose from Phone Library
+          </div>
+          <input type="file" id="productImageFront" class="file-input" accept="image/*">
+        </div>
+        <img id="imagePreviewFront" class="image-preview" style="display: none;">
+      </div>
+
+      <div class="form-group">
+        <label for="productImageBack">Back Image (Optional)</label>
+        <div class="file-input-wrapper">
+          <div class="file-input-button">
+            <i class="fas fa-upload"></i> Choose from Phone Library
+          </div>
+          <input type="file" id="productImageBack" class="file-input" accept="image/*">
+        </div>
+        <img id="imagePreviewBack" class="image-preview" style="display: none;">
+      </div>
+
+      <div class="form-group">
+        <label for="productDescription">Description</label>
+        <textarea id="productDescription" class="form-input form-textarea" placeholder="Product description..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="productType">Type</label>
+        <select id="productType" class="form-input">
+          <option value="vinyl">Vinyl Record</option>
+          <option value="cd">CD</option>
+          <option value="funko">Funko Pop</option>
+          <option value="movie">Movie</option>
+          <option value="collectible">Collectible</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-admin">
+        <i class="fas fa-save"></i> Save Product
+      </button>
+      <button type="button" class="btn-admin-secondary" onclick="resetProductForm()">
+        <i class="fas fa-undo"></i> Reset Form
+      </button>
+    </form>
+
+    <div class="inventory-list" id="inventoryList">
+      <!-- Admin inventory goes here -->
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+        <button onclick="closeModal('cartModal')" class="modal-close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="cartItems">
+          <!-- Cart items will be loaded here -->
+        </div>
+        <div id="cartEmpty" class="cart-empty-state">
+          <i class="fas fa-shopping-cart"></i>
+          <p>Your cart is empty</p>
+          <button onclick="closeModal('cartModal'); showStore();" class="btn-primary">Start Shopping</button>
+        </div>
+        <div id="cartSummary" class="cart-summary">
+          <div class="cart-summary-row">
+            <span>Subtotal:</span>
+            <span id="cartSubtotal">$0.00</span>
+          </div>
+          <div class="cart-summary-row">
+            <span>Tax (8.5%):</span>
+            <span id="cartTax">$0.00</span>
+          </div>
+          <div class="cart-summary-row total">
+            <span>Total:</span>
+            <span id="cartTotal">$0.00</span>
+          </div>
+        </div>
+        <div id="paypal-button-container"></div>
+      </div>
+      <div class="modal-footer">
+        <button onclick="closeModal('cartModal')" class="btn-secondary">
+          Continue Shopping
+        </button>
+        <button onclick="clearCart()" class="btn-danger">
+          Clear Cart
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification System -->
+  <div class="notification" id="notification">
+    <div class="notification-content" id="notificationContent">
+      <!-- Notification text goes here -->
+    </div>
+  </div>
+
+  <!-- Character Popups (2D Mode) -->
+  <div class="character-popup-2d zombie-kitty" id="zombieKittyPopup">
+    <div class="character-image">
+      <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/zombie_kitty.png" alt="Zombie Kitty">
+    </div>
+    <div class="speech-bubble" id="zombieKittySpeech">
+      Welcome to KornDog Records!
+    </div>
+  </div>
+
+  <div class="character-popup-2d korndog" id="korndogPopup">
+    <div class="character-image">
+      <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png" alt="KornDog">
+    </div>
+    <div class="speech-bubble" id="korndogSpeech">
+      Fresh wax, weird fun, zero skip!
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
