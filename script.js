@@ -1,3 +1,14 @@
+// IMMEDIATE LOADING SCREEN FIX - Add this at the very top of your script.js
+(function() {
+  // Force hide loading screen after a short delay
+  setTimeout(function() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+      loadingScreen.classList.add('hidden');
+      console.log('Loading screen force-hidden by immediate code');
+    }
+  }, 2500); // 2.5 seconds
+})();
 // Force admin access for testing
 function forceAdminAccess() {
   const adminBtn = document.getElementById('adminBtn');
