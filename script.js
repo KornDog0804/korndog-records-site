@@ -265,13 +265,32 @@ function showStoreCategory(category) {
 }
 
 function show3DInfo() {
-  if (window.innerWidth <= 768) {
-    showNotification('3D experience is available on desktop only. Enjoy browsing our collection!');
-    showStore();
-  } else {
-    showNotification('3D experience coming soon! Browse our collection in 2D for now.');
-    showStore();
+  // Create a 3D experience section if it doesn't exist
+  let experience3d = document.getElementById('experience3d');
+  if (!experience3d) {
+    experience3d = document.createElement('section');
+    experience3d.id = 'experience3d';
+    experience3d.className = 'content-area';
+    experience3d.innerHTML = `
+      <div class="experience-3d">
+        <button class="back-btn" onclick="goHome()">
+          <i class="fas fa-arrow-left"></i>
+          Back to Home
+        </button>
+        <h2>3D Experience</h2>
+        <span class="coming-soon-badge">Coming Soon</span>
+        <p>We're working on an immersive 3D shopping experience where you can browse our vinyl records, CDs, and collectibles in a virtual store environment.</p>
+        <p>Check back soon for this exciting feature!</p>
+        <button class="btn-large btn-primary" onclick="showStore()">
+          <i class="fas fa-store"></i>
+          Browse 2D Store Instead
+        </button>
+      </div>
+    `;
+    document.body.appendChild(experience3d);
   }
+  
+  showSection('experience3d');
 }
 
 // Show category selection prompt
@@ -337,6 +356,7 @@ function renderProducts() {
           <div class="product-back-info">
             <h3 class="product-title">${product.title}</h3>
             <div class="product-price">$${product.price.toFixed(2)}</div>
+            ${product.imageBack ? `<img src="${product.imageBack}" alt="${product.title} (back)" class="product-back-image">` : ''}
             <p class="product-back-description">${product.description}</p>
             <button class="add-to-cart-btn" onclick="addToCart(${product.id}, event)">
               <i class="fas fa-cart-plus"></i>
@@ -731,8 +751,27 @@ function initializePayPal(total) {
   // Clear previous buttons
   paypalContainer.innerHTML = '';
   
-  // Initialize PayPal buttons
+  // Force PayPal script reload if needed
+  if (typeof paypal === 'undefined') {
+    const script = document.createElement('script');
+    script.src = "https://www.paypal.com/sdk/js?client-id=AcU9sSdlnQlq_dsilwLNL2Kw5YQczqtoEpuYmoADtbJ7be3JaMUXpignQu2RiUcnBEuH_e-edGgSnYv8&currency=USD";
+    script.onload = function() {
+      renderPayPalButtons(paypalContainer, total);
+    };
+    document.body.appendChild(script);
+  } else {
+    renderPayPalButtons(paypalContainer, total);
+  }
+}
+
+function renderPayPalButtons(container, total) {
   paypal.Buttons({
+    style: {
+      layout: 'vertical',
+      color: 'gold',
+      shape: 'rect',
+      label: 'paypal'
+    },
     createOrder: function(data, actions) {
       return actions.order.create({
         purchase_units: [{
@@ -747,8 +786,12 @@ function initializePayPal(total) {
         // Payment successful
         processOrder(details);
       });
+    },
+    onError: function(err) {
+      console.error('PayPal error:', err);
+      showNotification('There was an error processing your payment. Please try again.');
     }
-  }).render('#paypal-button-container');
+  }).render(container);
 }
 
 function processOrder(details) {
@@ -823,53 +866,4 @@ function showNotification(message) {
 }
 
 // Loading System
-function hideLoadingScreen() {
-  const loadingScreen = document.getElementById('loadingScreen');
-  const progressBar = document.getElementById('loadingProgress');
-  
-  if (!loadingScreen || !progressBar) return;
-  
-  let progress = 0;
-  const interval = setInterval(() => {
-    progress += Math.random() * 20 + 5;
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(interval);
-      setTimeout(() => {
-        loadingScreen.classList.add('hidden');
-      }, 500);
-    }
-    progressBar.style.width = progress + '%';
-  }, 200);
-}
-
-// Initialize Everything
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('KornDog Records initializing...');
-  
-  // Start loading sequence
-  hideLoadingScreen();
-  
-  // Setup admin access
-  setupAdminAccess();
-  
-  // Initialize UI
-  updateCartUI();
-  
-  // Make sure admin panel is hidden
-  const adminPanel = document.getElementById('adminPanel');
-  if (adminPanel) {
-    adminPanel.classList.remove('show');
-  }
-  
-  // Loading failsafe
-  setTimeout(function() {
-    const loadingScreen = document.getElementById('loadingScreen');
-    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
-      loadingScreen.classList.add('hidden');
-      console.log('Loading screen hidden by failsafe');
-    }
-  }, 8000);
-
-  console.log('KornDog Records initialized successfully!');
-});
+function hideLoa
