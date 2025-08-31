@@ -148,7 +148,7 @@ const characters = {
   zombie: {
     name: "Zombie Kitty",
     role: "Vinyl Specialist",
-    avatar: 'assets/images/characters/zombie-kitty.png', // Gothic Hello Kitty with X eye
+    avatar: 'https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/1000043471-removebg-preview.png',
     messages: [
       "This record is absolutely killer! That bass drop is to die for.",
       "I've got my eye on this one... well, my one good eye anyway!",
@@ -160,7 +160,7 @@ const characters = {
   chibi: {
     name: "Chibi Kitty",
     role: "Funko Curator",
-    avatar: 'assets/images/characters/chibi-kitty.png', // Green zombie Hello Kitty
+    avatar: 'https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/1000044073-removebg-preview.png',
     messages: [
       "These Funkos are fresh from the grave! Er, I mean factory!",
       "This collectible is stitched together perfectly, just like me!",
@@ -172,7 +172,7 @@ const characters = {
   korndog: {
     name: "KornDog",
     role: "Store Owner",
-    avatar: 'assets/images/characters/korndog-logo.png',
+    avatar: 'https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png',
     messages: [
       "Welcome to KornDog Records! I'm your host with the most!",
       "Check out our vinyl section with Zombie Kitty or browse Funkos with Chibi Kitty!",
@@ -221,6 +221,7 @@ function init3DStore() {
   setupControls();
   animate();
 }
+
 function createMagicalEnvironment() {
   // Holographic floor with vinyl pattern
   const floorGeometry = new THREE.PlaneGeometry(120, 120);
@@ -274,15 +275,13 @@ function createMagicalEnvironment() {
 }
 
 function createStoreAisles() {
-  // Create aisle shelving units
-  
   // Left aisle (Zombie Kitty's Vinyl Section)
   createAisle({
     start: { x: -25, z: -20 },
     end: { x: -25, z: 10 },
     width: 10,
     height: 6,
-    color: 0x4a2a4a, // Dark purple for Zombie Kitty
+    color: 0x4a2a4a,
     glowColor: 0xff3e6c
   });
   
@@ -292,7 +291,7 @@ function createStoreAisles() {
     end: { x: 25, z: 10 },
     width: 10,
     height: 6,
-    color: 0x2a4a2a, // Dark green for Chibi Kitty
+    color: 0x2a4a2a,
     glowColor: 0x00ff66
   });
   
@@ -302,7 +301,7 @@ function createStoreAisles() {
     end: { x: 0, z: -20 },
     width: 15,
     height: 8,
-    color: 0x4a4a2a, // Gold/brown for KornDog
+    color: 0x4a4a2a,
     glowColor: 0xffd166
   });
 }
@@ -310,19 +309,17 @@ function createStoreAisles() {
 function createAisle(options) {
   const group = new THREE.Group();
   
-  // Calculate aisle length
   const length = Math.sqrt(
     Math.pow(options.end.x - options.start.x, 2) + 
     Math.pow(options.end.z - options.start.z, 2)
   );
   
-  // Calculate aisle angle
   const angle = Math.atan2(
     options.end.z - options.start.z,
     options.end.x - options.start.x
   );
   
-  // Create left shelf
+  // Create shelving
   const shelfGeometry = new THREE.BoxGeometry(length, options.height, 1);
   const shelfMaterial = new THREE.MeshLambertMaterial({ color: options.color });
   
@@ -335,7 +332,6 @@ function createAisle(options) {
   leftShelf.rotation.y = angle;
   group.add(leftShelf);
   
-  // Create right shelf
   const rightShelf = leftShelf.clone();
   rightShelf.position.z = (options.start.z + options.end.z) / 2 + options.width / 2;
   group.add(rightShelf);
@@ -349,22 +345,6 @@ function createAisle(options) {
   );
   group.add(glowLight);
   
-  // Add shelf dividers and product slots
-  const dividerCount = Math.floor(length / 4);
-  for (let i = 0; i < dividerCount; i++) {
-    const dividerGeometry = new THREE.BoxGeometry(0.2, options.height, options.width);
-    const divider = new THREE.Mesh(dividerGeometry, shelfMaterial);
-    
-    const progress = i / (dividerCount - 1);
-    divider.position.set(
-      options.start.x + (options.end.x - options.start.x) * progress,
-      options.height / 2,
-      options.start.z + (options.end.z - options.start.z) * progress
-    );
-    divider.rotation.y = angle;
-    group.add(divider);
-  }
-  
   scene.add(group);
   return group;
 }
@@ -377,12 +357,9 @@ function createDisplayCases() {
     depth: 4,
     position: { x: 25, y: 4, z: 15 },
     rotation: { x: 0, y: Math.PI / 4, z: 0 },
-    color: 0x00ff66 // Green glow to match Chibi Kitty
+    color: 0x00ff66
   });
   scene.add(funkoCase);
-  
-  // Populate with Funko items
-  populateDisplayCase(funkoCase, 'funko');
   
   // Collectibles Display Case
   const collectiblesCase = createGlassCase({
@@ -391,29 +368,23 @@ function createDisplayCases() {
     depth: 4,
     position: { x: -25, y: 4, z: 15 },
     rotation: { x: 0, y: -Math.PI / 4, z: 0 },
-    color: 0xff3e6c // Pink glow to match Zombie Kitty
+    color: 0xff3e6c
   });
   scene.add(collectiblesCase);
-  
-  // Populate with collectible items
-  populateDisplayCase(collectiblesCase, 'collectible');
 }
 
 function createGlassCase(options) {
   const group = new THREE.Group();
   
-  // Glass panels
   const glassMaterial = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
     transparent: true,
     opacity: 0.2,
     roughness: 0.05,
     transmission: 0.95,
-    thickness: 0.5,
-    envMapIntensity: 1
+    thickness: 0.5
   });
   
-  // Base and frame
   const frameMaterial = new THREE.MeshStandardMaterial({
     color: 0x333333,
     metalness: 0.8,
@@ -427,32 +398,27 @@ function createGlassCase(options) {
   group.add(base);
   
   // Create glass panels
-  // Front panel
   const frontGeometry = new THREE.PlaneGeometry(options.width, options.height);
   const frontPanel = new THREE.Mesh(frontGeometry, glassMaterial);
   frontPanel.position.z = options.depth/2;
   group.add(frontPanel);
   
-  // Back panel
   const backPanel = frontPanel.clone();
   backPanel.position.z = -options.depth/2;
   backPanel.rotation.y = Math.PI;
   group.add(backPanel);
   
-  // Left panel
   const sideGeometry = new THREE.PlaneGeometry(options.depth, options.height);
   const leftPanel = new THREE.Mesh(sideGeometry, glassMaterial);
   leftPanel.position.x = -options.width/2;
   leftPanel.rotation.y = Math.PI/2;
   group.add(leftPanel);
   
-  // Right panel
   const rightPanel = leftPanel.clone();
   rightPanel.position.x = options.width/2;
   rightPanel.rotation.y = -Math.PI/2;
   group.add(rightPanel);
   
-  // Top panel
   const topGeometry = new THREE.PlaneGeometry(options.width, options.depth);
   const topPanel = new THREE.Mesh(topGeometry, glassMaterial);
   topPanel.position.y = options.height/2;
@@ -464,7 +430,6 @@ function createGlassCase(options) {
   glowLight.position.set(0, 0, 0);
   group.add(glowLight);
   
-  // Position and rotate the entire case
   group.position.set(options.position.x, options.position.y, options.position.z);
   group.rotation.set(
     options.rotation.x || 0,
@@ -472,140 +437,7 @@ function createGlassCase(options) {
     options.rotation.z || 0
   );
   
-  // Add user data for interaction
   group.userData = { type: 'displayCase' };
-  
-  return group;
-}
-function populateDisplayCase(caseGroup, itemType) {
-  // Define items based on type
-  const items = itemType === 'funko' ? [
-    {
-      id: 101,
-      title: "Funko Pop! Music - Kurt Cobain",
-      price: 19.99,
-      image: "https://images.unsplash.com/photo-1516924962500-2b4b3b99ea02?w=400",
-      description: "Limited edition Kurt Cobain Funko Pop! figure with iconic outfit and guitar.",
-      character: 'chibi'
-    },
-    {
-      id: 102,
-      title: "Funko Pop! Horror - Freddy Krueger",
-      price: 24.99,
-      image: "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=400",
-      description: "Nightmare on Elm Street's iconic villain in adorable Funko form. Sweet dreams!",
-      character: 'chibi'
-    },
-    {
-      id: 103,
-      title: "Funko Pop! Music - David Bowie",
-      price: 22.99,
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400",
-      description: "Ziggy Stardust era David Bowie with detailed costume and iconic makeup.",
-      character: 'chibi'
-    }
-  ] : [
-    {
-      id: 201,
-      title: "Limited Edition Vinyl Figure - Zombie Kitty",
-      price: 49.99,
-      image: "https://images.unsplash.com/photo-1516924962500-2b4b3b99ea02?w=400",
-      description: "Exclusive KornDog Records mascot figure. Only 500 made worldwide!",
-      character: 'zombie'
-    },
-    {
-      id: 202,
-      title: "Vintage Record Player Miniature",
-      price: 34.99,
-      image: "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=400",
-      description: "Detailed miniature replica of a classic turntable. Perfect for display!",
-      character: 'zombie'
-    },
-    {
-      id: 203,
-      title: "Glow-in-the-Dark Album Art Pins",
-      price: 12.99,
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400",
-      description: "Set of 5 enamel pins featuring iconic album covers that glow in the dark.",
-      character: 'zombie'
-    }
-  ];
-  
-  // Create shelves inside the case
-  const caseWidth = 9; // Slightly less than the case width
-  const caseDepth = 3.5; // Slightly less than the case depth
-  
-  const shelfMaterial = new THREE.MeshStandardMaterial({
-    color: 0x222222,
-    metalness: 0.5,
-    roughness: 0.3
-  });
-  
-  // Add shelves and items
-  for (let i = 0; i < items.length; i++) {
-    // Create shelf
-    const shelfGeometry = new THREE.BoxGeometry(caseWidth, 0.1, caseDepth);
-    const shelf = new THREE.Mesh(shelfGeometry, shelfMaterial);
-    shelf.position.y = -2 + (i * 2); // Space shelves evenly
-    caseGroup.add(shelf);
-    
-    // Create item display
-    const item = items[i];
-    
-    // Create item card with image
-    const loader = new THREE.TextureLoader();
-    loader.load(item.image, (texture) => {
-      const cardGeometry = new THREE.PlaneGeometry(1.5, 2);
-      const cardMaterial = new THREE.MeshBasicMaterial({ 
-        map: texture,
-        transparent: true
-      });
-      const card = new THREE.Mesh(cardGeometry, cardMaterial);
-      card.position.set(0, shelf.position.y + 1.1, 0);
-      card.userData = { item };
-      caseGroup.add(card);
-      
-      // Add to interactive objects
-      productMeshes.push(card);
-      
-      // Add floating price tag
-      const priceTag = createPriceTag(item.price, item.title);
-      priceTag.position.set(0, shelf.position.y + 2.2, 0);
-      caseGroup.add(priceTag);
-    });
-  }
-}
-
-function createPriceTag(price, title) {
-  const group = new THREE.Group();
-  
-  // Create floating price tag background
-  const tagGeometry = new THREE.PlaneGeometry(2, 0.6);
-  const tagMaterial = new THREE.MeshBasicMaterial({
-    color: 0x000000,
-    transparent: true,
-    opacity: 0.7
-  });
-  const tag = new THREE.Mesh(tagGeometry, tagMaterial);
-  group.add(tag);
-  
-  // Create price text (using sprite for simplicity)
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 128;
-  const context = canvas.getContext('2d');
-  context.fillStyle = '#ffffff';
-  context.font = 'Bold 36px Arial';
-  context.textAlign = 'center';
-  context.fillText(`$${price}`, 128, 50);
-  context.font = '24px Arial';
-  context.fillText(title.substring(0, 15) + (title.length > 15 ? '...' : ''), 128, 90);
-  
-  const texture = new THREE.CanvasTexture(canvas);
-  const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-  const sprite = new THREE.Sprite(spriteMaterial);
-  sprite.scale.set(2, 1, 1);
-  group.add(sprite);
   
   return group;
 }
@@ -630,594 +462,591 @@ function createEnhancedProductDisplay(product) {
       pedestalColor = 0x2a4a2a;
       glowColor = 0x00ff66;
       break;
-    default: // korndog
+    default:
       pedestalColor = 0x4a4a2a;
       glowColor = 0xffd166;
+      break;
   }
   
-  const pedestalGeometry = new THREE.CylinderGeometry(3.5, 4, 1.5, 8);
+  // Create pedestal
+  const pedestalGeometry = new THREE.CylinderGeometry(2, 2.5, 1, 8);
   const pedestalMaterial = new THREE.MeshLambertMaterial({ color: pedestalColor });
   const pedestal = new THREE.Mesh(pedestalGeometry, pedestalMaterial);
-  pedestal.position.y = 0.75;
+  pedestal.position.set(product.position.x, 0.5, product.position.z);
   pedestal.castShadow = true;
   displayGroup.add(pedestal);
-
-  // Floating album with enhanced animations
-  const albumGeometry = new THREE.PlaneGeometry(5, 5);
-  const loader = new THREE.TextureLoader();
   
+  // Create floating product representation
+  const loader = new THREE.TextureLoader();
   loader.load(product.image, (texture) => {
-    const albumMaterial = new THREE.MeshLambertMaterial({ 
+    const productGeometry = new THREE.PlaneGeometry(3, 3);
+    const productMaterial = new THREE.MeshBasicMaterial({ 
       map: texture,
       transparent: true
     });
-    const album = new THREE.Mesh(albumGeometry, albumMaterial);
-    album.position.y = 4;
-    album.rotation.y = Math.PI / 4;
-    album.castShadow = true;
+    const productMesh = new THREE.Mesh(productGeometry, productMaterial);
+    productMesh.position.set(product.position.x, 3, product.position.z);
+    productMesh.userData = { product };
     
-    // Character-specific floating behavior
-    const originalY = album.position.y;
+    // Add floating animation
     let time = Math.random() * Math.PI * 2;
-    const floatAmplitude = product.character === 'zombie' ? 0.8 : 0.5;
-    const floatSpeed = product.character === 'chibi' ? 0.025 : 0.015;
-    
-    function animateAlbum() {
-      time += floatSpeed;
-      album.position.y = originalY + Math.sin(time) * floatAmplitude;
-      album.rotation.y += 0.008;
-      
-      // Zombie kitty items occasionally "glitch"
-      if (product.character === 'zombie' && Math.random() < 0.003) {
-        album.rotation.y += 0.2;
-        album.position.y += 0.5;
-      }
-      
-      requestAnimationFrame(animateAlbum);
+    function animateProduct() {
+      time += 0.02;
+      productMesh.position.y = 3 + Math.sin(time) * 0.5;
+      productMesh.rotation.y += 0.01;
+      requestAnimationFrame(animateProduct);
     }
-    animateAlbum();
+    animateProduct();
     
-    displayGroup.add(album);
+    displayGroup.add(productMesh);
+    productMeshes.push(productMesh);
   });
-
-  // Holographic info display
-  const holoGeometry = new THREE.PlaneGeometry(8, 2.5);
-  const holoMaterial = new THREE.MeshBasicMaterial({ 
-    color: glowColor,
-    transparent: true,
-    opacity: 0.4
-  });
-  const holo = new THREE.Mesh(holoGeometry, holoMaterial);
-  holo.position.y = 7;
-  displayGroup.add(holo);
-
-  // Price beacon
-  const beaconGeometry = new THREE.CylinderGeometry(0.1, 0.1, 3, 8);
-  const beaconMaterial = new THREE.MeshBasicMaterial({ 
-    color: glowColor,
-    transparent: true,
-    opacity: 0.6
-  });
-  const beacon = new THREE.Mesh(beaconGeometry, beaconMaterial);
-  beacon.position.y = 2.5;
-  displayGroup.add(beacon);
-
-  displayGroup.position.set(product.position.x, 0, product.position.z);
-  displayGroup.userData = { product };
+  
+  // Add glow effect
+  const glowLight = new THREE.PointLight(glowColor, 0.5, 8);
+  glowLight.position.set(product.position.x, 2, product.position.z);
+  displayGroup.add(glowLight);
   
   scene.add(displayGroup);
-  productMeshes.push(displayGroup);
 }
 
 function createCharacterZones() {
-  // Zombie Kitty's Spooky Corner
-  const zombieGeometry = new THREE.BoxGeometry(12, 8, 12);
-  const zombieMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0x2a1a2a,
-    transparent: true,
-    opacity: 0.2
+  // Create character representations in 3D space
+  Object.keys(characters).forEach((key, index) => {
+    const character = characters[key];
+    const positions = [
+      { x: -25, y: 4, z: 15 }, // Zombie Kitty
+      { x: 25, y: 4, z: 15 },  // Chibi Kitty
+      { x: 0, y: 4, z: -45 }   // KornDog
+    ];
+    
+    const loader = new THREE.TextureLoader();
+    loader.load(character.avatar, (texture) => {
+      const characterGeometry = new THREE.PlaneGeometry(4, 4);
+      const characterMaterial = new THREE.MeshBasicMaterial({ 
+        map: texture,
+        transparent: true
+      });
+      const characterMesh = new THREE.Mesh(characterGeometry, characterMaterial);
+      characterMesh.position.copy(positions[index]);
+      characterMesh.userData = { character: key };
+      
+      // Add floating animation
+      let time = Math.random() * Math.PI * 2;
+      function animateCharacter() {
+        time += 0.015;
+        characterMesh.position.y = positions[index].y + Math.sin(time) * 0.3;
+        characterMesh.rotation.y = Math.sin(time * 0.5) * 0.1;
+        requestAnimationFrame(animateCharacter);
+      }
+      animateCharacter();
+      
+      scene.add(characterMesh);
+      characterMeshes[key] = characterMesh;
+    });
   });
-  const zombieZone = new THREE.Mesh(zombieGeometry, zombieMaterial);
-  zombieZone.position.set(-25, 4, 0);
-  scene.add(zombieZone);
-
-  // Chibi Kitty's Kawaii Corner
-  const chibiGeometry = new THREE.BoxGeometry(12, 8, 12);
-  const chibiMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0x1a4a2a,
-    transparent: true,
-    opacity: 0.2
-  });
-  const chibiZone = new THREE.Mesh(chibiGeometry, chibiMaterial);
-  chibiZone.position.set(25, 4, 0);
-  scene.add(chibiZone);
-
-  // KornDog's Central Hub
-  const korndogGeometry = new THREE.CylinderGeometry(8, 10, 3, 12);
-  const korndogMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0x4a4a2a,
-    transparent: true,
-    opacity: 0.3
-  });
-  const korndogHub = new THREE.Mesh(korndogGeometry, korndogMaterial);
-  korndogHub.position.set(0, 1.5, -30);
-  scene.add(korndogHub);
 }
 
 function createAtmosphericLighting() {
   // Ambient lighting
-  const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+  const ambientLight = new THREE.AmbientLight(0x404080, 0.3);
   scene.add(ambientLight);
-
+  
   // Main directional light
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
-  directionalLight.position.set(30, 30, 30);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  directionalLight.position.set(0, 20, 10);
   directionalLight.castShadow = true;
   directionalLight.shadow.mapSize.width = 2048;
   directionalLight.shadow.mapSize.height = 2048;
   scene.add(directionalLight);
-
-  // Character zone lighting
-  const zombieLight = new THREE.PointLight(0xff3e6c, 0.6, 25);
-  zombieLight.position.set(-25, 10, 0);
-  scene.add(zombieLight);
-
-  const chibiLight = new THREE.PointLight(0x00ff66, 0.6, 25);
-  chibiLight.position.set(25, 10, 0);
-  scene.add(chibiLight);
-
-  const korndogLight = new THREE.PointLight(0xffd166, 0.8, 30);
-  korndogLight.position.set(0, 15, -30);
-  scene.add(korndogLight);
-
-  // Animated disco lighting
-  let lightTime = 0;
-  function animateLights() {
-    lightTime += 0.02;
-    zombieLight.intensity = 0.4 + Math.sin(lightTime) * 0.2;
-    chibiLight.intensity = 0.4 + Math.sin(lightTime + 2) * 0.2;
-    korndogLight.intensity = 0.6 + Math.sin(lightTime + 4) * 0.2;
-    requestAnimationFrame(animateLights);
-  }
-  animateLights();
+  
+  // Add colored accent lights
+  const lights = [
+    { color: 0xff3e6c, position: { x: -25, y: 10, z: 0 } },
+    { color: 0x00ff66, position: { x: 25, y: 10, z: 0 } },
+    { color: 0xffd166, position: { x: 0, y: 15, z: -30 } }
+  ];
+  
+  lights.forEach(lightData => {
+    const light = new THREE.PointLight(lightData.color, 0.6, 30);
+    light.position.set(lightData.position.x, lightData.position.y, lightData.position.z);
+    scene.add(light);
+  });
 }
 
 function createMagicalParticles() {
-  const particleCount = 200;
+  const particleCount = 100;
+  const particles = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3);
-  const colors = new Float32Array(particleCount * 3);
   
   for (let i = 0; i < particleCount * 3; i += 3) {
     positions[i] = (Math.random() - 0.5) * 100;
-    positions[i + 1] = Math.random() * 25;
+    positions[i + 1] = Math.random() * 20;
     positions[i + 2] = (Math.random() - 0.5) * 100;
-    
-    // Random character colors
-    const colorChoice = Math.random();
-    if (colorChoice < 0.33) {
-      colors[i] = 1; colors[i + 1] = 0.24; colors[i + 2] = 0.42; // Zombie pink
-    } else if (colorChoice < 0.66) {
-      colors[i] = 0; colors[i + 1] = 1; colors[i + 2] = 0.4; // Chibi green
-    } else {
-      colors[i] = 1; colors[i + 1] = 0.82; colors[i + 2] = 0.4; // KornDog gold
-    }
   }
   
-  const particleGeometry = new THREE.BufferGeometry();
-  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   
   const particleMaterial = new THREE.PointsMaterial({
-    size: 0.2,
+    color: 0xffd166,
+    size: 0.5,
     transparent: true,
-    opacity: 0.8,
-    vertexColors: true
+    opacity: 0.6
   });
   
-  const particles = new THREE.Points(particleGeometry, particleMaterial);
-  scene.add(particles);
-
-  // Animate particles like musical notes
+  const particleSystem = new THREE.Points(particles, particleMaterial);
+  scene.add(particleSystem);
+  
+  // Animate particles
   function animateParticles() {
-    const positions = particles.geometry.attributes.position.array;
+    const positions = particleSystem.geometry.attributes.position.array;
+    
     for (let i = 1; i < positions.length; i += 3) {
-      positions[i] += Math.sin(Date.now() * 0.001 + i) * 0.02;
+      positions[i] += 0.02;
+      if (positions[i] > 20) {
+        positions[i] = 0;
+      }
     }
-    particles.geometry.attributes.position.needsUpdate = true;
-    particles.rotation.y += 0.001;
+    
+    particleSystem.geometry.attributes.position.needsUpdate = true;
     requestAnimationFrame(animateParticles);
   }
   animateParticles();
 }
-// ======= CONTROLS =======
+
 function setupControls() {
-  // Keyboard
-  document.addEventListener('keydown', (event) => {
-    if (!state.is3D) return;
-    switch (event.code) {
-      case 'KeyW': moveForward = true; break;
-      case 'KeyA': moveLeft = true; break;
-      case 'KeyS': moveBackward = true; break;
-      case 'KeyD': moveRight = true; break;
-      case 'Space': 
-        event.preventDefault();
-        camera.position.y += 3;
-        setTimeout(() => { camera.position.y = Math.max(6, camera.position.y - 3); }, 400);
-        break;
-    }
-  });
-
-  document.addEventListener('keyup', (event) => {
-    switch (event.code) {
-      case 'KeyW': moveForward = false; break;
-      case 'KeyA': moveLeft = false; break;
-      case 'KeyS': moveBackward = false; break;
-      case 'KeyD': moveRight = false; break;
-    }
-  });
-
-  // Mouse look
-  let isMouseDown = false;
-  let mouseX = 0, mouseY = 0;
-
-  document.addEventListener('mousedown', (event) => {
-    if (!state.is3D) return;
-    isMouseDown = true;
-    mouseX = event.clientX;
-    mouseY = event.clientY;
-  });
-
-  document.addEventListener('mouseup', () => {
-    isMouseDown = false;
-  });
-
-  document.addEventListener('mousemove', (event) => {
-    if (isMouseDown && state.is3D) {
-      const deltaX = event.clientX - mouseX;
-      const deltaY = event.clientY - mouseY;
-      
-      camera.rotation.y -= deltaX * 0.003;
-      camera.rotation.x -= deltaY * 0.003;
-      camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
-      
-      mouseX = event.clientX;
-      mouseY = event.clientY;
-    }
-  });
-
-  // Product interaction
-  document.addEventListener('click', onProductClick);
+  // Keyboard controls
+  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('keyup', onKeyUp);
+  
+  // Mouse controls
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('click', onMouseClick);
+  
+  // Touch controls for mobile
+  setupTouchControls();
+  
+  // Window resize
   window.addEventListener('resize', onWindowResize);
-
-  // Mobile touch controls
-  setupMobileControls();
-  
-  // Admin panel access (press Ctrl+Shift+A)
-  document.addEventListener('keydown', (event) => {
-    if (event.ctrlKey && event.shiftKey && event.code === 'KeyA') {
-      toggleAdminPanel();
-    }
-  });
-  
-  // Admin panel access via touch gesture (swipe down with 3 fingers)
-  let touchStartY = 0;
-  let touchStartTime = 0;
-
-  document.addEventListener('touchstart', (event) => {
-    if (event.touches.length === 3) {
-      touchStartY = event.touches[0].clientY;
-      touchStartTime = Date.now();
-    }
-  });
-
-  document.addEventListener('touchend', (event) => {
-    if (event.changedTouches.length === 3) {
-      const touchEndY = event.changedTouches[0].clientY;
-      const touchEndTime = Date.now();
-      const touchDuration = touchEndTime - touchStartTime;
-      const touchDistance = touchEndY - touchStartY;
-      
-      // If swipe down with 3 fingers and quick enough
-      if (touchDistance > 100 && touchDuration < 500) {
-        toggleAdminPanel();
-      }
-    }
-  });
 }
 
-function setupMobileControls() {
-  const joystick = document.getElementById('joystick');
-  const joystickContainer = document.querySelector('.joystick-container');
-  let joystickActive = false;
-  let joystickCenter = { x: 0, y: 0 };
-
-  function startJoystick(event) {
-    if (!state.is3D) return;
-    joystickActive = true;
-    const rect = joystickContainer.getBoundingClientRect();
-    joystickCenter.x = rect.left + rect.width / 2;
-    joystickCenter.y = rect.top + rect.height / 2;
-    updateJoystick(event);
+function onKeyDown(event) {
+  switch (event.code) {
+    case 'ArrowUp':
+    case 'KeyW':
+      moveForward = true;
+      break;
+    case 'ArrowLeft':
+    case 'KeyA':
+      moveLeft = true;
+      break;
+    case 'ArrowDown':
+    case 'KeyS':
+      moveBackward = true;
+      break;
+    case 'ArrowRight':
+    case 'KeyD':
+      moveRight = true;
+      break;
+    case 'Space':
+      event.preventDefault();
+      // Jump functionality
+      velocity.y = 10;
+      break;
   }
-
-  function updateJoystick(event) {
-    if (!joystickActive || !state.is3D) return;
-    
-    const touch = event.touches ? event.touches[0] : event;
-    const deltaX = touch.clientX - joystickCenter.x;
-    const deltaY = touch.clientY - joystickCenter.y;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    const maxDistance = 35;
-    
-    if (distance <= maxDistance) {
-      joystick.style.transform = `translate(-50%, -50%) translate(${deltaX}px, ${deltaY}px)`;
-    } else {
-      const angle = Math.atan2(deltaY, deltaX);
-      const limitedX = Math.cos(angle) * maxDistance;
-      const limitedY = Math.sin(angle) * maxDistance;
-      joystick.style.transform = `translate(-50%, -50%) translate(${limitedX}px, ${limitedY}px)`;
-    }
-    
-    const normalizedDistance = Math.min(distance, maxDistance) / maxDistance;
-    const angle = Math.atan2(deltaY, deltaX);
-    
-    if (normalizedDistance > 0.2) {
-      moveForward = Math.cos(angle + Math.PI) * normalizedDistance > 0.3;
-      moveBackward = Math.cos(angle) * normalizedDistance > 0.3;
-      moveLeft = Math.sin(angle + Math.PI) * normalizedDistance > 0.3;
-      moveRight = Math.sin(angle) * normalizedDistance > 0.3;
-    } else {
-      moveForward = moveBackward = moveLeft = moveRight = false;
-    }
-  }
-
-  function endJoystick() {
-    joystickActive = false;
-    joystick.style.transform = 'translate(-50%, -50%)';
-    moveForward = moveBackward = moveLeft = moveRight = false;
-  }
-
-  joystickContainer.addEventListener('mousedown', startJoystick);
-  joystickContainer.addEventListener('touchstart', startJoystick);
-  document.addEventListener('mousemove', updateJoystick);
-  document.addEventListener('touchmove', updateJoystick);
-  document.addEventListener('mouseup', endJoystick);
-  document.addEventListener('touchend', endJoystick);
-
-  // Touch buttons
-  document.getElementById('jumpBtn').addEventListener('touchstart', (event) => {
-    event.preventDefault();
-    if (state.is3D) {
-      camera.position.y += 3;
-      setTimeout(() => { camera.position.y = Math.max(6, camera.position.y - 3); }, 400);
-    }
-  });
-
-  document.getElementById('interactBtn').addEventListener('touchstart', (event) => {
-    event.preventDefault();
-    if (state.is3D) {
-      raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-      const intersects = raycaster.intersectObjects(productMeshes, true);
-      
-      if (intersects.length > 0) {
-        const clickedGroup = intersects[0].object.parent;
-        if (clickedGroup.userData && clickedGroup.userData.product) {
-          showProductPanel(clickedGroup.userData.product);
-        }
-      }
-    }
-  });
 }
 
-function onProductClick(event) {
-  if (!state.is3D || event.target.closest('.ui-overlay')) return;
+function onKeyUp(event) {
+  switch (event.code) {
+    case 'ArrowUp':
+    case 'KeyW':
+      moveForward = false;
+      break;
+    case 'ArrowLeft':
+    case 'KeyA':
+      moveLeft = false;
+      break;
+    case 'ArrowDown':
+    case 'KeyS':
+      moveBackward = false;
+      break;
+    case 'ArrowRight':
+    case 'KeyD':
+      moveRight = false;
+      break;
+  }
+}
+
+function onMouseMove(event) {
+  if (!state.is3D) return;
   
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  
+  // Camera look around
+  const movementX = event.movementX || 0;
+  const movementY = event.movementY || 0;
+  
+  camera.rotation.y -= movementX * 0.002;
+  camera.rotation.x -= movementY * 0.002;
+  
+  // Clamp vertical rotation
+  camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
+}
 
+function onMouseClick(event) {
+  if (!state.is3D) return;
+  
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(productMeshes, true);
-
+  const intersects = raycaster.intersectObjects(productMeshes);
+  
   if (intersects.length > 0) {
-    const clickedGroup = intersects[0].object.parent;
-    if (clickedGroup.userData && clickedGroup.userData.product) {
-      showProductPanel(clickedGroup.userData.product);
+    const product = intersects[0].object.userData.product;
+    if (product) {
+      showProductPanel(product);
     }
   }
 }
 
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-function updateMovement() {
-  if (!state.is3D) return;
+function setupTouchControls() {
+  const joystick = document.getElementById('joystick');
+  const joystickContainer = document.querySelector('.joystick-container');
   
-  const speed = 0.4;
+  if (!joystick || !joystickContainer) return;
   
-  direction.z = Number(moveForward) - Number(moveBackward);
-  direction.x = Number(moveRight) - Number(moveLeft);
-  direction.normalize();
-
-  if (moveForward || moveBackward) velocity.z -= direction.z * speed;
-  if (moveLeft || moveRight) velocity.x -= direction.x * speed;
-
-  const euler = new THREE.Euler(0, camera.rotation.y, 0, 'YXZ');
-  const quaternion = new THREE.Quaternion().setFromEuler(euler);
-  velocity.applyQuaternion(quaternion);
-
-  camera.position.add(velocity);
-  velocity.multiplyScalar(0.85);
-  camera.position.y = Math.max(6, camera.position.y);
+  let isDragging = false;
+  let startPos = { x: 0, y: 0 };
+  
+  joystick.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    const touch = e.touches[0];
+    const rect = joystickContainer.getBoundingClientRect();
+    startPos.x = touch.clientX - rect.left - rect.width / 2;
+    startPos.y = touch.clientY - rect.top - rect.height / 2;
+  });
+  
+  document.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    
+    const touch = e.touches[0];
+    const rect = joystickContainer.getBoundingClientRect();
+    const deltaX = touch.clientX - rect.left - rect.width / 2;
+    const deltaY = touch.clientY - rect.top - rect.height / 2;
+    
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const maxDistance = 25;
+    
+    if (distance <= maxDistance) {
+      joystick.style.transform = `translate(-50%, -50%) translate(${deltaX}px, ${deltaY}px)`;
+      
+      // Update movement based on joystick position
+      moveForward = deltaY < -5;
+      moveBackward = deltaY > 5;
+      moveLeft = deltaX < -5;
+      moveRight = deltaX > 5;
+    }
+  });
+  
+  document.addEventListener('touchend', () => {
+    isDragging = false;
+    joystick.style.transform = 'translate(-50%, -50%)';
+    moveForward = moveBackward = moveLeft = moveRight = false;
+  });
 }
 
 function animate() {
   requestAnimationFrame(animate);
   
-  if (state.is3D) {
+  if (state.is3D && camera) {
     updateMovement();
-    
-    // Update holographic displays to face camera
-    productMeshes.forEach(group => {
-      const holo = group.children.find(child => 
-        child.geometry && child.geometry.type === 'PlaneGeometry' && child.position.y > 5
-      );
-      if (holo) holo.lookAt(camera.position);
-    });
-    
     renderer.render(scene, camera);
   }
 }
 
-// ======= UI FUNCTIONS =======
-function toggle3DMode() {
-  state.is3D = !state.is3D;
-  const canvas = document.getElementById('canvas3D');
-  const content2D = document.getElementById('content2D');
-  const hud = document.getElementById('hud3D');
-  const floating3D = document.getElementById('floating3DCharacters');
-  const dimensionText = document.getElementById('dimensionText');
+function updateMovement() {
+  const speed = 0.3;
   
-  if (state.is3D) {
-    // Enter 3D mode
-    document.body.className = 'mode-3d';
-    canvas.classList.add('active');
-    content2D.classList.add('hidden');
-    hud.classList.add('show');
-    floating3D.classList.add('show');
-    dimensionText.textContent = 'Exit 3D Store';
-    
-    // Update mode buttons
-    document.getElementById('mode2D').classList.remove('active');
-    document.getElementById('mode3D').classList.add('active');
-    
-    showCharacterMessage("Welcome to our 3D store! Walk around and click on albums to explore.", 'korndog');
-  } else {
-    // Exit 3D mode
-    document.body.className = 'mode-2d';
-    canvas.classList.remove('active');
-    content2D.classList.remove('hidden');
-    hud.classList.remove('show');
-    floating3D.classList.remove('show');
-    dimensionText.textContent = 'Enter 3D Store';
-    
-    // Update mode buttons
-    document.getElementById('mode3D').classList.remove('active');
-    document.getElementById('mode2D').classList.add('active');
-    
-    hideProductPanel();
-    hideCharacterPopup();
+  direction.z = Number(moveForward) - Number(moveBackward);
+  direction.x = Number(moveLeft) - Number(moveRight);
+  direction.normalize();
+  
+  if (moveForward || moveBackward) velocity.z -= direction.z * speed;
+  if (moveLeft || moveRight) velocity.x -= direction.x * speed;
+  
+  // Apply movement
+  camera.position.add(velocity);
+  
+  // Apply friction
+  velocity.multiplyScalar(0.9);
+  
+  // Keep camera above ground
+  if (camera.position.y < 2) {
+    camera.position.y = 2;
+    velocity.y = 0;
+  }
+  
+  // Gravity
+  velocity.y -= 0.3;
+}
+
+function onWindowResize() {
+  if (camera && renderer) {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
   }
 }
 
+// ======= UI FUNCTIONS =======
+function showProductPanel(product) {
+  const panel = document.getElementById('productPanel');
+  const image = document.getElementById('panelImage');
+  const title = document.getElementById('panelTitle');
+  const price = document.getElementById('panelPrice');
+  const description = document.getElementById('panelDescription');
+  
+  image.src = product.image;
+  title.textContent = product.title;
+  price.textContent = `$${product.price}`;
+  description.textContent = product.description;
+  
+  panel.classList.add('show');
+  
+  state.currentProduct = product;
+  
+  // Show character message
+  showCharacterMessage(product.character, product);
+}
+
+function hideProductPanel() {
+  const panel = document.getElementById('productPanel');
+  panel.classList.remove('show');
+  hideCharacterMessage();
+  state.currentProduct = null;
+}
+
+function showCharacterMessage(characterKey, product) {
+  const character = characters[characterKey];
+  const popup = document.getElementById('characterPopup');
+  const avatar = document.getElementById('characterAvatar');
+  const name = document.getElementById('characterName');
+  const role = document.getElementById('characterRole');
+  const message = document.getElementById('characterMessage');
+  
+  avatar.src = character.avatar;
+  name.textContent = character.name;
+  role.textContent = character.role;
+  
+  const randomMessage = character.messages[Math.floor(Math.random() * character.messages.length)];
+  message.textContent = randomMessage;
+  
+  popup.classList.add('show');
+}
+
+function hideCharacterMessage() {
+  const popup = document.getElementById('characterPopup');
+  popup.classList.remove('show');
+}
+
+function focusCharacter(characterKey) {
+  const character = characters[characterKey];
+  showCharacterMessage(characterKey, null);
+}
+
+// ======= MODE SWITCHING =======
 function enter3DStore() {
-  if (!state.is3D) {
-    toggle3DMode();
+  if (!scene) {
+    init3DStore();
+  }
+  
+  document.body.classList.add('mode-3d');
+  document.body.classList.remove('mode-2d');
+  
+  const canvas = document.getElementById('canvas3D');
+  const content2D = document.getElementById('content2D');
+  const hud = document.getElementById('hud3D');
+  const floatingCharacters = document.getElementById('floating3DCharacters');
+  
+  canvas.classList.add('active');
+  content2D.classList.add('hidden');
+  hud.classList.add('show');
+  floatingCharacters.classList.add('show');
+  
+  // Update button text
+  document.getElementById('dimensionText').textContent = 'Exit 3D Store';
+  
+  // Update mode buttons
+  document.getElementById('mode2D').classList.remove('active');
+  document.getElementById('mode3D').classList.add('active');
+  
+  state.is3D = true;
+  
+  // Request pointer lock for better 3D experience
+  canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
+  if (canvas.requestPointerLock) {
+    canvas.requestPointerLock();
+  }
+}
+
+function exit3DStore() {
+  document.body.classList.remove('mode-3d');
+  document.body.classList.add('mode-2d');
+  
+  const canvas = document.getElementById('canvas3D');
+  const content2D = document.getElementById('content2D');
+  const hud = document.getElementById('hud3D');
+  const floatingCharacters = document.getElementById('floating3DCharacters');
+  
+  canvas.classList.remove('active');
+  content2D.classList.remove('hidden');
+  hud.classList.remove('show');
+  floatingCharacters.classList.remove('show');
+  
+  // Hide panels
+  hideProductPanel();
+  
+  // Update button text
+  document.getElementById('dimensionText').textContent = 'Enter 3D Store';
+  
+  // Update mode buttons
+  document.getElementById('mode3D').classList.remove('active');
+  document.getElementById('mode2D').classList.add('active');
+  
+  state.is3D = false;
+  
+  // Exit pointer lock
+  if (document.exitPointerLock) {
+    document.exitPointerLock();
   }
 }
 
 function browse2D() {
-  if (state.is3D) {
-    toggle3DMode();
-  }
-}
-
-function focusCharacter(characterType) {
-  // Move camera to character zone
-  switch(characterType) {
-    case 'zombie':
-      camera.position.set(-20, 8, 5);
-      camera.lookAt(-25, 5, 0);
-      showCharacterMessage(characters.zombie.messages[Math.floor(Math.random() * characters.zombie.messages.length)], 'zombie');
-      break;
-    case 'chibi':
-      camera.position.set(20, 8, 5);
-      camera.lookAt(25, 5, 0);
-      showCharacterMessage(characters.chibi.messages[Math.floor(Math.random() * characters.chibi.messages.length)], 'chibi');
-      break;
-    case 'korndog':
-      camera.position.set(0, 10, -20);
-      camera.lookAt(0, 5, -30);
-      showCharacterMessage(characters.korndog.messages[Math.floor(Math.random() * characters.korndog.messages.length)], 'korndog');
-      break;
-  }
-}
-
-function showProductPanel(product) {
-  state.currentProduct = product;
-  
-  document.getElementById('panelImage').src = product.image;
-  document.getElementById('panelTitle').textContent = product.title;
-  document.getElementById('panelPrice').textContent = `$${product.price}`;
-  document.getElementById('panelDescription').textContent = product.description;
-  
-  document.getElementById('productPanel').classList.add('show');
-  
-  // Show character-specific message
-  const character = characters[product.character] || characters.korndog;
-  const message = character.messages[Math.floor(Math.random() * character.messages.length)];
-  showCharacterMessage(message, product.character);
-}
-
-function hideProductPanel() {
-  document.getElementById('productPanel').classList.remove('show');
-  state.currentProduct = null;
-}
-
-function showCharacterMessage(message, characterType = 'korndog') {
-  const character = characters[characterType];
-  document.getElementById('characterName').textContent = character.name;
-  document.getElementById('characterRole').textContent = character.role;
-  document.getElementById('characterAvatar').src = character.avatar;
-  document.getElementById('characterMessage').textContent = message;
-  document.getElementById('characterPopup').classList.add('show');
-  
-  setTimeout(() => {
-    hideCharacterPopup();
-  }, 6000);
-}
-
-function hideCharacterPopup() {
-  document.getElementById('characterPopup').classList.remove('show');
-}
-
-function addToCart(product, qty = 1) {
-  const existingIndex = state.cart.findIndex(item => item.id === product.id);
-  
-  if (existingIndex >= 0) {
-    state.cart[existingIndex].qty += qty;
-  } else {
-    state.cart.push({
-      id: product.id,
-      title: product.title,
-      price: product.price,
-      image: product.image,
-      qty: qty
-    });
-  }
-  
-  localStorage.setItem("kdr_cart", JSON.stringify(state.cart));
-  updateCartCount();
-  
-  const character = characters[product.character] || characters.korndog;
-  showCharacterMessage(`Added ${product.title} to your cart! Great choice!`, product.character);
-  hideProductPanel();
-}
-
-function updateCartCount() {
-  const count = state.cart.reduce((sum, item) => sum + item.qty, 0);
-  document.getElementById('cartCount').textContent = count;
-  
-  if (count > 0) {
-    document.getElementById('cartBtn').classList.add('has-items');
-  } else {
-    document.getElementById('cartBtn').classList.remove('has-items');
-  }
+  // Smooth scroll to 2D content area
+  const content = document.getElementById('content2D');
+  content.scrollIntoView({ behavior: 'smooth' });
 }
 
 // ======= CART SYSTEM =======
-function showCart() {
-  const cartPanel = document.getElementById('cartPanel') || createCartPanel();
-  cartPanel
+function addToCart(product) {
+  const existingItem = state.cart.find(item => item.id === product.id);
+  
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    state.cart.push({ ...product, quantity: 1 });
+  }
+  
+  updateCartUI();
+  saveCart();
+  showNotification(`Added ${product.title} to cart!`);
+}
+
+function updateCartUI() {
+  const cartCount = document.getElementById('cartCount');
+  const cartBtn = document.getElementById('cartBtn');
+  
+  const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+  cartCount.textContent = totalItems;
+  
+  if (totalItems > 0) {
+    cartBtn.classList.add('has-items');
+  } else {
+    cartBtn.classList.remove('has-items');
+  }
+}
+
+function saveCart() {
+  localStorage.setItem('kdr_cart', JSON.stringify(state.cart));
+}
+
+function showNotification(message) {
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.innerHTML = `
+    <div class="notification-content">
+      <i class="fas fa-check-circle"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Show notification
+  setTimeout(() => notification.classList.add('show'), 100);
+  
+  // Hide and remove notification
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => document.body.removeChild(notification), 300);
+  }, 3000);
+}
+
+// ======= EVENT LISTENERS =======
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize loading screen
+  simulateLoading();
+  
+  // Mode toggle buttons
+  document.getElementById('toggle3D').addEventListener('click', function() {
+    if (state.is3D) {
+      exit3DStore();
+    } else {
+      enter3DStore();
+    }
+  });
+  
+  document.getElementById('mode2D').addEventListener('click', exit3DStore);
+  document.getElementById('mode3D').addEventListener('click', enter3DStore);
+  
+  // Product panel controls
+  document.getElementById('addToCartBtn').addEventListener('click', function() {
+    if (state.currentProduct) {
+      addToCart(state.currentProduct);
+    }
+  });
+  
+  document.getElementById('closePanelBtn').addEventListener('click', hideProductPanel);
+  
+  // Character popup controls
+  document.getElementById('dismissCharacter').addEventListener('click', hideCharacterMessage);
+  
+  // Initialize cart UI
+  updateCartUI();
+  
+  // Show welcome character message
+  setTimeout(() => {
+    showCharacterMessage('korndog', null);
+  }, 2000);
+});
+
+function simulateLoading() {
+  const progressBar = document.getElementById('loadingProgress');
+  const loadingScreen = document.getElementById('loadingScreen');
+  
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 15;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      
+      setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+      }, 500);
+    }
+    
+    progressBar.style.width = progress + '%';
+  }, 200);
+}
+
+// ======= UTILITY FUNCTIONS =======
+function toggleCart() {
+  // Cart modal functionality
+  console.log('Cart toggled:', state.cart);
+}
+
+// Initialize on load
+window.addEventListener('load', function() {
+  console.log('KornDog Records initialized!');
+});
