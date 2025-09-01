@@ -20,6 +20,25 @@ body {
   min-height: 100vh; 
 }
 
+/* Fix for non-clickable buttons */
+button, .btn-large, .add-to-cart-btn, .tab-btn, .feature-item {
+  position: relative;
+  z-index: 10;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure content areas don't block clicks */
+.content-area {
+  position: relative;
+  z-index: 1;
+}
+
+/* Make sure modals are above everything */
+.modal-overlay {
+  z-index: 1100 !important;
+}
+
 /* Loading Screen */
 .loading-screen { 
   position: fixed; 
@@ -53,19 +72,17 @@ body {
   margin-bottom: 2rem; 
 }
 
-.loading-bar { 
-  width: 300px; 
-  height: 6px; 
-  background: rgba(255, 255, 255, 0.1); 
-  border-radius: 3px; 
-  overflow: hidden; 
+/* Spinning Record Animation */
+.spinning-record {
+  font-size: 4rem;
+  color: var(--accent2);
+  margin-bottom: 2rem;
+  animation: spin 2s linear infinite;
 }
 
-.loading-progress { 
-  height: 100%; 
-  background: linear-gradient(90deg, var(--accent1), var(--accent2)); 
-  width: 0%; 
-  transition: width 0.3s ease; 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Navigation */
@@ -595,6 +612,12 @@ body {
   border: 2px solid var(--accent2); 
 }
 
+.hero-preview {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
 .btn-admin { 
   background: var(--accent1); 
   color: white; 
@@ -605,6 +628,18 @@ body {
   cursor: pointer; 
   width: 100%; 
   margin-bottom: 1rem; 
+}
+
+.admin-section {
+  margin-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.5rem;
+}
+
+.admin-section-title {
+  color: var(--accent2);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 .inventory-list { 
