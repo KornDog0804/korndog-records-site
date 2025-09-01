@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="KornDog Records - Premium vinyl records, CDs, Funko Pops, movies and collectibles. Discover rare media and limited edition items with secure PayPal checkout."/>
+  <meta name="keywords" content="vinyl records, CDs, Funko Pop, collectibles, movies, music, premium media"/>
+  <meta name="author" content="KornDog Records"/>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b2aa2"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="KornDog Records"/>
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="KornDog Records - Premium Media & Collectibles"/>
+  <meta property="og:description" content="Discover rare vinyl records, classic CDs, exclusive movies, limited edition Funkos, and unique collectibles"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://korndog0804.github.io/korndog-records-site/"/>
+  <meta property="og:image" content="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png"/>
+  
+  <title>KornDog Records • Premium Media & Collectibles</title>
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Permanent+Marker&display=swap" as="style"/>
+  <link rel="preload" href="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png" as="image"/>
+  
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="manifest.json"/>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png"/>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Permanent+Marker&display=swap" rel="stylesheet"/>
+  
+  <!-- PayPal SDK - LIVE ENVIRONMENT -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AcU9sSdlnQlq_dsilwLNL2Kw5YQczqtoEpuYmoADtbJ7be3JaMUXpignQu2RiUcnBEuH_e-edGgSnYv8&currency=USD&intent=capture" defer></script>
+  
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">KornDog Records</div>
+    <div class="loading-text">Loading your media experience...</div>
+    <div class="spinning-record">
+      <i class="fas fa-record-vinyl"></i>
+    </div>
+    <button onclick="hideLoadingScreen()" class="loading-enter-btn">
+      ENTER SITE
+    </button>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-brand" onclick="goHome()" role="button" tabindex="0" aria-label="Go to homepage">
+      <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png" alt="KornDog Records Logo" id="navLogo">
+      KornDog Records
+    </div>
+    <div class="nav-controls">
+      <button class="admin-btn" id="adminBtn" onclick="toggleAdmin()" aria-label="Open admin panel">
+        <i class="fas fa-cog" aria-hidden="true"></i>
+        <span class="sr-only">Admin Settings</span>
+      </button>
+      <button class="btn-cart" id="cartBtn" onclick="showCart()" aria-label="View shopping cart">
+        <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+        Cart
+        <span class="cart-count" id="cartCount" aria-label="Items in cart">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HOME SECTION -->
+  <section class="content-area active" id="homeSection">
+    <div class="hero-section">
+      <div class="hero-content">
+        <div class="hero-logo" id="adminAccess" role="button" tabindex="0" aria-label="KornDog Records logo, click multiple times for admin access">
+          <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png" alt="KornDog Records Logo" id="heroLogo">
+        </div>
+        <h1 class="hero-title">Premium Media & Collectibles</h1>
+        <p class="hero-subtitle">Discover rare vinyl records, classic CDs, exclusive movies, limited edition Funkos, and unique collectibles</p>
+        
+        <div class="hero-actions">
+          <button class="btn-large btn-primary" onclick="showStore()" aria-label="Browse our product collection">
+            <i class="fas fa-store" aria-hidden="true"></i>
+            Browse Collection
+          </button>
+          <button class="btn-large btn-secondary" onclick="showAbout()" aria-label="Learn about KornDog Records">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+            About Us
+          </button>
+        </div>
+
+        <nav class="features-grid" role="navigation" aria-label="Product categories">
+          <button class="feature-item" onclick="showStoreCategory('vinyl')" aria-label="Browse vinyl records">
+            <i class="fas fa-record-vinyl" aria-hidden="true"></i>
+            <span>Vinyl</span>
+          </button>
+          <button class="feature-item" onclick="showStoreCategory('cd')" aria-label="Browse CD collection">
+            <i class="fas fa-compact-disc" aria-hidden="true"></i>
+            <span>CDs</span>
+          </button>
+          <button class="feature-item" onclick="showStoreCategory('funko')" aria-label="Browse Funko Pop figures">
+            <i class="fas fa-robot" aria-hidden="true"></i>
+            <span>Funkos</span>
+          </button>
+          <button class="feature-item" onclick="showStoreCategory('movie')" aria-label="Browse movie collection">
+            <i class="fas fa-film" aria-hidden="true"></i>
+            <span>Movies</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2D STORE SECTION -->
+  <section class="content-area" id="store2d">
+    <div class="store-2d">
+      <button class="back-btn" onclick="goHome()">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+      </button>
+      
+      <div class="store-header">
+        <h2>Our Collection</h2>
+        <p style="color: var(--muted);">Browse by category</p>
+      </div>
+
+      <div class="category-tabs">
+        <button class="tab-btn" onclick="filterProducts('all', this)">
+          <i class="fas fa-th"></i>
+          All
+        </button>
+        <button class="tab-btn" onclick="filterProducts('vinyl', this)">
+          <i class="fas fa-record-vinyl"></i>
+          Vinyl
+        </button>
+        <button class="tab-btn" onclick="filterProducts('cd', this)">
+          <i class="fas fa-compact-disc"></i>
+          CDs
+        </button>
+        <button class="tab-btn" onclick="filterProducts('funko', this)">
+          <i class="fas fa-robot"></i>
+          Funkos
+        </button>
+        <button class="tab-btn" onclick="filterProducts('movie', this)">
+          <i class="fas fa-film"></i>
+          Movies
+        </button>
+        <button class="tab-btn" onclick="filterProducts('collectible', this)">
+          <i class="fas fa-gem"></i>
+          Collectibles
+        </button>
+      </div>
+
+      <div class="products-grid" id="productsGrid">
+        <!-- Products load here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section class="content-area" id="aboutSection">
+    <div class="about-content">
+      <button class="back-btn" onclick="goHome()">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+      </button>
+      
+      <div class="about-header">
+        <div class="about-logo">
+          <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png" alt="KornDog Records Logo">
+        </div>
+        <h2>About KornDog Records</h2>
+      </div>
+
+      <div class="about-story">
+        <div class="story-section">
+          <h3>My Story</h3>
+          <p>Music's always been in my blood — thanks to my mom and dad — but vinyl didn't hit me 'til after my mom's wreck. She didn't make it. That moment split my world in two. Records became therapy. No therapist. No pills. Just needle to groove. It grounded me.</p>
+          
+          <p>Every spin pulls me back — riding shotgun with my old man, laughing with my kids, slow dancing with my wife. This site? It's not about algorithms, trends, or fake hype. It's about soul. About stories. About memories you can hear.</p>
+          
+          <p>Every record here means something. It's not just wax — it's a vibe. A scar. A time machine. If you get it, you get it. Welcome to Korndog Records — where vinyl therapy is always on deck.</p>
+        </div>
+
+        <div class="story-section zombie-kitty-lore">
+          <div class="kitty-showcase">
+            <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/Screenshot_20250827-140949.png" alt="Zombie Kitty - KornDog Records Mascot" class="mascot-image">
+          </div>
+          <h3>Meet Zombie Kitty</h3>
+          <p>Zombie Kitty isn't just some random mascot — she's family. Born from a tattoo I got on a Friday the 13th with my daughter, she's a reminder that even scars tell stories. Her rose-colored eye? That's resilience. Her jagged little grin? That's survival.</p>
+          
+          <p>Around here, she pops up with her blurbs when records hit the cart because she is the spirit of Korndog Records — a mix of pain, humor, and never dying love for music. She's not just undead; she's alive in every groove, every sale, every spin.</p>
+          
+          <div class="kitty-traits">
+            <h4>Zombie Kitty's Spirit:</h4>
+            <ul>
+              <li>Born from a Friday the 13th tattoo with family</li>
+              <li>Rose-colored eye symbolizes resilience through pain</li>
+              <li>Jagged grin represents survival and strength</li>
+              <li>Lives in every vinyl groove and needle drop</li>
+              <li>Guides customers to albums that heal the soul</li>
+              <li>Embodies the undead love for music that never dies</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-section">
+          <h3>What We Offer</h3>
+          <div class="offerings-grid">
+            <div class="offering-item">
+              <i class="fas fa-record-vinyl"></i>
+              <h4>Vinyl Records</h4>
+              <p>Rare pressings, limited editions, and classic albums on premium 180g vinyl. From Pink Floyd to underground gems.</p>
+            </div>
+            <div class="offering-item">
+              <i class="fas fa-robot"></i>
+              <h4>Funko Pops</h4>
+              <p>Exclusive figures, chase variants, and limited convention exclusives. Perfect for display and collecting.</p>
+            </div>
+            <div class="offering-item">
+              <i class="fas fa-compact-disc"></i>
+              <h4>CDs & Media</h4>
+              <p>Remastered editions, box sets, and rare imports. Digital quality meets physical collecting.</p>
+            </div>
+            <div class="offering-item">
+              <i class="fas fa-gem"></i>
+              <h4>Collectibles</h4>
+              <p>Unique items, limited figures, and exclusive merchandise you won't find anywhere else.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-info">
+          <h3>Get in Touch</h3>
+          <p>Questions about our collection? Looking for something specific? Have a collection to sell? We'd love to hear from you!</p>
+          <div class="contact-methods">
+            <div class="contact-item">
+              <i class="fas fa-phone"></i>
+              <span>(270) 783-1129 • Ask for Joey</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-clock"></i>
+              <span>Mon-Fri 10AM-8PM EST</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-record-vinyl"></i>
+              <span>Buying Collections & Rare Finds</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-shipping-fast"></i>
+              <span>US Shipping Available</span>
+            </div>
+          </div>
+          <p style="font-size: 0.9rem; text-align: center; margin-top: 1rem; opacity: 0.8;">
+            Call or text during business hours for collection inquiries, rare item searches, or general questions about our vinyl and collectibles.
+          </p>
+        </div>
+        
+        <!-- Hidden Admin Access -->
+        <div class="hidden-admin-trigger" id="hiddenAdminTrigger">.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN PANEL -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+      <div class="admin-title">Store Admin</div>
+      <button class="close-admin" onclick="toggleAdmin()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Hero Image Management Section -->
+    <div class="admin-section">
+      <h3 class="admin-section-title">Hero Image Management</h3>
+      <div class="hero-image-grid">
+        <div class="hero-image-option" onclick="selectHeroImage('https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png')">
+          <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/ChatGPT%20Image%20Aug%2010%2C%202025%2C%2012_07_42%20AM.png" alt="Default Logo">
+          <span>Default Logo</span>
+        </div>
+        <div class="hero-image-option" onclick="selectHeroImage('https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/Screenshot_20250827-140949.png')">
+          <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/Screenshot_20250827-140949.png" alt="Zombie Kitty">
+          <span>Zombie Kitty</span>
+        </div>
+        <div class="hero-image-option" onclick="selectHeroImage('https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/1000043471-removebg-preview.png')">
+          <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/1000043471-removebg-preview.png" alt="Chibi Kitty">
+          <span>Chibi Kitty</span>
+        </div>
+      </div>
+      
+      <form id="heroImageForm">
+        <div class="form-group">
+          <label for="heroImage">Upload Custom Hero Image</label>
+          <div class="file-input-wrapper">
+            <div class="file-input-button">
+              <i class="fas fa-upload"></i> Choose Custom Hero Logo
+            </div>
+            <input type="file" id="heroImage" class="file-input" accept="image/*">
+          </div>
+          <img id="heroImagePreview" class="image-preview hero-preview" style="display: none;">
+        </div>
+        <button type="submit" class="btn-admin">
+          <i class="fas fa-save"></i> Update Hero Image
+        </button>
+      </form>
+    </div>
+
+    <!-- Product Management Form -->
+    <div class="admin-section">
+      <h3 class="admin-section-title">Product Management</h3>
+      <form id="productForm">
+        <input type="hidden" id="productId">
+        <div class="form-group">
+          <label for="productTitle">Product Title</label>
+          <input type="text" id="productTitle" class="form-input" placeholder="Enter product name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="productPrice">Price ($)</label>
+          <input type="number" id="productPrice" class="form-input" placeholder="27.99" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <label for="productImageFront">Front Image</label>
+          <div class="file-input-wrapper">
+            <div class="file-input-button">
+              <i class="fas fa-upload"></i> Choose Front Image
+            </div>
+            <input type="file" id="productImageFront" class="file-input" accept="image/*">
+          </div>
+          <img id="imagePreviewFront" class="image-preview" style="display: none;">
+        </div>
+
+        <div class="form-group">
+          <label for="productImageBack">Back Image (Optional)</label>
+          <div class="file-input-wrapper">
+            <div class="file-input-button">
+              <i class="fas fa-upload"></i> Choose Back Image
+            </div>
+            <input type="file" id="productImageBack" class="file-input" accept="image/*">
+          </div>
+          <img id="imagePreviewBack" class="image-preview" style="display: none;">
+        </div>
+
+        <div class="form-group">
+          <label for="productDescription">Description</label>
+          <textarea id="productDescription" class="form-input form-textarea" placeholder="Product description..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="productType">Type</label>
+          <select id="productType" class="form-input">
+            <option value="vinyl">Vinyl Record</option>
+            <option value="cd">CD</option>
+            <option value="funko">Funko Pop</option>
+            <option value="movie">Movie</option>
+            <option value="collectible">Collectible</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-admin">
+          <i class="fas fa-save"></i> Save Product
+        </button>
+        <button type="button" onclick="resetProductForm()" class="btn-admin-secondary">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </form>
+    </div>
+
+    <!-- Inventory List -->
+    <div class="admin-section">
+      <div class="inventory-list" id="inventoryList">
+        <!-- Admin inventory goes here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+        <button onclick="closeModal('cartModal')" class="modal-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="cartItems">
+          <!-- Cart items will be loaded here -->
+        </div>
+        <div id="cartEmpty" class="cart-empty">
+          <i class="fas fa-shopping-cart"></i>
+          <p>Your cart is empty</p>
+        </div>
+        <div id="cartSummary" class="cart-summary">
+          <div class="cart-summary-row">
+            <span>Subtotal:</span>
+            <span id="cartSubtotal">$0.00</span>
+          </div>
+          <div class="cart-summary-row">
+            <span>Tax (6%):</span>
+            <span id="cartTax">$0.00</span>
+          </div>
+          <div class="cart-summary-row total">
+            <span>Total:</span>
+            <span id="cartTotal">$0.00</span>
+          </div>
+        </div>
+        <div id="paypal-button-container"></div>
+      </div>
+      <div class="modal-footer">
+        <button onclick="closeModal('cartModal')" class="btn-secondary">
+          Continue Shopping
+        </button>
+        <button onclick="clearCart()" class="btn-danger">
+          Clear Cart
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
