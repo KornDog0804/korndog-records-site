@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#3b2aa2"/>
+  <title>KornDog Records • Vinyl Therapy & Collectibles</title>
+
+  <!-- PayPal SDK (LIVE) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AcU9sSdlnQlq_dsilwLNL2Kw5YQczqtoEpuYmoADtbJ7be3JaMUXpignQu2RiUcnBEuH_e-edGgSnYv8&currency=USD&intent=capture" defer></script>
+
+  <!-- YouTube IFrame API for the mini player -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <style>
+    :root{
+      --bg1:#3b2aa2; --bg2:#0fa77f; --ink:#eaf4ff; --muted:#b6c2d1;
+      --card:#0b1220; --green:hsl(142 76% 36%); --green2:hsl(142 76% 46%);
+      --accent:#ffd166; --pink:#ff3e6c; --mint:#0fa77f;
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));background-attachment:fixed;color:var(--ink)}
+    a{color:inherit;text-decoration:none}
+
+    /* NAV */
+    .nav{position:sticky;top:0;z-index:50;background:rgba(11,18,32,.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.1);
+      padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+    .brand{display:flex;gap:10px;align-items:center;font-weight:900;letter-spacing:.3px;color:var(--accent);cursor:pointer}
+    .links{display:flex;gap:12px;align-items:center}
+    .links a{padding:8px 12px;border-radius:6px;transition:.2s}
+    .links a:hover{background:rgba(255,255,255,.08)}
+    .badge{background:#121827;border:1px solid #243041;color:#a3d2ff;border-radius:999px;padding:2px 7px;margin-left:6px}
+
+    main{min-height:calc(100vh - 60px); padding-bottom:220px;} /* room for mini player */
+
+    /* PAGES */
+    .page{display:none}.page.active{display:block}
+    .container{max-width:1200px;margin:0 auto;padding:18px}
+
+    /* HERO */
+    .hero{min-height:100vh;display:grid;place-items:center;text-align:center;padding:36px 20px}
+    .hero-logo{width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.12);
+      border:2px solid rgba(255,255,255,.3);display:grid;place-items:center;margin:0 auto 24px;overflow:hidden}
+    .hero h1{font-size:64px;line-height:1.03;margin:4px 0 12px;font-weight:900}
+    .sub{color:#dfe9f8;max-width:760px;margin:0 auto 18px;font-size:19px}
+    .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+    .btn{background:#0e1624;border:1px solid #253146;color:#d7e3f4;border-radius:10px;padding:12px 16px;cursor:pointer;min-height:44px;border:none}
+    .btn:hover{background:#151f31}.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+    .btn.primary:hover{background:var(--green2)}
+
+    /* STORE */
+    .store-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{background:#0f1729;border:1px solid #273043;color:#d7e3f4;border-radius:8px;padding:8px 12px;cursor:pointer;border:none}
+    .tab.active,.tab:hover{background:#172136}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .card{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.1);border-radius:14px;overflow:hidden;perspective:1000px}
+    .card-inner{position:relative;width:100%;height:200px;transition:transform .6s;transform-style:preserve-3d}
+    .card:hover .card-inner{transform:rotateY(180deg)}
+    .card-front,.card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;background:#0b1220}
+    .card-back{transform:rotateY(180deg)}
+    .card img{display:block;width:100%;height:200px;object-fit:cover}
+    .card .pad{padding:14px}
+    .item-title{font-weight:800;margin:8px 0 6px}
+    .price{color:#c4e6ff;margin-bottom:12px;font-weight:600}
+    .row{display:flex;justify-content:space-between;align-items:center;margin:6px 0;gap:8px}
+
+    /* ABOUT pink/green */
+    #about{position:relative}
+    #about .about-wrap{
+      background:linear-gradient(135deg,var(--pink),var(--mint));
+      padding:48px 18px; border-radius:16px;
+      box-shadow:0 12px 40px rgba(0,0,0,.25);
+    }
+
+    /* CART */
+    .summary{max-width:420px;margin-left:auto;background:rgba(0,0,0,.3);border-radius:12px;padding:20px}
+    .total{font-size:18px;border-top:1px solid #233046;padding-top:8px;margin-top:8px}
+
+    /* ADMIN PANEL */
+    .admin{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(2px);display:none;z-index:80}
+    .admin.show{display:block}
+    .admin-inner{position:absolute;right:0;top:0;width:100%;max-width:980px;height:100%;background:#0b1220;border-left:1px solid #223045;overflow:auto}
+    .adm-head{display:flex;justify-content:space-between;align-items:center;padding:14px;border-bottom:1px solid #223045}
+    .admin-grid{display:grid;grid-template-columns:380px 1fr;gap:14px;padding:14px}
+    .admin-card{background:#0e1628;border:1px solid #223145;border-radius:12px;padding:14px}
+    label{display:block;font-size:13px;margin:10px 0;color:#cfe0ff}
+    input,select,textarea{width:100%;background:#0b1322;border:1px solid #273246;color:#e6f1ff;border-radius:8px;padding:9px;margin-top:6px}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:10px 0}
+    .ph{background:#0b1322;border:1px solid #273246;border-radius:10px;padding:10px;text-align:center;cursor:pointer}
+    .ph img{width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px}
+    .ph input{display:none}
+
+    /* Floating Kitty (admin portal) */
+    .kitty-portal{position:fixed;left:16px;bottom:88px;z-index:120; width:56px;height:56px;border-radius:50%;
+      background:#fff;border:3px solid #111;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .kitty-portal img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+
+    /* Mini Player (sticky bottom) */
+    .mini-player{position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(11,18,32,.96);
+      border-top:1px solid rgba(255,255,255,.14);backdrop-filter:blur(8px)}
+    .mini-wrap{max-width:1200px;margin:0 auto;display:flex;gap:14px;align-items:center;padding:10px 14px;flex-wrap:wrap}
+    .thumb{width:320px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.18)}
+    .controls{display:flex;align-items:center;gap:8px;flex:1;min-width:260px}
+    .chip{background:#0f1729;border:1px solid #273043;color:#d7e3f4;border-radius:999px;padding:6px 10px;cursor:pointer;font-size:13px}
+    .chip.active{background:var(--green);border-color:var(--green);color:#fff}
+    .np{color:var(--accent);font-weight:700}
+    .pp{background:#0e1624;border:1px solid #253146;color:#fff;border-radius:8px;min-width:44px;min-height:44px;cursor:pointer}
+
+    @media (max-width:860px){
+      .hero{min-height:100svh}.hero h1{font-size:44px}.hero-logo{width:240px;height:240px}
+      .admin-grid{grid-template-columns:1fr}
+      .thumb{width:240px}
+      main{padding-bottom:240px}
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="brand" onclick="showPage('home')">🎵 KornDog Records</div>
+    <div class="links">
+      <a href="#" onclick="showPage('home')">Home</a>
+      <a href="#" onclick="showPage('store')">Shop</a>
+      <a href="#" onclick="showPage('about')">About</a>
+      <a href="#" onclick="showPage('cart')">Cart <span id="cartCount" class="badge">0</span></a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- HOME -->
+    <section id="home" class="page active">
+      <div class="hero">
+        <div class="hero-logo" id="heroLogo"></div>
+        <h1>Vinyl Therapy Always On Deck</h1>
+        <p class="sub">Hand-picked records, Funkos & collectibles for music lovers and pop culture enthusiasts.</p>
+        <div class="cta">
+          <button class="btn primary" onclick="showPage('store')">Enter The Shop</button>
+          <button class="btn" onclick="showPage('about')">About</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORE -->
+    <section id="store" class="page">
+      <div class="container">
+        <header class="store-head">
+          <h2>Explore Our Collections</h2>
+          <div class="tabs">
+            <button class="tab active" onclick="filterProducts('all',this)">All</button>
+            <button class="tab" onclick="filterProducts('vinyl',this)">Vinyl</button>
+            <button class="tab" onclick="filterProducts('cd',this)">CDs</button>
+            <button class="tab" onclick="filterProducts('funko',this)">Funkos</button>
+            <button class="tab" onclick="filterProducts('collectible',this)">Collectibles</button>
+          </div>
+        </header>
+        <div id="grid" class="grid"></div>
+      </div>
+    </section>
+
+    <!-- ABOUT (pink/green) -->
+    <section id="about" class="page">
+      <div class="container">
+        <div class="about-wrap">
+          <h2>About Me (Korndog Records)</h2>
+          <p>Music's always been in my blood — thanks to my mom and dad — but vinyl didn't hit me 'til after my mom's wreck. She didn't make it. That moment split my world in two. Records became therapy. No therapist. No pills. Just needle to groove. It grounded me.</p>
+          <p>Every spin pulls me back — riding shotgun with my old man, laughing with my kids, slow dancing with my wife. This site? Not algorithms or fake hype. It's about soul, stories, and memories you can hear.</p>
+          <p>If you get it, you get it. Welcome to Korndog Records — where vinyl therapy is always on deck.</p>
+
+          <div style="margin-top:28px">
+            <button class="btn" onclick="adminPortal()">🔒 Admin Portal</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CART -->
+    <section id="cart" class="page">
+      <div class="container" style="padding-bottom:60px;">
+        <h2>Your Cart</h2>
+        <div id="cartList" style="margin:16px 0 24px"></div>
+        <div class="summary">
+          <div class="row"><span>Subtotal:</span><strong id="subtotal">$0.00</strong></div>
+          <div class="row"><span>Discount:</span><span id="discount">$0.00</span></div>
+          <div class="row"><span>Tax (6%):</span><span id="tax">$0.00</span></div>
+          <div class="row total"><span>Total:</span><strong id="grand">$0.00</strong></div>
+          <div id="paypal-buttons" style="margin-top:16px"></div>
+          <button class="btn" onclick="clearCart()" style="width:100%;margin-top:10px">Clear Cart</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ADMIN -->
+  <div id="admin" class="admin" aria-hidden="true">
+    <div class="admin-inner">
+      <div class="adm-head">
+        <strong>Admin Panel</strong>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="backup()">Backup</button>
+          <button class="btn" onclick="importBackup()">Import</button>
+          <button class="btn" onclick="hideAdmin()">Close</button>
+        </div>
+      </div>
+      <div class="admin-grid">
+        <form id="prodForm" class="admin-card" onsubmit="saveProduct(event)">
+          <h3>Add / Edit Product</h3>
+          <label>Title<input id="pTitle" required></label>
+          <div class="row2">
+            <label>Category
+              <select id="pType" required>
+                <option value="vinyl">Vinyl</option><option value="cd">CD</option>
+                <option value="funko">Funko</option><option value="collectible">Collectible</option>
+              </select>
+            </label>
+            <label>Price ($)
+              <input id="pPrice" type="number" step="0.01" onblur="snapPrice(this)" required>
+              <small style="color:#9fb4c9">Snaps to .99 or .59</small>
+            </label>
+          </div>
+
+          <!-- 2x2 photo grid with phone library access -->
+          <div class="photo-grid">
+            <div class="ph" onclick="document.getElementById('pFront').click()">
+              <img id="prevFront" alt="Front"/>
+              <input id="pFront" type="file" accept="image/*" capture="environment" onchange="readImage(this,'prevFront')">
+              <span>Front</span>
+            </div>
+            <div class="ph" onclick="document.getElementById('pBack').click()">
+              <img id="prevBack" alt="Back"/>
+              <input id="pBack" type="file" accept="image/*" capture="environment" onchange="readImage(this,'prevBack')">
+              <span>Back</span>
+            </div>
+            <div class="ph" onclick="document.getElementById('pAlt1').click()">
+              <img id="prevAlt1" alt="Alt 1"/>
+              <input id="pAlt1" type="file" accept="image/*" capture="environment" onchange="readImage(this,'prevAlt1')">
+              <span>Alt 1</span>
+            </div>
+            <div class="ph" onclick="document.getElementById('pAlt2').click()">
+              <img id="prevAlt2" alt="Alt 2"/>
+              <input id="pAlt2" type="file" accept="image/*" capture="environment" onchange="readImage(this,'prevAlt2')">
+              <span>Alt 2</span>
+            </div>
+          </div>
+
+          <label>Description<textarea id="pDesc" rows="3" placeholder="Grade, condition, notes…"></textarea></label>
+          <button class="btn primary" type="submit">Save Product</button>
+          <button class="btn" type="button" onclick="resetForm()" style="margin-left:6px">Reset</button>
+        </form>
+
+        <div class="admin-card">
+          <h3>Inventory</h3>
+          <div id="adminList"></div>
+        </div>
+      </div>
+
+      <div class="admin-card" style="margin:14px">
+        <h3>Hero Photo Manager</h3>
+        <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+          <input id="heroPicker" type="file" accept="image/*" capture="environment" onchange="addHeroFromFile()" style="display:none"/>
+          <button class="btn" onclick="document.getElementById('heroPicker').click()">Add from Library</button>
+          <div style="display:flex;align-items:center;gap:8px">Active:
+            <img id="heroActiveThumb" src="" alt="" style="width:34px;height:34px;border-radius:6px;object-fit:cover">
+          </div>
+        </div>
+        <div id="heroStrip" style="display:flex;gap:12px;flex-wrap:wrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Zombie Kitty: 5 taps -> admin -->
+  <button class="kitty-portal" id="kittyPortal" title="Tap 5× for Admin">
+    <img src="https://raw.githubusercontent.com/KornDog0804/korndog-records-site/main/Screenshot_20250827-140949.png" alt="Zombie Kitty">
+  </button>
+
+  <!-- Sticky Mini Player -->
+  <div class="mini-player" role="region" aria-label="KornDog Radio">
+    <div class="mini-wrap">
+      <div class="thumb">
+        <div id="ytPlayer"></div>
+      </div>
+      <div class="controls">
+        <button class="pp" id="ppBtn" onclick="togglePlay()">▶️</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="chip active" onclick="setStation(0)">Metalcore Meltdown</button>
+          <button class="chip" onclick="setStation(1)">Hatsune Miku</button>
+          <button class="chip" onclick="setStation(2)">Dance Gavin Dance</button>
+        </div>
+        <div class="np" id="nowPlaying">Now Playing: Metalcore Meltdown</div>
+        <button class="pp" onclick="collapseVideo()" title="Collapse/Expand">▾</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ====== CONSTANTS / STATE ====== */
+    const TAX_RATE = 0.06;
+    const DISCOUNT_LADDER = [
+      { threshold: 130, percent: 10 },
+      { threshold: 200, percent: 20 }
+    ];
+    const LS_PRODUCTS = 'kdr_products';
+    const LS_CART = 'kdr_cart';
+    const LS_HERO = 'kdr_hero';
+    const PLACEHOLDER = "data:image/svg+xml;charset=utf8," +
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>" +
+      "<rect width='200' height='200' fill='%230b1220'/>" +
+      "<text x='100' y='108' text-anchor='middle' fill='%23ffffff' font-family='sans-serif' font-size='14'>Add Photo</text></svg>";
+
+    const STATIONS = [
+      { id: 'naNuknf62FY', name: 'Metalcore Meltdown' },
+      { id: '2ENM9GVOuAI', name: 'Hatsune Miku' },
+      { id: 'bR7r3uII-x8', name: 'Dance Gavin Dance' }
+    ];
+
+    let products = [];
+    let cart = [];
+    let filterKey = 'all';
+    let editId = null;
+    let heroImage = '';
+    let heroLibrary = [];
+
+    /* ====== UTIL ====== */
+    const $ = s => document.querySelector(s);
+    const fmt = n => '$' + (Math.round(n * 100) / 100).toFixed(2);
+
+    function snapPrice(input){
+      let v = parseFloat(input.value || 0);
+      if (isNaN(v)) return;
+      const d = Math.floor(v);
+      const cents = Math.round((v - d) * 100);
+      input.value = (d + (Math.abs(cents - 59) < Math.abs(cents - 99) ? 0.59 : 0.99)).toFixed(2);
+    }
+
+    function readImage(inp, targetId){
+      const f = inp.files?.[0]; if(!f) return;
+      const rd = new FileReader();
+      rd.onload = e => { document.getElementById(targetId).src = e.target.result; };
+      rd.readAsDataURL(f);
+    }
+
+    function saveToLS(key, value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
+    function loadFromLS(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
+
+    /* ====== NAV / PAGES ====== */
+    function showPage(id){
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if (id === 'cart'){ // when entering cart page, re-render (and PayPal)
+        renderCart(true);
+      }
+    }
+
+    /* ====== PRODUCTS ====== */
+    function loadProducts(){
+      products = loadFromLS(LS_PRODUCTS, []);
+      if (!products.length){
+        products = [
+          {id:'p1',title:'Sleep Token - Even In Arcadia',type:'vinyl',price:85.99,desc:'House Vendetta Edition',
+            imgFront:PLACEHOLDER,imgBack:PLACEHOLDER,alt1:PLACEHOLDER,alt2:PLACEHOLDER},
+          {id:'p2',title:'Pink Floyd - Dark Side of the Moon',type:'vinyl',price:29.99,
+            imgFront:PLACEHOLDER,imgBack:PLACEHOLDER},
+          {id:'p3',title:'The Cure - Disintegration',type:'cd',price:32.99,
+            imgFront:PLACEHOLDER,imgBack:PLACEHOLDER},
+          {id:'p4',title:'Funko Pop! Music - Freddie Mercury',type:'funko',price:19.99,
+            imgFront:PLACEHOLDER,imgBack:PLACEHOLDER}
+        ];
+        saveProducts();
+      }
+    }
+    function saveProducts(){ saveToLS(LS_PRODUCTS, products); }
+
+    function render(){
+      const grid = $('#grid');
+      grid.innerHTML = '';
+      const list = filterKey === 'all' ? products : products.filter(p => p.type === filterKey);
+      if (!list.length){ grid.innerHTML = '<div class="card"><div class="pad">No items yet.</div></div>'; return; }
+      list.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-front"><img src="${p.imgFront || PLACEHOLDER}" alt="${p.title} - Front"></div>
+            <div class="card-back"><img src="${p.imgBack || PLACEHOLDER}" alt="${p.title} - Back"></div>
+          </div>
+          <div class="pad">
+            <div class="item-title">${p.title}</div>
+            <div class="price">${fmt(p.price)}</div>
+            <div class="row">
+              <button class="btn" onclick="viewProduct('${p.id}')">View</button>
+              <button class="btn primary" onclick="addToCart('${p.id}')">Add</button>
+            </div>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterProducts(key, btn){
+      filterKey = key;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      render();
+    }
+
+    function viewProduct(id){
+      const p = products.find(x => x.id === id); if (!p) return;
+      alert(`${p.title}\n\n${p.desc || 'No description'}`);
+    }
+
+    /* ====== ADMIN ====== */
+    function adminPortal(){
+      const pass = prompt('Admin password:');
+      if (pass === 'vinyltherapy'){ showAdmin(); }
+      else if (pass){ alert('Access denied.'); }
+    }
+    function showAdmin(){ $('#admin').classList.add('show'); renderAdmin(); renderHeroManager(); }
+    function hideAdmin(){ $('#admin').classList.remove('show'); }
+
+    function resetForm(){
+      editId = null;
+      $('#prodForm').reset();
+      ['prevFront','prevBack','prevAlt1','prevAlt2'].forEach(id => document.getElementById(id).src = PLACEHOLDER);
+    }
+
+    function saveProduct(e){
+      e.preventDefault();
+      const p = {
+        id: editId || 'p_' + Date.now(),
+        title: $('#pTitle').value.trim(),
+        type: $('#pType').value,
+        price: parseFloat($('#pPrice').value || 0),
+        desc: $('#pDesc').value.trim(),
+        imgFront: $('#prevFront').src || PLACEHOLDER,
+        imgBack: $('#prevBack').src || PLACEHOLDER,
+        alt1: $('#prevAlt1').src || PLACEHOLDER,
+        alt2: $('#prevAlt2').src || PLACEHOLDER
+      };
+      if (!p.title || !p.type || isNaN(p.price)) return;
+      if (editId){
+        const i = products.findIndex(x => x.id === editId);
+        if (i > -1) products[i] = p;
+      } else {
+        products.unshift(p);
+      }
+      editId = null;
+      saveProducts(); render(); renderAdmin(); resetForm();
+    }
+
+    function renderAdmin(){
+      const list = $('#adminList'); list.innerHTML = '';
+      products.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = `
+          <div style="display:flex;gap:10px;align-items:center;flex:1">
+            <img src="${p.imgFront || PLACEHOLDER}" style="width:46px;height:46px;border-radius:8px;object-fit:cover">
+            <div><strong>${p.title}</strong><br><span style="color:#9fb4c9">${p.type} • ${fmt(p.price)}</span></div>
+          </div>
+          <button class="btn" onclick="editProduct('${p.id}')">Edit</button>
+          <button class="btn" onclick="deleteProduct('${p.id}')">Delete</button>`;
+        list.appendChild(row);
+      });
+    }
+
+    function editProduct(id){
+      const p = products.find(x => x.id === id); if (!p) return;
+      editId = id;
+      $('#pTitle').value = p.title; $('#pType').value = p.type;
+      $('#pPrice').value = p.price.toFixed(2); $('#pDesc').value = p.desc || '';
+      $('#prevFront').src = p.imgFront || PLACEHOLDER;
+      $('#prevBack').src = p.imgBack || PLACEHOLDER;
+      $('#prevAlt1').src = p.alt1 || PLACEHOLDER;
+      $('#prevAlt2').src = p.alt2 || PLACEHOLDER;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteProduct(id){
+      if (!confirm('Delete this product?')) return;
+      products = products.filter(x => x.id !== id);
+      saveProducts(); render(); renderAdmin();
+    }
+
+    /* ====== HERO MANAGER ====== */
+    function loadHero(){
+      const saved = loadFromLS(LS_HERO, null);
+      if (saved && saved.active) heroImage = saved.active;
+      heroLibrary = saved?.library || [];
+      applyHero();
+    }
+
+    function saveHero(){
+      saveToLS(LS_HERO, { active: heroImage, library: heroLibrary });
+    }
+
+    function applyHero(){
+      const box = $('#heroLogo');
+      if (heroImage){
+        box.innerHTML = `<img src="${heroImage}" alt="Hero" style="width:100%;height:100%;object-fit:cover">`;
+      } else {
+        box.innerHTML = `<div style="font-size:72px">🎵</div>`;
+      }
+    }
+
+    function addHeroFromFile(){
+      const inp = document.getElementById('heroPicker');
+      const f = inp.files?.[0]; if(!f) return;
+      const rd = new FileReader();
+      rd.onload = e => {
+        heroImage = e.target.result;
+        if (!heroLibrary.includes(heroImage)) heroLibrary.unshift(heroImage);
+        saveHero(); renderHeroManager(); applyHero();
+      };
+      rd.readAsDataURL(f);
+    }
+
+    function renderHeroManager(){
+      $('#heroActiveThumb').src = heroImage || PLACEHOLDER;
+      const strip = $('#heroStrip'); strip.innerHTML = '';
+      const all = heroImage ? [heroImage, ...heroLibrary.filter(x => x !== heroImage)] : [...heroLibrary];
+      all.forEach((src) => {
+        const box = document.createElement('div');
+        box.style.cssText='width:180px;background:#0b1322;border:1px solid #273246;border-radius:10px;padding:10px';
+        box.innerHTML = `
+          <img src="${src}" style="width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:8px">
+          <div style="display:flex;gap:8px">
+            <button class="btn primary" style="flex:1">Make Active</button>
+            <button class="btn" style="flex:1">Delete</button>
+          </div>`;
+        const [makeBtn, delBtn] = box.querySelectorAll('button');
+        makeBtn.onclick = () => { heroImage = src; saveHero(); renderHeroManager(); applyHero(); };
+        delBtn.onclick = () => {
+          heroLibrary = heroLibrary.filter(h => h !== src);
+          if (heroImage === src) heroImage = '';
+          saveHero(); renderHeroManager(); applyHero();
+        };
+        strip.appendChild(box);
+      });
+    }
+
+    /* ====== CART ====== */
+    function loadCart(){ cart = loadFromLS(LS_CART, []); updateCartCount(); }
+    function saveCart(){ saveToLS(LS_CART, cart); updateCartCount(); }
+    function updateCartCount(){ $('#cartCount').textContent = cart.reduce((a,i)=>a+(i.qty||1),0); }
+
+    function addToCart(id){
+      const p = products.find(x => x.id === id); if (!p) return;
+      const i = cart.findIndex(x => x.id === id);
+      if (i > -1) cart[i].qty += 1; else cart.push({ id:p.id,title:p.title,price:p.price,img:p.imgFront,qty:1 });
+      saveCart(); showPage('cart'); renderCart(true);
+    }
+    function removeFromCart(index){ cart.splice(index,1); saveCart(); renderCart(true); }
+    function clearCart(){ if(confirm('Clear entire cart?')){ cart=[]; saveCart(); renderCart(true); } }
+
+    function calcTotals(){
+      let sub = 0; cart.forEach(i => sub += (i.price * (i.qty||1)));
+      let disc = 0;
+      DISCOUNT_LADDER.forEach(t => { if (sub >= t.threshold) disc = Math.max(disc, sub * (t.percent/100)); });
+      const taxable = Math.max(0, sub - disc);
+      const tax = taxable * TAX_RATE;
+      return { sub, disc, tax, grand: taxable + tax };
+    }
+
+    function renderCart(tryPayPal){
+      const list = $('#cartList'); list.innerHTML = '';
+      if (!cart.length){
+        list.innerHTML = '<p>Your cart is empty</p>';
+        ['subtotal','discount','tax','grand'].forEach(id => $('#'+id).textContent = '$0.00');
+        $('#paypal-buttons').innerHTML = '';
+        return;
+      }
+      cart.forEach((i,idx) => {
+        const row = document.createElement('div');
+        row.style.cssText='display:flex;gap:12px;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px;margin-bottom:10px;background:rgba(0,0,0,0.2)';
+        row.innerHTML = `
+          <img src="${i.img || PLACEHOLDER}" alt="${i.title}" style="width:60px;height:60px;object-fit:cover;border-radius:8px">
+          <div style="flex:1">
+            <div><strong>${i.title}</strong></div>
+            <div style="color:#9fb4c9">${i.qty||1} × ${fmt(i.price)}</div>
+          </div>
+          <button class="btn" onclick="removeFromCart(${idx})">Remove</button>`;
+        list.appendChild(row);
+      });
+      const t = calcTotals();
+      $('#subtotal').textContent = fmt(t.sub);
+      $('#discount').textContent = '-' + fmt(t.disc);
+      $('#tax').textContent = fmt(t.tax);
+      $('#grand').textContent = fmt(t.grand);
+
+      if (tryPayPal) waitForPayPalThenRender(t);
+    }
+
+    /* ====== PAYPAL ====== */
+    function renderPayPalButtons(totals){
+      const container = $('#paypal-buttons');
+      container.innerHTML = '';
+      if (!window.paypal || !cart.length) return;
+
+      const item_total = cart.reduce((s,i)=> s + i.price * (i.qty||1), 0);
+      const discount = Math.min(item_total, totals.disc);
+      const tax_total = totals.tax;
+      const value = totals.grand;
+
+      paypal.Buttons({
+        style: { layout:'vertical', color:'gold', shape:'pill' },
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: value.toFixed(2),
+                currency_code: 'USD',
+                breakdown: {
+                  item_total: { value: item_total.toFixed(2), currency_code: 'USD' },
+                  discount: { value: discount.toFixed(2), currency_code: 'USD' },
+                  tax_total: { value: tax_total.toFixed(2), currency_code: 'USD' }
+                }
+              },
+              items: cart.map(i => ({
+                name: i.title,
+                quantity: i.qty || 1,
+                unit_amount: { value: i.price.toFixed(2), currency_code: 'USD' }
+              }))
+            }]
+          });
+        },
+        onApprove: (data, actions) => actions.order.capture().then(() => {
+          cart = []; saveCart(); renderCart(true);
+          alert('Thank you! Your order has been placed.');
+        }),
+        onError: err => { console.error(err); alert('Payment error occurred.'); }
+      }).render('#paypal-buttons');
+    }
+
+    function waitForPayPalThenRender(totals){
+      if (window.paypal){ renderPayPalButtons(totals); return; }
+      // Poll briefly until PayPal is ready
+      let tries = 0;
+      const iv = setInterval(() => {
+        if (window.paypal){ clearInterval(iv); renderPayPalButtons(totals); }
+        else if (++tries > 40){ clearInterval(iv); } // ~4s
+      }, 100);
+    }
+
+    /* ====== MINI PLAYER (YouTube) ====== */
+    let ytPlayer = null;
+    let currentStation = 0;
+    let playerReady = false;
+    let collapsed = false;
+
+    function onYouTubeIframeAPIReady(){
+      ytPlayer = new YT.Player('ytPlayer', {
+        width: '100%', height: '100%',
+        videoId: STATIONS[0].id,
+        playerVars: { playsinline: 1, rel: 0, modestbranding: 1, origin: window.location.origin },
+        events: { 'onReady': () => { playerReady = true; }, 'onStateChange': () => {} }
+      });
+    }
+
+    function setStation(i){
+      currentStation = i;
+      document.querySelectorAll('.chip').forEach((c,idx)=> c.classList.toggle('active', idx===i));
+      $('#nowPlaying').textContent = 'Now Playing: ' + STATIONS[i].name;
+      if (playerReady){ ytPlayer.loadVideoById(STATIONS[i].id); $('#ppBtn').textContent='⏸️'; }
+    }
+
+    function togglePlay(){
+      if (!playerReady) return;
+      const state = ytPlayer.getPlayerState(); // 1=playing, 2=paused
+      if (state !== 1){ ytPlayer.playVideo(); $('#ppBtn').textContent='⏸️'; }
+      else { ytPlayer.pauseVideo(); $('#ppBtn').textContent='▶️'; }
+    }
+
+    function collapseVideo(){
+      const thumb = document.querySelector('.thumb');
+      if (!collapsed){
+        thumb.style.height = '0px';
+        thumb.style.padding = '0';
+        thumb.style.borderWidth = '0';
+        collapsed = true;
+      } else {
+        thumb.style.height = '';
+        thumb.style.padding = '';
+        thumb.style.borderWidth = '';
+        collapsed = false;
+      }
+    }
+
+    /* ====== KITTY PORTAL (5 taps) ====== */
+    (function kittyTapper(){
+      let taps = 0, timer = null;
+      const k = document.getElementById('kittyPortal');
+      k.addEventListener('click', () => {
+        taps++;
+        clearTimeout(timer);
+        timer = setTimeout(() => { taps = 0; }, 8000);
+        if (taps >= 5){
+          taps = 0;
+          adminPortal();
+        }
+      });
+    })();
+
+    /* ====== INIT ====== */
+    function seedPlaceholders(){
+      ['prevFront','prevBack','prevAlt1','prevAlt2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.src) el.src = PLACEHOLDER;
+      });
+    }
+
+    (function init(){
+      loadProducts(); render();
+      loadCart(); renderCart(false);
+      loadHero(); applyHero();
+      seedPlaceholders();
+      $('#nowPlaying').textContent = 'Now Playing: ' + STATIONS[0].name;
+      // If PayPal loads after our init, try re-rendering buttons when window loads
+      window.addEventListener('load', () => {
+        if (document.getElementById('cart').classList.contains('active')) renderCart(true);
+      });
+    })();
+
+    /* ====== BACKUP / IMPORT ====== */
+    function backup(){
+      const blob = new Blob([JSON.stringify({ products, hero: {active:heroImage, library: heroLibrary} }, null, 2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = 'kdr-backup.json'; a.click();
+    }
+    function importBackup(){
+      const inp = document.createElement('input');
+      inp.type = 'file'; inp.accept = 'application/json';
+      inp.onchange = e => {
+        const f = e.target.files?.[0]; if(!f) return;
+        const rd = new FileReader();
+        rd.onload = x => {
+          try{
+            const data = JSON.parse(x.target.result);
+            if (Array.isArray(data.products)) products = data.products;
+            if (data.hero){ heroImage = data.hero.active || heroImage; heroLibrary = data.hero.library || heroLibrary; saveHero(); }
+            saveProducts(); render(); renderAdmin(); renderHeroManager(); applyHero();
+            alert('Import complete');
+          }catch(err){ alert('Bad backup file'); }
+        };
+        rd.readAsText(f);
+      };
+      inp.click();
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+Sources
