@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#3b2aa2"/>
+<title>KornDog Records • Vinyl Therapy & Collectibles</title>
+
+<!-- PayPal -->
+<script src="https://www.paypal.com/sdk/js?client-id=AcU9sSdlnQlq_dsilwLNL2Kw5YQczqtoEpuYmoADtbJ7be3JaMUXpignQu2RiUcnBEuH_e-edGgSnYv8&currency=USD" defer></script>
+<!-- YouTube Iframe API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<style>
+:root{
+  --bg1:#3b2aa2; --bg2:#0fa77f; --ink:#eaf4ff; --muted:#b6c2d1; --card:#0b1220;
+  --green:hsl(142 76% 36%); --green2:hsl(142 76% 46%); --accent:#ffd166;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:Inter,system-ui,Segoe UI,Helvetica,Arial,sans-serif;
+  color:var(--ink); background:linear-gradient(135deg,var(--bg1),var(--bg2)); background-attachment:fixed;
+}
+
+/* NAV */
+.nav{position:sticky; top:0; z-index:60; display:flex; justify-content:space-between; align-items:center;
+  padding:14px 18px; background:rgba(11,18,32,.95); border-bottom:1px solid rgba(255,255,255,.12); backdrop-filter:blur(8px)}
+.brand{font-weight:800; color:var(--accent); cursor:pointer}
+.links{display:flex; gap:10px; align-items:center}
+.links a,.links button{background:transparent; border:0; color:inherit; text-decoration:none; padding:8px 12px; border-radius:8px; cursor:pointer}
+.links a:hover,.links button:hover{background:rgba(255,255,255,.1)}
+.badge{background:#121827;border:1px solid #243041;color:#a3d2ff;border-radius:999px;padding:2px 7px;margin-left:6px}
+
+/* PAGES */
+main{min-height:calc(100vh - 60px)}
+.page{display:none}
+.page.active{display:block}
+
+/* HERO */
+.hero{min-height:100svh; display:grid; place-items:center; text-align:center; padding:36px 20px}
+.hero-logo{width:280px; height:280px; border-radius:50%; border:2px solid rgba(255,255,255,.3);
+  display:grid; place-items:center; overflow:hidden; background:rgba(255,255,255,.1); margin-bottom:18px}
+.hero h1{font-size:48px; margin:8px 0 12px; line-height:1.05; font-weight:900}
+.sub{color:#dfe9f8; max-width:720px; margin:0 auto 18px; font-size:18px}
+.cta{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+.btn{background:#0e1624; color:#d7e3f4; border:1px solid #253146; border-radius:10px; padding:12px 16px; cursor:pointer; min-height:44px}
+.btn:hover{background:#151f31}
+.btn.primary{background:var(--green); border-color:var(--green); color:#fff}
+.btn.primary:hover{background:var(--green2)}
+
+/* GTA-style radio panel (home) */
+.gtaradio{margin-top:8px; width:min(920px,92vw); background:#0c1321; border:1px solid rgba(255,255,255,.15);
+  border-radius:16px; padding:14px; box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.gtarow{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+.station-chip{background:#0f1a2c; border:1px solid #263247; color:#cfe0ff; border-radius:999px; padding:8px 12px; cursor:pointer; font-weight:700; font-size:14px}
+.station-chip.active{background:var(--accent); color:#000; border-color:var(--accent)}
+.dash{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:12px; flex-wrap:wrap}
+.playbig{display:flex; gap:8px; align-items:center}
+.playbtn{width:54px; height:54px; border-radius:50%; background:#152235; border:1px solid #2a3b56; color:#fff; font-size:24px; cursor:pointer}
+.nextbtn{width:40px; height:40px; border-radius:50%; background:#152235; border:1px solid #2a3b56; color:#fff; font-size:18px; cursor:pointer}
+.nowbig{color:#ffd166; font-weight:800}
+.logo-mini{width:48px; height:48px; border-radius:12px; background:#111; display:grid; place-items:center; overflow:hidden; border:1px solid rgba(255,255,255,.15)}
+
+/* STORE */
+.container{max-width:1200px; margin:0 auto; padding:18px}
+.store-head{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px}
+.tabs{display:flex; gap:8px; flex-wrap:wrap}
+.tab{background:#0f1729; border:1px solid #273043; color:#d7e3f4; border-radius:8px; padding:8px 12px; cursor:pointer}
+.tab.active,.tab:hover{background:#172136}
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px}
+.card{background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.1); border-radius:14px; overflow:hidden; position:relative}
+.card .flipbtn{position:absolute; top:8px; right:8px; font-size:12px; padding:4px 8px; border-radius:8px; background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.2); color:#fff; cursor:pointer}
+.card img.prod{width:100%; height:220px; object-fit:cover; background:#0b1220; display:block}
+.card .pad{padding:14px}
+.item-title{font-weight:800; margin:8px 0 6px; font-size:20px}
+.price{color:#c4e6ff; margin-bottom:12px; font-weight:700}
+.row{display:flex; align-items:center; justify-content:space-between; gap:8px}
+
+/* CART */
+.summary{max-width:420px; margin-left:auto; background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:18px}
+.total{font-size:18px; border-top:1px solid #233046; padding-top:8px; margin-top:8px}
+
+/* ADMIN */
+.admin{position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(2px); display:none; z-index:90}
+.admin.show{display:block}
+.admin-inner{position:absolute; right:0; top:0; width:100%; max-width:980px; height:100%; background:#0b1220; border-left:1px solid #223045; overflow:auto}
+.adm-head{display:flex; align-items:center; justify-content:space-between; padding:14px; border-bottom:1px solid #223045}
+.admin-grid{display:grid; grid-template-columns:380px 1fr; gap:14px; padding:14px}
+.admin-card{background:#0e1628; border:1px solid #223145; border-radius:12px; padding:14px}
+label{display:block; font-size:13px; margin:10px 0; color:#cfe0ff}
+input,select,textarea{width:100%; background:#0b1322; border:1px solid #273246; color:#e6f1ff; border-radius:8px; padding:9px; margin-top:6px}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.photo-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin:10px 0}
+.ph{background:#0b1322; border:1px solid #273246; border-radius:10px; padding:10px; text-align:center; cursor:pointer}
+.ph img{width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px}
+.ph input{display:none}
+#adminList .row{align-items:center; gap:12px; border-bottom:1px solid #1a2332; padding:10px 0}
+
+/* HERO MANAGER */
+.hero-strip{display:flex; gap:12px; flex-wrap:wrap}
+.hero-thumb{width:180px; background:#0b1322; border:1px solid #273246; border-radius:10px; padding:10px}
+.hero-thumb img{width:100%; height:110px; object-fit:cover; border-radius:8px; margin-bottom:8px}
+
+/* KITTY TOAST */
+.kitty{position:fixed; bottom:86px; left:10px; display:none; align-items:center; gap:10px; z-index:80}
+.kitty.show{display:flex; animation:fadein .25s ease}
+.kitty img{width:56px; height:56px; border-radius:50%; object-fit:cover; box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.bubble{background:#fff; color:#141a22; border:3px solid #141a22; border-radius:18px; padding:10px 14px; font-weight:800; max-width:240px}
+@keyframes fadein{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
+
+/* STICKY PLAYER BAR */
+.playerbar{position:fixed; left:0; right:0; bottom:0; z-index:70; background:#0b121b; border-top:1px solid rgba(255,255,255,.12);
+  display:flex; align-items:center; gap:10px; padding:8px 10px; flex-wrap:wrap}
+.station-btn{background:#0e1726; border:1px solid #263247; color:#cfe0ff; border-radius:14px; padding:6px 10px; font-size:12px; cursor:pointer}
+.station-btn.active{background:var(--accent); color:#000; border-color:var(--accent)}
+.play-toggle{background:#152235; border:1px solid #2a3b56; color:#fff; border-radius:10px; width:34px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer}
+.nowplaying{margin-left:auto; color:#ffd166; font-weight:700; font-size:12px}
+.open-yt{background:#152235; border:1px solid #2a3b56; color:#fff; border-radius:8px; padding:6px 8px}
+
+/* MODAL for big YT */
+.yt-modal{position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:95}
+.yt-modal.show{display:flex}
+.yt-wrap{width:min(900px,96vw); aspect-ratio:16/9; background:#000; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,.2)}
+
+@media (max-width:860px){
+  .admin-grid{grid-template-columns:1fr}
+  .hero h1{font-size:40px}
+  .hero-logo{width:220px; height:220px}
+  .nowplaying{order:3; width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="brand" onclick="route('#home')">🎵 KornDog Records</div>
+  <div class="links">
+    <span id="nowMini" style="color:#ffd166; font-size:12px; display:none;">🎵 <span id="nowMiniText"></span></span>
+    <a href="#home" onclick="route('#home')">Home</a>
+    <a href="#store" onclick="route('#store')">Shop</a>
+    <a href="#about" onclick="route('#about')">About</a>
+    <a href="#cart" onclick="route('#cart')">Cart <span id="cartCount" class="badge">0</span></a>
+    <button onclick="openAdmin()">🔒 Admin</button>
+  </div>
+</nav>
+
+<main>
+  <!-- HOME -->
+  <section id="home" class="page active">
+    <div class="hero">
+      <div class="hero-logo">
+        <img id="heroImg" alt="KornDog" style="width:100%;height:100%;object-fit:cover;display:none;">
+        <div id="heroSVG" style="width:90%;height:90%"></div>
+      </div>
+      <h1>Vinyl Therapy Always On Deck</h1>
+      <p class="sub">Hand-picked records, Funkos & collectibles for music lovers and pop culture enthusiasts.</p>
+      <div class="cta">
+        <button class="btn primary" onclick="route('#store')">Enter The Shop</button>
+        <button class="btn" onclick="route('#about')">About</button>
+      </div>
+
+      <!-- GTA style radio -->
+      <div class="gtaradio">
+        <div class="gtarow" id="gtaStations"></div>
+        <div class="dash">
+          <div class="playbig">
+            <button class="playbtn" id="gtaPlay" onclick="togglePlay()">▶️</button>
+            <button class="nextbtn" onclick="nextStation()">⏭️</button>
+          </div>
+          <div class="nowbig">Now Playing: <span id="nowBig">—</span></div>
+          <div class="logo-mini"><div id="logoMini"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORE -->
+  <section id="store" class="page">
+    <div class="container">
+      <header class="store-head">
+        <h2>Explore Our Collections</h2>
+        <div class="tabs">
+          <button class="tab active" onclick="filterProducts('all',this)">All</button>
+          <button class="tab" onclick="filterProducts('vinyl',this)">Vinyl</button>
+          <button class="tab" onclick="filterProducts('cd',this)">CDs</button>
+          <button class="tab" onclick="filterProducts('funko',this)">Funkos</button>
+          <button class="tab" onclick="filterProducts('collectible',this)">Collectibles</button>
+        </div>
+      </header>
+      <div id="grid" class="grid"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="page">
+    <div class="container" style="padding:24px">
+      <div style="background:linear-gradient(135deg,#ff4fa0,#22cc88); padding:24px; border-radius:16px; border:1px solid rgba(255,255,255,.25)">
+        <h2>About Me (Korndog Records)</h2>
+        <p>Music's always been in my blood — thanks to my mom and dad — but vinyl didn't hit me 'til after my mom's wreck. She didn't make it. That moment split my world in two. Records became therapy. No therapist. No pills. Just needle to groove. It grounded me.</p>
+        <p>Every spin pulls me back — riding shotgun with my old man, laughing with my kids, slow dancing with my wife. This site? It's not about algorithms, trends, or fake hype. It's about soul. About stories. About memories you can hear. Every record here means something. It's not just wax — it's a vibe. A scar. A time machine.</p>
+        <p>If you get it, you get it. Welcome to Korndog Records — where vinyl therapy is always on deck.</p>
+
+        <h3 style="margin-top:18px">Zombie Kitty Story</h3>
+        <p>Zombie Kitty isn't just a mascot — she's family. Born from a Friday the 13th tattoo session with my daughter Elizabeth: purple rose eye, stitched-up smile — part nightmare, part love letter. A reminder that scars can be turned into art, and broken pieces still tell a story. She lives in the grooves and wakes up when the needle drops.</p>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+          <a class="btn" href="https://www.discogs.com/user/korndog0804" target="_blank" rel="noopener">🎵 Discogs Profile</a>
+          <a class="btn" href="https://whatnot.com/s/OisexUo7" target="_blank" rel="noopener">📺 Whatnot Live Shows</a>
+          <button class="btn" onclick="openAdmin()">🔒 Admin Portal</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CART -->
+  <section id="cart" class="page">
+    <div class="container" style="padding-top:20px;padding-bottom:80px">
+      <h2>Your Cart</h2>
+      <div id="cartList" style="margin-bottom:22px"></div>
+      <div class="summary">
+        <div class="row"><span>Subtotal:</span><strong id="subtotal">$0.00</strong></div>
+        <div class="row"><span>Discount:</span><span id="discount">$0.00</span></div>
+        <div class="row"><span>Tax (6%):</span><span id="tax">$0.00</span></div>
+        <div class="row total"><span>Total:</span><strong id="grand">$0.00</strong></div>
+        <div id="paypal-buttons" style="margin-top:12px"></div>
+        <button class="btn" style="width:100%;margin-top:12px" onclick="clearCart()">Clear Cart</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ADMIN MODAL -->
+<div id="admin" class="admin">
+  <div class="admin-inner">
+    <div class="adm-head">
+      <strong>Admin Panel</strong>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="backup()">Backup</button>
+        <button class="btn" onclick="importBackup()">Import</button>
+        <button class="btn" onclick="closeAdmin()">Close</button>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <form id="prodForm" class="admin-card" onsubmit="saveProduct(event)">
+        <h3>Add / Edit Product</h3>
+        <label>Title<input id="pTitle" required></label>
+        <div class="row2">
+          <label>Category
+            <select id="pType" required>
+              <option value="vinyl">Vinyl</option>
+              <option value="cd">CD</option>
+              <option value="funko">Funko</option>
+              <option value="collectible">Collectible</option>
+            </select>
+          </label>
+          <label>Price ($)
+            <input id="pPrice" type="number" step="0.01" required onblur="snapPrice(this)">
+            <small style="color:#9fb4c9">Snaps to .59 or .99</small>
+          </label>
+        </div>
+
+        <div class="photo-grid">
+          <div class="ph" onclick="document.getElementById('pFront').click()">
+            <img id="prevFront" alt="Front"><input id="pFront" type="file" accept="image/*" capture="environment" onchange="readImage(this,'prevFront')"><span>Front</span>
+          </div>
+          <div class="ph" onclick="document.getElementById('pBack').click()">
+            <img id="prevBack" alt="Back"><input id="pBack" type="file" accept="image/*" capture="environment" onchange="readImage(this,'prevBack')"><span>Back</span>
+          </div>
+          <div class="ph" onclick="document.getElementById('pAlt1').click()">
+            <img id="prevAlt1" alt="Alt 1"><input id="pAlt1" type="file" accept="image/*" capture="environment" onchange="readImage(this,'prevAlt1')"><span>Alt 1</span>
+          </div>
+          <div class="ph" onclick="document.getElementById('pAlt2').click()">
+            <img id="prevAlt2" alt="Alt 2"><input id="pAlt2" type="file" accept="image/*" capture="environment" onchange="readImage(this,'prevAlt2')"><span>Alt 2</span>
+          </div>
+        </div>
+
+        <label>Description<textarea id="pDesc" rows="3" placeholder="Grade, condition, notes…"></textarea></label>
+        <div class="row"><button class="btn primary" type="submit">Save Product</button><button class="btn" type="button" onclick="resetForm()">Reset</button></div>
+      </form>
+
+      <div class="admin-card">
+        <h3>Inventory</h3>
+        <div id="adminList"></div>
+      </div>
+    </div>
+
+    <div class="admin-card" style="margin:14px">
+      <h3>Hero Photo Manager</h3>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input id="heroPicker" type="file" accept="image/*" capture="environment" onchange="addHeroFromFile()"/>
+        <button class="btn" onclick="document.getElementById('heroPicker').click()">Add from Library</button>
+        <div style="display:flex;align-items:center;gap:8px">Active: <img id="heroActiveThumb" alt="" style="width:32px;height:32px;border-radius:6px;object-fit:cover"></div>
+      </div>
+      <div id="heroStrip" class="hero-strip"></div>
+    </div>
+  </div>
+</div>
+
+<!-- KITTY TOAST -->
+<div id="kittyToast" class="kitty">
+  <img id="kittyPic" alt="Kitty">
+  <div id="kittyMsg" class="bubble"></div>
+</div>
+
+<!-- STICKY BAR PLAYER (hidden YouTube) -->
+<div class="playerbar">
+  <button class="station-btn" id="st0" onclick="chooseStation(0)">Metalcore Meltdown</button>
+  <button class="station-btn" id="st1" onclick="chooseStation(1)">Hatsune Miku</button>
+  <button class="station-btn" id="st2" onclick="chooseStation(2)">Dance Gavin Dance</button>
+  <button id="playToggle" class="play-toggle" onclick="togglePlay()">▶️</button>
+  <span class="nowplaying">Now Playing: <span id="nowText">—</span></span>
+  <button class="open-yt" onclick="openYT()">Open Player</button>
+  <!-- audio player lives here (1x1) -->
+  <div id="ytBarPlayer" style="width:1px;height:1px;overflow:hidden"></div>
+</div>
+
+<!-- Modal -->
+<div id="ytModal" class="yt-modal" onclick="closeYT(event)">
+  <div class="yt-wrap"><div id="ytModalFrame"></div></div>
+</div>
+
+<script>
+/* ======= Assets ======= */
+const KORNDOG_SVG = `
+<svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="50%">
+      <stop offset="0" stop-color="#ffd166"/>
+      <stop offset="1" stop-color="#f0a51a"/>
+    </radialGradient>
+  </defs>
+  <circle cx="130" cy="130" r="126" fill="url(#g)"/>
+  <g transform="translate(55,40)">
+    <ellipse cx="80" cy="75" rx="62" ry="86" fill="#8b5e00" stroke="#4a2d00" stroke-width="6"/>
+    <ellipse cx="80" cy="75" rx="56" ry="78" fill="#c68617"/>
+    <path d="M140 45c10 10-6 25-20 34-12 8-28 14-46 16" fill="none" stroke="#ffd166" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="60" cy="70" r="8" fill="#1b1b1b"/>
+    <circle cx="100" cy="70" r="8" fill="#1b1b1b"/>
+    <path d="M55 100c20 16 44 16 64 0" stroke="#1b1b1b" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <rect x="72" y="152" width="16" height="56" rx="8" fill="#9a6641" stroke="#5b3825" stroke-width="4"/>
+  </g>
+  <text x="130" y="240" text-anchor="middle" fill="#3b2aa2" font-size="26" font-weight="900">KORNDOG</text>
+</svg>`;
+const LOGO_DATA = "data:image/svg+xml;charset=utf8,"+encodeURIComponent(KORNDOG_SVG);
+
+/* ======= Config ======= */
+const TAX_RATE = 0.06;
+const DISCOUNT_TIERS = [{threshold:130,percent:10},{threshold:200,percent:20}];
+
+const STATIONS = [
+  {name:"Metalcore Meltdown", id:"naNuknf62FY"},
+  {name:"Hatsune Miku",       id:"2ENM9GVOuAI"},
+  {name:"Dance Gavin Dance",  id:"bR7r3uII-x8"}
+];
+
+const KITTY = [
+  "KAPOW! Another one for the collection!",
+  "Holy groove, Batman! Cart secured!",
+  "Boom! Your therapy session just leveled up!",
+  "Bam! Pure audio therapy activated!",
+  "Wax on, stress off! Added!",
+  "Needle blesses this pick. Added!",
+  "Kitty approves this banger!",
+  "Vinyl justice delivered!",
+  "Cart got juiced—nice grab!",
+  "Spin doctor says: great choice!"
+];
+const KITTY_REMOVE = ["Poof! Banished!","Zap! Back to the vinyl void!","Another one bites the dust!","Whoosh! Gone!","Item removed."];
+const KITTY_CLEAR = ["Gulp… clearing the whole cart?!","Kitty gasps—tabula rasa time!"];
+const KITTY_CHECK = ["Order captured! Therapy inbound!","Kitties packing your order—thanks!","Spin soon—huge thanks!"];
+
+/* ======= State ======= */
+let products = [];
+let cart = [];
+let heroImages = [];
+let activeHero = "";
+let filterKey = "all";
+let editId = null;
+
+/* ======= Helpers ======= */
+const $ = s=>document.querySelector(s);
+const fmt = n => "$"+(Math.round(n*100)/100).toFixed(2);
+function toast(msg){
+  $("#kittyPic").src = LOGO_DATA;
+  $("#kittyMsg").textContent = msg;
+  const el = $("#kittyToast"); el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"), 3200);
+}
+function snapPrice(input){
+  let v=parseFloat(input.value||0); if(isNaN(v))return;
+  const d=Math.floor(v); const cents=Math.round((v-d)*100);
+  input.value=(d+(Math.abs(cents-59)<Math.abs(cents-99)?0.59:0.99)).toFixed(2);
+}
+function readImage(inp,targetId){
+  const f=inp.files&&inp.files[0]; if(!f)return;
+  const rd=new FileReader(); rd.onload=e=>{document.getElementById(targetId).src=e.target.result}; rd.readAsDataURL(f);
+}
+
+/* ======= Routing ======= */
+function route(hash){ if(hash) location.hash=hash; const p=(location.hash||"#home").slice(1);
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  document.getElementById(p).classList.add("active");
+  if(p==="cart"){ renderCart(); renderPayPalButtons(); }
+  if(p==="home"){ updateHero(); }
+}
+window.addEventListener("hashchange", ()=>route());
+
+/* ======= Storage ======= */
+function loadAll(){
+  try{ products = JSON.parse(localStorage.getItem("KDR_PRODUCTS")||"[]"); }catch{ products=[]; }
+  try{ cart     = JSON.parse(localStorage.getItem("KDR_CART")||"[]"); }catch{ cart=[]; }
+  try{
+    heroImages = JSON.parse(localStorage.getItem("KDR_HERO_IMAGES")||"[]");
+    activeHero = localStorage.getItem("KDR_HERO_ACTIVE") || LOGO_DATA;
+  }catch{ heroImages=[]; activeHero=LOGO_DATA; }
+}
+function saveProducts(){ localStorage.setItem("KDR_PRODUCTS", JSON.stringify(products)); }
+function saveCart(){ localStorage.setItem("KDR_CART", JSON.stringify(cart)); }
+function saveHero(){ localStorage.setItem("KDR_HERO_IMAGES", JSON.stringify(heroImages)); localStorage.setItem("KDR_HERO_ACTIVE", activeHero||""); }
+
+/* ======= Store ======= */
+function filterProducts(key,btn){ filterKey=key; document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active")); if(btn)btn.classList.add("active"); renderStore(); }
+function renderStore(){
+  const grid=$("#grid"); grid.innerHTML="";
+  const list = filterKey==="all" ? products : products.filter(p=>p.type===filterKey);
+  if(!list.length){ grid.innerHTML='<div class="card"><div class="pad">No items yet.</div></div>'; return; }
+  list.forEach(p=>{
+    const card=document.createElement("div"); card.className="card"; card.dataset.card=p.id;
+    card.innerHTML = `
+      <button class="flipbtn" onclick="flipCard('${p.id}',this);event.stopPropagation()">Flip</button>
+      <img class="prod" data-side="front" src="${p.imgFront||LOGO_DATA}" alt="${p.title}">
+      <div class="pad">
+        <div class="item-title">${p.title}</div>
+        <div class="price">${fmt(p.price)}</div>
+        <div class="row">
+          <button class="btn" onclick="viewProduct('${p.id}')">View</button>
+          <button class="btn primary" onclick="addToCart('${p.id}')">Add</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+function flipCard(id,btn){
+  const p=products.find(x=>x.id===id); if(!p)return;
+  const img=document.querySelector(`.card[data-card="${id}"] img.prod`);
+  const side=img.dataset.side==="front"?"back":"front";
+  img.dataset.side=side; img.src = side==="front"?(p.imgFront||LOGO_DATA):(p.imgBack||LOGO_DATA);
+  btn.textContent = side==="front"?"Flip":"Front";
+}
+function viewProduct(id){ const p=products.find(x=>x.id===id); if(p) alert(`${p.title}\n\n${p.desc||'No description'}`); }
+
+/* ======= Cart ======= */
+function updateCartCount(){ $("#cartCount").textContent = cart.reduce((a,i)=>a+(i.qty||1),0); }
+function addToCart(id){
+  const p=products.find(x=>x.id===id); if(!p)return;
+  const i=cart.findIndex(x=>x.id===id); if(i>-1)cart[i].qty+=1; else cart.push({id:p.id,title:p.title,price:p.price,img:p.imgFront||LOGO_DATA,qty:1});
+  saveCart(); updateCartCount(); toast(KITTY[Math.floor(Math.random()*KITTY.length)]);
+}
+function removeFromCart(index){ cart.splice(index,1); saveCart(); updateCartCount(); renderCart(); toast(KITTY_REMOVE[Math.floor(Math.random()*KITTY_REMOVE.length)]); }
+function clearCart(){ if(!confirm("Clear entire cart?"))return; cart=[]; saveCart(); updateCartCount(); renderCart(); toast(KITTY_CLEAR[Math.floor(Math.random()*KITTY_CLEAR.length)]); }
+function totals(){
+  let sub=0; cart.forEach(i=>sub+=i.price*(i.qty||1));
+  let disc=0; DISCOUNT_TIERS.forEach(t=>{ if(sub>=t.threshold) disc=Math.max(disc,sub*(t.percent/100)); });
+  const taxBase=Math.max(0,sub-disc); const tax=taxBase*TAX_RATE; const grand=taxBase+tax; return {sub,disc,tax,grand};
+}
+function renderCart(){
+  const list=$("#cartList"); list.innerHTML="";
+  if(!cart.length){ list.innerHTML='<p>Your cart is empty.</p>'; }
+  cart.forEach((i,idx)=>{
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;gap:12px;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;margin-bottom:10px;background:rgba(0,0,0,.2)";
+    row.innerHTML=`
+      <img src="${i.img||LOGO_DATA}" alt="${i.title}" style="width:60px;height:60px;border-radius:8px;object-fit:cover">
+      <div style="flex:1"><div><strong>${i.title}</strong></div><div style="color:#9fb4c9">${i.qty} × ${fmt(i.price)}</div></div>
+      <button class="btn" onclick="removeFromCart(${idx})">Remove</button>`;
+    list.appendChild(row);
+  });
+  const t=totals();
+  $("#subtotal").textContent=fmt(t.sub);
+  $("#discount").textContent="-"+fmt(t.disc);
+  $("#tax").textContent=fmt(t.tax);
+  $("#grand").textContent=fmt(t.grand);
+  renderPayPalButtons();
+}
+
+/* ======= PayPal ======= */
+function renderPayPalButtons(){
+  const host=document.getElementById("paypal-buttons"); host.innerHTML="";
+  if(!window.paypal || !cart.length) return;
+  try{
+    paypal.Buttons({
+      style:{layout:'vertical', color:'gold', shape:'pill'},
+      createOrder:(data,actions)=>{
+        const t=totals();
+        return actions.order.create({
+          purchase_units:[{
+            amount:{
+              value:t.grand.toFixed(2), currency_code:'USD',
+              breakdown:{
+                item_total:{value:t.sub.toFixed(2),currency_code:'USD'},
+                discount:{value:t.disc.toFixed(2),currency_code:'USD'},
+                tax_total:{value:t.tax.toFixed(2),currency_code:'USD'}
+              }
+            },
+            items:cart.map(i=>({name:i.title,quantity:i.qty,unit_amount:{value:i.price.toFixed(2),currency_code:'USD'}}))
+          }]
+        });
+      },
+      onApprove:(data,actions)=>actions.order.capture().then(()=>{
+        cart=[]; saveCart(); updateCartCount(); renderCart(); toast(KITTY_CHECK[Math.floor(Math.random()*KITTY_CHECK.length)]);
+        alert("Thank you! Your order was captured.");
+      }),
+      onError: err=>{ console.error(err); alert("Payment error.\n"+(err?.message||"")); }
+    }).render("#paypal-buttons");
+  }catch(e){ console.error(e); alert("Payment error."); }
+}
+
+/* ======= Admin ======= */
+function openAdmin(){
+  const pass=prompt("Enter admin password:");
+  if(pass==="vinyltherapy"){ $("#admin").classList.add("show"); renderAdmin(); renderHeroManager(); }
+  else if(pass){ alert("Access denied."); }
+}
+function closeAdmin(){ $("#admin").classList.remove("show"); }
+function renderAdmin(){
+  const list=$("#adminList"); list.innerHTML="";
+  products.forEach(p=>{
+    const row=document.createElement("div"); row.className="row";
+    row.innerHTML=`
+      <img src="${p.imgFront||LOGO_DATA}" style="width:40px;height:40px;border-radius:8px;object-fit:cover">
+      <div style="flex:1"><strong>${p.title}</strong><br><span style="color:#9fb4c9">${p.type} • ${fmt(p.price)}</span></div>
+      <button class="btn" onclick="editProduct('${p.id}')">Edit</button>
+      <button class="btn" onclick="deleteProduct('${p.id}')">Delete</button>`;
+    list.appendChild(row);
+  });
+}
+function resetForm(){ editId=null; $("#prodForm").reset(); ["prevFront","prevBack","prevAlt1","prevAlt2"].forEach(id=>document.getElementById(id).src=LOGO_DATA); }
+function saveProduct(e){
+  e.preventDefault();
+  const p={
+    id:editId||("p_"+Date.now()), title:$("#pTitle").value.trim(), type:$("#pType").value,
+    price:parseFloat($("#pPrice").value||0), desc:$("#pDesc").value.trim(),
+    imgFront:$("#prevFront").src||LOGO_DATA, imgBack:$("#prevBack").src||LOGO_DATA,
+    alt1:$("#prevAlt1").src||LOGO_DATA, alt2:$("#prevAlt2").src||LOGO_DATA
+  };
+  if(editId){ const i=products.findIndex(x=>x.id===editId); if(i>-1)products[i]=p; } else { products.unshift(p); }
+  editId=null; saveProducts(); renderStore(); renderAdmin(); resetForm();
+}
+function editProduct(id){
+  const p=products.find(x=>x.id===id); if(!p)return; editId=id;
+  $("#pTitle").value=p.title; $("#pType").value=p.type; $("#pPrice").value=p.price.toFixed(2);
+  $("#pDesc").value=p.desc||""; $("#prevFront").src=p.imgFront||LOGO_DATA; $("#prevBack").src=p.imgBack||LOGO_DATA;
+  $("#prevAlt1").src=p.alt1||LOGO_DATA; $("#prevAlt2").src=p.alt2||LOGO_DATA; window.scrollTo({top:0,behavior:"smooth"});
+}
+function deleteProduct(id){ if(!confirm("Delete this product?"))return; products=products.filter(x=>x.id!==id); saveProducts(); renderStore(); renderAdmin(); }
+
+/* Backup / Import */
+function backup(){
+  const blob=new Blob([JSON.stringify({products,heroImages,activeHero},null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="kdr-backup.json"; a.click();
+}
+function importBackup(){
+  const inp=document.createElement("input"); inp.type="file"; inp.accept="application/json";
+  inp.onchange=e=>{
+    const f=e.target.files?.[0]; if(!f)return;
+    const rd=new FileReader();
+    rd.onload=x=>{
+      try{
+        const data=JSON.parse(x.target.result);
+        if(Array.isArray(data.products)) products=data.products;
+        if(Array.isArray(data.heroImages)) heroImages=data.heroImages;
+        if(data.activeHero) activeHero=data.activeHero;
+        saveProducts(); saveHero(); renderStore(); renderAdmin(); renderHeroManager(); updateHero();
+        alert("Import complete.");
+      }catch(err){ alert("Bad backup file."); }
+    };
+    rd.readAsText(f);
+  };
+  inp.click();
+}
+
+/* ======= Hero manager ======= */
+function renderHeroManager(){
+  $("#heroActiveThumb").src=activeHero||LOGO_DATA;
+  const strip=$("#heroStrip"); strip.innerHTML="";
+  const imgs=[activeHero,...heroImages.filter(s=>s!==activeHero)];
+  imgs.forEach((src,idx)=>{
+    const box=document.createElement("div"); box.className="hero-thumb";
+    box.innerHTML=`<img src="${src}"><div class="row">
+      <button class="btn primary" style="flex:1" onclick="setActiveHero('${src.replace(/'/g,"\\'")}')">${idx===0?"Active":"Make Active"}</button>
+      ${idx>0?`<button class="btn" style="flex:1" onclick="deleteHero('${src.replace(/'/g,"\\'")}')">Delete</button>`:""}
+    </div>`;
+    strip.appendChild(box);
+  });
+}
+function setActiveHero(src){ activeHero=src; saveHero(); renderHeroManager(); updateHero(); }
+function deleteHero(src){ heroImages=heroImages.filter(s=>s!==src); if(activeHero===src)activeHero=LOGO_DATA; saveHero(); renderHeroManager(); updateHero(); }
+function addHeroFromFile(){
+  const f=document.getElementById("heroPicker").files?.[0]; if(!f)return;
+  const rd=new FileReader(); rd.onload=e=>{ heroImages.unshift(e.target.result); if(!activeHero||activeHero===LOGO_DATA)activeHero=e.target.result;
+    saveHero(); renderHeroManager(); updateHero(); }; rd.readAsDataURL(f);
+}
+function updateHero(){
+  const img=$("#heroImg"), svg=$("#heroSVG");
+  if(activeHero && activeHero.startsWith("data:image/")){ img.src=activeHero; img.style.display="block"; svg.style.display="none"; }
+  else { img.style.display="none"; svg.style.display="block"; svg.innerHTML=KORNDOG_SVG; }
+  $("#logoMini").innerHTML=KORNDOG_SVG;
+}
+
+/* ======= YouTube Radio ======= */
+let ytApiReady=false, ytBarPlayer=null, ytModalPlayer=null, currentStation=0, isPlaying=false;
+
+function onYouTubeIframeAPIReady(){ ytApiReady=true; tryMakeBarPlayer(); }
+
+function tryMakeBarPlayer(){
+  if(!ytApiReady || ytBarPlayer) return;
+  ytBarPlayer = new YT.Player('ytBarPlayer', {
+    videoId: STATIONS[currentStation].id,
+    playerVars:{autoplay:0,controls:0,rel:0,modestbranding:1,playsinline:1},
+    events:{
+      onReady: ()=>updateStationUI(),
+      onStateChange: (e)=>{
+        if(e.data===YT.PlayerState.PLAYING){ isPlaying=true; $("#playToggle").textContent="⏸️"; $("#gtaPlay").textContent="⏸️"; $("#nowMini").style.display="inline"; }
+        if(e.data===YT.PlayerState.PAUSED || e.data===YT.PlayerState.ENDED){ isPlaying=false; $("#playToggle").textContent="▶️"; $("#gtaPlay").textContent="▶️"; }
+      }
+    }
+  });
+}
+function chooseStation(i){
+  currentStation=i; updateStationUI();
+  tryMakeBarPlayer();
+  if(ytBarPlayer?.loadVideoById) ytBarPlayer.loadVideoById(STATIONS[i].id);
+}
+function nextStation(){ chooseStation((currentStation+1)%STATIONS.length); }
+function updateStationUI(){
+  document.querySelectorAll(".station-btn").forEach((b,idx)=>b.classList.toggle("active",idx===currentStation));
+  const chips = STATIONS.map((s,idx)=>`<span class="station-chip ${idx===currentStation?'active':''}" onclick="chooseStation(${idx})">${s.name}</span>`).join("");
+  $("#gtaStations").innerHTML = chips;
+  const name=STATIONS[currentStation].name;
+  $("#nowText").textContent=name; $("#nowBig").textContent=name; $("#nowMiniText").textContent=name;
+}
+function togglePlay(){
+  tryMakeBarPlayer();
+  if(!ytBarPlayer) return;
+  try{ if(isPlaying) ytBarPlayer.pauseVideo(); else ytBarPlayer.playVideo(); }catch(e){}
+}
+function openYT(){
+  $("#ytModal").classList.add("show");
+  if(!ytModalPlayer && ytApiReady){
+    ytModalPlayer = new YT.Player('ytModalFrame',{ videoId:STATIONS[currentStation].id, playerVars:{autoplay:1,controls:1,rel:0,modestbranding:1,playsinline:1} });
+  }else if(ytModalPlayer?.loadVideoById){ ytModalPlayer.loadVideoById(STATIONS[currentStation].id); }
+}
+function closeYT(e){ if(e && e.target && e.target.id!=="ytModal") return; $("#ytModal").classList.remove("show"); }
+
+/* ======= Init ======= */
+(function(){
+  loadAll();
+  updateHero();
+  renderStore();
+  updateCartCount();
+  renderCart();
+  route();          // apply current hash
+  resetForm();      // set admin image previews
+  updateStationUI();// paint chips on home & bar
+  $("#heroSVG").innerHTML = KORNDOG_SVG;
+})();
+</script>
+</body>
+</html>
