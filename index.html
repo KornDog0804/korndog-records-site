@@ -1,0 +1,905 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KornDog Records - Vinyl, CDs, Funkos & Collectibles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers:wght@400&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(135deg, #2d1b69 0%, #4a148c 100%);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Ghosted Background Images */
+        .ghost-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+        }
+
+        .ghost-bg.home {
+            background-image: url('Screenshot_20250831-144625.png');
+            background-size: 400px 200px;
+            opacity: 0.08;
+            background-position: center;
+        }
+
+        .ghost-bg.about {
+            background-image: url('PXL_20250905_194138618.jpg');
+            background-size: 300px 300px;
+            opacity: 0.05;
+            background-position: center;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(90deg, #4a148c, #7b1fa2);
+            padding: 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-family: 'Bangers', cursive;
+            font-size: 2.5rem;
+            color: #00ff00;
+            text-shadow: 3px 3px 0px #000;
+            letter-spacing: 2px;
+        }
+
+        .logo img {
+            height: 60px;
+            vertical-align: middle;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(0,255,0,0.1);
+            cursor: pointer;
+        }
+
+        nav a:hover, nav a.active {
+            background: #00ff00;
+            color: #4a148c;
+            transform: scale(1.1);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            min-height: 70vh;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .product-card {
+            background: linear-gradient(135deg, #4a148c, #7b1fa2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,255,0,0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            background: #333;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+
+        .product-info h3 {
+            color: #00ff00;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .product-info p {
+            color: #ccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .price {
+            color: #00ff00;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .add-to-cart {
+            background: #00ff00;
+            color: #4a148c;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .add-to-cart:hover {
+            background: #4a148c;
+            color: #00ff00;
+            transform: scale(1.05);
+        }
+
+        /* Cart Styles */
+        .cart {
+            position: fixed;
+            top: 50%;
+            right: -400px;
+            transform: translateY(-50%);
+            width: 350px;
+            background: linear-gradient(135deg, #4a148c, #7b1fa2);
+            border-radius: 15px 0 0 15px;
+            padding: 2rem;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .cart.open {
+            right: 0;
+        }
+
+        .cart-toggle {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            background: #00ff00;
+            color: #4a148c;
+            border: none;
+            padding: 1rem;
+            border-radius: 15px 0 0 15px;
+            cursor: pointer;
+            z-index: 1002;
+            font-size: 1.5rem;
+        }
+
+        /* Radio Player */
+        .radio-player {
+            background: linear-gradient(135deg, #333, #555);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .boombox-player {
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .boombox-player::before {
+            content: '\ud83e\udd18 OZZY RADIO \ud83e\udd18';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #00ff00;
+            color: #000;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+
+        .mini-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            display: none;
+            z-index: 1000;
+        }
+
+        /* Kitty Mascot */
+        .kitty-mascot {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .kitty-mascot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #00ff00;
+            transition: all 0.3s ease;
+        }
+
+        .kitty-mascot:hover img {
+            transform: scale(1.1);
+            border-color: #ff69b4;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            bottom: 110px;
+            right: 120px;
+            background: #00ff00;
+            color: #000;
+            padding: 1rem;
+            border-radius: 15px;
+            max-width: 200px;
+            display: none;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -10px;
+            transform: translateY(-50%);
+            border: 10px solid transparent;
+            border-left-color: #00ff00;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: linear-gradient(135deg, #1a1a1a, #333);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: none;
+        }
+
+        .admin-login {
+            background: linear-gradient(135deg, #4a148c, #7b1fa2);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart {
+                width: 100%;
+                right: -100%;
+                border-radius: 0;
+            }
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #00ff00;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+        }
+
+        button {
+            background: #00ff00;
+            color: #4a148c;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #4a148c;
+            color: #00ff00;
+            transform: scale(1.05);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #00ff00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Olivia Drawing Focus */
+        .olivia-drawing {
+            background-image: url('Screenshot_20250905-221518.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 300px;
+            width: 300px;
+            margin: 0 auto;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="ghost-bg home" id="ghostBg"></div>
+    
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="Screenshot_20250831-144625.png" alt="KornDog Records">
+            </div>
+            <ul>
+                <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                <li><a href="#" class="nav-link" data-page="vinyl">Vinyl</a></li>
+                <li><a href="#" class="nav-link" data-page="cds">CDs</a></li>
+                <li><a href="#" class="nav-link" data-page="funkos">Funkos</a></li>
+                <li><a href="#" class="nav-link" data-page="collectibles">Collectibles</a></li>
+                <li><a href="#" class="nav-link" data-page="about">About</a></li>
+                <li><a href="#" class="nav-link" data-page="admin">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Home Page -->
+        <div class="page active" id="home">
+            <h1>Welcome to KornDog Records</h1>
+            <div class="boombox-player">
+                <h3>\ud83e\udd18 OZZY RADIO \ud83e\udd18</h3>
+                <div id="radioPlayer">
+                    <select id="stationSelect">
+                        <option value="ozzY">\ud83e\udd87 Ozzy Radio \ud83e\udd87</option>
+                        <option value="metalcore">\ud83d\udc80 Metalcore Meltdown \ud83d\udc80</option>
+                        <option value="miku">\ud83c\udf38 Hatsune Miku Radio \ud83c\udf38</option>
+                        <option value="dancegavindance">\ud83d\udd25 Dance Gavin Dance Radio \ud83d\udd25</option>
+                    </select>
+                    <button onclick="playRadio()">\u25b6\ufe0f Play</button>
+                    <button onclick="pauseRadio()">\u23f8\ufe0f Pause</button>
+                    <button onclick="nextTrack()">\u23ed\ufe0f Next</button>
+                    <div id="nowPlaying">Now Playing: Select a station...</div>
+                </div>
+            </div>
+            <p>Your one-stop shop for vinyl, CDs, Funkos, and rare collectibles!</p>
+            
+            <!-- Olivia Drawing Focal Point -->
+            <div class="olivia-drawing" style="margin: 2rem auto;">
+                <img src="Screenshot_20250905-221518.png" alt="Olivia's Drawing" style="width: 100%; height: 100%; object-fit: contain; border-radius: 15px;">
+            </div>
+        </div>
+
+        <!-- Vinyl Page -->
+        <div class="page" id="vinyl">
+            <h1>Vinyl Records</h1>
+            <div class="product-grid" id="vinylGrid"></div>
+        </div>
+
+        <!-- CDs Page -->
+        <div class="page" id="cds">
+            <h1>Compact Discs</h1>
+            <div class="product-grid" id="cdsGrid"></div>
+        </div>
+
+        <!-- Funkos Page -->
+        <div class="page" id="funkos">
+            <h1>Funko Pop! Figures</h1>
+            <div class="product-grid" id="funkosGrid"></div>
+        </div>
+
+        <!-- Collectibles Page -->
+        <div class="page" id="collectibles">
+            <h1>Rare Collectibles</h1>
+            <div class="product-grid" id="collectiblesGrid"></div>
+        </div>
+
+        <!-- About Page -->
+        <div class="page" id="about">
+            <div class="ghost-bg about"></div>
+            <h1>About KornDog Records</h1>
+            <p>Founded by music enthusiasts, KornDog Records is your ultimate destination for music and collectibles.</p>
+            <p>We specialize in rare vinyl, CDs, Funko Pop! figures, and unique collectibles.</p>
+            <p>Visit us in-store or shop online for the best selection!</p>
+        </div>
+
+        <!-- Admin Page -->
+        <div class="page" id="admin">
+            <h1>Admin Panel</h1>
+            <div class="admin-login" id="adminLogin">
+                <h2>Admin Login</h2>
+                <input type="password" id="adminPassword" placeholder="Enter password">
+                <button onclick="loginAdmin()">Login</button>
+            </div>
+            <div class="admin-panel" id="adminPanel">
+                <h2>Inventory Management</h2>
+                <button onclick="exportInventory()">Export Inventory</button>
+                <input type="file" id="importFile" accept=".json" onchange="importInventory(event)">
+                <button onclick="addProduct()">Add Product</button>
+                <div id="adminProducts"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cart -->
+    <button class="cart-toggle" onclick="toggleCart()">\ud83d\uded2</button>
+    <div class="cart" id="cart">
+        <h2>Shopping Cart</h2>
+        <div id="cartItems"></div>
+        <div id="cartTotal"></div>
+        <button onclick="checkout()">Checkout with PayPal</button>
+    </div>
+
+    <!-- Mini Player -->
+    <div class="mini-player" id="miniPlayer">
+        <button onclick="toggleMiniPlayer()">\ud83c\udfb5</button>
+        <div id="miniNowPlaying"></div>
+    </div>
+
+    <!-- Kitty Mascot -->
+    <div class="kitty-mascot" id="kittyMascot" onclick="kittySpeak()">
+        <div id="mascotImage">
+            <img src="PXL_20250905_194138618.jpg" alt="Zombie Kitty Mascot" style="border: 3px solid #00ff00;">
+        </div>
+        <div class="speech-bubble" id="speechBubble"></div>
+    </div>
+
+    <script>
+        // Global Variables
+        let cart = [];
+        let currentPage = 'home';
+        let player = null;
+        let inventory = {
+            vinyl: [
+                {id: 'v1', name: 'Zombie Kitty Vinyl Special', price: 29.99, image: 'PXL_20250905_194138618.jpg', category: 'vinyl', condition: 'NM', front: 'PXL_20250905_194138618.jpg', back: 'zombie-back.jpg'},
+                {id: 'v2', name: 'Metal Vinyl Collection', price: 34.99, image: 'vinyl-placeholder.jpg', category: 'vinyl', condition: 'VG+', front: 'vinyl-placeholder.jpg', back: 'back-vinyl-2.jpg'},
+                {id: 'v3', name: 'Rock Classics Vinyl', price: 39.99, image: 'vinyl-placeholder-2.jpg', category: 'vinyl', condition: 'NM', front: 'vinyl-placeholder-2.jpg', back: 'back-vinyl-3.jpg'}
+            ],
+            cds: [
+                {id: 'c1', name: 'System of a Down CD', price: 12.99, image: 'cd-placeholder.jpg', category: 'cds', condition: 'NM', front: 'cd-placeholder.jpg', back: 'back-cd.jpg'},
+                {id: 'c2', name: 'Linkin Park CD', price: 11.99, image: 'cd-placeholder-2.jpg', category: 'cds', condition: 'VG+', front: 'cd-placeholder-2.jpg', back: 'back-cd-2.jpg'}
+            ],
+            funkos: [
+                {id: 'f1', name: 'Olivia Drawing Collectible', price: 89.99, image: 'Screenshot_20250905-221518.png', category: 'funkos', condition: 'Mint', front: 'Screenshot_20250905-221518.png', back: 'olivia-back.jpg'},
+                {id: 'f2', name: 'Cute Collectible Figure', price: 24.99, image: 'Screenshot_20250905-221244.png', category: 'funkos', condition: 'NM', front: 'Screenshot_20250905-221244.png', back: 'back-funko.jpg'}
+            ],
+            collectibles: [
+                {id: 'col1', name: 'Zombie Kitty Art Piece', price: 149.99, image: 'PXL_20250905_194138618.jpg', category: 'collectibles', condition: 'Excellent', front: 'PXL_20250905_194138618.jpg', back: 'zombie-art-back.jpg'},
+                {id: 'col2', name: 'Olivia Drawing Art', price: 199.99, image: 'Screenshot_20250905-221518.png', category: 'collectibles', condition: 'NM', front: 'Screenshot_20250905-221518.png', back: 'olivia-art-back.jpg'}
+            ]
+        };
+
+        // Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            const activeLink = document.querySelector(`[data-page="${pageId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+            currentPage = pageId;
+
+            // Update ghost background
+            const ghostBg = document.getElementById('ghostBg');
+            ghostBg.className = 'ghost-bg ' + pageId;
+
+            // Update kitty mascot
+            updateKittyMascot(pageId);
+            
+            // Load products for the page
+            if (['vinyl', 'cds', 'funkos', 'collectibles'].includes(pageId)) {
+                loadProducts(pageId);
+            }
+        }
+
+        // Kitty Mascot Functions
+        const zombieQuotes = [
+            "BRAINS... I mean VINYL! \ud83e\udd18",
+            "This beat is infectious... like me! \ud83e\udddf\u200d\u2642\ufe0f",
+            "Add to cart... or I'll eat your brains! \ud83e\udde0",
+            "These prices are to DIE for! \ud83d\udc80",
+            "Checkout now... resistance is futile! \ud83e\udd87",
+            "Music so good it's SCARY! \ud83d\udc7b",
+            "I'll haunt your dreams... with great deals! \ud83d\ude08",
+            "Don't be a zombie... buy this now! \ud83e\udddf\u200d\u2640\ufe0f",
+            "These records are drop DEAD gorgeous! \ud83d\udcbf",
+            "Time to raise the DEAD... with these tunes! \ud83c\udfb5"
+        ];
+
+        const oliviaQuotes = [
+            "Hi friend! Let's collect some cuties! \ud83c\udf38",
+            "These Funkos are super kawaii! \u2728",
+            "Add to your collection! They're so adorable! \ud83d\udc95",
+            "Look at this precious baby! \ud83e\udd7a",
+            "Your collection will be so happy! \ud83c\udf08",
+            "These are my favorite things ever! \ud83c\udf80",
+            "Let's make your shelf sparkle! \u2728",
+            "So many cute friends to choose from! \ud83e\uddf8",
+            "Your collection is going to be amazing! \ud83d\udc96",
+            "Let's spread some joy with these cuties! \ud83c\udf1f"
+        ];
+
+        function updateKittyMascot(page) {
+            const mascotImage = document.getElementById('mascotImage');
+            if (['vinyl', 'cds'].includes(page)) {
+                mascotImage.innerHTML = '<img src="PXL_20250905_194138618.jpg" alt="Zombie Kitty Mascot" style="border: 3px solid #00ff00;">';
+            } else if (['funkos', 'collectibles'].includes(page)) {
+                mascotImage.innerHTML = '<img src="Screenshot_20250905-221518.png" alt="Olivia Drawing Mascot" style="border: 3px solid #ff69b4;">';
+            }
+        }
+
+        // Product Loading
+        function loadProducts(category) {
+            const grid = document.getElementById(category + 'Grid');
+            grid.innerHTML = '';
+            
+            inventory[category].forEach(product => {
+                const card = createProductCard(product);
+                grid.appendChild(card);
+            });
+        }
+
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <div class="product-image" onclick="flipImage(this, '${product.front}', '${product.back}')">
+                    <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                </div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p>Condition: ${product.condition}</p>
+                    <p class="price">$${product.price}</p>
+                    <button class="add-to-cart" onclick="addToCart('${product.id}', '${product.category}')">
+                        Add to Cart
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        function flipImage(element, front, back) {
+            const img = element.querySelector('img');
+            if (img.src.includes(front)) {
+                img.src = back;
+            } else {
+                img.src = front;
+            }
+        }
+
+        // Cart Functions
+        function addToCart(productId, category) {
+            const product = inventory[category].find(p => p.id === productId);
+            if (product) {
+                cart.push({...product, quantity: 1});
+                updateCartDisplay();
+                kittySpeak();
+            }
+        }
+
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                total += item.price * item.quantity;
+                cartItems.innerHTML += `
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                        <h4>${item.name}</h4>
+                        <p>$${item.price} x ${item.quantity}</p>
+                        <button onclick="removeFromCart(${index})">Remove</button>
+                    </div>
+                `;
+            });
+            
+            cartTotal.innerHTML = `
+                <h3>Total: $${total.toFixed(2)}</h3>
+                <p>Shipping: <select id="shipping">
+                    <option value="standard">Standard ($5.99)</option>
+                    <option value="express">Express ($12.99)</option>
+                    <option value="overnight">Overnight ($24.99)</option>
+                </select></p>
+                <p>Grand Total: $${(total + 5.99).toFixed(2)}</p>
+            `;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+
+        function toggleCart() {
+            const cart = document.getElementById('cart');
+            cart.classList.toggle('open');
+            updateCartDisplay();
+        }
+
+        // PayPal Checkout
+        function checkout() {
+            const shipping = document.getElementById('shipping').value;
+            const shippingCost = {
+                standard: 5.99,
+                express: 12.99,
+                overnight: 24.99
+            };
+            
+            const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const grandTotal = total + shippingCost[shipping];
+            
+            // PayPal integration simulation
+            alert(`Redirecting to PayPal checkout for $${grandTotal.toFixed(2)}`);
+        }
+
+        // Radio Player
+        function playRadio() {
+            const station = document.getElementById('stationSelect').value;
+            const nowPlaying = document.getElementById('nowPlaying');
+            
+            const stations = {
+                ozzY: "\ud83e\udd87 Ozzy Radio - Playing 'Crazy Train'",
+                metalcore: "\ud83d\udc80 Metalcore Meltdown - Playing 'In Waves'",
+                miku: "\ud83c\udf38 Hatsune Miku Radio - Playing 'World is Mine'",
+                dancegavindance: "\ud83d\udd25 Dance Gavin Dance Radio - Playing 'We Own the Night'"
+            };
+            
+            nowPlaying.textContent = stations[station];
+            
+            if (!player) {
+                player = document.createElement('iframe');
+                player.style.display = 'none';
+                document.body.appendChild(player);
+            }
+            
+            document.getElementById('miniPlayer').style.display = 'block';
+            document.getElementById('miniNowPlaying').textContent = stations[station];
+        }
+
+        function pauseRadio() {
+            document.getElementById('nowPlaying').textContent = 'Paused';
+            document.getElementById('miniNowPlaying').textContent = 'Paused';
+        }
+
+        function nextTrack() {
+            playRadio();
+        }
+
+        function toggleMiniPlayer() {
+            const miniPlayer = document.getElementById('miniPlayer');
+            miniPlayer.style.display = miniPlayer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Admin Functions
+        function loginAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === 'vinyltherapy2025!') {
+                document.getElementById('adminLogin').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadAdminProducts();
+            } else {
+                alert('Incorrect password!');
+            }
+        }
+
+        function loadAdminProducts() {
+            const adminProducts = document.getElementById('adminProducts');
+            adminProducts.innerHTML = '';
+            
+            Object.keys(inventory).forEach(category => {
+                inventory[category].forEach(product => {
+                    adminProducts.innerHTML += `
+                        <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                            <h4>${product.name}</h4>
+                            <p>Price: $${product.price}</p>
+                            <button onclick="editProduct('${product.id}')">Edit</button>
+                            <button onclick="deleteProduct('${product.id}')">Delete</button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function exportInventory() {
+            const data = JSON.stringify(inventory, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'korndog-inventory.json';
+            a.click();
+        }
+
+        function importInventory(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        inventory = JSON.parse(e.target.result);
+                        alert('Inventory imported successfully!');
+                        loadAdminProducts();
+                    } catch (error) {
+                        alert('Error importing inventory!');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function addProduct() {
+            const name = prompt('Product name:');
+            const price = parseFloat(prompt('Price:'));
+            const category = prompt('Category (vinyl, cds, funkos, collectibles):');
+            
+            if (name && price && category) {
+                const newProduct = {
+                    id: Date.now().toString(),
+                    name: name,
+                    price: price,
+                    image: category === 'vinyl' ? 'PXL_20250905_194138618.jpg' : 'Screenshot_20250905-221518.png',
+                    category: category,
+                    condition: 'NM',
+                    front: category === 'vinyl' ? 'PXL_20250905_194138618.jpg' : 'Screenshot_20250905-221518.png',
+                    back: 'back-' + category + '.jpg'
+                };
+                
+                inventory[category].push(newProduct);
+                loadAdminProducts();
+                alert('Product added!');
+            }
+        }
+
+        // Kitty Speak Function
+        function kittySpeak() {
+            const speechBubble = document.getElementById('speechBubble');
+            let quotes = zombieQuotes;
+            
+            if (['funkos', 'collectibles'].includes(currentPage)) {
+                quotes = oliviaQuotes;
+            }
+            
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            speechBubble.textContent = randomQuote;
+            speechBubble.style.display = 'block';
+            
+            setTimeout(() => {
+                speechBubble.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fix navigation clicks
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showPage(this.dataset.page);
+                });
+            });
+            
+            // Initialize first page
+            showPage('home');
+            updateKittyMascot('home');
+            localStorage.setItem('korndogInventory', JSON.stringify(inventory));
+        });
+    </script>
+</body>
+</html>
