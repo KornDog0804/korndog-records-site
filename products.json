@@ -5,7 +5,7 @@
     "price": 32.99,
     "grade": "NM/NM",
     "image": "images/PXL_20251124_210448795.TS-000.jpg",
-    "description": "Pop-punk chaos, no filler. NM/NM copy Black and Blue Smash"
+    "description": "Pop-punk chaos, no filler. NM/NM copy Black and Blue Smash."
   },
   {
     "id": "within-destruction-lotus",
@@ -56,11 +56,11 @@
     "description": "10th Anniversary Edition. NM/NM copy."
   },
   {
-    "id": "Jimi Hendrix Experience ",
-    "title": "Smash Hits ",
+    "id": "jimi-hendrix-smash-hits",
+    "title": "Jimi Hendrix Experience – Smash Hits",
     "price": 14.99,
     "grade": "VG/VG",
     "image": "images/PXL_20251125_201153364.jpg",
-    "description": "Club Repress "
+    "description": "Club repress. VG/VG copy."
   }
 ]
