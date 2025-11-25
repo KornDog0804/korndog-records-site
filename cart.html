@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Your Cart • KornDog Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+  :root {
+    --bg: #050013;
+    --bg-alt: #0b0420;
+    --accent: #7bff5a;
+    --accent-soft: rgba(123, 255, 90, 0.1);
+    --text: #f5f5ff;
+    --muted: #a1a1c5;
+    --card: #12052b;
+    --border: #2b1550;
+    --danger: #ff4b6a;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text);
+    background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(12px);
+    background: linear-gradient(to right, rgba(10, 1, 30, 0.95), rgba(10, 1, 25, 0.9));
+    border-bottom: 1px solid rgba(123, 255, 90, 0.2);
+  }
+
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .brand-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 2px solid var(--accent);
+    background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+    line-height: 1.1;
+  }
+
+  .brand-text strong {
+    letter-spacing: 0.08em;
+    font-size: 0.9rem;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .nav-link {
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    border: 1px solid transparent;
+  }
+
+  .nav-link.active {
+    background: var(--accent);
+    color: #02010a;
+    font-weight: 600;
+  }
+
+  .nav-link:hover {
+    border-color: rgba(123, 255, 90, 0.6);
+    color: var(--text);
+  }
+
+  .cart-pill {
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(123, 255, 90, 0.12);
+    border: 1px solid rgba(123, 255, 90, 0.5);
+    font-size: 0.85rem;
+  }
+
+  .cart-pill span {
+    background: var(--accent);
+    color: #02010a;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    margin-left: 0.35rem;
+    font-weight: 600;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+    gap: 2rem;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+
+  .hero-card {
+    border-radius: 2rem;
+    padding: 3rem 2.5rem;
+    background: radial-gradient(circle at top left, #3d1395, #110021);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+  }
+
+  .hero h1 {
+    font-size: clamp(2.1rem, 4vw, 2.7rem);
+    margin: 0 0 1rem;
+  }
+
+  .hero h1 span {
+    color: var(--accent);
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  .hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    border-radius: 999px;
+    padding: 0.6rem 1.3rem;
+    font-size: 0.92rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #02010a;
+  }
+
+  .btn-secondary {
+    background: rgba(123, 255, 90, 0.16);
+    border: 1px solid rgba(123, 255, 90, 0.5);
+    color: var(--accent);
+  }
+
+  .btn-danger {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    filter: brightness(1.05);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(123, 255, 90, 0.24);
+  }
+
+  .hero-art {
+    border-radius: 2rem;
+    min-height: 260px;
+    background: radial-gradient(circle at top, #4520a0, #12001f);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(123, 255, 90, 0.2);
+  }
+
+  .hero-art::before {
+    content: '';
+    position: absolute;
+    inset: 14%;
+    border-radius: 1.7rem;
+    border: 1px dashed rgba(123, 255, 90, 0.4);
+    opacity: 0.6;
+  }
+
+  .hero-art-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .pill {
+    border-radius: 999px;
+    padding: 0.3rem 0.9rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(123, 255, 90, 0.28);
+  }
+
+  .section {
+    margin-top: 2.5rem;
+  }
+
+  .section h2 {
+    margin: 0 0 0.75rem;
+  }
+
+  .section p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .products-grid {
+    margin-top: 1.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .record-card {
+    background: var(--card);
+    border-radius: 1.4rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .record-card img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .image-missing {
+    background: repeating-linear-gradient(
+      45deg,
+      #1f102f,
+      #1f102f 6px,
+      #12061f 6px,
+      #12061f 12px
+    );
+  }
+
+  .record-card h3 {
+    font-size: 1rem;
+    margin: 0.15rem 0;
+  }
+
+  .record-grade {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .record-price {
+    font-weight: 600;
+    margin-top: 0.2rem;
+  }
+
+  .record-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .record-card .btn-primary {
+    margin-top: 0.4rem;
+    align-self: flex-start;
+  }
+
+  .cart-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr);
+    gap: 1.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 1.4rem;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+  }
+
+  .cart-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .cart-row:last-child {
+    border-bottom: none;
+  }
+
+  .cart-title {
+    font-size: 0.95rem;
+    margin: 0 0 0.15rem;
+  }
+
+  .cart-grade {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .cart-qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .cart-qty button {
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: transparent;
+    color: var(--text);
+    width: 1.6rem;
+    height: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .cart-line-price {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .cart-total {
+    margin-top: 0.6rem;
+    font-size: 1.05rem;
+  }
+
+  footer {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.25rem 2rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  footer strong {
+    color: var(--accent);
+  }
+
+  /* Admin styles */
+  .admin-wrap {
+    margin-top: 1.5rem;
+  }
+
+  .admin-card {
+    background: var(--card);
+    border-radius: 1.4rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .admin-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .admin-field span {
+    color: var(--muted);
+  }
+
+  .admin-field input,
+  .admin-field textarea {
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: #090017;
+    color: var(--text);
+    padding: 0.45rem 0.55rem;
+    font-size: 0.85rem;
+  }
+
+  .admin-field textarea {
+    min-height: 60px;
+    resize: vertical;
+  }
+
+  .admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  @media (max-width: 800px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hero-card {
+      order: 2;
+      padding: 2rem 1.5rem;
+    }
+    .hero-art {
+      order: 1;
+      min-height: 210px;
+    }
+    .cart-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .nav-inner {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .brand-text {
+      display: none;
+    }
+  }
+</style>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="images/logo-round.png" alt="KornDog Records logo" />
+        </div>
+        <div class="brand-text">
+          <strong>KORNDOG RECORDS</strong>
+          <span>Nashville Born · Bowling Green Driven</span>
+        </div>
+      </div>
+      <nav>
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="cart.html" class="nav-link cart-pill active">
+          Cart <span data-cart-count>0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <h2>Your Cart</h2>
+      <p>Double-check titles and grades before you pay. Once it ships, the therapy session begins.</p>
+
+      <div class="cart-layout">
+        <div class="card">
+          <h3>Records</h3>
+          <div id="cart-items" style="margin-top:0.75rem;"></div>
+          <button class="btn-secondary" style="margin-top:0.75rem;" onclick="clearCart()">Clear Cart</button>
+        </div>
+
+        <div class="card">
+          <h3>Summary</h3>
+          <p style="font-size:0.85rem;color:var(--muted);">
+            Shipping: $7.99 flat for up to 3 records, then $2 per extra record.
+            Orders $130+ get an automatic 10% discount before shipping.
+          </p>
+          <div id="cart-summary" style="margin-top:0.75rem;"></div>
+          <button id="paypal-button" class="btn-primary" style="margin-top:1rem;width:100%;">Pay with PayPal</button>
+          <form id="paypal-form" style="display:none;"></form>
+          <p style="margin-top:0.75rem;font-size:0.8rem;color:var(--muted);">
+            Questions or special requests? Add a note in PayPal and Joey will hit you back.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</p>
+  </footer>
+</body>
+</html>
