@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin • KornDog Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+  :root {
+    --bg: #050013;
+    --bg-alt: #0b0420;
+    --accent: #7bff5a;
+    --accent-soft: rgba(123, 255, 90, 0.1);
+    --text: #f5f5ff;
+    --muted: #a1a1c5;
+    --card: #12052b;
+    --border: #2b1550;
+    --danger: #ff4b6a;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text);
+    background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(12px);
+    background: linear-gradient(to right, rgba(10, 1, 30, 0.95), rgba(10, 1, 25, 0.9));
+    border-bottom: 1px solid rgba(123, 255, 90, 0.2);
+  }
+
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .brand-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 2px solid var(--accent);
+    background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8rem;
+    line-height: 1.1;
+  }
+
+  .brand-text strong {
+    letter-spacing: 0.08em;
+    font-size: 0.9rem;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .nav-link {
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    border: 1px solid transparent;
+  }
+
+  .nav-link.active {
+    background: var(--accent);
+    color: #02010a;
+    font-weight: 600;
+  }
+
+  .nav-link:hover {
+    border-color: rgba(123, 255, 90, 0.6);
+    color: var(--text);
+  }
+
+  .cart-pill {
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(123, 255, 90, 0.12);
+    border: 1px solid rgba(123, 255, 90, 0.5);
+    font-size: 0.85rem;
+  }
+
+  .cart-pill span {
+    background: var(--accent);
+    color: #02010a;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    margin-left: 0.35rem;
+    font-weight: 600;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .section {
+    margin-top: 2.5rem;
+  }
+
+  .section h2 {
+    margin: 0 0 0.75rem;
+  }
+
+  .section p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  footer {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.25rem 2rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  footer strong {
+    color: var(--accent);
+  }
+
+  /* Admin cards / fields */
+  .admin-wrap {
+    margin-top: 1.5rem;
+  }
+
+  .admin-card {
+    background: var(--card);
+    border-radius: 1.4rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .admin-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .admin-field span {
+    color: var(--muted);
+  }
+
+  .admin-field input,
+  .admin-field textarea {
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: #090017;
+    color: var(--text);
+    padding: 0.45rem 0.55rem;
+    font-size: 0.85rem;
+  }
+
+  .admin-field textarea {
+    min-height: 60px;
+    resize: vertical;
+  }
+
+  .admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    border-radius: 999px;
+    padding: 0.6rem 1.3rem;
+    font-size: 0.92rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #02010a;
+  }
+
+  .btn-secondary {
+    background: rgba(123, 255, 90, 0.16);
+    border: 1px solid rgba(123, 255, 90, 0.5);
+    color: var(--accent);
+  }
+
+  .btn-danger {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    filter: brightness(1.05);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(123, 255, 90, 0.24);
+  }
+
+  @media (max-width: 800px) {
+    .nav-inner {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .brand-text {
+      display: none;
+    }
+  }
+
+  /* ---------- SELLER LOGIN OVERLAY ---------- */
+  .login-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top, #2a0a60cc 0, #050013ee 55%);
+    z-index: 100;
+  }
+
+  .login-card {
+    background: var(--card);
+    border-radius: 1.6rem;
+    padding: 2rem 1.75rem;
+    border: 1px solid var(--border);
+    max-width: 360px;
+    width: 90%;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.8);
+  }
+
+  .login-card h1 {
+    margin: 0 0 0.75rem;
+    font-size: 1.5rem;
+  }
+
+  .login-card p {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .login-card input {
+    width: 100%;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: #090017;
+    color: var(--text);
+    padding: 0.65rem 0.75rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .login-error {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--danger);
+  }
+  </style>
+
+  <script>
+    // Simple front-end password gate (obviously not bank-level security,
+    // but enough to keep random shoppers out of your seller tools).
+    const ADMIN_PASSWORD = "ZombieKitty2025!"; // <-- change this to whatever you want
+
+    function checkAdminPassword() {
+      const input = document.getElementById("admin-password");
+      const error = document.getElementById("login-error");
+      const shell = document.getElementById("admin-shell");
+      const screen = document.getElementById("login-screen");
+
+      if (!input) return;
+
+      if (input.value === ADMIN_PASSWORD) {
+        // hide login, show portal
+        screen.style.display = "none";
+        shell.style.display = "block";
+      } else {
+        error.style.display = "block";
+      }
+    }
+
+    // Allow Enter key to submit password
+    document.addEventListener("DOMContentLoaded", () => {
+      const input = document.getElementById("admin-password");
+      if (!input) return;
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          checkAdminPassword();
+        }
+      });
+    });
+  </script>
+
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <!-- SELLER LOGIN OVERLAY -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <h1>Seller Login</h1>
+      <p>
+        Private KornDog Records seller portal.  
+        Drop the password and step into the Vinyl Therapy lab.
+      </p>
+      <input type="password" id="admin-password" placeholder="Portal password" />
+      <button class="btn-primary" style="width:100%;" onclick="checkAdminPassword()">
+        Enter Portal
+      </button>
+      <div id="login-error" class="login-error" style="display:none;">
+        Wrong password, bubba. Try again.
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTUAL ADMIN SHELL (HIDDEN UNTIL PASSWORD IS CORRECT) -->
+  <div id="admin-shell" style="display:none;">
+    <header>
+      <div class="nav-inner">
+        <div class="brand">
+          <div class="brand-logo">
+            <img src="images/logo-round.png" alt="KornDog Records logo" />
+          </div>
+          <div class="brand-text">
+            <strong>KORNDOG RECORDS</strong>
+            <span>Admin · Vinyl Therapy Lab</span>
+          </div>
+        </div>
+        <nav>
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="shop.html" class="nav-link">Shop</a>
+          <a href="cart.html" class="nav-link cart-pill">
+            Cart <span data-cart-count>0</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section admin-wrap">
+        <h2>Inventory Editor</h2>
+        <p style="font-size:0.9rem;color:var(--muted);max-width:640px;">
+          This page edits <code>products.json</code>. Change titles, prices, grades, and image paths here,
+          then hit <strong>Download JSON</strong>. Upload that file to your GitHub repo (replace the existing
+          <code>products.json</code>) and Netlify will redeploy your site with the new inventory.
+        </p>
+        <p style="font-size:0.85rem;color:var(--muted);margin-top:0.4rem;">
+          For images: upload the record photo into your repo’s <code>images/</code> folder on GitHub, then paste the
+          filename here (example: <code>images/sum41.jpg</code>).
+        </p>
+
+        <!-- script.js will render the editor into this div -->
+        <div id="admin-root" style="margin-top:1.25rem;"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</p>
+    </footer>
+  </div>
+</body>
+</html>
