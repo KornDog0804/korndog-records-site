@@ -1,0 +1,58 @@
+[
+  {
+    "id": "sum41-all-killer-no-filler",
+    "title": "Sum 41 – All Killer No Filler",
+    "price": 32.99,
+    "grade": "NM/NM",
+    "image": "images/sum41.jpg",
+    "description": "Pop-punk chaos, no filler. NM/NM copy."
+  },
+  {
+    "id": "within-destruction-lotus",
+    "title": "Within Destruction – Lotus",
+    "price": 44.99,
+    "grade": "NM/NM",
+    "image": "images/within-destruction-lotus.jpg",
+    "description": "Crushing modern deathcore, Lotus variant. NM/NM copy."
+  },
+  {
+    "id": "sleep-token-even-in-arcadia",
+    "title": "Sleep Token – Even in Arcadia",
+    "price": 69.99,
+    "grade": "NM/NM",
+    "image": "images/sleep-token-even-in-arcadia.jpg",
+    "description": "Sleep Token vibes on wax. NM/NM copy."
+  },
+  {
+    "id": "ten-dolla-holla",
+    "title": "$10 Dolla Holla Mystery Record",
+    "price": 10.0,
+    "grade": "VG/VG",
+    "image": "images/ten-dolla-holla.jpg",
+    "description": "Random mystery pull from the stack. VG/VG."
+  },
+  {
+    "id": "johnny-guitar-watson-giant",
+    "title": "Johnny Guitar Watson – Giant",
+    "price": 8.99,
+    "grade": "VG/VG",
+    "image": "images/johnny-guitar-watson-giant.jpg",
+    "description": "Funky, spacey soul trip. VG/VG copy."
+  },
+  {
+    "id": "i-prevail-heart-vs-mind",
+    "title": "I Prevail – Heart vs Mind",
+    "price": 19.99,
+    "grade": "NM/NM",
+    "image": "images/i-prevail-heart-vs-mind.jpg",
+    "description": "Debut EP. NM/NM copy."
+  },
+  {
+    "id": "blessthefall-hollow-bodies",
+    "title": "blessthefall – Hollow Bodies (10th Anniversary)",
+    "price": 14.99,
+    "grade": "NM/NM",
+    "image": "images/blessthefall-hollow-bodies.jpg",
+    "description": "10th Anniversary edition. NM/NM."
+  }
+]
