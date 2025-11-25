@@ -3,12 +3,19 @@
 const CART_KEY = 'korndog_cart_v1';
 
 async function loadProducts() {
-  const res = await fetch('products.json?v=' + Date.now());
-  if (!res.ok) {
-    console.error('Failed to load products.json');
+  try {
+    const res = await fetch('./products.json'); // FIXED PATH
+
+    if (!res.ok) {
+      console.error('Failed to load products');
+      return [];
+    }
+
+    return await res.json();
+  } catch (e) {
+    console.error('Failed to load products', e);
     return [];
   }
-  return await res.json();
 }
 
 function getCart() {
