@@ -142,5 +142,13 @@
     "grade": "VG+/Vag+",
     "image": "images/The_Police-1764229577731.jpg",
     "description": "Great Copy Super Clean"
+  },
+  {
+    "id": "Johnny Cash",
+    "title": "Greatest Hits Volume 1",
+    "price": 4.99,
+    "grade": "VG/VG",
+    "image": "images/Johnny_Cash-1764230221013.jpg",
+    "description": "You better walk the line when you get this one"
   }
 ]
