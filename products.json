@@ -118,5 +118,13 @@
     "grade": "NM/NM",
     "image": "images/AC_DC-1764228748149.jpg",
     "description": "Iconic album"
+  },
+  {
+    "id": "Bob Seger & Silver Bullet Band",
+    "title": "Stranger In Town",
+    "price": 4.99,
+    "grade": "VG/Vg",
+    "image": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
+    "description": "Nice clean OG cooy"
   }
 ]
