@@ -1,0 +1,31 @@
+/* ===== Shop pagination pills ===== */
+.shop-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 2rem 0 3rem;
+}
+
+.page-btn {
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;            /* pill shape */
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #a3ff3f;             /* neon green pill */
+  color: #120020;                  /* dark text */
+  box-shadow: 0 0 10px rgba(163, 255, 63, 0.4);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.page-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 14px rgba(163, 255, 63, 0.7);
+}
+
+.page-btn.active {
+  background: #8a3dff;            /* purple active */
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(138, 61, 255, 0.8);
+}
