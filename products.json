@@ -174,5 +174,13 @@
     "grade": "VG/VG+",
     "image": "images/Foreigner-1764230780118.jpg",
     "description": "You know it you love it now it can be yours."
+  },
+  {
+    "id": "Boston",
+    "title": "Boston 1",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Boston-1764230862646.jpg",
+    "description": "Very Nice in my Borat voice"
   }
 ]
