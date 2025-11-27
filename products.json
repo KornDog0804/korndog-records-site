@@ -174,5 +174,13 @@
     "grade": "VG/VG+",
     "image": "images/Boston-1764230862646.jpg",
     "description": "Very Nice in my Borat voice"
+  },
+  {
+    "id": "Willie Nelson",
+    "title": "Willie And Family Live",
+    "price": 4.99,
+    "grade": "VG/VG",
+    "image": "images/Willie_Nelson-1764232751664.jpg",
+    "description": "I know you can't wait to get on the road again with this one."
   }
 ]
