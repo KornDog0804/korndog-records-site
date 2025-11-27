@@ -5,7 +5,7 @@
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- External stylesheet (for pills, etc.) -->
+  <!-- External stylesheet -->
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -38,7 +38,7 @@
       text-decoration: none;
     }
 
-    /* HEADER / NAV */
+    /* HEADER */
 
     header {
       position: sticky;
@@ -50,7 +50,7 @@
         rgba(10, 1, 30, 0.95),
         rgba(10, 1, 25, 0.9)
       );
-      border-bottom: 1px solid rgba(123, 255, 90, 0.2);
+      border-bottom: 1px solid rgba(123,255,90,0.2);
     }
 
     .nav-inner {
@@ -97,7 +97,7 @@
       color: var(--muted);
       border: 1px solid transparent;
       font-weight: 500;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      transition: 0.15s ease;
     }
 
     .nav-link.active {
@@ -107,7 +107,7 @@
     }
 
     .nav-link:hover {
-      border-color: rgba(123, 255, 90, 0.6);
+      border-color: rgba(123,255,90,0.6);
       color: var(--text);
     }
 
@@ -117,8 +117,8 @@
       gap: 0.35rem;
       padding: 0.45rem 0.9rem;
       border-radius: 999px;
-      background: rgba(123, 255, 90, 0.12);
-      border: 1px solid rgba(123, 255, 90, 0.5);
+      background: rgba(123,255,90,0.12);
+      border: 1px solid rgba(123,255,90,0.5);
       font-size: 0.88rem;
     }
 
@@ -130,7 +130,7 @@
       font-weight: 600;
     }
 
-    /* MAIN LAYOUT */
+    /* MAIN */
 
     main {
       max-width: 1100px;
@@ -174,41 +174,21 @@
       margin-bottom: 0.5rem;
     }
 
-    .image-missing {
-      background: repeating-linear-gradient(
-        45deg,
-        #1f102f,
-        #1f102f 6px,
-        #12061f 6px,
-        #12061f 12px
-      );
-    }
-
     .record-card h3 {
-      font-size: 1rem;
       margin: 0.15rem 0;
+      font-size: 1rem;
     }
 
-    .record-grade {
+    .record-grade,
+    .record-desc,
+    .qty-text {
       font-size: 0.85rem;
       color: var(--muted);
     }
 
     .record-price {
-      font-weight: 600;
       margin-top: 0.2rem;
-    }
-
-    .record-desc {
-      font-size: 0.85rem;
-      color: var(--muted);
-      flex: 1;
-    }
-
-    .qty-text {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-top: 0.15rem;
+      font-weight: 600;
     }
 
     .btn-primary {
@@ -231,65 +211,58 @@
       max-width: 1100px;
       margin: 0 auto;
       padding: 0 1.25rem 2rem;
+      text-align: center;
       font-size: 0.78rem;
       color: var(--muted);
-      text-align: center;
     }
 
     footer strong {
       color: var(--accent);
     }
 
-    @media (max-width: 800px) {
-      .nav-inner {
-        flex-wrap: nowrap;
-        justify-content: space-between;
-      }
-    }
+    /* FLOATING MESSAGE BUBBLE */
 
-    /* Floating contact bubble (shop-only) */
     .floating-message {
       position: fixed;
       bottom: 10px;
       right: 10px;
       z-index: 9999;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 999px;
       background: var(--accent);
       color: #02010a;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
       box-shadow: 0 0 14px rgba(123,255,90,0.55);
       border: 1px solid #02010a;
-      text-decoration: none;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease,
-        bottom 0.15s ease, right 0.15s ease;
+      transition: 0.15s ease;
     }
 
     .floating-message:hover {
-      transform: scale(1.06);
+      transform: scale(1.07);
       box-shadow: 0 0 20px rgba(123,255,90,0.75);
     }
 
     .floating-message.hidden {
       opacity: 0;
       pointer-events: none;
-      transform: translateY(8px);
+      transform: translateY(10px);
     }
   </style>
 
   <script defer src="script.js"></script>
 </head>
+
 <body>
   <header>
     <div class="nav-inner">
       <a href="index.html" class="logo-link">
         <div class="logo-circle">
-          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
+          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo">
         </div>
       </a>
 
@@ -308,41 +281,41 @@
     <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
 
     <div id="products" class="products-grid"></div>
-    <!-- Pagination is injected by script.js into #products as neon pills -->
+    <!-- Pagination injected by script.js -->
+    <div id="pagination"></div>
   </main>
 
   <footer>
     © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
 
-  <!-- Floating Contact Joey Bubble (Shop Only) -->
-  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">
-    💬
-  </a>
+  <!-- Floating Contact Bubble -->
+  <a id="floatingJoey" class="floating-message">💬</a>
 
   <script>
     (function () {
-      const btn = document.getElementById('floatingJoey');
+      const btn = document.getElementById("floatingJoey");
       if (!btn) return;
 
-      // Device detection: mobile = SMS, desktop = email
+      // Detect mobile vs desktop
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-        btn.href = "sms:2707843283";
+        btn.href = "sms:2707843283?body=Hey Joey! I’m on your website and had a question about a record.";
       } else {
-        btn.href = "mailto:korndogrecords@gmail.com";
+        btn.href = "mailto:korndogrecords@gmail.com?subject=KornDog Records Website Question&body=Hey Joey! I’m on your website and had a question about a record.";
       }
 
-      // Hide while scrolling, show after scroll stops
-      let hideTimer;
-      window.addEventListener('scroll', () => {
-        btn.classList.add('hidden');
-        clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => {
-          btn.classList.remove('hidden');
+      // Hide when scrolling
+      let scrollTimer;
+      window.addEventListener("scroll", () => {
+        btn.classList.add("hidden");
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(() => {
+          btn.classList.remove("hidden");
         }, 600);
       });
     })();
   </script>
+
 </body>
 </html>
