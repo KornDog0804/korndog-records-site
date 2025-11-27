@@ -5,7 +5,7 @@
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- External stylesheet (ok if it exists; safe if it doesn’t) -->
+  <!-- External stylesheet (for pills, etc.) -->
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -227,44 +227,6 @@
       filter: brightness(1.05);
     }
 
-    /* PAGINATION – KORNDOG PILLS */
-
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 2rem;
-    }
-
-    .pagination button,
-    .pagination .page-btn,
-    .pagination .pagination-btn {
-      min-width: 40px;
-      padding: 0.35rem 0.9rem;
-      border-radius: 999px;
-      border: 1px solid rgba(123, 255, 90, 0.7);
-      background: rgba(123, 255, 90, 0.12);
-      color: var(--accent);
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-
-    .pagination button.active,
-    .pagination .page-btn.active,
-    .pagination .pagination-btn.active {
-      background: var(--accent);
-      color: #02010a;
-      box-shadow: 0 0 12px rgba(123, 255, 90, 0.5);
-    }
-
-    .pagination button:hover,
-    .pagination .page-btn:hover,
-    .pagination .pagination-btn:hover {
-      background: rgba(123, 255, 90, 0.28);
-    }
-
     footer {
       max-width: 1100px;
       margin: 0 auto;
@@ -283,6 +245,40 @@
         flex-wrap: nowrap;
         justify-content: space-between;
       }
+    }
+
+    /* Floating contact bubble (shop-only) */
+    .floating-message {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 9999;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #02010a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 0 14px rgba(123,255,90,0.55);
+      border: 1px solid #02010a;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease,
+        bottom 0.15s ease, right 0.15s ease;
+    }
+
+    .floating-message:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 20px rgba(123,255,90,0.75);
+    }
+
+    .floating-message.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
     }
   </style>
 
@@ -312,13 +308,41 @@
     <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
 
     <div id="products" class="products-grid"></div>
-
-    <!-- Pagination pills -->
-    <div id="pagination" class="pagination"></div>
+    <!-- Pagination is injected by script.js into #products as neon pills -->
   </main>
 
   <footer>
     © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
+
+  <!-- Floating Contact Joey Bubble (Shop Only) -->
+  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">
+    💬
+  </a>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('floatingJoey');
+      if (!btn) return;
+
+      // Device detection: mobile = SMS, desktop = email
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        btn.href = "sms:2707843283";
+      } else {
+        btn.href = "mailto:korndogrecords@gmail.com";
+      }
+
+      // Hide while scrolling, show after scroll stops
+      let hideTimer;
+      window.addEventListener('scroll', () => {
+        btn.classList.add('hidden');
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+          btn.classList.remove('hidden');
+        }, 600);
+      });
+    })();
+  </script>
 </body>
 </html>
