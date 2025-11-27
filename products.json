@@ -198,5 +198,13 @@
     "grade": "VG/VG+",
     "image": "images/Robert_Plant-1764232983897.jpg",
     "description": "Super Clean Copy"
+  },
+  {
+    "id": "Night Ranger",
+    "title": "7 Wishes",
+    "price": 4.99,
+    "grade": "VG/VG",
+    "image": "images/Night_Ranger-1764233043019.jpg",
+    "description": "Very Nice"
   }
 ]
