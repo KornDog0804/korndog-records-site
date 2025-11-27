@@ -47,3 +47,45 @@
   font-size: 1rem;
   margin: 0 0.3rem;
 }
+/* External marketplace links (Whatnot + Discogs) */
+
+.external-links {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  border: 1px solid rgba(123, 255, 90, 0.2);
+}
+
+.external-links .subtitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.external-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.external-buttons .btn-primary,
+.external-buttons .btn-secondary {
+  text-decoration: none;
+}
+
+.trust-text {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Mobile layout */
+@media (max-width: 600px) {
+  .external-buttons {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
