@@ -222,5 +222,13 @@
     "grade": "VG/VG+",
     "image": "images/Cheap_Trick-1764233303621.jpg",
     "description": "Now this is No Cheap Trick. Super Clean Copy and yours today for 4.99"
+  },
+  {
+    "id": "ZZ TOP",
+    "title": "Tres Hombres",
+    "price": 14.99,
+    "grade": "VG/VG+",
+    "image": "images/ZZ_TOP-1764287666570.jpg",
+    "description": "Are you ready to go to La Grange?"
   }
 ]
