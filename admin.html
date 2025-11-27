@@ -1,410 +1,287 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Admin • KornDog Records</title>
+  <meta charset="UTF-8" />
+  <title>KornDog Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-  :root {
-    --bg: #050013;
-    --bg-alt: #0b0420;
-    --accent: #7bff5a;
-    --accent-soft: rgba(123, 255, 90, 0.1);
-    --text: #f5f5ff;
-    --muted: #a1a1c5;
-    --card: #12052b;
-    --border: #2b1550;
-    --danger: #ff4b6a;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    color: var(--text);
-    background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    backdrop-filter: blur(12px);
-    background: linear-gradient(to right, rgba(10, 1, 30, 0.95), rgba(10, 1, 25, 0.9));
-    border-bottom: 1px solid rgba(123, 255, 90, 0.2);
-  }
-
-  .nav-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0.75rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .brand-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 999px;
-    border: 2px solid var(--accent);
-    background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .brand-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .brand-text {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.8rem;
-    line-height: 1.1;
-  }
-
-  .brand-text strong {
-    letter-spacing: 0.08em;
-    font-size: 0.9rem;
-  }
-
-  nav {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .nav-link {
-    padding: 0.4rem 0.9rem;
-    border-radius: 999px;
-    font-size: 0.9rem;
-    color: var(--muted);
-    border: 1px solid transparent;
-  }
-
-  .nav-link.active {
-    background: var(--accent);
-    color: #02010a;
-    font-weight: 600;
-  }
-
-  .nav-link:hover {
-    border-color: rgba(123, 255, 90, 0.6);
-    color: var(--text);
-  }
-
-  .cart-pill {
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    background: rgba(123, 255, 90, 0.12);
-    border: 1px solid rgba(123, 255, 90, 0.5);
-    font-size: 0.85rem;
-  }
-
-  .cart-pill span {
-    background: var(--accent);
-    color: #02010a;
-    border-radius: 999px;
-    padding: 0.15rem 0.55rem;
-    margin-left: 0.35rem;
-    font-weight: 600;
-  }
-
-  main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 1.5rem 1.25rem 3rem;
-  }
-
-  .section {
-    margin-top: 2.5rem;
-  }
-
-  .section h2 {
-    margin: 0 0 0.75rem;
-  }
-
-  .section p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.95rem;
-  }
-
-  footer {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 1.25rem 2rem;
-    font-size: 0.78rem;
-    color: var(--muted);
-  }
-
-  footer strong {
-    color: var(--accent);
-  }
-
-  /* Admin cards / fields */
-  .admin-wrap {
-    margin-top: 1.5rem;
-  }
-
-  .admin-card {
-    background: var(--card);
-    border-radius: 1.4rem;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    margin-bottom: 1rem;
-  }
-
-  .admin-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    margin-bottom: 0.6rem;
-    font-size: 0.85rem;
-  }
-
-  .admin-field span {
-    color: var(--muted);
-  }
-
-  .admin-field input,
-  .admin-field textarea {
-    border-radius: 0.6rem;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: #090017;
-    color: var(--text);
-    padding: 0.45rem 0.55rem;
-    font-size: 0.85rem;
-  }
-
-  .admin-field textarea {
-    min-height: 60px;
-    resize: vertical;
-  }
-
-  .admin-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 0.75rem;
-  }
-
-  .btn-primary,
-  .btn-secondary,
-  .btn-danger {
-    border-radius: 999px;
-    padding: 0.6rem 1.3rem;
-    font-size: 0.92rem;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-  }
-
-  .btn-primary {
-    background: var(--accent);
-    color: #02010a;
-  }
-
-  .btn-secondary {
-    background: rgba(123, 255, 90, 0.16);
-    border: 1px solid rgba(123, 255, 90, 0.5);
-    color: var(--accent);
-  }
-
-  .btn-danger {
-    background: var(--danger);
-    color: #fff;
-  }
-
-  .btn-primary:hover {
-    filter: brightness(1.05);
-  }
-
-  .btn-secondary:hover {
-    background: rgba(123, 255, 90, 0.24);
-  }
-
-  @media (max-width: 800px) {
-    .nav-inner {
-      flex-wrap: wrap;
-      justify-content: center;
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top, #3b0b78, #050014);
+      color: #f9f9ff;
+      padding: 16px;
     }
-    .brand-text {
-      display: none;
+    .wrap {
+      max-width: 600px;
+      margin: 0 auto;
     }
-  }
-
-  /* ---------- SELLER LOGIN OVERLAY ---------- */
-  .login-screen {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at top, #2a0a60cc 0, #050013ee 55%);
-    z-index: 100;
-  }
-
-  .login-card {
-    background: var(--card);
-    border-radius: 1.6rem;
-    padding: 2rem 1.75rem;
-    border: 1px solid var(--border);
-    max-width: 360px;
-    width: 90%;
-    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.8);
-  }
-
-  .login-card h1 {
-    margin: 0 0 0.75rem;
-    font-size: 1.5rem;
-  }
-
-  .login-card p {
-    margin: 0 0 1rem;
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-
-  .login-card input {
-    width: 100%;
-    border-radius: 0.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: #090017;
-    color: var(--text);
-    padding: 0.65rem 0.75rem;
-    font-size: 0.9rem;
-    margin-bottom: 0.9rem;
-  }
-
-  .login-error {
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
-    color: var(--danger);
-  }
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .tagline {
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      opacity: 0.9;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #3a3a6a;
+      background: #0c0618;
+      color: #f9f9ff;
+      box-sizing: border-box;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .btn {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      padding: 12px;
+      border-radius: 999px;
+      border: none;
+      background: #a4ff3b;
+      color: #050014;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .secondary {
+      background: transparent;
+      border: 1px solid #a4ff3b;
+      color: #a4ff3b;
+      margin-top: 12px;
+    }
+    .status {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #120825;
+    }
+    .status.ok { color: #a4ff3b; }
+    .status.err { color: #ff6b81; }
+    .field-row {
+      display: flex;
+      gap: 10px;
+    }
+    .field-row > div {
+      flex: 1;
+    }
   </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>KornDog Admin</h1>
+    <div class="tagline">Whatnot-style upload · No more JSON headaches</div>
+
+    <div id="status" class="status">Waiting for input…</div>
+
+    <button class="btn secondary" id="setTokenBtn">Set / Change GitHub Token</button>
+
+    <form id="recordForm">
+      <label>Artist / ID (no spaces, e.g. acdc-backinblack)</label>
+      <input id="id" required />
+
+      <label>Title (what the customer sees)</label>
+      <input id="title" required />
+
+      <div class="field-row">
+        <div>
+          <label>Price (e.g. 17.99)</label>
+          <input id="price" type="number" step="0.01" required />
+        </div>
+        <div>
+          <label>Grade (e.g. NM/NM)</label>
+          <input id="grade" required />
+        </div>
+      </div>
+
+      <label>Description</label>
+      <textarea id="description"></textarea>
+
+      <label>Cover Photo</label>
+      <input id="imageFile" type="file" accept="image/*" required />
+
+      <button type="submit" class="btn" id="saveBtn">Save to Site</button>
+    </form>
+  </div>
 
   <script>
-    // Simple front-end password gate (obviously not bank-level security,
-    // but enough to keep random shoppers out of your seller tools).
-    const ADMIN_PASSWORD = "ZombieKitty2025!"; // <-- change this to whatever you want
+    // ===== CONFIG – CHANGE THESE TO MATCH YOUR REPO =====
+    const GITHUB_OWNER = "KornDog0804";
+    const GITHUB_REPO = "korndog-records-site";
+    const PRODUCTS_PATH = "products.json";
+    const IMAGES_FOLDER = "images"; // existing folder
 
-    function checkAdminPassword() {
-      const input = document.getElementById("admin-password");
-      const error = document.getElementById("login-error");
-      const shell = document.getElementById("admin-shell");
-      const screen = document.getElementById("login-screen");
+    const statusEl = document.getElementById("status");
+    const saveBtn = document.getElementById("saveBtn");
+    const setTokenBtn = document.getElementById("setTokenBtn");
 
-      if (!input) return;
+    function setStatus(msg, type = "") {
+      statusEl.textContent = msg;
+      statusEl.className = "status " + (type || "");
+    }
 
-      if (input.value === ADMIN_PASSWORD) {
-        // hide login, show portal
-        screen.style.display = "none";
-        shell.style.display = "block";
-      } else {
-        error.style.display = "block";
+    function getToken() {
+      return localStorage.getItem("kd_github_token") || "";
+    }
+
+    function requireToken() {
+      let token = getToken();
+      if (!token) {
+        token = prompt("Paste your GitHub personal access token (it will be stored only on this device):");
+        if (token) {
+          localStorage.setItem("kd_github_token", token.trim());
+        }
+      }
+      return token;
+    }
+
+    setTokenBtn.addEventListener("click", () => {
+      const t = prompt("Paste new GitHub token:");
+      if (t) {
+        localStorage.setItem("kd_github_token", t.trim());
+        setStatus("Token updated on this device.", "ok");
+      }
+    });
+
+    // Convert File → base64 (no header)
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result.split(",")[1]; // strip data:...;base64,
+          resolve(result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function githubGet(path) {
+      const token = requireToken();
+      if (!token) throw new Error("No token set.");
+      const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json"
+        }
+      });
+      if (!res.ok) throw new Error(`GitHub GET ${path} failed: ${res.status}`);
+      return res.json();
+    }
+
+    async function githubPut(path, contentBase64, message, sha) {
+      const token = requireToken();
+      if (!token) throw new Error("No token set.");
+      const body = {
+        message,
+        content: contentBase64
+      };
+      if (sha) body.sha = sha;
+      const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json"
+        },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`GitHub PUT ${path} failed: ${res.status} ${txt}`);
+      }
+      return res.json();
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      try {
+        saveBtn.disabled = true;
+        setStatus("Uploading image…");
+
+        const id = document.getElementById("id").value.trim();
+        const title = document.getElementById("title").value.trim();
+        const price = parseFloat(document.getElementById("price").value);
+        const grade = document.getElementById("grade").value.trim();
+        const description = document.getElementById("description").value.trim();
+        const file = document.getElementById("imageFile").files[0];
+
+        if (!id || !title || !file || isNaN(price)) {
+          throw new Error("Missing required fields.");
+        }
+
+        // 1) Upload image file into /images/
+        const safeFileName = `${id}-${Date.now()}.jpg`.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const imgBase64 = await fileToBase64(file);
+        await githubPut(
+          `${IMAGES_FOLDER}/${safeFileName}`,
+          imgBase64,
+          `Add image for ${title}`
+        );
+
+        const imagePathForSite = `images/${safeFileName}`; // what products.json will use
+
+        setStatus("Image uploaded. Updating products.json…");
+
+        // 2) Get current products.json from GitHub
+        const prodFile = await githubGet(PRODUCTS_PATH);
+        const currentJson = atob(prodFile.content);
+        const products = JSON.parse(currentJson);
+
+        // 3) Push new record
+        products.push({
+          id,
+          title,
+          price,
+          grade,
+          image: imagePathForSite,
+          description
+        });
+
+        const newJsonString = JSON.stringify(products, null, 2);
+        const newJsonBase64 = btoa(newJsonString);
+
+        // 4) Write products.json back to GitHub
+        await githubPut(
+          PRODUCTS_PATH,
+          newJsonBase64,
+          `Add record: ${title}`,
+          prodFile.sha
+        );
+
+        setStatus("Saved! Netlify will redeploy and the record will show on Shop in a bit.", "ok");
+        (e.target).reset();
+      } catch (err) {
+        console.error(err);
+        setStatus("Error: " + err.message, "err");
+      } finally {
+        saveBtn.disabled = false;
       }
     }
 
-    // Allow Enter key to submit password
-    document.addEventListener("DOMContentLoaded", () => {
-      const input = document.getElementById("admin-password");
-      if (!input) return;
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          checkAdminPassword();
-        }
-      });
-    });
+    document.getElementById("recordForm").addEventListener("submit", handleSubmit);
   </script>
-
-  <script defer src="script.js"></script>
-</head>
-<body>
-  <!-- SELLER LOGIN OVERLAY -->
-  <div id="login-screen" class="login-screen">
-    <div class="login-card">
-      <h1>Seller Login</h1>
-      <p>
-        Private KornDog Records seller portal.  
-        Drop the password and step into the Vinyl Therapy lab.
-      </p>
-      <input type="password" id="admin-password" placeholder="Portal password" />
-      <button class="btn-primary" style="width:100%;" onclick="checkAdminPassword()">
-        Enter Portal
-      </button>
-      <div id="login-error" class="login-error" style="display:none;">
-        Wrong password, bubba. Try again.
-      </div>
-    </div>
-  </div>
-
-  <!-- ACTUAL ADMIN SHELL (HIDDEN UNTIL PASSWORD IS CORRECT) -->
-  <div id="admin-shell" style="display:none;">
-    <header>
-      <div class="nav-inner">
-        <div class="brand">
-          <div class="brand-logo">
-            <img src="images/logo-round.png" alt="KornDog Records logo" />
-          </div>
-          <div class="brand-text">
-            <strong>KORNDOG RECORDS</strong>
-            <span>Admin · Vinyl Therapy Lab</span>
-          </div>
-        </div>
-        <nav>
-          <a href="index.html" class="nav-link">Home</a>
-          <a href="shop.html" class="nav-link">Shop</a>
-          <a href="cart.html" class="nav-link cart-pill">
-            Cart <span data-cart-count>0</span>
-          </a>
-        </nav>
-      </div>
-    </header>
-
-    <main>
-      <section class="section admin-wrap">
-        <h2>Inventory Editor</h2>
-        <p style="font-size:0.9rem;color:var(--muted);max-width:640px;">
-          This page edits <code>products.json</code>. Change titles, prices, grades, and image paths here,
-          then hit <strong>Download JSON</strong>. Upload that file to your GitHub repo (replace the existing
-          <code>products.json</code>) and Netlify will redeploy your site with the new inventory.
-        </p>
-        <p style="font-size:0.85rem;color:var(--muted);margin-top:0.4rem;">
-          For images: upload the record photo into your repo’s <code>images/</code> folder on GitHub, then paste the
-          filename here (example: <code>images/sum41.jpg</code>).
-        </p>
-
-        <!-- script.js will render the editor into this div -->
-        <div id="admin-root" style="margin-top:1.25rem;"></div>
-      </section>
-    </main>
-
-    <footer>
-      <p>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</p>
-    </footer>
-  </div>
 </body>
 </html>
