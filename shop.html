@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Optional shared stylesheet -->
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -16,31 +18,40 @@
       --muted: #a1a1c5;
       --card: #12052b;
       --border: #2b1550;
-      --danger: #ff4b6a;
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
       color: var(--text);
       background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
     }
 
-    a { color: inherit; text-decoration: none; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-    /* HEADER */
+    /* HEADER / NAV */
+
     header {
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
       backdrop-filter: blur(12px);
-      background: linear-gradient(to right, rgba(10,1,30,.95), rgba(10,1,25,.9));
-      border-bottom: 1px solid rgba(123,255,90,0.2);
+      background: linear-gradient(
+        to right,
+        rgba(10, 1, 30, 0.95),
+        rgba(10, 1, 25, 0.9)
+      );
+      border-bottom: 1px solid rgba(123, 255, 90, 0.2);
     }
 
     .nav-inner {
@@ -50,6 +61,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .logo-circle {
@@ -57,6 +75,7 @@
       height: 44px;
       border-radius: 999px;
       border: 2px solid var(--accent);
+      background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
       overflow: hidden;
     }
 
@@ -66,15 +85,20 @@
       object-fit: cover;
     }
 
-    nav { display: flex; gap: 0.75rem; }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
 
     .nav-link {
       padding: 0.6rem 1.6rem;
       border-radius: 999px;
-      border: 1px solid transparent;
+      font-size: 0.92rem;
       color: var(--muted);
-      font-size: .92rem;
+      border: 1px solid transparent;
       font-weight: 500;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
 
     .nav-link.active {
@@ -83,38 +107,60 @@
       font-weight: 600;
     }
 
+    .nav-link:hover {
+      border-color: rgba(123, 255, 90, 0.6);
+      color: var(--text);
+    }
+
     .cart-pill {
       display: inline-flex;
       align-items: center;
-      gap: .35rem;
-      padding: .45rem .9rem;
+      gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
       border-radius: 999px;
-      background: rgba(123,255,90,.12);
-      border: 1px solid rgba(123,255,90,.5);
+      background: rgba(123, 255, 90, 0.12);
+      border: 1px solid rgba(123, 255, 90, 0.5);
+      font-size: 0.88rem;
     }
 
     .cart-pill span {
       background: var(--accent);
       color: #02010a;
-      padding: .2rem .6rem;
       border-radius: 999px;
+      padding: 0.2rem 0.6rem;
       font-weight: 600;
     }
 
-    /* CONTENT */
+    @media (max-width: 800px) {
+      .nav-inner {
+        flex-wrap: nowrap;
+        justify-content: space-between;
+      }
+    }
+
+    /* MAIN LAYOUT */
+
     main {
       max-width: 1100px;
       margin: 0 auto;
       padding: 1.5rem 1.25rem 3rem;
     }
 
-    h2 { margin: 0 0 .75rem; font-size: 1.8rem; }
-    .subtitle { margin: 0; color: var(--muted); font-size: .95rem; }
+    h2 {
+      margin-bottom: 0.75rem;
+      font-size: 1.8rem;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
 
     .products-grid {
       margin-top: 1.75rem;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px,1fr));
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 1.25rem;
     }
 
@@ -125,36 +171,113 @@
       border: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      gap: .4rem;
+      gap: 0.4rem;
     }
 
     .record-card img {
       width: 100%;
-      aspect-ratio: 1/1;
+      aspect-ratio: 1 / 1;
       object-fit: cover;
       border-radius: 1rem;
+      margin-bottom: 0.5rem;
     }
 
-    .qty-text { color: var(--muted); font-size: .85rem; }
+    .image-missing {
+      background: repeating-linear-gradient(
+        45deg,
+        #1f102f,
+        #1f102f 6px,
+        #12061f 6px,
+        #12061f 12px
+      );
+    }
+
+    .record-card h3 {
+      font-size: 1rem;
+      margin: 0.15rem 0;
+    }
+
+    .record-grade {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .record-price {
+      font-weight: 600;
+      margin-top: 0.2rem;
+    }
+
+    .record-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .qty-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
 
     .btn-primary {
+      border-radius: 999px;
+      padding: 0.6rem 1.3rem;
+      font-size: 0.92rem;
       border: none;
+      cursor: pointer;
+      font-weight: 600;
       background: var(--accent);
       color: #02010a;
-      padding: .6rem 1.3rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+
+    /* PAGINATION (script.js injects buttons) */
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .pagination button {
+      min-width: 40px;
+      padding: 0.35rem 0.9rem;
       border-radius: 999px;
+      border: 1px solid rgba(123, 255, 90, 0.7);
+      background: rgba(123, 255, 90, 0.12);
+      color: var(--accent);
       font-weight: 600;
+      font-size: 0.9rem;
       cursor: pointer;
     }
 
-    footer {
-      text-align: center;
-      color: var(--muted);
-      padding: 2rem;
-      font-size: .78rem;
+    .pagination button.active {
+      background: var(--accent);
+      color: #02010a;
+      box-shadow: 0 0 12px rgba(123, 255, 90, 0.5);
     }
 
-    /* FLOATING BUTTON */
+    footer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.25rem 2rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    footer strong {
+      color: var(--accent);
+    }
+
+    /* FLOATING 💬 BUTTON */
+
     .floating-message {
       position: fixed;
       bottom: 20px;
@@ -170,40 +293,41 @@
       justify-content: center;
       font-size: 1.3rem;
       font-weight: 700;
-      box-shadow: 0 0 16px rgba(123,255,90,.5);
+      box-shadow: 0 0 16px rgba(123, 255, 90, 0.5);
+      cursor: pointer;
     }
 
-    /* ZOMBIE KITTY SYSTEM */
+    /* ZOMBIE KITTY OVERLAY */
+
     .zk-overlay {
       position: fixed;
       bottom: 90px;
-      left: -420px; /* hidden */
+      left: -420px; /* fully hidden off-screen */
       display: flex;
       align-items: flex-end;
       gap: 10px;
       z-index: 9998;
-      transition: left .6s ease;
+      transition: left 0.6s ease;
       pointer-events: none;
     }
 
     .zk-overlay.active {
-      left: 20px;
+      left: 20px; /* slide into view */
     }
 
     .zk-kitty {
       width: 140px;
-      opacity: .95;
+      opacity: 0.95;
       animation: zk-blink 5s infinite, zk-wave 1.2s infinite ease-in-out;
       transform-origin: top right;
     }
 
     @keyframes zk-blink {
       0%, 90%, 100% { filter: brightness(1); }
-      92% { filter: brightness(.2); }
+      92% { filter: brightness(0.2); }
       95% { filter: brightness(1); }
     }
 
-    /* waving the hand */
     @keyframes zk-wave {
       0% { transform: rotate(0deg); }
       20% { transform: rotate(6deg); }
@@ -219,10 +343,12 @@
       padding: 12px 16px;
       font-weight: 600;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       max-width: 240px;
       pointer-events: auto;
       position: relative;
+      font-size: 0.9rem;
+      line-height: 1.4;
     }
 
     .zk-tail {
@@ -235,97 +361,93 @@
       left: -12px;
       bottom: 20px;
     }
-
   </style>
 
+  <!-- existing logic for products/cart/pagination -->
   <script defer src="script.js"></script>
 </head>
-
 <body>
-
-<header>
-  <div class="nav-inner">
-    <a href="index.html" class="logo-link">
-      <div class="logo-circle">
-        <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
-      </div>
-    </a>
-
-    <nav>
-      <a href="index.html" class="nav-link">Home</a>
-      <a href="shop.html" class="nav-link active">Shop</a>
-      <a href="cart.html" class="nav-link cart-pill">
-        Cart <span data-cart-count>0</span>
+  <header>
+    <div class="nav-inner">
+      <a href="index.html" class="logo-link">
+        <div class="logo-circle">
+          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
+        </div>
       </a>
-    </nav>
+
+      <nav>
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link active">Shop</a>
+        <a href="cart.html" class="nav-link cart-pill">
+          Cart <span data-cart-count>0</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h2>Shop Vinyl</h2>
+    <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
+
+    <div id="products" class="products-grid"></div>
+    <div id="pagination" class="pagination"></div>
+  </main>
+
+  <footer>
+    © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
+  </footer>
+
+  <!-- FLOATING CONTACT BUTTON -->
+  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
+
+  <!-- ZOMBIE KITTY ASSISTANT -->
+  <div id="zkOverlay" class="zk-overlay">
+    <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
+    <div class="zk-bubble" id="zkBubble">
+      <div class="zk-tail"></div>
+      Hi! I'm Zombie Kitty — your crate-digging assistant.<br><br>
+      I'll get KornDog for you now…
+    </div>
   </div>
-</header>
 
-<main>
-  <h2>Shop Vinyl</h2>
-  <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
+  <script>
+    (function () {
+      const btn = document.getElementById('floatingJoey');
+      const overlay = document.getElementById('zkOverlay');
+      const bubble = document.getElementById('zkBubble');
+      if (!btn || !overlay || !bubble) return;
 
-  <div id="products" class="products-grid"></div>
-</main>
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      let running = false;
 
-<footer>
-  © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
-</footer>
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (running) return;
+        running = true;
 
-<!-- FLOATING MESSAGE BUTTON -->
-<a id="floatingJoey" class="floating-message">💬</a>
+        // Reset text in case of second use
+        bubble.innerHTML = '<div class="zk-tail"></div>Hi! I\'m Zombie Kitty — your crate-digging assistant.<br><br>I\'ll get KornDog for you now…';
 
-<!-- ZOMBIE KITTY ASSISTANT -->
-<div id="zkAssist" class="zk-overlay">
-  <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty">
-  <div class="zk-bubble">
-    <div class="zk-tail"></div>
-    Hi! I'm Zombie Kitty — your crate-digging assistant.<br><br>
-    I'll get KornDog for you now…
-  </div>
-</div>
+        // Slide her in
+        overlay.classList.add('active');
 
-<script>
-(function () {
-  const zk = document.getElementById("zkAssist");
-  const btn = document.getElementById("floatingJoey");
-  if (!zk || !btn) return;
+        // Keep her visible for 5.5 seconds
+        setTimeout(() => {
+          // Slide her out
+          overlay.classList.remove('active');
 
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  let running = false;
-
-  btn.addEventListener("click", function (e) {
-    e.preventDefault();
-    if (running) return;
-    running = true;
-
-    zk.style.left = "-420px"; 
-    zk.classList.add("active");
-
-    // Show for 5.5 seconds
-    setTimeout(() => {
-
-      // Slide back out
-      zk.classList.remove("active");
-
-      setTimeout(() => {
-        zk.style.left = "-420px";
-
-        // THEN launch contact
-        if (isMobile) {
-          window.location.href = "sms:2707843283?body=Hey%20KornDog!";
-        } else {
-          window.location.href = "mailto:korndogrecords@gmail.com?subject=Hey%20KornDog!";
-        }
-
-        running = false;
-
-      }, 600);
-
-    }, 5500);
-  });
-})();
-</script>
-
+          // After slide-out animation, trigger contact
+          setTimeout(() => {
+            if (isMobile) {
+              window.location.href = 'sms:2707843283?body=Hey%20KornDog!';
+            } else {
+              window.location.href = 'mailto:korndogrecords@gmail.com?subject=Hey%20KornDog!';
+            }
+            running = false;
+          }, 600); // matches CSS transition
+        }, 5500);
+      });
+    })();
+  </script>
 </body>
 </html>
