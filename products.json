@@ -110,5 +110,13 @@
     "grade": "VG+/VG+",
     "image": "images/rn-image_picker_lib_temp_6eed81b0-419c-42a9-938d-e44da8a3154d.jpg",
     "description": "Country storytelling at its peak. Randy Travis’ debut album didn’t just climb charts, it rewrote what country could be."
+  },
+  {
+    "id": "AC/DC",
+    "title": "Black In Black",
+    "price": 17.99,
+    "grade": "NM/NM",
+    "image": "images/AC_DC-1764228748149.jpg",
+    "description": "Iconic album"
   }
 ]
