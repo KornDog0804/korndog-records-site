@@ -166,5 +166,13 @@
     "grade": "VG+/VG+",
     "image": "images/David_Lee_Roth_EP-1764230391826.jpg",
     "description": "Super Clean"
+  },
+  {
+    "id": "Foreigner",
+    "title": "4",
+    "price": 9.99,
+    "grade": "VG/VG+",
+    "image": "images/Foreigner-1764230780118.jpg",
+    "description": "You know it you love it now it can be yours."
   }
 ]
