@@ -4,53 +4,33 @@
   <meta charset="utf-8" />
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- External stylesheet (if you use it) -->
   <link rel="stylesheet" href="style.css">
 
   <style>
     :root {
       --bg: #050013;
-      --bg-alt: #0b0420;
       --accent: #7bff5a;
-      --accent-soft: rgba(123, 255, 90, 0.1);
       --text: #f5f5ff;
       --muted: #a1a1c5;
       --card: #12052b;
       --border: #2b1550;
-      --danger: #ff4b6a;
-    }
-
-    * {
-      box-sizing: border-box;
     }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       color: var(--text);
       background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
     }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* HEADER / NAV */
 
     header {
       position: sticky;
       top: 0;
       z-index: 10;
       backdrop-filter: blur(12px);
-      background: linear-gradient(
-        to right,
-        rgba(10, 1, 30, 0.95),
-        rgba(10, 1, 25, 0.9)
-      );
-      border-bottom: 1px solid rgba(123, 255, 90, 0.2);
+      background: rgba(10,1,25,0.9);
+      border-bottom: 1px solid rgba(123,255,90,0.2);
     }
 
     .nav-inner {
@@ -60,93 +40,35 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
     }
 
-    .logo-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo-circle {
-      width: 44px;
-      height: 44px;
+    nav a {
+      padding: 0.6rem 1.4rem;
       border-radius: 999px;
-      border: 2px solid var(--accent);
-      background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
-      overflow: hidden;
-    }
-
-    .logo-circle img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .nav-link {
-      padding: 0.6rem 1.6rem;
-      border-radius: 999px;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
+      text-decoration: none;
       color: var(--muted);
       border: 1px solid transparent;
-      font-weight: 500;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
 
-    .nav-link.active {
+    nav a.active {
       background: var(--accent);
       color: #02010a;
       font-weight: 600;
-    }
-
-    .nav-link:hover {
-      border-color: rgba(123, 255, 90, 0.6);
-      color: var(--text);
-    }
-
-    .cart-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      background: rgba(123, 255, 90, 0.12);
-      border: 1px solid rgba(123, 255, 90, 0.5);
-      font-size: 0.88rem;
     }
 
     .cart-pill span {
       background: var(--accent);
       color: #02010a;
-      border-radius: 999px;
-      padding: 0.2rem 0.6rem;
-      font-weight: 600;
+      padding: 0 8px;
+      border-radius: 12px;
+      margin-left: 6px;
     }
-
-    /* MAIN LAYOUT */
 
     main {
       max-width: 1100px;
       margin: 0 auto;
       padding: 1.5rem 1.25rem 3rem;
-    }
-
-    h2 {
-      margin: 0 0 0.75rem;
-      font-size: 1.8rem;
-    }
-
-    .subtitle {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
     }
 
     .products-grid {
@@ -156,357 +78,177 @@
       gap: 1.25rem;
     }
 
-    .record-card {
-      background: var(--card);
-      border-radius: 1.4rem;
-      padding: 1rem;
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .record-card img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      border-radius: 1rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .image-missing {
-      background: repeating-linear-gradient(
-        45deg,
-        #1f102f,
-        #1f102f 6px,
-        #12061f 6px,
-        #12061f 12px
-      );
-    }
-
-    .record-card h3 {
-      font-size: 1rem;
-      margin: 0.15rem 0;
-    }
-
-    .record-grade {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .record-price {
-      font-weight: 600;
-      margin-top: 0.2rem;
-    }
-
-    .record-desc {
-      font-size: 0.85rem;
-      color: var(--muted);
-      flex: 1;
-    }
-
-    .qty-text {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-top: 0.15rem;
-    }
-
-    .btn-primary {
-      border-radius: 999px;
-      padding: 0.6rem 1.3rem;
-      font-size: 0.92rem;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      background: var(--accent);
-      color: #02010a;
-      margin-top: 0.5rem;
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.05);
-    }
-
-    footer {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 1.25rem 2rem;
-      font-size: 0.78rem;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    footer strong {
-      color: var(--accent);
-    }
-
-    @media (max-width: 800px) {
-      .nav-inner {
-        flex-wrap: nowrap;
-        justify-content: space-between;
-      }
-    }
-
-    /* Floating contact bubble (shop-only) */
+    /* FLOATING MESSAGE BUBBLE */
     .floating-message {
       position: fixed;
-      bottom: 10px;
-      right: 10px;
-      z-index: 9999;
-      width: 44px;
-      height: 44px;
-      border-radius: 999px;
+      bottom: 12px;
+      right: 12px;
       background: var(--accent);
-      color: #02010a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      font-weight: 700;
-      box-shadow: 0 0 14px rgba(123,255,90,0.55);
-      border: 1px solid #02010a;
-      text-decoration: none;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease,
-        bottom 0.15s ease, right 0.15s ease;
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 1.3rem;
+      color:#02010a;
+      box-shadow: 0 0 20px rgba(123,255,90,0.75);
+      cursor:pointer;
+      z-index:9999;
+      transition: transform .15s ease, opacity .2s ease;
     }
 
     .floating-message:hover {
-      transform: scale(1.06);
-      box-shadow: 0 0 20px rgba(123,255,90,0.75);
-    }
-
-    .floating-message.hidden {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(8px);
+      transform: scale(1.07);
     }
 
     /* ZOMBIE KITTY OVERLAY */
-
     .zk-overlay {
       position: fixed;
-      bottom: 72px; /* above the 💬 button */
-      right: 10px;
-      z-index: 9998;
-      pointer-events: none;
+      bottom: -500px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      padding-bottom: 20px;
+      display:flex;
+      flex-direction: column;
+      align-items:center;
       opacity: 0;
-      transform: translateX(140%);
-      transition: opacity 0.25s ease, transform 0.35s ease;
+      pointer-events:none;
+      z-index: 9998;
+      transition: bottom .45s ease, opacity .45s ease;
     }
 
     .zk-overlay.active {
+      bottom: 90px;
       opacity: 1;
-      transform: translateX(0);
-    }
-
-    .zk-wrapper {
-      position: relative;
-      display: flex;
-      align-items: flex-end;
-      gap: 0.5rem;
     }
 
     .zk-img {
-      width: 120px;
-      height: auto;
-      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.8));
-      transform-origin: center bottom;
+      width: 180px;
+      animation: zkWave 1.8s infinite ease-in-out;
+      opacity: 0.95;
     }
 
-    /* Goofy wave animation (whole body tilt) */
-    @keyframes zk-wave {
-      0%   { transform: rotate(0deg); }
-      25%  { transform: rotate(-6deg); }
-      50%  { transform: rotate(4deg); }
-      75%  { transform: rotate(-3deg); }
+    @keyframes zkWave {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(2deg); }
+      50% { transform: rotate(0deg); }
+      75% { transform: rotate(-2deg); }
       100% { transform: rotate(0deg); }
     }
 
-    /* Rapid "blink" (squish) */
-    @keyframes zk-blink {
-      0%   { transform: scaleY(1); }
-      45%  { transform: scaleY(0.4); }
-      100% { transform: scaleY(1); }
+    /* Blink animation overlay */
+    .zk-eye {
+      position:absolute;
+      width:180px;
+      height:180px;
+      top:0;
+      left:50%;
+      transform:translateX(-50%);
+      background: transparent;
+      pointer-events: none;
+      animation: blink 6s infinite;
     }
 
-    .zk-wave {
-      animation: zk-wave 0.45s ease-in-out 2;
+    @keyframes blink {
+      0%, 97%, 100% { opacity: 0; }
+      98% { opacity: 1; }
     }
 
-    .zk-blink-fast {
-      animation: zk-blink 0.22s ease-in-out 2;
-    }
-
+    /* SPEECH BUBBLE */
     .zk-bubble {
-      max-width: 220px;
-      background: #ffeb3b;
-      color: #1a1300;
-      padding: 0.55rem 0.9rem;
-      border-radius: 0.9rem;
-      border: 2px solid #000;
-      font-size: 0.78rem;
-      font-weight: 700;
-      line-height: 1.3;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.6);
-      position: relative;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      margin-top: -10px;
+      background: #ffe14f;
+      padding: 12px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 14px;
+      color: #02010a;
+      width: 220px;
+      text-align:center;
+      box-shadow: 0 0 14px rgba(0,0,0,0.35);
+      animation: popIn .35s ease-out;
     }
 
-    .zk-bubble.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .zk-bubble::after {
-      content: "";
-      position: absolute;
-      bottom: -10px;
-      left: 20px;
-      border-width: 10px 10px 0 0;
-      border-style: solid;
-      border-color: #ffeb3b transparent transparent transparent;
-      filter: drop-shadow(0 2px 0 #000);
-    }
-
-    .zk-bubble-2 {
-      position: absolute;
-      bottom: 0;
-      left: 0;
+    @keyframes popIn {
+      0% { transform: scale(.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
   </style>
 
   <script defer src="script.js"></script>
 </head>
+
 <body>
-  <header>
-    <div class="nav-inner">
-      <a href="index.html" class="logo-link">
-        <div class="logo-circle">
-          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
-        </div>
-      </a>
 
-      <nav>
-        <a href="index.html" class="nav-link">Home</a>
-        <a href="shop.html" class="nav-link active">Shop</a>
-        <a href="cart.html" class="nav-link cart-pill">
-          Cart <span data-cart-count>0</span>
-        </a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <h2>Shop Vinyl</h2>
-    <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
-
-    <div id="products" class="products-grid"></div>
-    <!-- Pagination pills are injected by script.js -->
-  </main>
-
-  <footer>
-    © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
-  </footer>
-
-  <!-- Floating Contact Bubble (Shop Only) -->
-  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">
-    💬
-  </a>
-
-  <!-- Zombie Kitty overlay -->
-  <div id="zk-overlay" class="zk-overlay">
-    <div class="zk-wrapper">
-      <img
-        src="images/file_000000003b4871fd96148f1c33526782.png"
-        alt="Zombie Kitty"
-        class="zk-img"
-      />
-      <div class="zk-bubble zk-bubble-1">
-        Hi! I’m Zombie Kitty — your crate-digging assistant.
-      </div>
-      <div class="zk-bubble zk-bubble-2">
-        I’ll get KornDog for you now…
-      </div>
-    </div>
+<header>
+  <div class="nav-inner">
+    <a href="index.html">Home</a>
+    <a href="shop.html" class="active">Shop</a>
+    <a href="cart.html" class="cart-pill">Cart <span data-cart-count>0</span></a>
   </div>
+</header>
 
-  <script>
-    (function () {
-      const btn = document.getElementById('floatingJoey');
-      const overlay = document.getElementById('zk-overlay');
-      const kitty = overlay ? overlay.querySelector('.zk-img') : null;
-      const bubble1 = overlay ? overlay.querySelector('.zk-bubble-1') : null;
-      const bubble2 = overlay ? overlay.querySelector('.zk-bubble-2') : null;
+<main>
+  <h2>Shop Vinyl</h2>
+  <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
 
-      if (!btn || !overlay || !kitty || !bubble1 || !bubble2) return;
+  <div id="products" class="products-grid"></div>
+</main>
 
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+<footer>
+  © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
+</footer>
 
-      // Where we send them after the animation
-      const targetHref = isMobile
-        ? 'sms:2707843283'
-        : 'mailto:korndogrecords@gmail.com?subject=Question%20from%20KornDogRecords.com&body=Hey%20KornDog%2C%20I%20have%20a%20question%20about...';
+<!-- FLOATING BUTTON -->
+<div id="chatBtn" class="floating-message">💬</div>
 
-      let animRunning = false;
+<!-- ZOMBIE KITTY ANIMATION -->
+<div id="zkOverlay" class="zk-overlay">
+  
+  <!-- Kitty -->
+  <img src="images/3817.png" class="zk-img" alt="Zombie Kitty">
 
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (animRunning) return;
-        animRunning = true;
+  <!-- Fake eyelid (blink) -->
+  <div class="zk-eye"></div>
 
-        // Reset state
-        bubble1.classList.remove('show');
-        bubble2.classList.remove('show');
-        kitty.classList.remove('zk-wave', 'zk-blink-fast');
+  <!-- Bubble text -->
+  <div id="zkBubble" class="zk-bubble">Hi! I'm Zombie Kitty — your crate-digging assistant.</div>
 
-        // Show overlay and slide in
-        overlay.classList.add('active');
+</div>
 
-        // Wave + first blink right after slide-in
-        setTimeout(() => {
-          kitty.classList.add('zk-wave', 'zk-blink-fast');
-        }, 150);
 
-        // Show first bubble
-        setTimeout(() => {
-          bubble1.classList.add('show');
-        }, 250);
+<script>
+/* MAIN INTERACTION */
+(function () {
+  const btn = document.getElementById("chatBtn");
+  const overlay = document.getElementById("zkOverlay");
+  const bubble = document.getElementById("zkBubble");
 
-        // Switch to second bubble + another blink
-        setTimeout(() => {
-          bubble1.classList.remove('show');
-          bubble2.classList.add('show');
-          kitty.classList.remove('zk-wave');
-          kitty.classList.add('zk-blink-fast');
-        }, 1900);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-        // Open SMS / email after ~5 seconds total
-        setTimeout(() => {
-          window.location.href = targetHref;
-        }, 5000);
+  btn.addEventListener("click", () => {
+    overlay.classList.add("active");
+    bubble.textContent = "Hi! I'm Zombie Kitty — your crate-digging assistant.";
 
-        // Hide overlay slightly after navigation trigger
-        setTimeout(() => {
-          overlay.classList.remove('active');
-          bubble1.classList.remove('show');
-          bubble2.classList.remove('show');
-          kitty.classList.remove('zk-wave', 'zk-blink-fast');
-          animRunning = false;
-        }, 5200);
-      });
+    setTimeout(() => {
+      bubble.textContent = "I'll get KornDog for you now…";
+    }, 1800);
 
-      // Hide the 💬 bubble while scrolling, show when scroll stops
-      let hideTimer;
-      window.addEventListener('scroll', () => {
-        btn.classList.add('hidden');
-        clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => {
-          btn.classList.remove('hidden');
-        }, 600);
-      });
-    })();
-  </script>
+    setTimeout(() => {
+      overlay.classList.remove("active");
+
+      if (isMobile) {
+        window.location.href = "sms:2707843283";
+      } else {
+        window.location.href = "mailto:korndogrecords@gmail.com";
+      }
+
+    }, 3500);
+  });
+})();
+</script>
+
 </body>
 </html>
