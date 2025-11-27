@@ -134,5 +134,13 @@
     "grade": "VG/VG",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
     "description": "Super clean OG copy"
+  },
+  {
+    "id": "The Police",
+    "title": "Zenyatta Mondatta",
+    "price": 9.99,
+    "grade": "VG+/Vag+",
+    "image": "images/The_Police-1764229577731.jpg",
+    "description": "Great Copy Super Clean"
   }
 ]
