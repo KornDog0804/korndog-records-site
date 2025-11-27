@@ -5,7 +5,7 @@
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- External stylesheet for shared styles -->
+  <!-- External stylesheet (if you use it) -->
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -39,6 +39,7 @@
     }
 
     /* HEADER / NAV */
+
     header {
       position: sticky;
       top: 0;
@@ -130,6 +131,7 @@
     }
 
     /* MAIN LAYOUT */
+
     main {
       max-width: 1100px;
       margin: 0 auto;
@@ -245,97 +247,136 @@
       }
     }
 
-    /* FLOATING CONTACT BUBBLE */
+    /* Floating contact bubble (shop-only) */
     .floating-message {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 99999;
-      width: 50px;
-      height: 50px;
+      bottom: 10px;
+      right: 10px;
+      z-index: 9999;
+      width: 44px;
+      height: 44px;
       border-radius: 999px;
       background: var(--accent);
       color: #02010a;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       font-weight: 700;
-      box-shadow: 0 0 16px rgba(123,255,90,0.55);
+      box-shadow: 0 0 14px rgba(123,255,90,0.55);
       border: 1px solid #02010a;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.2s ease;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease,
+        bottom 0.15s ease, right 0.15s ease;
     }
 
     .floating-message:hover {
       transform: scale(1.06);
+      box-shadow: 0 0 20px rgba(123,255,90,0.75);
     }
 
     .floating-message.hidden {
       opacity: 0;
       pointer-events: none;
+      transform: translateY(8px);
     }
 
-    /* ZOMBIE KITTY – BATMAN STYLE SPEECH BUBBLE */
-    #kitty-wrap {
+    /* ZOMBIE KITTY OVERLAY */
+
+    .zk-overlay {
       position: fixed;
-      bottom: -220px; /* start off-screen */
-      right: 80px;
-      width: 160px;
-      z-index: 99998;
-      opacity: 0;
-      transition: all 0.4s ease-out;
+      bottom: 72px; /* above the 💬 button */
+      right: 10px;
+      z-index: 9998;
       pointer-events: none;
-    }
-
-    #kitty-wrap.active {
-      bottom: 22px;
-      opacity: 1;
-    }
-
-    #kitty {
-      width: 100%;
-      filter: drop-shadow(0 0 8px rgba(0,0,0,0.7));
-    }
-
-    #kitty-bubble {
-      position: absolute;
-      left: -20px;
-      bottom: 130px;
-      max-width: 220px;
-      background: #ffec4a;
-      color: #000;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 3px solid #000;
-      font-size: 0.85rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.5);
-      transform: rotate(-2deg) translateY(10px);
       opacity: 0;
-      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+      transform: translateX(140%);
+      transition: opacity 0.25s ease, transform 0.35s ease;
     }
 
-    #kitty-bubble::after {
+    .zk-overlay.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .zk-wrapper {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      gap: 0.5rem;
+    }
+
+    .zk-img {
+      width: 120px;
+      height: auto;
+      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.8));
+      transform-origin: center bottom;
+    }
+
+    /* Goofy wave animation (whole body tilt) */
+    @keyframes zk-wave {
+      0%   { transform: rotate(0deg); }
+      25%  { transform: rotate(-6deg); }
+      50%  { transform: rotate(4deg); }
+      75%  { transform: rotate(-3deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Rapid "blink" (squish) */
+    @keyframes zk-blink {
+      0%   { transform: scaleY(1); }
+      45%  { transform: scaleY(0.4); }
+      100% { transform: scaleY(1); }
+    }
+
+    .zk-wave {
+      animation: zk-wave 0.45s ease-in-out 2;
+    }
+
+    .zk-blink-fast {
+      animation: zk-blink 0.22s ease-in-out 2;
+    }
+
+    .zk-bubble {
+      max-width: 220px;
+      background: #ffeb3b;
+      color: #1a1300;
+      padding: 0.55rem 0.9rem;
+      border-radius: 0.9rem;
+      border: 2px solid #000;
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.3;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+      position: relative;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .zk-bubble.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .zk-bubble::after {
       content: "";
       position: absolute;
-      bottom: -16px;
-      left: 40px;
+      bottom: -10px;
+      left: 20px;
+      border-width: 10px 10px 0 0;
       border-style: solid;
-      border-width: 16px 14px 0 14px;
-      border-color: #ffec4a transparent transparent transparent;
-      filter: drop-shadow(0 -2px 0 #000);
+      border-color: #ffeb3b transparent transparent transparent;
+      filter: drop-shadow(0 2px 0 #000);
     }
 
-    #kitty-wrap.active #kitty-bubble {
-      opacity: 1;
-      transform: rotate(-2deg) translateY(0);
+    .zk-bubble-2 {
+      position: absolute;
+      bottom: 0;
+      left: 0;
     }
   </style>
 
-  <!-- Main JS (cart, products, pagination, etc.) -->
   <script defer src="script.js"></script>
 </head>
 <body>
@@ -362,73 +403,110 @@
     <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
 
     <div id="products" class="products-grid"></div>
-    <!-- Pagination pills still handled by script.js / style.css -->
+    <!-- Pagination pills are injected by script.js -->
   </main>
 
   <footer>
     © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
 
-  <!-- Zombie Kitty Contact Assistant -->
-  <div id="kitty-wrap">
-    <img id="kitty" src="images/Screenshot_20250926-234627.png" alt="Zombie Kitty">
-    <div id="kitty-bubble">Hey! I’ll get KornDog for you now…</div>
+  <!-- Floating Contact Bubble (Shop Only) -->
+  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">
+    💬
+  </a>
+
+  <!-- Zombie Kitty overlay -->
+  <div id="zk-overlay" class="zk-overlay">
+    <div class="zk-wrapper">
+      <img
+        src="images/file_000000003b4871fd96148f1c33526782.png"
+        alt="Zombie Kitty"
+        class="zk-img"
+      />
+      <div class="zk-bubble zk-bubble-1">
+        Hi! I’m Zombie Kitty — your crate-digging assistant.
+      </div>
+      <div class="zk-bubble zk-bubble-2">
+        I’ll get KornDog for you now…
+      </div>
+    </div>
   </div>
 
-  <!-- Floating contact bubble -->
-  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
-
-  <!-- Optional ping sound (drop kitty-ping.mp3 in the site root or change path) -->
-  <audio id="kittyPing" src="kitty-ping.mp3" preload="auto"></audio>
-
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const btn   = document.getElementById('floatingJoey');
-      const kitty = document.getElementById('kitty-wrap');
-      const ping  = document.getElementById('kittyPing');
+    (function () {
+      const btn = document.getElementById('floatingJoey');
+      const overlay = document.getElementById('zk-overlay');
+      const kitty = overlay ? overlay.querySelector('.zk-img') : null;
+      const bubble1 = overlay ? overlay.querySelector('.zk-bubble-1') : null;
+      const bubble2 = overlay ? overlay.querySelector('.zk-bubble-2') : null;
 
-      if (!btn || !kitty) return;
+      if (!btn || !overlay || !kitty || !bubble1 || !bubble2) return;
 
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-      const smsBody    = "Hey KornDog, I had a question on your site...";
-      const mailBody   = "Hey KornDog,%0D%0A%0D%0AI was browsing your site and had a question about:";
-      const mailSubject = "KornDog Records website question";
+      // Where we send them after the animation
+      const targetHref = isMobile
+        ? 'sms:2707843283'
+        : 'mailto:korndogrecords@gmail.com?subject=Question%20from%20KornDogRecords.com&body=Hey%20KornDog%2C%20I%20have%20a%20question%20about...';
+
+      let animRunning = false;
 
       btn.addEventListener('click', function (e) {
         e.preventDefault();
+        if (animRunning) return;
+        animRunning = true;
 
-        // Slide in Zombie Kitty + Batman bubble
-        kitty.classList.add('active');
+        // Reset state
+        bubble1.classList.remove('show');
+        bubble2.classList.remove('show');
+        kitty.classList.remove('zk-wave', 'zk-blink-fast');
 
-        // Play ping (if file exists)
-        if (ping && ping.play) {
-          try {
-            ping.currentTime = 0;
-            ping.play().catch(() => {});
-          } catch (_) {}
-        }
+        // Show overlay and slide in
+        overlay.classList.add('active');
 
-        // After the animation, open SMS or email
-        const target = isMobile
-          ? `sms:2707843283?body=${encodeURIComponent(smsBody)}`
-          : `mailto:korndogrecords@gmail.com?subject=${encodeURIComponent(mailSubject)}&body=${mailBody}`;
-
+        // Wave + first blink right after slide-in
         setTimeout(() => {
-          window.location.href = target;
-        }, 550);
+          kitty.classList.add('zk-wave', 'zk-blink-fast');
+        }, 150);
+
+        // Show first bubble
+        setTimeout(() => {
+          bubble1.classList.add('show');
+        }, 250);
+
+        // Switch to second bubble + another blink
+        setTimeout(() => {
+          bubble1.classList.remove('show');
+          bubble2.classList.add('show');
+          kitty.classList.remove('zk-wave');
+          kitty.classList.add('zk-blink-fast');
+        }, 1900);
+
+        // Open SMS / email after ~5 seconds total
+        setTimeout(() => {
+          window.location.href = targetHref;
+        }, 5000);
+
+        // Hide overlay slightly after navigation trigger
+        setTimeout(() => {
+          overlay.classList.remove('active');
+          bubble1.classList.remove('show');
+          bubble2.classList.remove('show');
+          kitty.classList.remove('zk-wave', 'zk-blink-fast');
+          animRunning = false;
+        }, 5200);
       });
 
-      // Hide bubble briefly while scrolling so it never blocks content
-      let scrollTimer;
+      // Hide the 💬 bubble while scrolling, show when scroll stops
+      let hideTimer;
       window.addEventListener('scroll', () => {
         btn.classList.add('hidden');
-        clearTimeout(scrollTimer);
-        scrollTimer = setTimeout(() => {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
           btn.classList.remove('hidden');
-        }, 400);
+        }, 600);
       });
-    });
+    })();
   </script>
 </body>
 </html>
