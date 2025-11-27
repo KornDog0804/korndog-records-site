@@ -5,7 +5,7 @@
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- External stylesheet -->
+  <!-- External stylesheet for shared styles -->
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -38,8 +38,7 @@
       text-decoration: none;
     }
 
-    /* HEADER */
-
+    /* HEADER / NAV */
     header {
       position: sticky;
       top: 0;
@@ -50,7 +49,7 @@
         rgba(10, 1, 30, 0.95),
         rgba(10, 1, 25, 0.9)
       );
-      border-bottom: 1px solid rgba(123,255,90,0.2);
+      border-bottom: 1px solid rgba(123, 255, 90, 0.2);
     }
 
     .nav-inner {
@@ -97,7 +96,7 @@
       color: var(--muted);
       border: 1px solid transparent;
       font-weight: 500;
-      transition: 0.15s ease;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
 
     .nav-link.active {
@@ -107,7 +106,7 @@
     }
 
     .nav-link:hover {
-      border-color: rgba(123,255,90,0.6);
+      border-color: rgba(123, 255, 90, 0.6);
       color: var(--text);
     }
 
@@ -117,8 +116,8 @@
       gap: 0.35rem;
       padding: 0.45rem 0.9rem;
       border-radius: 999px;
-      background: rgba(123,255,90,0.12);
-      border: 1px solid rgba(123,255,90,0.5);
+      background: rgba(123, 255, 90, 0.12);
+      border: 1px solid rgba(123, 255, 90, 0.5);
       font-size: 0.88rem;
     }
 
@@ -130,8 +129,7 @@
       font-weight: 600;
     }
 
-    /* MAIN */
-
+    /* MAIN LAYOUT */
     main {
       max-width: 1100px;
       margin: 0 auto;
@@ -174,21 +172,41 @@
       margin-bottom: 0.5rem;
     }
 
-    .record-card h3 {
-      margin: 0.15rem 0;
-      font-size: 1rem;
+    .image-missing {
+      background: repeating-linear-gradient(
+        45deg,
+        #1f102f,
+        #1f102f 6px,
+        #12061f 6px,
+        #12061f 12px
+      );
     }
 
-    .record-grade,
-    .record-desc,
-    .qty-text {
+    .record-card h3 {
+      font-size: 1rem;
+      margin: 0.15rem 0;
+    }
+
+    .record-grade {
       font-size: 0.85rem;
       color: var(--muted);
     }
 
     .record-price {
-      margin-top: 0.2rem;
       font-weight: 600;
+      margin-top: 0.2rem;
+    }
+
+    .record-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      flex: 1;
+    }
+
+    .qty-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
     }
 
     .btn-primary {
@@ -211,58 +229,121 @@
       max-width: 1100px;
       margin: 0 auto;
       padding: 0 1.25rem 2rem;
-      text-align: center;
       font-size: 0.78rem;
       color: var(--muted);
+      text-align: center;
     }
 
     footer strong {
       color: var(--accent);
     }
 
-    /* FLOATING MESSAGE BUBBLE */
+    @media (max-width: 800px) {
+      .nav-inner {
+        flex-wrap: nowrap;
+        justify-content: space-between;
+      }
+    }
 
+    /* FLOATING CONTACT BUBBLE */
     .floating-message {
       position: fixed;
-      bottom: 10px;
-      right: 10px;
-      z-index: 9999;
-      width: 42px;
-      height: 42px;
+      bottom: 20px;
+      right: 20px;
+      z-index: 99999;
+      width: 50px;
+      height: 50px;
       border-radius: 999px;
       background: var(--accent);
       color: #02010a;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.15rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      box-shadow: 0 0 14px rgba(123,255,90,0.55);
+      box-shadow: 0 0 16px rgba(123,255,90,0.55);
       border: 1px solid #02010a;
-      transition: 0.15s ease;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.2s ease;
     }
 
     .floating-message:hover {
-      transform: scale(1.07);
-      box-shadow: 0 0 20px rgba(123,255,90,0.75);
+      transform: scale(1.06);
     }
 
     .floating-message.hidden {
       opacity: 0;
       pointer-events: none;
-      transform: translateY(10px);
+    }
+
+    /* ZOMBIE KITTY – BATMAN STYLE SPEECH BUBBLE */
+    #kitty-wrap {
+      position: fixed;
+      bottom: -220px; /* start off-screen */
+      right: 80px;
+      width: 160px;
+      z-index: 99998;
+      opacity: 0;
+      transition: all 0.4s ease-out;
+      pointer-events: none;
+    }
+
+    #kitty-wrap.active {
+      bottom: 22px;
+      opacity: 1;
+    }
+
+    #kitty {
+      width: 100%;
+      filter: drop-shadow(0 0 8px rgba(0,0,0,0.7));
+    }
+
+    #kitty-bubble {
+      position: absolute;
+      left: -20px;
+      bottom: 130px;
+      max-width: 220px;
+      background: #ffec4a;
+      color: #000;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 3px solid #000;
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+      transform: rotate(-2deg) translateY(10px);
+      opacity: 0;
+      transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    }
+
+    #kitty-bubble::after {
+      content: "";
+      position: absolute;
+      bottom: -16px;
+      left: 40px;
+      border-style: solid;
+      border-width: 16px 14px 0 14px;
+      border-color: #ffec4a transparent transparent transparent;
+      filter: drop-shadow(0 -2px 0 #000);
+    }
+
+    #kitty-wrap.active #kitty-bubble {
+      opacity: 1;
+      transform: rotate(-2deg) translateY(0);
     }
   </style>
 
+  <!-- Main JS (cart, products, pagination, etc.) -->
   <script defer src="script.js"></script>
 </head>
-
 <body>
   <header>
     <div class="nav-inner">
       <a href="index.html" class="logo-link">
         <div class="logo-circle">
-          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo">
+          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
         </div>
       </a>
 
@@ -281,41 +362,73 @@
     <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
 
     <div id="products" class="products-grid"></div>
-    <!-- Pagination injected by script.js -->
-    <div id="pagination"></div>
+    <!-- Pagination pills still handled by script.js / style.css -->
   </main>
 
   <footer>
     © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
 
-  <!-- Floating Contact Bubble -->
-  <a id="floatingJoey" class="floating-message">💬</a>
+  <!-- Zombie Kitty Contact Assistant -->
+  <div id="kitty-wrap">
+    <img id="kitty" src="images/Screenshot_20250926-234627.png" alt="Zombie Kitty">
+    <div id="kitty-bubble">Hey! I’ll get KornDog for you now…</div>
+  </div>
+
+  <!-- Floating contact bubble -->
+  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
+
+  <!-- Optional ping sound (drop kitty-ping.mp3 in the site root or change path) -->
+  <audio id="kittyPing" src="kitty-ping.mp3" preload="auto"></audio>
 
   <script>
-    (function () {
-      const btn = document.getElementById("floatingJoey");
-      if (!btn) return;
+    document.addEventListener('DOMContentLoaded', function () {
+      const btn   = document.getElementById('floatingJoey');
+      const kitty = document.getElementById('kitty-wrap');
+      const ping  = document.getElementById('kittyPing');
 
-      // Detect mobile vs desktop
+      if (!btn || !kitty) return;
+
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        btn.href = "sms:2707843283?body=Hey Joey! I’m on your website and had a question about a record.";
-      } else {
-        btn.href = "mailto:korndogrecords@gmail.com?subject=KornDog Records Website Question&body=Hey Joey! I’m on your website and had a question about a record.";
-      }
 
-      // Hide when scrolling
+      const smsBody    = "Hey KornDog, I had a question on your site...";
+      const mailBody   = "Hey KornDog,%0D%0A%0D%0AI was browsing your site and had a question about:";
+      const mailSubject = "KornDog Records website question";
+
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Slide in Zombie Kitty + Batman bubble
+        kitty.classList.add('active');
+
+        // Play ping (if file exists)
+        if (ping && ping.play) {
+          try {
+            ping.currentTime = 0;
+            ping.play().catch(() => {});
+          } catch (_) {}
+        }
+
+        // After the animation, open SMS or email
+        const target = isMobile
+          ? `sms:2707843283?body=${encodeURIComponent(smsBody)}`
+          : `mailto:korndogrecords@gmail.com?subject=${encodeURIComponent(mailSubject)}&body=${mailBody}`;
+
+        setTimeout(() => {
+          window.location.href = target;
+        }, 550);
+      });
+
+      // Hide bubble briefly while scrolling so it never blocks content
       let scrollTimer;
-      window.addEventListener("scroll", () => {
-        btn.classList.add("hidden");
+      window.addEventListener('scroll', () => {
+        btn.classList.add('hidden');
         clearTimeout(scrollTimer);
         scrollTimer = setTimeout(() => {
-          btn.classList.remove("hidden");
-        }, 600);
+          btn.classList.remove('hidden');
+        }, 400);
       });
-    })();
+    });
   </script>
-
 </body>
 </html>
