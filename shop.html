@@ -5,313 +5,10 @@
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Shared site styles -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Shared styles -->
+  <link rel="stylesheet" href="style.css" />
 
-  <style>
-    :root {
-      --bg: #050013;
-      --bg-alt: #0b0420;
-      --accent: #7bff5a;
-      --accent-soft: rgba(123, 255, 90, 0.1);
-      --text: #f5f5ff;
-      --muted: #a1a1c5;
-      --card: #12052b;
-      --border: #2b1550;
-      --danger: #ff4b6a;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* HEADER / NAV – matches Home */
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      backdrop-filter: blur(12px);
-      background: linear-gradient(
-        to right,
-        rgba(10, 1, 30, 0.95),
-        rgba(10, 1, 25, 0.9)
-      );
-      border-bottom: 1px solid rgba(123, 255, 90, 0.2);
-    }
-
-    .nav-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0.75rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .logo-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo-circle {
-      width: 44px;
-      height: 44px;
-      border-radius: 999px;
-      border: 2px solid var(--accent);
-      background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
-      overflow: hidden;
-    }
-
-    .logo-circle img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .nav-link {
-      padding: 0.6rem 1.6rem;
-      border-radius: 999px;
-      font-size: 0.92rem;
-      color: var(--muted);
-      border: 1px solid transparent;
-      font-weight: 500;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-    }
-
-    .nav-link.active {
-      background: var(--accent);
-      color: #02010a;
-      font-weight: 600;
-    }
-
-    .nav-link:hover {
-      border-color: rgba(123, 255, 90, 0.6);
-      color: var(--text);
-    }
-
-    .cart-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      background: rgba(123, 255, 90, 0.12);
-      border: 1px solid rgba(123, 255, 90, 0.5);
-      font-size: 0.88rem;
-    }
-
-    .cart-pill span {
-      background: var(--accent);
-      color: #02010a;
-      border-radius: 999px;
-      padding: 0.2rem 0.6rem;
-      font-weight: 600;
-    }
-
-    /* MAIN */
-
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1.5rem 1.25rem 3rem;
-    }
-
-    h2 {
-      margin: 0 0 0.75rem;
-      font-size: 1.8rem;
-    }
-
-    .subtitle {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .products-grid {
-      margin-top: 1.75rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .record-card {
-      background: var(--card);
-      border-radius: 1.4rem;
-      padding: 1rem;
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .record-card img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      border-radius: 1rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .image-missing {
-      background: repeating-linear-gradient(
-        45deg,
-        #1f102f,
-        #1f102f 6px,
-        #12061f 6px,
-        #12061f 12px
-      );
-    }
-
-    .record-card h3 {
-      font-size: 1rem;
-      margin: 0.15rem 0;
-    }
-
-    .record-grade {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .record-price {
-      font-weight: 600;
-      margin-top: 0.2rem;
-    }
-
-    .record-desc {
-      font-size: 0.85rem;
-      color: var(--muted);
-      flex: 1;
-    }
-
-    .qty-text {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-top: 0.15rem;
-    }
-
-    .btn-primary {
-      border-radius: 999px;
-      padding: 0.6rem 1.3rem;
-      font-size: 0.92rem;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      background: var(--accent);
-      color: #02010a;
-      margin-top: 0.5rem;
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.05);
-    }
-
-    footer {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 1.25rem 2rem;
-      font-size: 0.78rem;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    footer strong {
-      color: var(--accent);
-    }
-
-    @media (max-width: 800px) {
-      .nav-inner {
-        flex-wrap: nowrap;
-        justify-content: space-between;
-      }
-    }
-
-    /* CHAT BUTTON & ZOMBIE KITTY */
-
-    #chatBtn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #a6ff00;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      cursor: pointer;
-      z-index: 9999;
-    }
-
-    #zkOverlay {
-      position: fixed;
-      bottom: 20px;
-      left: -320px; /* off-screen start */
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      z-index: 9998;
-      transition: left 0.6s ease;
-      pointer-events: none;
-    }
-
-    #zkOverlay.active {
-      left: 20px;
-      pointer-events: auto;
-    }
-
-    #zkImage {
-      width: 140px;
-      opacity: 0.95;
-      animation: zkBlink 4s infinite, zkWave 2s infinite;
-    }
-
-    #zkBubble {
-      background: #ffeb3b;
-      padding: 12px 18px;
-      border-radius: 12px;
-      max-width: 240px;
-      font-weight: 800;
-      font-size: 16px;
-      box-shadow: 0px 4px 12px rgba(0,0,0,0.35);
-      color: #222;
-    }
-
-    @keyframes zkBlink {
-      0%, 90%, 100% { opacity: 1; }
-      92%, 94% { opacity: 0.3; }
-    }
-
-    @keyframes zkWave {
-      0% { transform: rotate(0deg); }
-      50% { transform: rotate(3deg); }
-      100% { transform: rotate(0deg); }
-    }
-  </style>
-
+  <!-- Existing site logic (cart, products, admin, etc.) -->
   <script defer src="script.js"></script>
 </head>
 <body>
@@ -338,7 +35,7 @@
     <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
 
     <div id="products" class="products-grid"></div>
-    <!-- pagination pills are injected by script.js -->
+    <!-- Pagination pills are injected by script.js -->
   </main>
 
   <footer>
@@ -346,13 +43,13 @@
   </footer>
 
   <!-- Zombie Kitty overlay -->
-  <div id="zkOverlay">
-    <img id="zkImage" src="images/3817.png" alt="Zombie Kitty" />
-    <div id="zkBubble"></div>
+  <div id="zkOverlay" class="zk-overlay">
+    <img id="zkImage" src="images/3817.png" alt="Zombie Kitty" class="zk-img" />
+    <div id="zkBubble" class="zk-bubble"></div>
   </div>
 
   <!-- Chat button -->
-  <div id="chatBtn">💬</div>
+  <div id="chatBtn" class="chat-btn">💬</div>
 
   <!-- Kitty logic -->
   <script>
@@ -364,10 +61,10 @@
       let running = false;
 
       btn.addEventListener("click", () => {
-        if (running) return; // stop spam
+        if (running) return;
         running = true;
 
-        // slide in
+        // slide kitty in
         overlay.classList.add("active");
 
         // first line
@@ -388,8 +85,7 @@
             window.location.href = "mailto:korndogrecords@gmail.com";
           }
 
-          // allow another run next time they click
-          setTimeout(() => { running = false; }, 1000);
+          setTimeout(() => { running = false; }, 800);
         }, 5500);
       });
     })();
