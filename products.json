@@ -190,5 +190,13 @@
     "grade": "VG/VG+",
     "image": "images/Kansas-1764232880896.jpg",
     "description": "Carry on my Wayward Son"
+  },
+  {
+    "id": "Robert Plant",
+    "title": "Now And Zen",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Robert_Plant-1764232983897.jpg",
+    "description": "Super Clean Copy"
   }
 ]
