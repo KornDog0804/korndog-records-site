@@ -214,5 +214,13 @@
     "grade": "VG/VG",
     "image": "images/REO_SpeedWagon-1764233215456.jpg",
     "description": "Who doesn't love some SpeedWagon"
+  },
+  {
+    "id": "Cheap Trick",
+    "title": "Dream Police",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Cheap_Trick-1764233303621.jpg",
+    "description": "Now this is No Cheap Trick. Super Clean Copy and yours today for 4.99"
   }
 ]
