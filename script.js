@@ -1,22 +1,63 @@
+// ================== KORNDOG SCRIPT (SHOP + CART) ==================
+// - All records default to quantity 1
+// - "10 dolla Holla" gets quantity 3
+// - Shop is paginated: numbered pages instead of one long scroll
+// - Cart respects quantity limits
+// - Shipping + discount + PayPal flow preserved
+// ================================================================
 
 // Global cart storage key
 const CART_KEY = 'korndog_cart_v1';
 
+// Pagination settings
+const PRODUCTS_PER_PAGE = 10;
+
+// Global product list (filled by loadProducts)
+let allProducts = [];
+
+// Current Shop page
+let currentPage = 1;
+
+// -------------------- LOAD PRODUCTS + QUANTITY --------------------
+
 async function loadProducts() {
   try {
-    const res = await fetch('./products.json'); // FIXED PATH
+    const res = await fetch('./products.json');
 
     if (!res.ok) {
       console.error('Failed to load products');
       return [];
     }
 
-    return await res.json();
+    const raw = await res.json();
+
+    // Attach quantity to each record
+    allProducts = raw.map((p) => {
+      // If quantity already exists in JSON, keep it
+      if (typeof p.quantity === 'number') return p;
+
+      // Default: every record is quantity 1
+      let qty = 1;
+
+      // Special case: 10 dolla Holla gets quantity 3
+      const id = (p.id || '').toLowerCase();
+      const title = (p.title || '').toLowerCase();
+      if (id.includes('10-dolla') || title.includes('10 dolla holla')) {
+        qty = 3;
+      }
+
+      return { ...p, quantity: qty };
+    });
+
+    return allProducts;
   } catch (e) {
     console.error('Failed to load products', e);
+    allProducts = [];
     return [];
   }
 }
+
+// ------------------------ CART HELPERS ----------------------------
 
 function getCart() {
   try {
@@ -40,14 +81,29 @@ function updateCartBadge() {
   if (badge) badge.textContent = count;
 }
 
-function addToCart(productId, products) {
+// Add one item to cart, respecting stock quantity
+function addToCart(productId) {
+  if (!allProducts || allProducts.length === 0) return;
+
+  const product = allProducts.find((p) => p.id === productId);
+  if (!product) return;
+
+  const maxQty = typeof product.quantity === 'number' ? product.quantity : 1;
+
   const cart = getCart();
-  const existing = cart.find(item => item.id === productId);
+  const existing = cart.find((item) => item.id === productId);
+
   if (existing) {
+    if (existing.qty >= maxQty) {
+      alert(
+        maxQty === 1
+          ? 'You only have 1 copy of this record in stock.'
+          : `You only have ${maxQty} copies of this record in stock.`
+      );
+      return;
+    }
     existing.qty += 1;
   } else {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
     cart.push({
       id: product.id,
       title: product.title,
@@ -57,6 +113,7 @@ function addToCart(productId, products) {
       qty: 1
     });
   }
+
   saveCart(cart);
   alert('Dropped in the cart.');
 }
@@ -65,6 +122,8 @@ function clearCart() {
   saveCart([]);
   renderCart();
 }
+
+// ----------------- SHIPPING + DISCOUNT RULES ----------------------
 
 function calcShipping(itemCount) {
   if (itemCount === 0) return 0;
@@ -76,13 +135,32 @@ function calcDiscount(subtotal) {
   return subtotal >= 130 ? subtotal * 0.10 : 0;
 }
 
+// -------------------- SHOP RENDERING + PAGES ----------------------
+
 async function renderShop() {
   const container = document.getElementById('products');
   if (!container) return;
-  const products = await loadProducts();
+
+  // Load products only once
+  if (!allProducts || allProducts.length === 0) {
+    await loadProducts();
+  }
+
+  currentPage = 1;
+  renderShopPage();
+}
+
+function renderShopPage() {
+  const container = document.getElementById('products');
+  if (!container) return;
 
   container.innerHTML = '';
-  products.forEach(prod => {
+
+  const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const end = start + PRODUCTS_PER_PAGE;
+  const pageProducts = allProducts.slice(start, end);
+
+  pageProducts.forEach((prod) => {
     const card = document.createElement('div');
     card.className = 'record-card';
 
@@ -108,20 +186,57 @@ async function renderShop() {
     desc.className = 'record-desc';
     desc.textContent = prod.description || '';
 
+    const qtyNote = document.createElement('p');
+    qtyNote.className = 'record-qty';
+    qtyNote.textContent = 'Qty available: ' + (prod.quantity ?? 1);
+
     const btn = document.createElement('button');
     btn.textContent = 'Add to Cart';
     btn.className = 'btn-primary';
-    btn.addEventListener('click', () => addToCart(prod.id, products));
+    btn.addEventListener('click', () => addToCart(prod.id));
 
     card.appendChild(img);
     card.appendChild(title);
     card.appendChild(grade);
     card.appendChild(price);
     if (prod.description) card.appendChild(desc);
+    card.appendChild(qtyNote);
     card.appendChild(btn);
     container.appendChild(card);
   });
+
+  renderPagination();
 }
+
+function renderPagination() {
+  const container = document.getElementById('products');
+  if (!container) return;
+
+  const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE);
+  if (totalPages <= 1) return;
+
+  const nav = document.createElement('div');
+  nav.className = 'shop-pagination';
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.className = 'page-btn';
+    if (i === currentPage) btn.classList.add('active');
+
+    btn.addEventListener('click', () => {
+      currentPage = i;
+      renderShopPage();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    nav.appendChild(btn);
+  }
+
+  container.appendChild(nav);
+}
+
+// -------------------------- CART RENDERING ------------------------
 
 function renderCart() {
   const container = document.getElementById('cart-items');
@@ -167,6 +282,20 @@ function renderCart() {
       const plus = document.createElement('button');
       plus.textContent = '+';
       plus.addEventListener('click', () => {
+        // enforce the same max-quantity rule in the cart view
+        const product = allProducts.find((p) => p.id === item.id);
+        const maxQty =
+          product && typeof product.quantity === 'number' ? product.quantity : 1;
+
+        if (item.qty >= maxQty) {
+          alert(
+            maxQty === 1
+              ? 'You only have 1 copy of this record in stock.'
+              : `You only have ${maxQty} copies of this record in stock.`
+          );
+          return;
+        }
+
         item.qty += 1;
         saveCart(cart);
         renderCart();
@@ -205,6 +334,8 @@ function renderCart() {
   }
 }
 
+// -------------------------- PAYPAL SUBMIT -------------------------
+
 function submitPayPal(cart, shipping, discount) {
   if (cart.length === 0) {
     alert('Cart is empty.');
@@ -233,7 +364,7 @@ function submitPayPal(cart, shipping, discount) {
   addField('currency_code', 'USD');
 
   let index = 1;
-  cart.forEach(item => {
+  cart.forEach((item) => {
     addField(`item_name_${index}`, item.title);
     addField(`amount_${index}`, item.price.toFixed(2));
     addField(`quantity_${index}`, item.qty);
@@ -248,121 +379,21 @@ function submitPayPal(cart, shipping, discount) {
     addField(`quantity_${index}`, 1);
   }
 
-  // Discount is already baked into total, so we don't send separately,
-  // or we could send a negative line item (PayPal doesn't like that).
-
   form.action = 'https://www.paypal.com/cgi-bin/webscr';
   form.method = 'post';
   form.submit();
 }
 
-// ADMIN PAGE LOGIC
+// ---------------------- ADMIN PAGE (PLACEHOLDER) ------------------
+// Your new GitHub/token-based admin lives in admin.html now.
+// This stub just keeps things from breaking if script.js is loaded.
+
 async function initAdmin() {
-  const adminRoot = document.getElementById('admin-root');
-  if (!adminRoot) return;
-
-  // TEMP: auto-allow admin (we'll add a real form later)
-const password = 'korndog2024!';
-// no check – just proceed
-
-  const products = await loadProducts();
-
-  const list = document.createElement('div');
-  list.id = 'admin-product-list';
-
-  const renderAdminList = () => {
-    list.innerHTML = '';
-    products.forEach((p, idx) => {
-      const card = document.createElement('div');
-      card.className = 'admin-card';
-
-      const heading = document.createElement('h3');
-      heading.textContent = `Record ${idx + 1}`;
-      card.appendChild(heading);
-
-      const makeInput = (labelText, value, onChange) => {
-        const wrapper = document.createElement('label');
-        wrapper.className = 'admin-field';
-        const span = document.createElement('span');
-        span.textContent = labelText;
-        const input = document.createElement('input');
-        input.value = value ?? '';
-        input.addEventListener('input', e => onChange(e.target.value));
-        wrapper.appendChild(span);
-        wrapper.appendChild(input);
-        return wrapper;
-      };
-
-      card.appendChild(makeInput('ID', p.id, v => p.id = v));
-      card.appendChild(makeInput('Title', p.title, v => p.title = v));
-      card.appendChild(makeInput('Price', p.price, v => p.price = parseFloat(v) || 0));
-      card.appendChild(makeInput('Grade', p.grade, v => p.grade = v));
-      card.appendChild(makeInput('Image (images/...)', p.image, v => p.image = v));
-
-      const descWrap = document.createElement('label');
-      descWrap.className = 'admin-field';
-      const span = document.createElement('span');
-      span.textContent = 'Description';
-      const textarea = document.createElement('textarea');
-      textarea.value = p.description || '';
-      textarea.addEventListener('input', e => p.description = e.target.value);
-      descWrap.appendChild(span);
-      descWrap.appendChild(textarea);
-      card.appendChild(descWrap);
-
-      const delBtn = document.createElement('button');
-      delBtn.textContent = 'Delete Record';
-      delBtn.className = 'btn-danger';
-      delBtn.addEventListener('click', () => {
-        products.splice(idx, 1);
-        renderAdminList();
-      });
-      card.appendChild(delBtn);
-
-      list.appendChild(card);
-    });
-  };
-
-  renderAdminList();
-
-  const addBtn = document.createElement('button');
-  addBtn.textContent = 'Add New Record';
-  addBtn.className = 'btn-primary';
-  addBtn.addEventListener('click', () => {
-    products.push({
-      id: 'new-record-' + (products.length + 1),
-      title: 'New Record',
-      price: 0,
-      grade: 'VG/VG',
-      image: 'images/example.jpg',
-      description: ''
-    });
-    renderAdminList();
-  });
-
-  const downloadBtn = document.createElement('button');
-  downloadBtn.textContent = 'Download JSON';
-  downloadBtn.className = 'btn-secondary';
-  downloadBtn.addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(products, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'products.json';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    alert('products.json downloaded. Upload this to your GitHub repo to go live.');
-  });
-
-  adminRoot.appendChild(list);
-  const actions = document.createElement('div');
-  actions.className = 'admin-actions';
-  actions.appendChild(addBtn);
-  actions.appendChild(downloadBtn);
-  adminRoot.appendChild(actions);
+  // No-op placeholder – real admin logic is in admin.html
+  return;
 }
+
+// ----------------------------- INIT -------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
