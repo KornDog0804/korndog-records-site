@@ -230,5 +230,13 @@
     "grade": "VG/VG+",
     "image": "images/ZZ_TOP-1764287666570.jpg",
     "description": "Are you ready to go to La Grange?"
+  },
+  {
+    "id": "Red Hot Chili Peppers",
+    "title": "Californication",
+    "price": 32.99,
+    "grade": "NM/NM",
+    "image": "images/Red_Hot_Chili_Peppers-1764287782972.jpg",
+    "description": "25th Anniversary 2 LP Colored Vinyl"
   }
 ]
