@@ -238,5 +238,13 @@
     "grade": "NM/NM",
     "image": "images/Red_Hot_Chili_Peppers-1764287782972.jpg",
     "description": "25th Anniversary 2 LP Colored Vinyl"
+  },
+  {
+    "id": "A Day To Remember",
+    "title": "Big Ole Album Vol 1",
+    "price": 34.99,
+    "grade": "NM/NM",
+    "image": "images/A_Day_To_Remember-1764287872011.jpg",
+    "description": "Limited Edition Orange Creamsicle Vinyl. Amazon Exclusive"
   }
 ]
