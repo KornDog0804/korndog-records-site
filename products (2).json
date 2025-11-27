@@ -1,0 +1,114 @@
+[
+  {
+    "id": "sum41-all-killer-no-filler",
+    "title": "Sum 41 – All Killer No Filler",
+    "price": 32.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20251124_210448795.TS-000.jpg",
+    "description": "Pop-punk chaos, no filler. NM/NM copy Black and Blue Smash."
+  },
+  {
+    "id": "within-destruction-lotus",
+    "title": "Within Destruction – Lotus",
+    "price": 44.99,
+    "grade": "NM/NM",
+    "image": "images/Screenshot_20250914-012633.png",
+    "description": "Crushing modern deathcore, Ghost variant. NM/NM copy."
+  },
+  {
+    "id": "sleep-token-even-in-arcadia",
+    "title": "Sleep Token – Even in Arcadia",
+    "price": 69.99,
+    "grade": "NM/NM",
+    "image": "images/Screenshot_20250826-210248.png",
+    "description": "House Veridian Edition. NM/NM copy."
+  },
+  {
+    "id": "ten-dolla-holla",
+    "title": "$10 Dolla Holla Mystery Record",
+    "price": 10,
+    "grade": "VG/VG",
+    "image": "images/Screenshot_20250822-074904.png",
+    "description": "Random mystery pull from the stack. VG/VG."
+  },
+  {
+    "id": "johnny-guitar-watson-giant",
+    "title": "Johnny Guitar Watson – Giant",
+    "price": 8.99,
+    "grade": "VG/VG",
+    "image": "images/PXL_20250915_125512318.jpg",
+    "description": "Funky, spacey soul trip. VG/VG copy."
+  },
+  {
+    "id": "i-prevail-heart-vs-mind",
+    "title": "I Prevail – Heart vs Mind",
+    "price": 19.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20250915_125450366.jpg",
+    "description": "Debut EP. NM/NM copy."
+  },
+  {
+    "id": "blessthefall-hollow-bodies",
+    "title": "BlessTheFall – Hollow Bodies",
+    "price": 14.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20250907_203733675.jpg",
+    "description": "10th Anniversary Edition. NM/NM copy."
+  },
+  {
+    "id": "jimi-hendrix-smash-hits",
+    "title": "Jimi Hendrix Experience – Smash Hits",
+    "price": 14.99,
+    "grade": "VG/VG",
+    "image": "images/PXL_20251125_201153364.jpg",
+    "description": "Club repress. VG/VG+ copy."
+  },
+  {
+    "id": "AC/DC",
+    "title": "Back In Black ",
+    "price": 17.99,
+    "grade": "VG/VG",
+    "image": "images/images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg",
+    "description": "Back In Black ICONIC VG/VG+"
+  },
+  {
+    "id": "Hootie And The Blowfish",
+    "title": "Cracked Rear View",
+    "price": 19.99,
+    "grade": "NM/NM",
+    "image": "images/images/rn-image_picker_lib_temp_19781262-ab91-4a40-ade0-d5cc28437c51.jpg",
+    "description": "2017 Re-press NM/NM"
+  },
+  {
+    "id": "Pantera",
+    "title": "History Of Hostility ",
+    "price": 19.99,
+    "grade": "NM/NM",
+    "image": "images/images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
+    "description": "2015 Rhino Pressing NM/NM"
+  },
+  {
+    "id": "Bullet For My Valentine ",
+    "title": "The Poison 20th Anniversary Gatefold",
+    "price": 34.99,
+    "grade": "NM/NM",
+    "image": "images/images/rn-image_picker_lib_temp_4677e40d-5aff-403e-8216-cb3a0cd47fe2.jpg",
+    "description": "Limited 20th anniversary Red NM/NM"
+  },
+  {
+    "id": "Grateful Dead",
+    "title": "50th Anniversary Edition (Picture Disc, Rhino 2017)",
+    "price": 24.99,
+    "grade": "NM/NM",
+    "image": "images/images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
+    "description": "Psychedelic swirl for the ages. This 50th Anniversary picture disc reissue of the Dead’s groundbreaking 1967 debut takes the acid-soaked vibe and makes it spin-ready art. Limited to 10,000 copies worldwide, this one’s both a collectible and a sonic time capsule."
+  },
+  {
+    "id": "Randy Travis",
+    "title": "Storms Of Life",
+    "price": 19.99,
+    "grade": "VG+/VG+",
+    "image": "images/images/rn-image_picker_lib_temp_6eed81b0-419c-42a9-938d-e44da8a3154d.jpg",
+    "description": "Country storytelling at its peak. Randy Travis’ debut album didn’t just climb charts, it rewrote what country could be."
+  }
+]
