@@ -112,13 +112,6 @@
     "description": "Country storytelling at its peak. Randy Travis’ debut album didn’t just climb charts, it rewrote what country could be."
   },
   {
-    "id": "AC/DC",
-    "title": "Black In Black",
-    "price": 17.99,
-    "grade": "NM/NM",
-    "image": "images/AC_DC-1764228748149.jpg",
-    "description": "Iconic album"
-  },
   {
     "id": "Bob Seger & Silver Bullet Band",
     "title": "Stranger In Town",
