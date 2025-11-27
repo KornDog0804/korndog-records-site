@@ -261,11 +261,9 @@ async function initAdmin() {
   const adminRoot = document.getElementById('admin-root');
   if (!adminRoot) return;
 
-  const password = prompt('Enter admin password');
-  if (password !== 'korndog2024!') {
-    adminRoot.innerHTML = '<p>Access denied.</p>';
-    return;
-  }
+  // TEMP: auto-allow admin (we'll add a real form later)
+const password = 'korndog2024!';
+// no check – just proceed
 
   const products = await loadProducts();
 
