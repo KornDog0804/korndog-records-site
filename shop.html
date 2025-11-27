@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- NEW: Linked stylesheet (safe + correct) -->
+  <link rel="stylesheet" href="style.css">
+
   <style>
     :root {
       --bg: #050013;
@@ -29,12 +33,7 @@
       background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* HEADER / NAV (same as Home/Cart) */
+    a { text-decoration: none; color: inherit; }
 
     header {
       position: sticky;
@@ -56,7 +55,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
     }
 
     .brand {
@@ -92,7 +90,6 @@
 
     .brand-text strong {
       letter-spacing: 0.08em;
-      font-size: 0.9rem;
     }
 
     .brand-text span {
@@ -109,22 +106,15 @@
     .nav-link {
       padding: 0.6rem 1.6rem;
       border-radius: 999px;
-      font-size: 0.92rem;
       color: var(--muted);
       border: 1px solid transparent;
       font-weight: 500;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     }
 
     .nav-link.active {
       background: var(--accent);
       color: #02010a;
       font-weight: 600;
-    }
-
-    .nav-link:hover {
-      border-color: rgba(123, 255, 90, 0.6);
-      color: var(--text);
     }
 
     .cart-pill {
@@ -135,7 +125,6 @@
       border-radius: 999px;
       background: rgba(123, 255, 90, 0.12);
       border: 1px solid rgba(123, 255, 90, 0.5);
-      font-size: 0.88rem;
     }
 
     .cart-pill span {
@@ -146,27 +135,10 @@
       font-weight: 600;
     }
 
-    /* MAIN LAYOUT */
-
     main {
       max-width: 1100px;
       margin: 0 auto;
       padding: 1.5rem 1.25rem 3rem;
-    }
-
-    .section {
-      margin-top: 1.5rem;
-    }
-
-    .section h2 {
-      margin: 0 0 0.75rem;
-      font-size: 1.8rem;
-    }
-
-    .section p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
     }
 
     .products-grid {
@@ -188,78 +160,18 @@
 
     .record-card img {
       width: 100%;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 1/1;
       object-fit: cover;
       border-radius: 1rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .image-missing {
-      background: repeating-linear-gradient(
-        45deg,
-        #1f102f,
-        #1f102f 6px,
-        #12061f 6px,
-        #12061f 12px
-      );
-    }
-
-    .record-card h3 {
-      font-size: 1rem;
-      margin: 0.15rem 0;
-    }
-
-    .record-grade {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .record-price {
-      font-weight: 600;
-      margin-top: 0.2rem;
-    }
-
-    .record-desc {
-      font-size: 0.85rem;
-      color: var(--muted);
-      flex: 1;
-    }
-
-    /* Neon pill buttons for Add to Cart etc. */
-
-    .btn-primary,
-    .btn-secondary,
-    .btn-danger {
-      border-radius: 999px;
-      padding: 0.6rem 1.3rem;
-      font-size: 0.92rem;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
     }
 
     .btn-primary {
       background: var(--accent);
       color: #02010a;
-    }
-
-    .btn-secondary {
-      background: rgba(123, 255, 90, 0.16);
-      border: 1px solid rgba(123, 255, 90, 0.5);
-      color: var(--accent);
-    }
-
-    .btn-danger {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.05);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(123, 255, 90, 0.24);
+      border-radius: 999px;
+      padding: 0.6rem 1.3rem;
+      font-weight: 600;
+      cursor: pointer;
     }
 
     footer {
@@ -268,30 +180,20 @@
       padding: 0 1.25rem 2rem;
       font-size: 0.78rem;
       color: var(--muted);
+      text-align: center;
     }
 
-    footer strong {
-      color: var(--accent);
-    }
-
-    @media (max-width: 800px) {
-      .nav-inner {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      .brand-text {
-        display: none;
-      }
-    }
+    footer strong { color: var(--accent); }
   </style>
+
   <script defer src="script.js"></script>
 </head>
+
 <body>
   <header>
     <div class="nav-inner">
       <div class="brand">
         <div class="brand-logo">
-          <!-- use same circle logo file you’re using on Home -->
           <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
         </div>
         <div class="brand-text">
@@ -299,6 +201,7 @@
           <span>Nashville Born · Bowling Green Driven</span>
         </div>
       </div>
+
       <nav>
         <a href="index.html" class="nav-link">Home</a>
         <a href="shop.html" class="nav-link active">Shop</a>
@@ -310,15 +213,17 @@
   </header>
 
   <main>
-    <section class="section">
-      <h2>Shop Vinyl</h2>
-      <p>Hand-picked records. Graded honestly. First paid gets it.</p>
-      <div id="products" class="products-grid"></div>
-    </section>
+    <h2>Shop Vinyl</h2>
+    <p>Hand-picked records. Graded honestly. First paid gets it.</p>
+
+    <div id="products" class="products-grid"></div>
+
+    <!-- PAGINATION -->
+    <div id="pagination" style="text-align:center; margin-top:2rem;"></div>
   </main>
 
   <footer>
-    <p>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</p>
+    © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
 </body>
 </html>
