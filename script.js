@@ -4,6 +4,7 @@
 // - Shop is paginated: numbered pages instead of one long scroll
 // - Cart respects quantity limits
 // - Shipping + discount + PayPal flow preserved
+// - Products are shuffled so the shop feels fresh every visit
 // ================================================================
 
 // Global cart storage key
@@ -18,6 +19,17 @@ let allProducts = [];
 // Current Shop page
 let currentPage = 1;
 
+// ----------------------- UTIL: SHUFFLE ----------------------------
+// Fisher–Yates shuffle so the product order is random each page load
+function shuffleArray(arr) {
+  const copy = arr.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 // -------------------- LOAD PRODUCTS + QUANTITY --------------------
 
 async function loadProducts() {
@@ -26,13 +38,14 @@ async function loadProducts() {
 
     if (!res.ok) {
       console.error('Failed to load products');
+      allProducts = [];
       return [];
     }
 
     const raw = await res.json();
 
     // Attach quantity to each record
-    allProducts = raw.map((p) => {
+    const mapped = raw.map((p) => {
       // If quantity already exists in JSON, keep it
       if (typeof p.quantity === 'number') return p;
 
@@ -48,6 +61,9 @@ async function loadProducts() {
 
       return { ...p, quantity: qty };
     });
+
+    // Randomize the order so the shop feels fresh
+    allProducts = shuffleArray(mapped);
 
     return allProducts;
   } catch (e) {
