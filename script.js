@@ -228,17 +228,65 @@ function renderPagination() {
   const container = document.getElementById('products');
   if (!container) return;
 
+  // Remove any previous pagination bar
+  const existing = document.querySelector('.shop-pagination');
+  if (existing) existing.remove();
+
   const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE);
   if (totalPages <= 1) return;
 
   const nav = document.createElement('div');
   nav.className = 'shop-pagination';
 
+  // Center the buttons at the bottom
+  nav.style.display = 'flex';
+  nav.style.justifyContent = 'center';
+  nav.style.alignItems = 'center';
+  nav.style.gap = '8px';
+  nav.style.margin = '1.5rem 0 0.5rem';
+
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement('button');
     btn.textContent = i;
     btn.className = 'page-btn';
-    if (i === currentPage) btn.classList.add('active');
+
+    // 🔥 Inline styles so nothing can override them
+    btn.style.backgroundColor = '#a8ff60';     // neon-ish green
+    btn.style.color = '#02010a';              // dark text
+    btn.style.border = 'none';
+    btn.style.padding = '12px 18px';
+    btn.style.fontSize = '1.05rem';
+    btn.style.fontWeight = '700';
+    btn.style.borderRadius = '999px';
+    btn.style.minWidth = '48px';
+    btn.style.minHeight = '48px';
+    btn.style.display = 'flex';
+    btn.style.alignItems = 'center';
+    btn.style.justifyContent = 'center';
+    btn.style.cursor = 'pointer';
+    btn.style.boxShadow = '0 0 10px rgba(168,255,96,0.5)';
+
+    if (i === currentPage) {
+      btn.style.backgroundColor = '#7fff32';
+      btn.style.transform = 'scale(1.1)';
+    }
+
+    btn.addEventListener('mouseenter', () => {
+      if (i !== currentPage) {
+        btn.style.backgroundColor = '#caff90';
+        btn.style.transform = 'scale(1.08)';
+      }
+    });
+
+    btn.addEventListener('mouseleave', () => {
+      if (i === currentPage) {
+        btn.style.backgroundColor = '#7fff32';
+        btn.style.transform = 'scale(1.1)';
+      } else {
+        btn.style.backgroundColor = '#a8ff60';
+        btn.style.transform = 'scale(1.0)';
+      }
+    });
 
     btn.addEventListener('click', () => {
       currentPage = i;
