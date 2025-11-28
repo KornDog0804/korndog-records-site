@@ -451,3 +451,19 @@ footer strong {
   box-shadow: 0 0 14px rgba(168, 255, 96, 0.8);
   transform: scale(1.12);
 }
+.home-content,
+.home-hero,
+.home-wrapper,
+.home-intro {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    display: block;
+}
+
+.home-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
