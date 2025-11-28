@@ -254,5 +254,13 @@
     "grade": "VG/VG+",
     "image": "images/Dazz_Band-1764298272765.jpg",
     "description": "Very Clean Copy"
+  },
+  {
+    "id": "WAR",
+    "title": "WAR Greatest Hits",
+    "price": 9.99,
+    "grade": "VG+/VG+",
+    "image": "images/WAR-1764298393607.jpg",
+    "description": "Almost NM with original inner"
   }
 ]
