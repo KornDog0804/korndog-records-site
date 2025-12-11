@@ -300,16 +300,6 @@
     "available": true
   },
   {
-    "id": "zz-top-tres-hombres",
-    "artist": "ZZ Top",
-    "title": "Tres Hombres",
-    "price": 14.99,
-    "grade": "VG/VG+",
-    "image": "images/ZZ_TOP-1764287666570.jpg",
-    "description": "Are you ready to go to La Grange?",
-    "available": true
-  },
-  {
     "id": "willie-nelson-willie-and-family-live",
     "artist": "Willie Nelson",
     "title": "Willie And Family Live",
