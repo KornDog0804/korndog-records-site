@@ -1,6 +1,7 @@
 [
   {
     "id": "ten-dolla-holla",
+    "artist": "Mystery Pull",
     "title": "$10 Dolla Holla Mystery Record",
     "price": 10,
     "grade": "VG/VG",
@@ -9,8 +10,9 @@
     "available": true
   },
   {
-    "id": "Foreigner",
-    "title": "Foreigner - 4",
+    "id": "foreigner-4",
+    "artist": "Foreigner",
+    "title": "4",
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Foreigner-1764230780118.jpg",
@@ -18,8 +20,9 @@
     "available": true
   },
   {
-    "id": "Grateful Dead",
-    "title": "Grateful Dead - 50th Anniversary Edition (Picture Disc, Rhino 2017)",
+    "id": "grateful-dead-50th-anniversary-picture-disc",
+    "artist": "Grateful Dead",
+    "title": "50th Anniversary Edition (Picture Disc, Rhino 2017)",
     "price": 24.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
@@ -27,8 +30,9 @@
     "available": true
   },
   {
-    "id": "Billy Joel",
-    "title": "Billy Joel - 52nd Street",
+    "id": "billy-joel-52nd-street",
+    "artist": "Billy Joel",
+    "title": "52nd Street",
     "price": 5.99,
     "grade": "VG/VG+",
     "image": "images/Billy_Joel-1764298491999.jpg",
@@ -36,8 +40,9 @@
     "available": true
   },
   {
-    "id": "Night Ranger",
-    "title": "Night Ranger - 7 Wishes",
+    "id": "night-ranger-7-wishes",
+    "artist": "Night Ranger",
+    "title": "7 Wishes",
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Night_Ranger-1764233043019.jpg",
@@ -45,8 +50,9 @@
     "available": true
   },
   {
-    "id": "REO SpeedWagon",
-    "title": "REO Speedwagon - A Decade Of Rock & Roll",
+    "id": "reo-speedwagon-decade-of-rock-and-roll",
+    "artist": "REO Speedwagon",
+    "title": "A Decade Of Rock & Roll",
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/REO_SpeedWagon-1764233215456.jpg",
@@ -54,8 +60,9 @@
     "available": true
   },
   {
-    "id": "Dokken",
-    "title": "Dokken - Back For The Attack",
+    "id": "dokken-back-for-the-attack",
+    "artist": "Dokken",
+    "title": "Back For The Attack",
     "price": 19.99,
     "grade": "VG/VG+",
     "image": "images/Dokken-1764298922683.jpg",
@@ -63,8 +70,9 @@
     "available": true
   },
   {
-    "id": "AC/DC",
-    "title": "AC/DC - Back In Black",
+    "id": "acdc-back-in-black",
+    "artist": "AC/DC",
+    "title": "Back In Black",
     "price": 17.99,
     "grade": "VG/VG",
     "image": "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg",
@@ -72,8 +80,9 @@
     "available": true
   },
   {
-    "id": "A Day To Remember",
-    "title": "A Day To Remember - Big Ole Album Vol 1",
+    "id": "a-day-to-remember-big-ole-album-vol-1",
+    "artist": "A Day To Remember",
+    "title": "Big Ole Album Vol 1",
     "price": 34.99,
     "grade": "NM/NM",
     "image": "images/A_Day_To_Remember-1764287872011.jpg",
@@ -82,7 +91,8 @@
   },
   {
     "id": "blessthefall-hollow-bodies",
-    "title": "BlessTheFall - Hollow Bodies",
+    "artist": "BlessTheFall",
+    "title": "Hollow Bodies",
     "price": 14.99,
     "grade": "NM/NM",
     "image": "images/PXL_20250907_203733675.jpg",
@@ -90,8 +100,9 @@
     "available": true
   },
   {
-    "id": "Boston",
-    "title": "Boston - Boston 1",
+    "id": "boston-1",
+    "artist": "Boston",
+    "title": "Boston 1",
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Boston-1764230862646.jpg",
@@ -99,8 +110,9 @@
     "available": true
   },
   {
-    "id": "Red Hot Chili Peppers",
-    "title": "Red Hot Chili Peppers - Californication",
+    "id": "red-hot-chili-peppers-californication",
+    "artist": "Red Hot Chili Peppers",
+    "title": "Californication",
     "price": 32.99,
     "grade": "NM/NM",
     "image": "images/Red_Hot_Chili_Peppers-1764287782972.jpg",
@@ -108,8 +120,9 @@
     "available": true
   },
   {
-    "id": "David Lee Roth EP",
-    "title": "David Lee Roth - Crazy From The Heat (EP)",
+    "id": "david-lee-roth-crazy-from-the-heat-ep",
+    "artist": "David Lee Roth",
+    "title": "Crazy From The Heat (EP)",
     "price": 9.99,
     "grade": "VG+/VG+",
     "image": "images/David_Lee_Roth_EP-1764230391826.jpg",
@@ -117,8 +130,9 @@
     "available": true
   },
   {
-    "id": "Cheap Trick",
-    "title": "Cheap Trick - Dream Police",
+    "id": "cheap-trick-dream-police",
+    "artist": "Cheap Trick",
+    "title": "Dream Police",
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Cheap_Trick-1764233303621.jpg",
@@ -126,8 +140,9 @@
     "available": true
   },
   {
-    "id": "Johnny Cash",
-    "title": "Johnny Cash - Greatest Hits Volume 1",
+    "id": "johnny-cash-greatest-hits-vol-1",
+    "artist": "Johnny Cash",
+    "title": "Greatest Hits Volume 1",
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Johnny_Cash-1764230221013.jpg",
@@ -135,8 +150,9 @@
     "available": true
   },
   {
-    "id": "Pantera",
-    "title": "Pantera - History Of Hostility",
+    "id": "pantera-history-of-hostility",
+    "artist": "Pantera",
+    "title": "History Of Hostility",
     "price": 19.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
@@ -145,7 +161,8 @@
   },
   {
     "id": "i-prevail-heart-vs-mind",
-    "title": "I Prevail - Heart vs Mind",
+    "artist": "I Prevail",
+    "title": "Heart vs Mind",
     "price": 19.99,
     "grade": "NM/NM",
     "image": "images/PXL_20250915_125450366.jpg",
@@ -154,7 +171,8 @@
   },
   {
     "id": "jimi-hendrix-smash-hits",
-    "title": "Jimi Hendrix Experience - Smash Hits",
+    "artist": "Jimi Hendrix Experience",
+    "title": "Smash Hits",
     "price": 14.99,
     "grade": "VG/VG",
     "image": "images/PXL_20251125_201153364.jpg",
@@ -163,7 +181,8 @@
   },
   {
     "id": "johnny-guitar-watson-giant",
-    "title": "Johnny Guitar Watson - Giant",
+    "artist": "Johnny Guitar Watson",
+    "title": "Giant",
     "price": 8.99,
     "grade": "VG/VG",
     "image": "images/PXL_20250915_125512318.jpg",
@@ -171,8 +190,9 @@
     "available": true
   },
   {
-    "id": "Dazz Band",
-    "title": "Dazz Band - Keep It Live",
+    "id": "dazz-band-keep-it-live",
+    "artist": "Dazz Band",
+    "title": "Keep It Live",
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Dazz_Band-1764298272765.jpg",
@@ -180,8 +200,9 @@
     "available": true
   },
   {
-    "id": "Kansas",
-    "title": "Kansas - Leftoverture",
+    "id": "kansas-leftoverture",
+    "artist": "Kansas",
+    "title": "Leftoverture",
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Kansas-1764232880896.jpg",
@@ -189,8 +210,9 @@
     "available": true
   },
   {
-    "id": "Bob Seger & Silver Bullet Band",
-    "title": "Bob Seger & Silver Bullet Band - Night Moves",
+    "id": "bob-seger-night-moves",
+    "artist": "Bob Seger & Silver Bullet Band",
+    "title": "Night Moves",
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
@@ -198,8 +220,9 @@
     "available": true
   },
   {
-    "id": "Robert Plant",
-    "title": "Robert Plant - Now And Zen",
+    "id": "robert-plant-now-and-zen",
+    "artist": "Robert Plant",
+    "title": "Now And Zen",
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Robert_Plant-1764232983897.jpg",
@@ -207,8 +230,9 @@
     "available": true
   },
   {
-    "id": "Kansas",
-    "title": "Kansas - Point Of Know Return",
+    "id": "kansas-point-of-know-return",
+    "artist": "Kansas",
+    "title": "Point Of Know Return",
     "price": 9.99,
     "grade": "VG/VG+",
     "image": "images/Kansas-1764299103385.jpg",
@@ -217,7 +241,8 @@
   },
   {
     "id": "sleep-token-even-in-arcadia",
-    "title": "Sleep Token - Even in Arcadia",
+    "artist": "Sleep Token",
+    "title": "Even in Arcadia",
     "price": 69.99,
     "grade": "NM/NM",
     "image": "images/Screenshot_20250826-210248.png",
@@ -225,8 +250,9 @@
     "available": true
   },
   {
-    "id": "Bob Seger & Silver Bullet Band",
-    "title": "Bob Seger & Silver Bullet Band - Stranger In Town",
+    "id": "bob-seger-stranger-in-town",
+    "artist": "Bob Seger & Silver Bullet Band",
+    "title": "Stranger In Town",
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
@@ -235,7 +261,8 @@
   },
   {
     "id": "sum41-all-killer-no-filler",
-    "title": "Sum 41 - All Killer No Filler",
+    "artist": "Sum 41",
+    "title": "All Killer No Filler",
     "price": 32.99,
     "grade": "NM/NM",
     "image": "images/PXL_20251124_210448795.TS-000.jpg",
@@ -243,8 +270,9 @@
     "available": true
   },
   {
-    "id": "Bullet For My Valentine ",
-    "title": "Bullet For My Valentine - The Poison (20th Anniversary Gatefold)",
+    "id": "bullet-for-my-valentine-the-poison-20th",
+    "artist": "Bullet For My Valentine",
+    "title": "The Poison (20th Anniversary Gatefold)",
     "price": 34.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_4677e40d-5aff-403e-8216-cb3a0cd47fe2.jpg",
@@ -252,8 +280,9 @@
     "available": true
   },
   {
-    "id": "ZZ TOP",
-    "title": "ZZ Top - Tres Hombres",
+    "id": "zz-top-tres-hombres",
+    "artist": "ZZ Top",
+    "title": "Tres Hombres",
     "price": 14.99,
     "grade": "VG/VG+",
     "image": "images/ZZ_TOP-1764287666570.jpg",
@@ -261,8 +290,9 @@
     "available": true
   },
   {
-    "id": "WAR",
-    "title": "War - Greatest Hits",
+    "id": "war-greatest-hits",
+    "artist": "War",
+    "title": "Greatest Hits",
     "price": 9.99,
     "grade": "VG+/VG+",
     "image": "images/WAR-1764298393607.jpg",
@@ -270,8 +300,9 @@
     "available": true
   },
   {
-    "id": "Willie Nelson",
-    "title": "Willie Nelson - Willie And Family Live",
+    "id": "willie-nelson-willie-and-family-live",
+    "artist": "Willie Nelson",
+    "title": "Willie And Family Live",
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Willie_Nelson-1764232751664.jpg",
@@ -280,7 +311,8 @@
   },
   {
     "id": "within-destruction-lotus",
-    "title": "Within Destruction - Lotus",
+    "artist": "Within Destruction",
+    "title": "Lotus",
     "price": 44.99,
     "grade": "NM/NM",
     "image": "images/Screenshot_20250914-012633.png",
@@ -288,8 +320,9 @@
     "available": true
   },
   {
-    "id": "The Police",
-    "title": "The Police - Zenyatta Mondatta",
+    "id": "the-police-zenyatta-mondatta",
+    "artist": "The Police",
+    "title": "Zenyatta Mondatta",
     "price": 9.99,
     "grade": "VG+/VG+",
     "image": "images/The_Police-1764229577731.jpg",
@@ -297,8 +330,9 @@
     "available": true
   },
   {
-    "id": "Neil Young",
-    "title": "Neil Young - Zuma",
+    "id": "neil-young-zuma",
+    "artist": "Neil Young",
+    "title": "Zuma",
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Neil_Young-1764230307095.jpg",
