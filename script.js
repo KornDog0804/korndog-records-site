@@ -1,13 +1,10 @@
 // ================== KORNDOG SCRIPT (SHOP + CART) ==================
-// - All records default to quantity 1
-// - "10 dolla Holla" gets quantity 3
-// - Shop is paginated: numbered pages instead of one long scroll
+// - All records default to quantity 1 (10 Dolla Holla gets 3)
+// - Shop is paginated
 // - Cart respects quantity limits
-// - Shipping + discount + PayPal flow preserved
-// - Products are shuffled so the shop feels fresh every visit
-// - Products with available === false are hidden from the shop
-// - NEW: artist + title combined for display
-// - NEW: front/back image fields normalized so admin uploads work
+// - Shipping + discount + PayPal flow
+// - Hides products with available === false
+// - NEW: Uses artist + title, and supports front/back flip images
 // ================================================================
 
 const CART_KEY = "korndog_cart_v1";
@@ -26,16 +23,6 @@ function shuffleArray(arr) {
   return copy;
 }
 
-// Build display title: "Artist – Title"
-function buildDisplayTitle(prod) {
-  const artist = prod.artist && String(prod.artist).trim();
-  const title = prod.title && String(prod.title).trim();
-  if (artist && title) return `${artist} – ${title}`;
-  if (title) return title;
-  if (artist) return artist;
-  return prod.id || "Untitled";
-}
-
 // -------------------- LOAD PRODUCTS + QUANTITY --------------------
 async function loadProducts() {
   try {
@@ -49,48 +36,19 @@ async function loadProducts() {
     const raw = await res.json();
 
     const mapped = raw
-      // hide things explicitly marked as unavailable
       .filter((p) => p.available !== false)
       .map((p) => {
-        // ----- quantity handling -----
-        let qty;
-        if (typeof p.quantity === "number") {
-          qty = p.quantity;
-        } else {
-          qty = 1;
-          const id = (p.id || "").toLowerCase();
-          const title = (p.title || "").toLowerCase();
-          if (id.includes("10-dolla") || title.includes("10 dolla holla")) {
-            qty = 3;
-          }
+        if (typeof p.quantity === "number") return p;
+
+        let qty = 1;
+        const id = (p.id || "").toLowerCase();
+        const title = (p.title || "").toLowerCase();
+
+        if (id.includes("10-dolla") || title.includes("10 dolla holla")) {
+          qty = 3;
         }
 
-        // ----- image handling (normalize front & back) -----
-        const frontImage =
-          p.imageFront ||
-          p.frontImage ||
-          p.image_front ||
-          p.front_image ||
-          p.image ||
-          "";
-
-        const backImage =
-          p.imageBack ||
-          p.backImage ||
-          p.image_back ||
-          p.back_image ||
-          p.imageBack || // just in case
-          "";
-
-        const base = { ...p };
-        base.quantity = qty;
-        base.image = frontImage; // always set a front image for the shop
-
-        if (backImage) {
-          base.imageBack = backImage;
-        }
-
-        return base;
+        return { ...p, quantity: qty };
       });
 
     allProducts = shuffleArray(mapped);
@@ -125,6 +83,7 @@ function updateCartBadge() {
   if (badge) badge.textContent = count;
 }
 
+// Add one item to cart, respecting stock quantity
 function addToCart(productId) {
   if (!allProducts || allProducts.length === 0) return;
 
@@ -134,8 +93,6 @@ function addToCart(productId) {
   const maxQty = typeof product.quantity === "number" ? product.quantity : 1;
   const cart = getCart();
   const existing = cart.find((item) => item.id === productId);
-
-  const displayTitle = buildDisplayTitle(product);
 
   if (existing) {
     if (existing.qty >= maxQty) {
@@ -148,12 +105,13 @@ function addToCart(productId) {
     }
     existing.qty += 1;
   } else {
+    const imageForCart = product.imageFront || product.image || product.imageBack || "";
     cart.push({
       id: product.id,
-      title: displayTitle,
+      title: product.title,
       price: product.price,
       grade: product.grade,
-      image: product.image,
+      image: imageForCart,
       qty: 1,
     });
   }
@@ -205,32 +163,80 @@ function renderShopPage() {
     const card = document.createElement("div");
     card.className = "record-card";
 
-    const displayTitle = buildDisplayTitle(prod);
+    // --------- IMAGE FLIP ----------
+    const recordImage = document.createElement("div");
+    recordImage.className = "record-image";
 
-    const img = document.createElement("img");
-    img.src = prod.image || "";
-    img.alt = displayTitle;
-    img.onerror = () => {
-      img.classList.add("image-missing");
-    };
+    const flipWrapper = document.createElement("div");
+    flipWrapper.className = "flip-wrapper";
 
+    const flipInner = document.createElement("div");
+    flipInner.className = "flip-inner";
+
+    const frontDiv = document.createElement("div");
+    frontDiv.className = "flip-front";
+
+    const backDiv = document.createElement("div");
+    backDiv.className = "flip-back";
+
+    const frontSrc = prod.imageFront || prod.image || prod.imageBack || "";
+    const backSrc = prod.imageBack || prod.imageFront || prod.image || "";
+
+    if (frontSrc) {
+      const frontImg = document.createElement("img");
+      frontImg.src = frontSrc;
+      frontImg.alt = prod.title || prod.id || "Record front";
+      frontImg.onerror = () => {
+        frontImg.classList.add("image-missing");
+      };
+      frontDiv.appendChild(frontImg);
+    } else {
+      const placeholder = document.createElement("div");
+      placeholder.className = "image-missing";
+      frontDiv.appendChild(placeholder);
+    }
+
+    if (backSrc) {
+      const backImg = document.createElement("img");
+      backImg.src = backSrc;
+      backImg.alt = prod.title || prod.id || "Record back";
+      backImg.onerror = () => {
+        backImg.classList.add("image-missing");
+      };
+      backDiv.appendChild(backImg);
+    } else {
+      const placeholderBack = document.createElement("div");
+      placeholderBack.className = "image-missing";
+      backDiv.appendChild(placeholderBack);
+    }
+
+    flipInner.appendChild(frontDiv);
+    flipInner.appendChild(backDiv);
+    flipWrapper.appendChild(flipInner);
+    recordImage.appendChild(flipWrapper);
+
+    // --------- TEXT ----------
     const title = document.createElement("h3");
-    title.textContent = displayTitle;
+    if (prod.artist) {
+      title.textContent = `${prod.artist} – ${prod.title}`;
+    } else {
+      title.textContent = prod.title || prod.id || "Untitled";
+    }
 
     const grade = document.createElement("p");
     grade.className = "record-grade";
-    grade.textContent = "Grade: " + prod.grade;
+    grade.textContent = "Grade: " + (prod.grade || "—");
 
     const price = document.createElement("p");
     price.className = "record-price";
-    price.textContent = "$" + prod.price.toFixed(2);
+    price.textContent = "$" + Number(prod.price || 0).toFixed(2);
 
     const desc = document.createElement("p");
     desc.className = "record-desc";
     desc.textContent = prod.description || "";
 
     const qtyNote = document.createElement("p");
-    qtyNote.className = "record-qty";
+    qtyNote.className = "qty-text";
     qtyNote.textContent = "Qty available: " + (prod.quantity ?? 1);
 
     const btn = document.createElement("button");
@@ -238,7 +244,8 @@ function renderShopPage() {
     btn.className = "btn-primary";
     btn.addEventListener("click", () => addToCart(prod.id));
 
-    card.appendChild(img);
+    // assemble card
+    card.appendChild(recordImage);
     card.appendChild(title);
     card.appendChild(grade);
     card.appendChild(price);
@@ -253,65 +260,20 @@ function renderShopPage() {
 }
 
 function renderPagination() {
-  const container = document.getElementById("products");
-  if (!container) return;
+  const pagination = document.getElementById("pagination");
+  if (!pagination) return;
 
-  const existing = document.querySelector(".shop-pagination");
-  if (existing) existing.remove();
+  pagination.innerHTML = "";
 
   const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE);
   if (totalPages <= 1) return;
 
-  const nav = document.createElement("div");
-  nav.className = "shop-pagination";
-
-  nav.style.display = "flex";
-  nav.style.justifyContent = "center";
-  nav.style.alignItems = "center";
-  nav.style.gap = "8px";
-  nav.style.margin = "1.5rem 0 0.5rem";
-
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement("button");
     btn.textContent = i;
-    btn.className = "page-btn";
-
-    btn.style.backgroundColor = "#a8ff60";
-    btn.style.color = "#02010a";
-    btn.style.border = "none";
-    btn.style.padding = "12px 18px";
-    btn.style.fontSize = "1.05rem";
-    btn.style.fontWeight = "700";
-    btn.style.borderRadius = "999px";
-    btn.style.minWidth = "48px";
-    btn.style.minHeight = "48px";
-    btn.style.display = "flex";
-    btn.style.alignItems = "center";
-    btn.style.justifyContent = "center";
-    btn.style.cursor = "pointer";
-    btn.style.boxShadow = "0 0 10px rgba(168,255,96,0.5)";
-
     if (i === currentPage) {
-      btn.style.backgroundColor = "#7fff32";
-      btn.style.transform = "scale(1.1)";
+      btn.classList.add("active");
     }
-
-    btn.addEventListener("mouseenter", () => {
-      if (i !== currentPage) {
-        btn.style.backgroundColor = "#caff90";
-        btn.style.transform = "scale(1.08)";
-      }
-    });
-
-    btn.addEventListener("mouseleave", () => {
-      if (i === currentPage) {
-        btn.style.backgroundColor = "#7fff32";
-        btn.style.transform = "scale(1.1)";
-      } else {
-        btn.style.backgroundColor = "#a8ff60";
-        btn.style.transform = "scale(1.0)";
-      }
-    });
 
     btn.addEventListener("click", () => {
       currentPage = i;
@@ -319,10 +281,8 @@ function renderPagination() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    nav.appendChild(btn);
+    pagination.appendChild(btn);
   }
-
-  container.appendChild(nav);
 }
 
 // -------------------------- CART RENDERING ------------------------
@@ -438,7 +398,9 @@ function submitPayPal(cart, shipping, discount) {
   const form = document.getElementById("paypal-form");
   if (!form) return;
 
-  while (form.firstChild) form.removeChild(form.firstChild);
+  while (form.firstChild) {
+    form.removeChild(form.firstChild);
+  }
 
   const addField = (name, value) => {
     const input = document.createElement("input");
@@ -473,7 +435,7 @@ function submitPayPal(cart, shipping, discount) {
   form.submit();
 }
 
-// ---------------------- ADMIN PAGE (PLACEHOLDER) ------------------
+// ---------------------- ADMIN PAGE (NOP) ------------------
 async function initAdmin() {
   return;
 }
