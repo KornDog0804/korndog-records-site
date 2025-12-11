@@ -4,284 +4,605 @@
   <meta charset="UTF-8" />
   <title>KornDog Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: radial-gradient(circle at top, #3b0b78, #050014);
-      color: #f9f9ff;
-      padding: 16px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #5b2cff 0, #120019 40%, #050007 100%);
+      color: #f8f8ff;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
     }
-    .wrap {
-      max-width: 600px;
-      margin: 0 auto;
+    .admin-shell {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(5, 0, 10, 0.85);
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.6);
+      border: 1px solid rgba(168,255,96,0.25);
+      padding: 1.75rem 1.5rem 2.25rem;
+      backdrop-filter: blur(10px);
+    }
+    @media (min-width: 768px) {
+      .admin-shell { padding: 2.25rem 2.5rem 2.75rem; }
     }
     h1 {
-      text-align: center;
-      margin-bottom: 8px;
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
     }
-    .tagline {
-      text-align: center;
+    .subtitle {
+      margin-top: 0.35rem;
+      font-size: 0.95rem;
+      color: #d9d7ff;
+    }
+    .subtitle span {
+      color: #a8ff60;
+      font-weight: 600;
+    }
+    .status {
+      margin-top: 1rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: 999px;
       font-size: 0.9rem;
-      opacity: 0.8;
-      margin-bottom: 24px;
+      background: rgba(10, 255, 150, 0.08);
+      border: 1px solid rgba(168,255,96,0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #ffaf3a;
+      box-shadow: 0 0 8px rgba(255,175,58,0.9);
+    }
+    .status.ok .status-dot {
+      background: #7fff32;
+      box-shadow: 0 0 8px rgba(127,255,50,0.9);
+    }
+    .status.error {
+      border-color: rgba(255,96,96,0.7);
+      background: rgba(255,40,80,0.14);
+    }
+    .status.error .status-dot {
+      background: #ff4b6b;
+      box-shadow: 0 0 8px rgba(255,75,107,0.9);
+    }
+
+    .section-title {
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #c4ff95;
+    }
+    .field-group {
+      margin-bottom: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
     }
     label {
-      display: block;
-      font-size: 0.85rem;
-      margin-bottom: 4px;
-      opacity: 0.9;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #3a3a6a;
-      background: #0c0618;
-      color: #f9f9ff;
-      box-sizing: border-box;
-      margin-bottom: 14px;
       font-size: 0.9rem;
+      color: #f4f4ff;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      background: rgba(10,0,20,0.9);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 0.6rem 0.9rem;
+      font-size: 0.95rem;
+      color: #fdfdff;
+      outline: none;
+      width: 100%;
     }
     textarea {
+      border-radius: 14px;
       min-height: 80px;
       resize: vertical;
     }
+    input[type="file"] {
+      font-size: 0.9rem;
+      color: #f4f4ff;
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: #bcb7ff;
+    }
+    input:focus,
+    textarea:focus {
+      border-color: #a8ff60;
+      box-shadow: 0 0 0 1px rgba(168,255,96,0.45);
+    }
+    .inline {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .inline .field-group {
+      flex: 1 1 120px;
+    }
+
     .btn {
-      display: inline-block;
-      width: 100%;
-      text-align: center;
-      padding: 12px;
       border-radius: 999px;
       border: none;
-      background: #a4ff3b;
-      color: #050014;
+      padding: 0.75rem 1.4rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-size: 0.98rem;
       cursor: pointer;
-      margin-top: 4px;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
     }
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: default;
+    .btn-primary {
+      background: linear-gradient(135deg, #a8ff60, #7fff32);
+      color: #050208;
+      box-shadow: 0 0 16px rgba(168,255,96,0.6);
     }
-    .secondary {
-      background: transparent;
-      border: 1px solid #a4ff3b;
-      color: #a4ff3b;
-      margin-top: 12px;
+    .btn-primary:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 0 20px rgba(168,255,96,0.9);
     }
-    .status {
-      margin-top: 12px;
-      font-size: 0.85rem;
-      padding: 8px 10px;
-      border-radius: 8px;
-      background: #120825;
+    .btn-secondary {
+      background: rgba(75,0,130,0.8);
+      color: #f8f8ff;
+      border: 1px solid rgba(203,189,255,0.6);
     }
-    .status.ok { color: #a4ff3b; }
-    .status.err { color: #ff6b81; }
-    .field-row {
+    .btn-secondary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 16px rgba(160,120,255,0.6);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #ff4b6b, #ff8a6f);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(255,75,107,0.5);
+    }
+    .btn-danger:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(255,75,107,0.8);
+    }
+
+    .token-row {
       display: flex;
-      gap: 10px;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+      margin-bottom: 0.25rem;
+      flex-wrap: wrap;
     }
-    .field-row > div {
-      flex: 1;
+    .token-row input[type="text"] {
+      flex: 1 1 200px;
+    }
+    .hint {
+      font-size: 0.82rem;
+      color: #b8b3ff;
+      margin-bottom: 0.3rem;
+    }
+    .tiny {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.35rem;
+      font-size: 0.88rem;
+    }
+    .toggle-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+    .divider {
+      margin: 1.6rem 0 1.25rem;
+      border-top: 1px dashed rgba(255,255,255,0.15);
+    }
+    .id-chip {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(10,10,40,0.9);
+      border: 1px solid rgba(255,255,255,0.25);
+      display: inline-block;
+      margin-top: 0.15rem;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>KornDog Admin</h1>
-    <div class="tagline">Whatnot-style upload · No more JSON headaches</div>
+  <div class="admin-shell">
+    <header>
+      <h1>KornDog Admin</h1>
+      <p class="subtitle">
+        Whatnot-style upload · <span>No more JSON headaches</span>
+      </p>
+      <div id="status" class="status">
+        <span class="status-dot"></span>
+        <span id="status-text">Waiting for input…</span>
+      </div>
+    </header>
 
-    <div id="status" class="status">Waiting for input…</div>
+    <!-- GITHUB TOKEN -->
+    <section>
+      <h2 class="section-title">1. GitHub Token</h2>
+      <p class="hint">
+        Paste a GitHub personal access token with <strong>repo</strong> access.
+        It never leaves your browser – we just use it to talk to GitHub’s API.
+      </p>
+      <div class="token-row">
+        <input type="text" id="token-input" placeholder="ghp_your_personal_access_token_here" />
+        <button id="save-token-btn" class="btn btn-secondary">Set / Change GitHub Token</button>
+      </div>
+      <p class="tiny">
+        Stored as <code>korndog_github_token</code> in localStorage.  
+        If something gets weird, clear it and paste again.
+      </p>
+    </section>
 
-    <button class="btn secondary" id="setTokenBtn">Set / Change GitHub Token</button>
+    <!-- ADD / EDIT PRODUCT -->
+    <section>
+      <h2 class="section-title">2. Add a New Record</h2>
 
-    <form id="recordForm">
-      <label>Artist / ID (no spaces, e.g. acdc-backinblack)</label>
-      <input id="id" required />
-
-      <label>Title (what the customer sees)</label>
-      <input id="title" required />
-
-      <div class="field-row">
-        <div>
-          <label>Price (e.g. 17.99)</label>
-          <input id="price" type="number" step="0.01" required />
+      <form id="add-form">
+        <div class="field-group">
+          <label for="artist-id">
+            Artist / ID (no spaces, e.g. <code>acdc-backinblack</code>)
+          </label>
+          <input id="artist-id" type="text" required placeholder="sleep-token-even-in-arcadia" />
+          <span class="tiny">
+            This is the <strong>id</strong> in <code>products.json</code>. Keep it unique.
+          </span>
         </div>
-        <div>
-          <label>Grade (e.g. NM/NM)</label>
-          <input id="grade" required />
+
+        <div class="field-group">
+          <label for="title">Title (what the customer sees)</label>
+          <input id="title" type="text" required placeholder="Sleep Token – Even in Arcadia" />
         </div>
+
+        <div class="inline">
+          <div class="field-group">
+            <label for="price">Price (e.g. 17.99)</label>
+            <input id="price" type="number" step="0.01" min="0" required placeholder="17.99" />
+          </div>
+          <div class="field-group">
+            <label for="grade">Grade (e.g. NM/NM)</label>
+            <input id="grade" type="text" required placeholder="NM/NM" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="description">Description</label>
+          <textarea id="description" placeholder="Short hype line – variant, color, story, etc."></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="quantity">Stock / Quantity</label>
+          <input id="quantity" type="number" min="1" step="1" value="1" />
+          <span class="tiny">
+            Defaults to 1. For <code>$10 Dolla Holla</code> you can set 3, 5, etc.
+          </span>
+        </div>
+
+        <div class="field-group">
+          <label for="cover">Cover Photo</label>
+          <input id="cover" type="file" accept="image/*" required />
+          <span class="tiny">
+            Will be uploaded to the repo’s <span class="id-chip">images/</span> folder.
+          </span>
+        </div>
+
+        <div class="toggle-row">
+          <input type="checkbox" id="available" checked />
+          <label for="available">Available on the site (uncheck to add as hidden / coming soon)</label>
+        </div>
+
+        <div style="margin-top: 1.2rem;">
+          <button type="submit" class="btn btn-primary">Save to Site</button>
+        </div>
+      </form>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- TOGGLE SOLD / AVAILABLE -->
+    <section>
+      <h2 class="section-title">3. Mark Sold / Back in Stock</h2>
+      <p class="hint">
+        Use the <strong>id</strong> from <code>products.json</code> (same as “Artist / ID” above).
+        Example:
+        <span class="id-chip">sleep-token-even-in-arcadia</span>
+      </p>
+
+      <div class="field-group">
+        <label for="toggle-id">Record ID</label>
+        <input id="toggle-id" type="text" placeholder="sleep-token-even-in-arcadia" />
       </div>
 
-      <label>Description</label>
-      <textarea id="description"></textarea>
-
-      <label>Cover Photo</label>
-      <input id="imageFile" type="file" accept="image/*" required />
-
-      <button type="submit" class="btn" id="saveBtn">Save to Site</button>
-    </form>
+      <div class="inline" style="margin-top: 0.5rem;">
+        <button id="mark-sold-btn" type="button" class="btn btn-danger">
+          Mark Sold (Hide from shop)
+        </button>
+        <button id="mark-available-btn" type="button" class="btn btn-secondary">
+          Mark Available (Show on shop)
+        </button>
+      </div>
+    </section>
   </div>
 
   <script>
-    // ===== CONFIG – CHANGE THESE TO MATCH YOUR REPO =====
-    const GITHUB_OWNER = "KornDog0804";
-    const GITHUB_REPO = "korndog-records-site";
+    // === CONFIG: YOUR REPO ===
+    const OWNER = "KornDog0804";
+    const REPO  = "korndog-records-site";
+    const BRANCH = "main";
     const PRODUCTS_PATH = "products.json";
-    const IMAGES_FOLDER = "images"; // existing folder
+    const IMAGES_FOLDER = "images";
 
+    // === STATUS HELPERS ===
     const statusEl = document.getElementById("status");
-    const saveBtn = document.getElementById("saveBtn");
-    const setTokenBtn = document.getElementById("setTokenBtn");
+    const statusText = document.getElementById("status-text");
 
-    function setStatus(msg, type = "") {
-      statusEl.textContent = msg;
-      statusEl.className = "status " + (type || "");
+    function setStatus(message, kind = "ok") {
+      statusText.textContent = message;
+      statusEl.classList.remove("ok", "error");
+      if (kind === "ok") statusEl.classList.add("ok");
+      if (kind === "error") statusEl.classList.add("error");
     }
 
+    // === TOKEN HANDLING ===
+    const TOKEN_KEY = "korndog_github_token";
+    const tokenInput = document.getElementById("token-input");
+    const saveTokenBtn = document.getElementById("save-token-btn");
+
     function getToken() {
-      return localStorage.getItem("kd_github_token") || "";
+      return localStorage.getItem(TOKEN_KEY) || "";
     }
 
     function requireToken() {
-      let token = getToken();
+      const token = getToken();
       if (!token) {
-        token = prompt("Paste your GitHub personal access token (it will be stored only on this device):");
-        if (token) {
-          localStorage.setItem("kd_github_token", token.trim());
-        }
+        setStatus("No GitHub token set. Paste it above first.", "error");
+        throw new Error("Missing GitHub token");
       }
       return token;
     }
 
-    setTokenBtn.addEventListener("click", () => {
-      const t = prompt("Paste new GitHub token:");
-      if (t) {
-        localStorage.setItem("kd_github_token", t.trim());
-        setStatus("Token updated on this device.", "ok");
+    // On load, show short token hint if already set
+    (function initTokenDisplay() {
+      const existing = getToken();
+      if (existing) {
+        tokenInput.placeholder = "Token already set (•••" + existing.slice(-6) + ")";
+        setStatus("GitHub token loaded. You’re ready to go.", "ok");
       }
+    })();
+
+    saveTokenBtn.addEventListener("click", () => {
+      const value = tokenInput.value.trim();
+      if (!value) {
+        localStorage.removeItem(TOKEN_KEY);
+        setStatus("GitHub token cleared. Paste a new one before saving records.", "error");
+        return;
+      }
+      localStorage.setItem(TOKEN_KEY, value);
+      tokenInput.value = "";
+      tokenInput.placeholder = "Token set (•••" + value.slice(-6) + ")";
+      setStatus("GitHub token saved. You’re wired into the repo.", "ok");
     });
 
-    // Convert File → base64 (no header)
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result.split(",")[1]; // strip data:...;base64,
-          resolve(result);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function githubGet(path) {
+    // === GITHUB HELPERS ===
+    async function githubRequest(path, options = {}) {
       const token = requireToken();
-      if (!token) throw new Error("No token set.");
-      const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/vnd.github+json"
-        }
-      });
-      if (!res.ok) throw new Error(`GitHub GET ${path} failed: ${res.status}`);
-      return res.json();
-    }
-
-    async function githubPut(path, contentBase64, message, sha) {
-      const token = requireToken();
-      if (!token) throw new Error("No token set.");
-      const body = {
-        message,
-        content: contentBase64
+      const headers = {
+        "Authorization": "token " + token,
+        "Accept": "application/vnd.github+json"
       };
-      if (sha) body.sha = sha;
-      const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/vnd.github+json"
-        },
-        body: JSON.stringify(body)
-      });
+      const res = await fetch(
+        "https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" + path,
+        { ...options, headers: { ...headers, ...(options.headers || {}) } }
+      );
       if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(`GitHub PUT ${path} failed: ${res.status} ${txt}`);
+        const msg = await res.text();
+        console.error("GitHub error:", msg);
+        throw new Error("GitHub API error: " + res.status);
       }
       return res.json();
     }
 
-    async function handleSubmit(e) {
+    async function getFile(path) {
+      const data = await githubRequest(path, { method: "GET" });
+      const decoded = atob(data.content.replace(/\\n/g, ""));
+      return { text: decoded, sha: data.sha };
+    }
+
+    async function putFile(path, contentText, message, sha) {
+      const encoded = btoa(unescape(encodeURIComponent(contentText)));
+      const body = {
+        message,
+        content: encoded,
+        branch: BRANCH
+      };
+      if (sha) body.sha = sha;
+      return githubRequest(path, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    async function uploadImage(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+      let binary = "";
+      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+      const base64 = btoa(binary);
+
+      // Build a clean filename based on time + original name
+      const safeName = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9_.-]/g, "_");
+      const path = IMAGES_FOLDER + "/" + safeName;
+      await putFile(path, atob(base64), "Add image " + safeName);
+      return path;
+    }
+
+    // === LOAD + SAVE PRODUCTS.JSON ===
+    async function loadProductsJson() {
+      const { text, sha } = await getFile(PRODUCTS_PATH);
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error("Bad products.json", e);
+        throw new Error("products.json is not valid JSON");
+      }
+      if (!Array.isArray(data)) {
+        throw new Error("products.json must be an array");
+      }
+      return { products: data, sha };
+    }
+
+    async function saveProductsJson(products, sha, message) {
+      const text = JSON.stringify(products, null, 2);
+      await putFile(PRODUCTS_PATH, text, message, sha);
+    }
+
+    // === ADD FORM LOGIC ===
+    const addForm = document.getElementById("add-form");
+    const artistIdInput = document.getElementById("artist-id");
+    const titleInput = document.getElementById("title");
+    const priceInput = document.getElementById("price");
+    const gradeInput = document.getElementById("grade");
+    const descInput = document.getElementById("description");
+    const qtyInput = document.getElementById("quantity");
+    const coverInput = document.getElementById("cover");
+    const availableInput = document.getElementById("available");
+
+    addForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       try {
-        saveBtn.disabled = true;
-        setStatus("Uploading image…");
+        requireToken();
+      } catch {
+        return;
+      }
 
-        const id = document.getElementById("id").value.trim();
-        const title = document.getElementById("title").value.trim();
-        const price = parseFloat(document.getElementById("price").value);
-        const grade = document.getElementById("grade").value.trim();
-        const description = document.getElementById("description").value.trim();
-        const file = document.getElementById("imageFile").files[0];
+      const id = artistIdInput.value.trim();
+      const title = titleInput.value.trim();
+      const price = parseFloat(priceInput.value);
+      const grade = gradeInput.value.trim();
+      const description = descInput.value.trim();
+      const quantity = parseInt(qtyInput.value || "1", 10) || 1;
+      const available = availableInput.checked;
+      const file = coverInput.files[0];
 
-        if (!id || !title || !file || isNaN(price)) {
-          throw new Error("Missing required fields.");
-        }
+      if (!id || !title || !grade || !file || isNaN(price)) {
+        setStatus("Missing required fields. Double-check the form.", "error");
+        return;
+      }
 
-        // 1) Upload image file into /images/
-        const safeFileName = `${id}-${Date.now()}.jpg`.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const imgBase64 = await fileToBase64(file);
-        await githubPut(
-          `${IMAGES_FOLDER}/${safeFileName}`,
-          imgBase64,
-          `Add image for ${title}`
-        );
+      setStatus("Uploading cover photo to GitHub…");
 
-        const imagePathForSite = `images/${safeFileName}`; // what products.json will use
+      try {
+        const imagePath = await uploadImage(file);
 
-        setStatus("Image uploaded. Updating products.json…");
+        setStatus("Updating products.json…");
 
-        // 2) Get current products.json from GitHub
-        const prodFile = await githubGet(PRODUCTS_PATH);
-        const currentJson = atob(prodFile.content);
-        const products = JSON.parse(currentJson);
+        const { products, sha } = await loadProductsJson();
 
-        // 3) Push new record
-        products.push({
+        // Check for existing id
+        const existingIndex = products.findIndex((p) => p.id === id);
+        const newProduct = {
           id,
           title,
           price,
           grade,
-          image: imagePathForSite,
-          description
-        });
+          image: imagePath,
+          description,
+          quantity,
+          available
+        };
 
-        const newJsonString = JSON.stringify(products, null, 2);
-        const newJsonBase64 = btoa(newJsonString);
+        if (existingIndex >= 0) {
+          products[existingIndex] = { ...products[existingIndex], ...newProduct };
+        } else {
+          products.push(newProduct);
+        }
 
-        // 4) Write products.json back to GitHub
-        await githubPut(
-          PRODUCTS_PATH,
-          newJsonBase64,
-          `Add record: ${title}`,
-          prodFile.sha
+        await saveProductsJson(
+          products,
+          sha,
+          (existingIndex >= 0 ? "Update record " : "Add record ") + id
         );
 
-        setStatus("Saved! Netlify will redeploy and the record will show on Shop in a bit.", "ok");
-        (e.target).reset();
+        setStatus("Saved! " + title + " is now in the JSON and ready to sell.", "ok");
+
+        // Reset form
+        addForm.reset();
+        qtyInput.value = "1";
+        availableInput.checked = true;
       } catch (err) {
         console.error(err);
-        setStatus("Error: " + err.message, "err");
-      } finally {
-        saveBtn.disabled = false;
+        setStatus("Something blew up talking to GitHub. Check console / token.", "error");
+      }
+    });
+
+    // === SOLD / AVAILABLE TOGGLE ===
+    const toggleIdInput = document.getElementById("toggle-id");
+    const markSoldBtn = document.getElementById("mark-sold-btn");
+    const markAvailableBtn = document.getElementById("mark-available-btn");
+
+    async function setAvailability(flag) {
+      const id = toggleIdInput.value.trim();
+      if (!id) {
+        setStatus("Type the record ID you want to flip.", "error");
+        return;
+      }
+
+      try {
+        requireToken();
+      } catch {
+        return;
+      }
+
+      try {
+        setStatus("Updating availability for " + id + "…");
+
+        const { products, sha } = await loadProductsJson();
+        const idx = products.findIndex((p) => p.id === id);
+
+        if (idx === -1) {
+          setStatus("No record found with id: " + id, "error");
+          return;
+        }
+
+        products[idx].available = flag;
+
+        await saveProductsJson(
+          products,
+          sha,
+          (flag ? "Mark available " : "Mark sold ") + id
+        );
+
+        setStatus(
+          "Done. " +
+          products[idx].title +
+          (flag ? " is back on the shop." : " is now hidden / sold."),
+          "ok"
+        );
+      } catch (err) {
+        console.error(err);
+        setStatus("Could not update availability. Check console / token.", "error");
       }
     }
 
-    document.getElementById("recordForm").addEventListener("submit", handleSubmit);
+    markSoldBtn.addEventListener("click", () => setAvailability(false));
+    markAvailableBtn.addEventListener("click", () => setAvailability(true));
   </script>
 </body>
 </html>
