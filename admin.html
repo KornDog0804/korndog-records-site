@@ -526,18 +526,40 @@
       });
     }
 
-    async function uploadImage(file) {
+    // UPDATED: uploadImage now takes a targetBaseName and overwrites same file if it exists
+    async function uploadImage(file, targetBaseName) {
       const arrayBuffer = await file.arrayBuffer();
       const bytes = new Uint8Array(arrayBuffer);
       let binary = "";
       for (let i = 0; i < bytes.length; i++) {
         binary += String.fromCharCode(bytes[i]);
       }
-      const safeName =
-        Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9_.-]/g, "_");
+
+      // pull extension from original filename
+      const extMatch = file.name.match(/\.[a-zA-Z0-9]+$/);
+      const ext = extMatch ? extMatch[0].toLowerCase() : ".jpg";
+
+      // clean base name (from record id)
+      const cleanBase =
+        (targetBaseName || "record")
+          .toLowerCase()
+          .replace(/[^a-z0-9_-]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-+|-+$/g, "") || "record";
+
+      const safeName = cleanBase + ext;
       const path = IMAGES_FOLDER + "/" + safeName;
 
-      await putFile(path, binary, "Add image " + safeName);
+      // if file already exists, get its SHA so GitHub updates instead of failing
+      let sha;
+      try {
+        const existing = await getFile(path);
+        sha = existing.sha;
+      } catch (e) {
+        sha = undefined; // not found, will create new
+      }
+
+      await putFile(path, binary, "Add/Update image " + safeName, sha);
       return path;
     }
 
@@ -642,10 +664,18 @@
       setStatus("Uploading cover photo(s) to GitHub…");
 
       try {
-        const frontPath = await uploadImage(frontFile);
+        // base name derived from ID for clean, predictable filenames
+        const safeBase =
+          id
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/-+/g, "-")
+            .replace(/^-+|-+$/g, "") || "record";
+
+        const frontPath = await uploadImage(frontFile, safeBase + "-front");
         let backPath = frontPath;
         if (backFile) {
-          backPath = await uploadImage(backFile);
+          backPath = await uploadImage(backFile, safeBase + "-back");
         }
 
         setStatus("Updating products.json…");
