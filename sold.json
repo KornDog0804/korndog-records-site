@@ -5,7 +5,16 @@
     "price": 14.99,
     "grade": "VG+/VG+",
     "image": "images/rn-image_picker_lib_temp_6eed81b0-419c-42a9-938d-e44da8a3154d.jpg",
-    "description": "Country storytelling at its peak. Randy Travisâ debut album didnât just climb charts, it rewrote what country could be.",
+    "description": "Country storytelling at its peak. Randy TravisÃ¢ÂÂ debut album didnÃ¢ÂÂt just climb charts, it rewrote what country could be.",
+    "available": false
+  },
+  {
+    "id": "Hootie And The Blowfish",
+    "title": "Cracked Rear View",
+    "price": 24.99,
+    "grade": "NM/NM",
+    "image": "images/rn-image_picker_lib_temp_19781262-ab91-4a40-ade0-d5cc28437c51.jpg",
+    "description": "2017 Re-press NM/NM",
     "available": false
   }
 ]
