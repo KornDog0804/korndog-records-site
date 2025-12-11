@@ -1,173 +1,11 @@
 [
   {
-    "id": "sum41-all-killer-no-filler",
-    "title": "Sum 41 â All Killer No Filler",
-    "price": 32.99,
-    "grade": "NM/NM",
-    "image": "images/PXL_20251124_210448795.TS-000.jpg",
-    "description": "Pop-punk chaos, no filler. NM/NM copy Black and Blue Smash.",
-    "available": true
-  },
-  {
-    "id": "within-destruction-lotus",
-    "title": "Within Destruction â Lotus",
-    "price": 44.99,
-    "grade": "NM/NM",
-    "image": "images/Screenshot_20250914-012633.png",
-    "description": "Crushing modern deathcore, Ghost variant. NM/NM copy.",
-    "available": true
-  },
-  {
-    "id": "sleep-token-even-in-arcadia",
-    "title": "Sleep Token â Even in Arcadia",
-    "price": 69.99,
-    "grade": "NM/NM",
-    "image": "images/Screenshot_20250826-210248.png",
-    "description": "House Veridian Edition. NM/NM copy.",
-    "available": true
-  },
-  {
     "id": "ten-dolla-holla",
     "title": "$10 Dolla Holla Mystery Record",
     "price": 10,
     "grade": "VG/VG",
     "image": "images/Screenshot_20250822-074904.png",
     "description": "Random mystery pull from the stack. VG/VG.",
-    "available": true
-  },
-  {
-    "id": "johnny-guitar-watson-giant",
-    "title": "Johnny Guitar Watson â Giant",
-    "price": 8.99,
-    "grade": "VG/VG",
-    "image": "images/PXL_20250915_125512318.jpg",
-    "description": "Funky, spacey soul trip. VG/VG copy.",
-    "available": true
-  },
-  {
-    "id": "i-prevail-heart-vs-mind",
-    "title": "I Prevail â Heart vs Mind",
-    "price": 19.99,
-    "grade": "NM/NM",
-    "image": "images/PXL_20250915_125450366.jpg",
-    "description": "Debut EP. NM/NM copy.",
-    "available": true
-  },
-  {
-    "id": "blessthefall-hollow-bodies",
-    "title": "BlessTheFall â Hollow Bodies",
-    "price": 14.99,
-    "grade": "NM/NM",
-    "image": "images/PXL_20250907_203733675.jpg",
-    "description": "10th Anniversary Edition. NM/NM copy.",
-    "available": true
-  },
-  {
-    "id": "jimi-hendrix-smash-hits",
-    "title": "Jimi Hendrix Experience â Smash Hits",
-    "price": 14.99,
-    "grade": "VG/VG",
-    "image": "images/PXL_20251125_201153364.jpg",
-    "description": "Club repress. VG/VG+ copy.",
-    "available": true
-  },
-  {
-    "id": "AC/DC",
-    "title": "Back In Black ",
-    "price": 17.99,
-    "grade": "VG/VG",
-    "image": "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg",
-    "description": "Back In Black ICONIC VG/VG+",
-    "available": true
-  },
-  {
-    "id": "Hootie And The Blowfish",
-    "title": "Cracked Rear View",
-    "price": 24.99,
-    "grade": "NM/NM",
-    "image": "images/rn-image_picker_lib_temp_19781262-ab91-4a40-ade0-d5cc28437c51.jpg",
-    "description": "2017 Re-press NM/NM",
-    "available": true
-  },
-  {
-    "id": "Pantera",
-    "title": "History Of Hostility ",
-    "price": 19.99,
-    "grade": "NM/NM",
-    "image": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
-    "description": "2015 Rhino Pressing NM/NM",
-    "available": true
-  },
-  {
-    "id": "Bullet For My Valentine ",
-    "title": "The Poison 20th Anniversary Gatefold",
-    "price": 34.99,
-    "grade": "NM/NM",
-    "image": "images/rn-image_picker_lib_temp_4677e40d-5aff-403e-8216-cb3a0cd47fe2.jpg",
-    "description": "Limited 20th anniversary Red NM/NM",
-    "available": true
-  },
-  {
-    "id": "Grateful Dead",
-    "title": "50th Anniversary Edition (Picture Disc, Rhino 2017)",
-    "price": 24.99,
-    "grade": "NM/NM",
-    "image": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
-    "description": "Psychedelic swirl for the ages. This 50th Anniversary picture disc reissue of the Deadâs groundbreaking 1967 debut takes the acid-soaked vibe and makes it spin-ready art. Limited to 10,000 copies worldwide, this oneâs both a collectible and a sonic time capsule.",
-    "available": true
-  },
-  {
-    "id": "Bob Seger & Silver Bullet Band",
-    "title": "Stranger In Town",
-    "price": 4.99,
-    "grade": "VG/Vg",
-    "image": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
-    "description": "Nice clean OG cooy",
-    "available": true
-  },
-  {
-    "id": "Bob Seger & Silver Bullet Band",
-    "title": "Night Moves",
-    "price": 4.99,
-    "grade": "VG/VG",
-    "image": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
-    "description": "Super clean OG copy",
-    "available": true
-  },
-  {
-    "id": "The Police",
-    "title": "Zenyatta Mondatta",
-    "price": 9.99,
-    "grade": "VG+/Vag+",
-    "image": "images/The_Police-1764229577731.jpg",
-    "description": "Great Copy Super Clean",
-    "available": true
-  },
-  {
-    "id": "Johnny Cash",
-    "title": "Greatest Hits Volume 1",
-    "price": 4.99,
-    "grade": "VG/VG",
-    "image": "images/Johnny_Cash-1764230221013.jpg",
-    "description": "You better walk the line when you get this one",
-    "available": true
-  },
-  {
-    "id": "Neil Young",
-    "title": "Zuma",
-    "price": 4.99,
-    "grade": "VG/VG+",
-    "image": "images/Neil_Young-1764230307095.jpg",
-    "description": "Marker spot on cover but solid all around",
-    "available": true
-  },
-  {
-    "id": "David Lee Roth EP",
-    "title": "Crazy From The Heat",
-    "price": 9.99,
-    "grade": "VG+/VG+",
-    "image": "images/David_Lee_Roth_EP-1764230391826.jpg",
-    "description": "Super Clean",
     "available": true
   },
   {
@@ -180,39 +18,21 @@
     "available": true
   },
   {
-    "id": "Boston",
-    "title": "Boston 1",
-    "price": 4.99,
-    "grade": "VG/VG+",
-    "image": "images/Boston-1764230862646.jpg",
-    "description": "Very Nice in my Borat voice",
+    "id": "Grateful Dead",
+    "title": "50th Anniversary Edition (Picture Disc, Rhino 2017)",
+    "price": 24.99,
+    "grade": "NM/NM",
+    "image": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
+    "description": "Psychedelic swirl for the ages. This 50th Anniversary picture disc reissue of the DeadÃ¢ÂÂs groundbreaking 1967 debut takes the acid-soaked vibe and makes it spin-ready art. Limited to 10,000 copies worldwide, this oneÃ¢ÂÂs both a collectible and a sonic time capsule.",
     "available": true
   },
   {
-    "id": "Willie Nelson",
-    "title": "Willie And Family Live",
-    "price": 4.99,
-    "grade": "VG/VG",
-    "image": "images/Willie_Nelson-1764232751664.jpg",
-    "description": "I know you can't wait to get on the road again with this one.",
-    "available": true
-  },
-  {
-    "id": "Kansas",
-    "title": "Leftoverture",
-    "price": 4.99,
+    "id": "Billy Joel",
+    "title": "52nd Street",
+    "price": 5.99,
     "grade": "VG/VG+",
-    "image": "images/Kansas-1764232880896.jpg",
-    "description": "Carry on my Wayward Son",
-    "available": true
-  },
-  {
-    "id": "Robert Plant",
-    "title": "Now And Zen",
-    "price": 4.99,
-    "grade": "VG/VG+",
-    "image": "images/Robert_Plant-1764232983897.jpg",
-    "description": "Super Clean Copy",
+    "image": "images/Billy_Joel-1764298491999.jpg",
+    "description": "Original Inner Very Nice Copy",
     "available": true
   },
   {
@@ -234,30 +54,21 @@
     "available": true
   },
   {
-    "id": "Cheap Trick",
-    "title": "Dream Police",
-    "price": 4.99,
+    "id": "Dokken",
+    "title": "Back For The Attack",
+    "price": 19.99,
     "grade": "VG/VG+",
-    "image": "images/Cheap_Trick-1764233303621.jpg",
-    "description": "Now this is No Cheap Trick. Super Clean Copy and yours today for 4.99",
+    "image": "images/Dokken-1764298922683.jpg",
+    "description": "OG Copy with original inner",
     "available": true
   },
   {
-    "id": "ZZ TOP",
-    "title": "Tres Hombres",
-    "price": 14.99,
-    "grade": "VG/VG+",
-    "image": "images/ZZ_TOP-1764287666570.jpg",
-    "description": "Are you ready to go to La Grange?",
-    "available": true
-  },
-  {
-    "id": "Red Hot Chili Peppers",
-    "title": "Californication",
-    "price": 32.99,
-    "grade": "NM/NM",
-    "image": "images/Red_Hot_Chili_Peppers-1764287782972.jpg",
-    "description": "25th Anniversary 2 LP Colored Vinyl",
+    "id": "AC/DC",
+    "title": "Back In Black ",
+    "price": 17.99,
+    "grade": "VG/VG",
+    "image": "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg",
+    "description": "Back In Black ICONIC VG/VG+",
     "available": true
   },
   {
@@ -270,12 +81,183 @@
     "available": true
   },
   {
+    "id": "blessthefall-hollow-bodies",
+    "title": "BlessTheFall Ã¢ÂÂ Hollow Bodies",
+    "price": 14.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20250907_203733675.jpg",
+    "description": "10th Anniversary Edition. NM/NM copy.",
+    "available": true
+  },
+  {
+    "id": "Boston",
+    "title": "Boston 1",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Boston-1764230862646.jpg",
+    "description": "Very Nice in my Borat voice",
+    "available": true
+  },
+  {
+    "id": "Red Hot Chili Peppers",
+    "title": "Californication",
+    "price": 32.99,
+    "grade": "NM/NM",
+    "image": "images/Red_Hot_Chili_Peppers-1764287782972.jpg",
+    "description": "25th Anniversary 2 LP Colored Vinyl",
+    "available": true
+  },
+  {
+    "id": "David Lee Roth EP",
+    "title": "Crazy From The Heat",
+    "price": 9.99,
+    "grade": "VG+/VG+",
+    "image": "images/David_Lee_Roth_EP-1764230391826.jpg",
+    "description": "Super Clean",
+    "available": true
+  },
+  {
+    "id": "Cheap Trick",
+    "title": "Dream Police",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Cheap_Trick-1764233303621.jpg",
+    "description": "Now this is No Cheap Trick. Super Clean Copy and yours today for 4.99",
+    "available": true
+  },
+  {
+    "id": "Johnny Cash",
+    "title": "Greatest Hits Volume 1",
+    "price": 4.99,
+    "grade": "VG/VG",
+    "image": "images/Johnny_Cash-1764230221013.jpg",
+    "description": "You better walk the line when you get this one",
+    "available": true
+  },
+  {
+    "id": "Pantera",
+    "title": "History Of Hostility ",
+    "price": 19.99,
+    "grade": "NM/NM",
+    "image": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
+    "description": "2015 Rhino Pressing NM/NM",
+    "available": true
+  },
+  {
+    "id": "i-prevail-heart-vs-mind",
+    "title": "I Prevail Ã¢ÂÂ Heart vs Mind",
+    "price": 19.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20250915_125450366.jpg",
+    "description": "Debut EP. NM/NM copy.",
+    "available": true
+  },
+  {
+    "id": "jimi-hendrix-smash-hits",
+    "title": "Jimi Hendrix Experience Ã¢ÂÂ Smash Hits",
+    "price": 14.99,
+    "grade": "VG/VG",
+    "image": "images/PXL_20251125_201153364.jpg",
+    "description": "Club repress. VG/VG+ copy.",
+    "available": true
+  },
+  {
+    "id": "johnny-guitar-watson-giant",
+    "title": "Johnny Guitar Watson Ã¢ÂÂ Giant",
+    "price": 8.99,
+    "grade": "VG/VG",
+    "image": "images/PXL_20250915_125512318.jpg",
+    "description": "Funky, spacey soul trip. VG/VG copy.",
+    "available": true
+  },
+  {
     "id": "Dazz Band",
     "title": "Keep It Live",
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Dazz_Band-1764298272765.jpg",
     "description": "Very Clean Copy",
+    "available": true
+  },
+  {
+    "id": "Kansas",
+    "title": "Leftoverture",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Kansas-1764232880896.jpg",
+    "description": "Carry on my Wayward Son",
+    "available": true
+  },
+  {
+    "id": "Bob Seger & Silver Bullet Band",
+    "title": "Night Moves",
+    "price": 4.99,
+    "grade": "VG/VG",
+    "image": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
+    "description": "Super clean OG copy",
+    "available": true
+  },
+  {
+    "id": "Robert Plant",
+    "title": "Now And Zen",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Robert_Plant-1764232983897.jpg",
+    "description": "Super Clean Copy",
+    "available": true
+  },
+  {
+    "id": "Kansas",
+    "title": "Point Of Know Return",
+    "price": 9.99,
+    "grade": "VG/VG+",
+    "image": "images/Kansas-1764299103385.jpg",
+    "description": "OG Copy with Original Inner",
+    "available": true
+  },
+  {
+    "id": "sleep-token-even-in-arcadia",
+    "title": "Sleep Token Ã¢ÂÂ Even in Arcadia",
+    "price": 69.99,
+    "grade": "NM/NM",
+    "image": "images/Screenshot_20250826-210248.png",
+    "description": "House Veridian Edition. NM/NM copy.",
+    "available": true
+  },
+  {
+    "id": "Bob Seger & Silver Bullet Band",
+    "title": "Stranger In Town",
+    "price": 4.99,
+    "grade": "VG/Vg",
+    "image": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
+    "description": "Nice clean OG cooy",
+    "available": true
+  },
+  {
+    "id": "sum41-all-killer-no-filler",
+    "title": "Sum 41 Ã¢ÂÂ All Killer No Filler",
+    "price": 32.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20251124_210448795.TS-000.jpg",
+    "description": "Pop-punk chaos, no filler. NM/NM copy Black and Blue Smash.",
+    "available": true
+  },
+  {
+    "id": "Bullet For My Valentine ",
+    "title": "The Poison 20th Anniversary Gatefold",
+    "price": 34.99,
+    "grade": "NM/NM",
+    "image": "images/rn-image_picker_lib_temp_4677e40d-5aff-403e-8216-cb3a0cd47fe2.jpg",
+    "description": "Limited 20th anniversary Red NM/NM",
+    "available": true
+  },
+  {
+    "id": "ZZ TOP",
+    "title": "Tres Hombres",
+    "price": 14.99,
+    "grade": "VG/VG+",
+    "image": "images/ZZ_TOP-1764287666570.jpg",
+    "description": "Are you ready to go to La Grange?",
     "available": true
   },
   {
@@ -288,30 +270,39 @@
     "available": true
   },
   {
-    "id": "Billy Joel",
-    "title": "52nd Street",
-    "price": 5.99,
-    "grade": "VG/VG+",
-    "image": "images/Billy_Joel-1764298491999.jpg",
-    "description": "Original Inner Very Nice Copy",
+    "id": "Willie Nelson",
+    "title": "Willie And Family Live",
+    "price": 4.99,
+    "grade": "VG/VG",
+    "image": "images/Willie_Nelson-1764232751664.jpg",
+    "description": "I know you can't wait to get on the road again with this one.",
     "available": true
   },
   {
-    "id": "Dokken",
-    "title": "Back For The Attack",
-    "price": 19.99,
-    "grade": "VG/VG+",
-    "image": "images/Dokken-1764298922683.jpg",
-    "description": "OG Copy with original inner",
+    "id": "within-destruction-lotus",
+    "title": "Within Destruction Ã¢ÂÂ Lotus",
+    "price": 44.99,
+    "grade": "NM/NM",
+    "image": "images/Screenshot_20250914-012633.png",
+    "description": "Crushing modern deathcore, Ghost variant. NM/NM copy.",
     "available": true
   },
   {
-    "id": "Kansas",
-    "title": "Point Of Know Return",
+    "id": "The Police",
+    "title": "Zenyatta Mondatta",
     "price": 9.99,
+    "grade": "VG+/Vag+",
+    "image": "images/The_Police-1764229577731.jpg",
+    "description": "Great Copy Super Clean",
+    "available": true
+  },
+  {
+    "id": "Neil Young",
+    "title": "Zuma",
+    "price": 4.99,
     "grade": "VG/VG+",
-    "image": "images/Kansas-1764299103385.jpg",
-    "description": "OG Copy with Original Inner",
+    "image": "images/Neil_Young-1764230307095.jpg",
+    "description": "Marker spot on cover but solid all around",
     "available": true
   }
 ]
