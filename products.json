@@ -60,6 +60,16 @@
     "available": true
   },
   {
+    "id": "sum41-all-killer-no-filler",
+    "artist": "Sum 41",
+    "title": "All Killer No Filler",
+    "price": 32.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20251124_210448795.TS-000.jpg",
+    "description": "Pop-punk chaos, no filler. NM/NM copy, black and blue smash.",
+    "available": true
+  },
+  {
     "id": "dokken-back-for-the-attack",
     "artist": "Dokken",
     "title": "Back For The Attack",
@@ -87,16 +97,6 @@
     "grade": "NM/NM",
     "image": "images/A_Day_To_Remember-1764287872011.jpg",
     "description": "Limited edition orange creamsicle vinyl. Amazon exclusive.",
-    "available": true
-  },
-  {
-    "id": "blessthefall-hollow-bodies",
-    "artist": "BlessTheFall",
-    "title": "Hollow Bodies",
-    "price": 14.99,
-    "grade": "NM/NM",
-    "image": "images/PXL_20250907_203733675.jpg",
-    "description": "10th Anniversary Edition. NM/NM copy.",
     "available": true
   },
   {
@@ -140,6 +140,36 @@
     "available": true
   },
   {
+    "id": "sleep-token-even-in-arcadia",
+    "artist": "Sleep Token",
+    "title": "Even in Arcadia",
+    "price": 69.99,
+    "grade": "NM/NM",
+    "image": "images/Screenshot_20250826-210248.png",
+    "description": "House Veridian Edition. NM/NM copy.",
+    "available": true
+  },
+  {
+    "id": "johnny-guitar-watson-giant",
+    "artist": "Johnny Guitar Watson",
+    "title": "Giant",
+    "price": 8.99,
+    "grade": "VG/VG",
+    "image": "images/PXL_20250915_125512318.jpg",
+    "description": "Funky, spacey soul trip. VG/VG copy.",
+    "available": true
+  },
+  {
+    "id": "war-greatest-hits",
+    "artist": "War",
+    "title": "Greatest Hits",
+    "price": 9.99,
+    "grade": "VG+/VG+",
+    "image": "images/WAR-1764298393607.jpg",
+    "description": "Almost NM with original inner.",
+    "available": true
+  },
+  {
     "id": "johnny-cash-greatest-hits-vol-1",
     "artist": "Johnny Cash",
     "title": "Greatest Hits Volume 1",
@@ -147,16 +177,6 @@
     "grade": "VG/VG",
     "image": "images/Johnny_Cash-1764230221013.jpg",
     "description": "You better walk the line when you get this one.",
-    "available": true
-  },
-  {
-    "id": "pantera-history-of-hostility",
-    "artist": "Pantera",
-    "title": "History Of Hostility",
-    "price": 19.99,
-    "grade": "NM/NM",
-    "image": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
-    "description": "2015 Rhino pressing. NM/NM.",
     "available": true
   },
   {
@@ -170,23 +190,23 @@
     "available": true
   },
   {
-    "id": "jimi-hendrix-smash-hits",
-    "artist": "Jimi Hendrix Experience",
-    "title": "Smash Hits",
-    "price": 14.99,
-    "grade": "VG/VG",
-    "image": "images/PXL_20251125_201153364.jpg",
-    "description": "Club repress. VG/VG+ copy.",
+    "id": "pantera-history-of-hostility",
+    "artist": "Pantera",
+    "title": "History Of Hostility",
+    "price": 19.99,
+    "grade": "NM/NM",
+    "image": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
+    "description": "2015 Rhino pressing. NM/NM.",
     "available": true
   },
   {
-    "id": "johnny-guitar-watson-giant",
-    "artist": "Johnny Guitar Watson",
-    "title": "Giant",
-    "price": 8.99,
-    "grade": "VG/VG",
-    "image": "images/PXL_20250915_125512318.jpg",
-    "description": "Funky, spacey soul trip. VG/VG copy.",
+    "id": "blessthefall-hollow-bodies",
+    "artist": "BlessTheFall",
+    "title": "Hollow Bodies",
+    "price": 14.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20250907_203733675.jpg",
+    "description": "10th Anniversary Edition. NM/NM copy.",
     "available": true
   },
   {
@@ -207,6 +227,16 @@
     "grade": "VG/VG+",
     "image": "images/Kansas-1764232880896.jpg",
     "description": "Carry On Wayward Son lives here.",
+    "available": true
+  },
+  {
+    "id": "within-destruction-lotus",
+    "artist": "Within Destruction",
+    "title": "Lotus",
+    "price": 44.99,
+    "grade": "NM/NM",
+    "image": "images/Screenshot_20250914-012633.png",
+    "description": "Crushing modern deathcore, Ghost variant. NM/NM copy.",
     "available": true
   },
   {
@@ -240,13 +270,13 @@
     "available": true
   },
   {
-    "id": "sleep-token-even-in-arcadia",
-    "artist": "Sleep Token",
-    "title": "Even in Arcadia",
-    "price": 69.99,
-    "grade": "NM/NM",
-    "image": "images/Screenshot_20250826-210248.png",
-    "description": "House Veridian Edition. NM/NM copy.",
+    "id": "jimi-hendrix-smash-hits",
+    "artist": "Jimi Hendrix Experience",
+    "title": "Smash Hits",
+    "price": 14.99,
+    "grade": "VG/VG",
+    "image": "images/PXL_20251125_201153364.jpg",
+    "description": "Club repress. VG/VG+ copy.",
     "available": true
   },
   {
@@ -257,16 +287,6 @@
     "grade": "VG/VG",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
     "description": "Nice clean OG copy.",
-    "available": true
-  },
-  {
-    "id": "sum41-all-killer-no-filler",
-    "artist": "Sum 41",
-    "title": "All Killer No Filler",
-    "price": 32.99,
-    "grade": "NM/NM",
-    "image": "images/PXL_20251124_210448795.TS-000.jpg",
-    "description": "Pop-punk chaos, no filler. NM/NM copy, black and blue smash.",
     "available": true
   },
   {
@@ -287,17 +307,7 @@
     "grade": "VG/VG+",
     "image": "images/ZZ_TOP-1764287666570.jpg",
     "description": "Are you ready to go to La Grange?",
-    "available": true
-  },
-  {
-    "id": "war-greatest-hits",
-    "artist": "War",
-    "title": "Greatest Hits",
-    "price": 9.99,
-    "grade": "VG+/VG+",
-    "image": "images/WAR-1764298393607.jpg",
-    "description": "Almost NM with original inner.",
-    "available": true
+    "available": false
   },
   {
     "id": "willie-nelson-willie-and-family-live",
@@ -307,16 +317,6 @@
     "grade": "VG/VG",
     "image": "images/Willie_Nelson-1764232751664.jpg",
     "description": "I know you can't wait to get on the road again with this one.",
-    "available": true
-  },
-  {
-    "id": "within-destruction-lotus",
-    "artist": "Within Destruction",
-    "title": "Lotus",
-    "price": 44.99,
-    "grade": "NM/NM",
-    "image": "images/Screenshot_20250914-012633.png",
-    "description": "Crushing modern deathcore, Ghost variant. NM/NM copy.",
     "available": true
   },
   {
