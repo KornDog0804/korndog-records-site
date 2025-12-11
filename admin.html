@@ -359,7 +359,7 @@
         <input
           id="toggle-id"
           type="text"
-          placeholder="Start typing: randy, hendrix, acdc..."
+          placeholder="Start typing: acdc, kansas, seger..."
         />
         <p class="hint">
           Type part of the artist or title and tap a pill, then save.
@@ -375,7 +375,7 @@
             id="availability-action"
             style="width:100%;padding:10px 11px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:rgba(5,0,15,0.9);color:#f5f5ff;"
           >
-            <option value="sold">Save as SOLD (hide &amp; archive)</option>
+            <option value="sold">Save as SOLD (hide from shop)</option>
             <option value="available">Save as AVAILABLE (show on shop)</option>
           </select>
           <p class="hint">
@@ -393,10 +393,10 @@
 
       <div class="btn-row" style="margin-top:10px;">
         <button id="mark-sold-btn" type="button" class="btn btn-danger">
-          Quick: Mark Sold (Hide &amp; Archive Now)
+          Quick: Mark Sold Now
         </button>
         <button id="mark-available-btn" type="button" class="btn btn-soft">
-          Quick: Mark Available (Show on Shop Now)
+          Quick: Mark Available Now
         </button>
       </div>
     </section>
@@ -408,7 +408,6 @@
     const REPO = "korndog-records-site";
     const BRANCH = "main";
     const PRODUCTS_PATH = "products.json";
-    const SOLD_PATH = "sold.json";
     const IMAGES_FOLDER = "images";
 
     // === STATUS HELPERS ===
@@ -565,32 +564,20 @@
       await saveJsonArray(PRODUCTS_PATH, products, sha, message);
     }
 
-    async function loadSoldJson() {
-      const { items, sha } = await loadJsonArray(SOLD_PATH);
-      return { sold: items, sha };
-    }
-
-    async function saveSoldJson(sold, sha, message) {
-      await saveJsonArray(SOLD_PATH, sold, sha, message);
-    }
-
-    // === CACHE FOR SEARCH ===
+    // === CACHE FOR SEARCH (PRODUCTS ONLY) ===
     let cacheProducts = null;
-    let cacheSold = null;
 
-    async function refreshCaches() {
+    async function refreshProductsCache() {
       const { products } = await loadProductsJson();
-      const { sold } = await loadSoldJson();
       cacheProducts = products;
-      cacheSold = sold;
-      return { products, sold };
+      return products;
     }
 
-    async function getAllRecords() {
-      if (!cacheProducts || !cacheSold) {
-        return refreshCaches();
+    async function getProducts() {
+      if (!cacheProducts) {
+        return refreshProductsCache();
       }
-      return { products: cacheProducts, sold: cacheSold };
+      return cacheProducts;
     }
 
     // === ADD FORM LOGIC ===
@@ -653,13 +640,17 @@
           products.push(newProduct);
         }
 
+        products.sort((a, b) =>
+          (a.title || "").localeCompare(b.title || "")
+        );
+
         await saveProductsJson(
           products,
           sha,
           (existingIndex >= 0 ? "Update record " : "Add record ") + id
         );
 
-        await refreshCaches();
+        await refreshProductsCache();
 
         setStatus(
           "Saved! " + title + " is now in the JSON and ready to sell.",
@@ -678,7 +669,7 @@
       }
     });
 
-    // === SOLD / AVAILABLE TOGGLE + SEARCH ===
+    // === SOLD / AVAILABLE TOGGLE + SEARCH (PRODUCTS ONLY) ===
     const toggleIdInput = document.getElementById("toggle-id");
     const searchResults = document.getElementById("search-results");
     const markSoldBtn = document.getElementById("mark-sold-btn");
@@ -699,28 +690,30 @@
       }
 
       try {
-        const { products, sold } = await getAllRecords();
-        const combined = [
-          ...products.map((p) => ({ ...p, _bucket: "live" })),
-          ...sold.map((p) => ({ ...p, _bucket: "sold" })),
-        ];
+        const products = await getProducts();
 
-        const matches = combined
+        const matches = products
           .filter((p) => {
             const id = norm(p.id);
             const title = norm(p.title);
             return id.includes(term) || title.includes(term);
           })
-          .slice(0, 10);
+          .slice(0, 15);
 
         matches.forEach((p) => {
           const pill = document.createElement("button");
           pill.type = "button";
           pill.className = "search-pill";
-          pill.textContent = (p.title || p.id || "Unknown");
-          if (p._bucket === "sold") pill.textContent += " (sold)";
+
+          const price = typeof p.price === "number" ? p.price.toFixed(2) : p.price;
+          const label = `${p.title || p.id || "Unknown"} · $${price} · ${p.grade || ""} ${
+            p.available === false ? " (SOLD)" : ""
+          }`;
+
+          pill.textContent = label;
           pill.addEventListener("click", () => {
-            toggleIdInput.value = p.id || p.title;
+            // put something easy back into the box – full title is safest
+            toggleIdInput.value = p.title || p.id;
             searchResults.innerHTML = "";
           });
           searchResults.appendChild(pill);
@@ -756,121 +749,61 @@
 
       try {
         const { products, sha } = await loadProductsJson();
-        const { sold, sha: soldSha } = await loadSoldJson();
 
-        let message;
+        let idx = products.findIndex(
+          (p) =>
+            norm(p.id).includes(search) || norm(p.title).includes(search)
+        );
 
-        if (flag === "sold") {
-          // MARK SOLD: move from products.json -> sold.json
-          let idx = products.findIndex(
-            (p) =>
-              norm(p.id).includes(search) || norm(p.title).includes(search)
-          );
-          if (idx === -1) {
-            setStatus("No live record found matching: " + rawInput, "error");
-            return;
-          }
-
-          const product = products[idx];
-
-          const alreadySoldIndex = sold.findIndex(
-            (p) => norm(p.id) === norm(product.id)
-          );
-          if (alreadySoldIndex !== -1) {
-            setStatus("That record is already marked SOLD.", "ok");
-            return;
-          }
-
-          product.available = false;
-
-          products.splice(idx, 1);
-          sold.push(product);
-
-          products.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-
-          await saveProductsJson(
-            products,
-            sha,
-            "Mark sold & remove from products: " +
-              (product.id || product.title)
-          );
-          await saveSoldJson(
-            sold,
-            soldSha,
-            "Archive sold record: " + (product.id || product.title)
-          );
-
-          message = (product.title || product.id) + " moved to sold/archive.";
-        } else if (flag === "available") {
-          // MARK AVAILABLE: move from sold.json -> products.json
-          let idx = sold.findIndex(
-            (p) =>
-              norm(p.id).includes(search) || norm(p.title).includes(search)
-          );
-
-          if (idx === -1) {
-            // maybe already live
-            const liveIdx = products.findIndex(
-              (p) =>
-                norm(p.id).includes(search) || norm(p.title).includes(search)
-            );
-            if (liveIdx !== -1) {
-              products[liveIdx].available = true;
-              await saveProductsJson(
-                products,
-                sha,
-                "Mark available: " +
-                  (products[liveIdx].id || products[liveIdx].title)
-              );
-              message =
-                (products[liveIdx].title || products[liveIdx].id) +
-                " is now marked available.";
-            } else {
-              setStatus(
-                "No record found in sold or live matching: " + rawInput,
-                "error"
-              );
-              return;
-            }
-          } else {
-            const product = sold[idx];
-            product.available = true;
-
-            const filteredProducts = products.filter(
-              (p) => norm(p.id) !== norm(product.id)
-            );
-
-            filteredProducts.push(product);
-
-            filteredProducts.sort((a, b) =>
-              (a.title || "").localeCompare(b.title || "")
-            );
-
-            await saveProductsJson(
-              filteredProducts,
-              sha,
-              "Return record to products: " + (product.id || product.title)
-            );
-            sold.splice(idx, 1);
-            await saveSoldJson(
-              sold,
-              soldSha,
-              "Remove record from sold archive: " +
-                (product.id || product.title)
-            );
-
-            message = (product.title || product.id) + " is back on the shop.";
-          }
-        } else {
-          setStatus("Unknown flag passed to setAvailability().", "error");
+        if (idx === -1) {
+          setStatus("No record found matching: " + rawInput, "error");
           return;
         }
 
-        await refreshCaches();
+        const product = products[idx];
+
+        if (flag === "sold") {
+          if (product.available === false) {
+            setStatus(
+              (product.title || product.id) +
+                " is already marked SOLD / hidden.",
+              "ok"
+            );
+          } else {
+            product.available = false;
+          }
+        } else if (flag === "available") {
+          product.available = true;
+        } else {
+          setStatus("Unknown action for availability.", "error");
+          return;
+        }
+
+        // keep things pretty by sorting by title
+        products.sort((a, b) =>
+          (a.title || "").localeCompare(b.title || "")
+        );
+
+        await saveProductsJson(
+          products,
+          sha,
+          "Set availability (" +
+            flag +
+            "): " +
+            (product.id || product.title)
+        );
+
+        cacheProducts = products;
+
         toggleIdInput.value = "";
         searchResults.innerHTML = "";
 
-        setStatus("Done. " + message, "ok");
+        const msg =
+          (product.title || product.id) +
+          (flag === "sold"
+            ? " has been marked SOLD and hidden from the shop."
+            : " has been marked AVAILABLE and will show on the shop.");
+        setStatus("Done. " + msg, "ok");
       } catch (err) {
         console.error(err);
         setStatus(
