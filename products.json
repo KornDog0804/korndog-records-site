@@ -90,16 +90,6 @@
     "available": true
   },
   {
-    "id": "a-day-to-remember-big-ole-album-vol-1",
-    "artist": "A Day To Remember",
-    "title": "Big Ole Album Vol 1",
-    "price": 34.99,
-    "grade": "NM/NM",
-    "image": "images/A_Day_To_Remember-1764287872011.jpg",
-    "description": "Limited edition orange creamsicle vinyl. Amazon exclusive.",
-    "available": true
-  },
-  {
     "id": "boston-1",
     "artist": "Boston",
     "title": "Boston 1",
