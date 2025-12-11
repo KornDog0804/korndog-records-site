@@ -371,7 +371,7 @@
 
       <div class="btn-row">
         <button id="mark-sold-btn" type="button" class="btn btn-danger">
-          Mark Sold (Hide & Archive)
+          Mark Sold (Hide &amp; Archive)
         </button>
         <button id="mark-available-btn" type="button" class="btn btn-soft">
           Mark Available (Show on Shop)
@@ -383,7 +383,7 @@
   <script>
     // === CONFIG: YOUR REPO ===
     const OWNER = "KornDog0804";
-    const REPO = "korndog-records-site"; // change if your repo name is different
+    const REPO = "korndog-records-site";
     const BRANCH = "main";
     const PRODUCTS_PATH = "products.json";
     const SOLD_PATH = "sold.json";
@@ -418,7 +418,6 @@
       return token;
     }
 
-    // On load, show short token hint if already set
     (function initTokenDisplay() {
       const existing = getToken();
       if (existing) {
@@ -705,6 +704,7 @@
       refreshSearchSuggestions();
     });
 
+    // --- NEW setAvailability: moves between products.json and sold.json ---
     async function setAvailability(flag) {
       const rawInput = toggleIdInput.value.trim();
       if (!rawInput) {
@@ -715,42 +715,51 @@
         return;
       }
 
-      try {
-        requireToken();
-      } catch {
+      const token = getToken();
+      if (!token) {
+        setStatus("GitHub token missing. Set it at the top first.", "error");
         return;
       }
 
       const search = rawInput.toLowerCase();
 
-      try {
-        setStatus("Updating availability for " + rawInput + "…");
+      setStatus("Loading records from GitHub…", "ok");
 
+      try {
         const { products, sha } = await loadProductsJson();
         const { sold, sha: soldSha } = await loadSoldJson();
 
         let message;
 
-        if (!flag) {
+        if (flag === "sold") {
           // MARK SOLD: move from products.json -> sold.json
           let idx = products.findIndex(
-            (p) => (p.id || "").toLowerCase() === search
+            (p) =>
+              (p.id || "").toLowerCase().includes(search) ||
+              (p.title || "").toLowerCase().includes(search)
           );
-          if (idx === -1) {
-            idx = products.findIndex(
-              (p) => (p.title || "").toLowerCase() === search
-            );
-          }
           if (idx === -1) {
             setStatus("No live record found matching: " + rawInput, "error");
             return;
           }
 
           const product = products[idx];
+
+          // if already in sold, don't duplicate
+          const alreadySoldIndex = sold.findIndex(
+            (p) => (p.id || "").toLowerCase() === (product.id || "").toLowerCase()
+          );
+          if (alreadySoldIndex !== -1) {
+            setStatus("That record is already marked SOLD.", "ok");
+            return;
+          }
+
           product.available = false;
 
           products.splice(idx, 1);
           sold.push(product);
+
+          products.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
 
           await saveProductsJson(
             products,
@@ -765,22 +774,54 @@
           );
 
           message = (product.title || product.id) + " moved to sold/archive.";
-        } else {
-          // MARK AVAILABLE: move from sold.json -> products.json if found
+        } else if (flag === "available") {
+          // MARK AVAILABLE: move from sold.json -> products.json
           let idx = sold.findIndex(
-            (p) => (p.id || "").toLowerCase() === search
+            (p) =>
+              (p.id || "").toLowerCase().includes(search) ||
+              (p.title || "").toLowerCase().includes(search)
           );
-          if (idx === -1) {
-            idx = sold.findIndex(
-              (p) => (p.title || "").toLowerCase() === search
-            );
-          }
 
-          if (idx !== -1) {
+          if (idx === -1) {
+            // maybe already live
+            const liveIdx = products.findIndex(
+              (p) =>
+                (p.id || "").toLowerCase().includes(search) ||
+                (p.title || "").toLowerCase().includes(search)
+            );
+            if (liveIdx !== -1) {
+              products[liveIdx].available = true;
+              await saveProductsJson(
+                products,
+                sha,
+                "Mark available: " +
+                  (products[liveIdx].id || products[liveIdx].title)
+              );
+              message =
+                (products[liveIdx].title || products[liveIdx].id) +
+                " is now marked available.";
+            } else {
+              setStatus(
+                "No record found in sold or live matching: " + rawInput,
+                "error"
+              );
+              return;
+            }
+          } else {
             const product = sold[idx];
             product.available = true;
+
+            // remove any old copy in products
+            products = products.filter(
+              (p) =>
+                (p.id || "").toLowerCase() !==
+                (product.id || "").toLowerCase()
+            );
+
             products.push(product);
             sold.splice(idx, 1);
+
+            products.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
 
             await saveProductsJson(
               products,
@@ -795,37 +836,16 @@
             );
 
             message = (product.title || product.id) + " is back on the shop.";
-          } else {
-            // fallback: toggle in products only (for older records)
-            let pIdx = products.findIndex(
-              (p) => (p.id || "").toLowerCase() === search
-            );
-            if (pIdx === -1) {
-              pIdx = products.findIndex(
-                (p) => (p.title || "").toLowerCase() === search
-              );
-            }
-            if (pIdx === -1) {
-              setStatus(
-                "No record found in sold or live matching: " + rawInput,
-                "error"
-              );
-              return;
-            }
-            products[pIdx].available = true;
-            await saveProductsJson(
-              products,
-              sha,
-              "Mark available: " +
-                (products[pIdx].id || products[pIdx].title)
-            );
-            message =
-              (products[pIdx].title || products[pIdx].id) +
-              " is now marked available.";
           }
+        } else {
+          setStatus("Unknown flag passed to setAvailability().", "error");
+          return;
         }
 
         await refreshCaches();
+        toggleIdInput.value = "";
+        searchResults.innerHTML = "";
+
         setStatus("Done. " + message, "ok");
       } catch (err) {
         console.error(err);
@@ -836,8 +856,8 @@
       }
     }
 
-    markSoldBtn.addEventListener("click", () => setAvailability(false));
-    markAvailableBtn.addEventListener("click", () => setAvailability(true));
+    markSoldBtn.addEventListener("click", () => setAvailability("sold"));
+    markAvailableBtn.addEventListener("click", () => setAvailability("available"));
   </script>
 </body>
 </html>
