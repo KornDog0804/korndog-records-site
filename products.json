@@ -5,7 +5,8 @@
     "price": 32.99,
     "grade": "NM/NM",
     "image": "images/PXL_20251124_210448795.TS-000.jpg",
-    "description": "Pop-punk chaos, no filler. NM/NM copy Black and Blue Smash."
+    "description": "Pop-punk chaos, no filler. NM/NM copy Black and Blue Smash.",
+    "available": true
   },
   {
     "id": "within-destruction-lotus",
@@ -13,7 +14,8 @@
     "price": 44.99,
     "grade": "NM/NM",
     "image": "images/Screenshot_20250914-012633.png",
-    "description": "Crushing modern deathcore, Ghost variant. NM/NM copy."
+    "description": "Crushing modern deathcore, Ghost variant. NM/NM copy.",
+    "available": true
   },
   {
     "id": "sleep-token-even-in-arcadia",
@@ -21,7 +23,8 @@
     "price": 69.99,
     "grade": "NM/NM",
     "image": "images/Screenshot_20250826-210248.png",
-    "description": "House Veridian Edition. NM/NM copy."
+    "description": "House Veridian Edition. NM/NM copy.",
+    "available": true
   },
   {
     "id": "ten-dolla-holla",
@@ -29,7 +32,8 @@
     "price": 10,
     "grade": "VG/VG",
     "image": "images/Screenshot_20250822-074904.png",
-    "description": "Random mystery pull from the stack. VG/VG."
+    "description": "Random mystery pull from the stack. VG/VG.",
+    "available": true
   },
   {
     "id": "johnny-guitar-watson-giant",
@@ -37,7 +41,8 @@
     "price": 8.99,
     "grade": "VG/VG",
     "image": "images/PXL_20250915_125512318.jpg",
-    "description": "Funky, spacey soul trip. VG/VG copy."
+    "description": "Funky, spacey soul trip. VG/VG copy.",
+    "available": true
   },
   {
     "id": "i-prevail-heart-vs-mind",
@@ -45,7 +50,8 @@
     "price": 19.99,
     "grade": "NM/NM",
     "image": "images/PXL_20250915_125450366.jpg",
-    "description": "Debut EP. NM/NM copy."
+    "description": "Debut EP. NM/NM copy.",
+    "available": true
   },
   {
     "id": "blessthefall-hollow-bodies",
@@ -53,7 +59,8 @@
     "price": 14.99,
     "grade": "NM/NM",
     "image": "images/PXL_20250907_203733675.jpg",
-    "description": "10th Anniversary Edition. NM/NM copy."
+    "description": "10th Anniversary Edition. NM/NM copy.",
+    "available": true
   },
   {
     "id": "jimi-hendrix-smash-hits",
@@ -61,7 +68,8 @@
     "price": 14.99,
     "grade": "VG/VG",
     "image": "images/PXL_20251125_201153364.jpg",
-    "description": "Club repress. VG/VG+ copy."
+    "description": "Club repress. VG/VG+ copy.",
+    "available": true
   },
   {
     "id": "AC/DC",
@@ -69,7 +77,8 @@
     "price": 17.99,
     "grade": "VG/VG",
     "image": "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg",
-    "description": "Back In Black ICONIC VG/VG+"
+    "description": "Back In Black ICONIC VG/VG+",
+    "available": true
   },
   {
     "id": "Hootie And The Blowfish",
@@ -77,7 +86,8 @@
     "price": 24.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_19781262-ab91-4a40-ade0-d5cc28437c51.jpg",
-    "description": "2017 Re-press NM/NM"
+    "description": "2017 Re-press NM/NM",
+    "available": true
   },
   {
     "id": "Pantera",
@@ -85,7 +95,8 @@
     "price": 19.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
-    "description": "2015 Rhino Pressing NM/NM"
+    "description": "2015 Rhino Pressing NM/NM",
+    "available": true
   },
   {
     "id": "Bullet For My Valentine ",
@@ -93,7 +104,8 @@
     "price": 34.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_4677e40d-5aff-403e-8216-cb3a0cd47fe2.jpg",
-    "description": "Limited 20th anniversary Red NM/NM"
+    "description": "Limited 20th anniversary Red NM/NM",
+    "available": true
   },
   {
     "id": "Grateful Dead",
@@ -101,7 +113,8 @@
     "price": 24.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
-    "description": "Psychedelic swirl for the ages. This 50th Anniversary picture disc reissue of the Dead’s groundbreaking 1967 debut takes the acid-soaked vibe and makes it spin-ready art. Limited to 10,000 copies worldwide, this one’s both a collectible and a sonic time capsule."
+    "description": "Psychedelic swirl for the ages. This 50th Anniversary picture disc reissue of the Dead’s groundbreaking 1967 debut takes the acid-soaked vibe and makes it spin-ready art. Limited to 10,000 copies worldwide, this one’s both a collectible and a sonic time capsule.",
+    "available": true
   },
   {
     "id": "Randy Travis",
@@ -109,7 +122,8 @@
     "price": 14.99,
     "grade": "VG+/VG+",
     "image": "images/rn-image_picker_lib_temp_6eed81b0-419c-42a9-938d-e44da8a3154d.jpg",
-    "description": "Country storytelling at its peak. Randy Travis’ debut album didn’t just climb charts, it rewrote what country could be."
+    "description": "Country storytelling at its peak. Randy Travis’ debut album didn’t just climb charts, it rewrote what country could be.",
+    "available": true
   },
   {
     "id": "Bob Seger & Silver Bullet Band",
@@ -117,7 +131,8 @@
     "price": 4.99,
     "grade": "VG/Vg",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
-    "description": "Nice clean OG cooy"
+    "description": "Nice clean OG cooy",
+    "available": true
   },
   {
     "id": "Bob Seger & Silver Bullet Band",
@@ -125,7 +140,8 @@
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
-    "description": "Super clean OG copy"
+    "description": "Super clean OG copy",
+    "available": true
   },
   {
     "id": "The Police",
@@ -133,7 +149,8 @@
     "price": 9.99,
     "grade": "VG+/Vag+",
     "image": "images/The_Police-1764229577731.jpg",
-    "description": "Great Copy Super Clean"
+    "description": "Great Copy Super Clean",
+    "available": true
   },
   {
     "id": "Johnny Cash",
@@ -141,7 +158,8 @@
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Johnny_Cash-1764230221013.jpg",
-    "description": "You better walk the line when you get this one"
+    "description": "You better walk the line when you get this one",
+    "available": true
   },
   {
     "id": "Neil Young",
@@ -149,7 +167,8 @@
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Neil_Young-1764230307095.jpg",
-    "description": "Marker spot on cover but solid all around"
+    "description": "Marker spot on cover but solid all around",
+    "available": true
   },
   {
     "id": "David Lee Roth EP",
@@ -157,7 +176,8 @@
     "price": 9.99,
     "grade": "VG+/VG+",
     "image": "images/David_Lee_Roth_EP-1764230391826.jpg",
-    "description": "Super Clean"
+    "description": "Super Clean",
+    "available": true
   },
   {
     "id": "Foreigner",
@@ -165,7 +185,8 @@
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Foreigner-1764230780118.jpg",
-    "description": "You know it you love it now it can be yours."
+    "description": "You know it you love it now it can be yours.",
+    "available": true
   },
   {
     "id": "Boston",
@@ -173,7 +194,8 @@
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Boston-1764230862646.jpg",
-    "description": "Very Nice in my Borat voice"
+    "description": "Very Nice in my Borat voice",
+    "available": true
   },
   {
     "id": "Willie Nelson",
@@ -181,7 +203,8 @@
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Willie_Nelson-1764232751664.jpg",
-    "description": "I know you can't wait to get on the road again with this one."
+    "description": "I know you can't wait to get on the road again with this one.",
+    "available": true
   },
   {
     "id": "Kansas",
@@ -189,7 +212,8 @@
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Kansas-1764232880896.jpg",
-    "description": "Carry on my Wayward Son"
+    "description": "Carry on my Wayward Son",
+    "available": true
   },
   {
     "id": "Robert Plant",
@@ -197,7 +221,8 @@
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Robert_Plant-1764232983897.jpg",
-    "description": "Super Clean Copy"
+    "description": "Super Clean Copy",
+    "available": true
   },
   {
     "id": "Night Ranger",
@@ -205,7 +230,8 @@
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Night_Ranger-1764233043019.jpg",
-    "description": "Very Nice"
+    "description": "Very Nice",
+    "available": true
   },
   {
     "id": "REO SpeedWagon",
@@ -213,7 +239,8 @@
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/REO_SpeedWagon-1764233215456.jpg",
-    "description": "Who doesn't love some SpeedWagon"
+    "description": "Who doesn't love some SpeedWagon",
+    "available": true
   },
   {
     "id": "Cheap Trick",
@@ -221,7 +248,8 @@
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Cheap_Trick-1764233303621.jpg",
-    "description": "Now this is No Cheap Trick. Super Clean Copy and yours today for 4.99"
+    "description": "Now this is No Cheap Trick. Super Clean Copy and yours today for 4.99",
+    "available": true
   },
   {
     "id": "ZZ TOP",
@@ -229,7 +257,8 @@
     "price": 14.99,
     "grade": "VG/VG+",
     "image": "images/ZZ_TOP-1764287666570.jpg",
-    "description": "Are you ready to go to La Grange?"
+    "description": "Are you ready to go to La Grange?",
+    "available": true
   },
   {
     "id": "Red Hot Chili Peppers",
@@ -237,7 +266,8 @@
     "price": 32.99,
     "grade": "NM/NM",
     "image": "images/Red_Hot_Chili_Peppers-1764287782972.jpg",
-    "description": "25th Anniversary 2 LP Colored Vinyl"
+    "description": "25th Anniversary 2 LP Colored Vinyl",
+    "available": true
   },
   {
     "id": "A Day To Remember",
@@ -245,7 +275,8 @@
     "price": 34.99,
     "grade": "NM/NM",
     "image": "images/A_Day_To_Remember-1764287872011.jpg",
-    "description": "Limited Edition Orange Creamsicle Vinyl. Amazon Exclusive"
+    "description": "Limited Edition Orange Creamsicle Vinyl. Amazon Exclusive",
+    "available": true
   },
   {
     "id": "Dazz Band",
@@ -253,7 +284,8 @@
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Dazz_Band-1764298272765.jpg",
-    "description": "Very Clean Copy"
+    "description": "Very Clean Copy",
+    "available": true
   },
   {
     "id": "WAR",
@@ -261,7 +293,8 @@
     "price": 9.99,
     "grade": "VG+/VG+",
     "image": "images/WAR-1764298393607.jpg",
-    "description": "Almost NM with original inner"
+    "description": "Almost NM with original inner",
+    "available": true
   },
   {
     "id": "Billy Joel",
@@ -269,7 +302,8 @@
     "price": 5.99,
     "grade": "VG/VG+",
     "image": "images/Billy_Joel-1764298491999.jpg",
-    "description": "Original Inner Very Nice Copy"
+    "description": "Original Inner Very Nice Copy",
+    "available": true
   },
   {
     "id": "Dokken",
@@ -277,7 +311,8 @@
     "price": 19.99,
     "grade": "VG/VG+",
     "image": "images/Dokken-1764298922683.jpg",
-    "description": "OG Copy with original inner"
+    "description": "OG Copy with original inner",
+    "available": true
   },
   {
     "id": "Kansas",
@@ -285,6 +320,7 @@
     "price": 9.99,
     "grade": "VG/VG+",
     "image": "images/Kansas-1764299103385.jpg",
-    "description": "OG Copy with Original Inner"
+    "description": "OG Copy with Original Inner",
+    "available": true
   }
 ]
