@@ -1,7 +1,7 @@
 [
   {
     "id": "sum41-all-killer-no-filler",
-    "title": "Sum 41 – All Killer No Filler",
+    "title": "Sum 41 â All Killer No Filler",
     "price": 32.99,
     "grade": "NM/NM",
     "image": "images/PXL_20251124_210448795.TS-000.jpg",
@@ -10,7 +10,7 @@
   },
   {
     "id": "within-destruction-lotus",
-    "title": "Within Destruction – Lotus",
+    "title": "Within Destruction â Lotus",
     "price": 44.99,
     "grade": "NM/NM",
     "image": "images/Screenshot_20250914-012633.png",
@@ -19,7 +19,7 @@
   },
   {
     "id": "sleep-token-even-in-arcadia",
-    "title": "Sleep Token – Even in Arcadia",
+    "title": "Sleep Token â Even in Arcadia",
     "price": 69.99,
     "grade": "NM/NM",
     "image": "images/Screenshot_20250826-210248.png",
@@ -37,7 +37,7 @@
   },
   {
     "id": "johnny-guitar-watson-giant",
-    "title": "Johnny Guitar Watson – Giant",
+    "title": "Johnny Guitar Watson â Giant",
     "price": 8.99,
     "grade": "VG/VG",
     "image": "images/PXL_20250915_125512318.jpg",
@@ -46,7 +46,7 @@
   },
   {
     "id": "i-prevail-heart-vs-mind",
-    "title": "I Prevail – Heart vs Mind",
+    "title": "I Prevail â Heart vs Mind",
     "price": 19.99,
     "grade": "NM/NM",
     "image": "images/PXL_20250915_125450366.jpg",
@@ -55,7 +55,7 @@
   },
   {
     "id": "blessthefall-hollow-bodies",
-    "title": "BlessTheFall – Hollow Bodies",
+    "title": "BlessTheFall â Hollow Bodies",
     "price": 14.99,
     "grade": "NM/NM",
     "image": "images/PXL_20250907_203733675.jpg",
@@ -64,7 +64,7 @@
   },
   {
     "id": "jimi-hendrix-smash-hits",
-    "title": "Jimi Hendrix Experience – Smash Hits",
+    "title": "Jimi Hendrix Experience â Smash Hits",
     "price": 14.99,
     "grade": "VG/VG",
     "image": "images/PXL_20251125_201153364.jpg",
@@ -113,16 +113,7 @@
     "price": 24.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
-    "description": "Psychedelic swirl for the ages. This 50th Anniversary picture disc reissue of the Dead’s groundbreaking 1967 debut takes the acid-soaked vibe and makes it spin-ready art. Limited to 10,000 copies worldwide, this one’s both a collectible and a sonic time capsule.",
-    "available": true
-  },
-  {
-    "id": "Randy Travis",
-    "title": "Storms Of Life",
-    "price": 14.99,
-    "grade": "VG+/VG+",
-    "image": "images/rn-image_picker_lib_temp_6eed81b0-419c-42a9-938d-e44da8a3154d.jpg",
-    "description": "Country storytelling at its peak. Randy Travis’ debut album didn’t just climb charts, it rewrote what country could be.",
+    "description": "Psychedelic swirl for the ages. This 50th Anniversary picture disc reissue of the Deadâs groundbreaking 1967 debut takes the acid-soaked vibe and makes it spin-ready art. Limited to 10,000 copies worldwide, this oneâs both a collectible and a sonic time capsule.",
     "available": true
   },
   {
