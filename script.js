@@ -5,9 +5,8 @@
 // - Cart respects quantity limits
 // - Shipping + discount + PayPal flow preserved
 // - Products are shuffled so the shop feels fresh every visit
-// - NEW: products with available === false are hidden from the shop
-// - NEW: title normalization so artist names never disappear
-// - NEW: prefers front image (imageFront) if present, falls back to image
+// - Products with available === false are hidden from the shop
+// - NEW: Artist + Title are combined for display: "Artist – Title"
 // ================================================================
 
 // Global cart storage key
@@ -31,6 +30,16 @@ function shuffleArray(arr) {
     [copy[i], copy[j]] = [copy[j], copy[i]];
   }
   return copy;
+}
+
+// Helper: build the display title ("Artist – Title")
+function buildDisplayTitle(prod) {
+  const artist = prod.artist && String(prod.artist).trim();
+  const title = prod.title && String(prod.title).trim();
+  if (artist && title) return `${artist} – ${title}`;
+  if (title) return title;
+  if (artist) return artist;
+  return prod.id || "Untitled";
 }
 
 // -------------------- LOAD PRODUCTS + QUANTITY --------------------
@@ -110,6 +119,8 @@ function addToCart(productId) {
   const cart = getCart();
   const existing = cart.find((item) => item.id === productId);
 
+  const displayTitle = buildDisplayTitle(product);
+
   if (existing) {
     if (existing.qty >= maxQty) {
       alert(
@@ -123,10 +134,10 @@ function addToCart(productId) {
   } else {
     cart.push({
       id: product.id,
-      title: product.title,
+      title: displayTitle,
       price: product.price,
       grade: product.grade,
-      image: product.imageFront || product.image, // keep for cart view
+      image: product.image,
       qty: 1,
     });
   }
@@ -179,27 +190,17 @@ function renderShopPage() {
     const card = document.createElement("div");
     card.className = "record-card";
 
-    // ---------------- IMAGE (PREFERS FRONT IMAGE) ----------------
-    const img = document.createElement("img");
-    const imgSrc =
-      prod.imageFront || // new style
-      prod.image || // legacy
-      ""; // worst case
+    const displayTitle = buildDisplayTitle(prod);
 
-    img.src = imgSrc;
-    img.alt = prod.title || "Record cover";
+    const img = document.createElement("img");
+    img.src = prod.image;
+    img.alt = displayTitle;
     img.onerror = () => {
       img.classList.add("image-missing");
     };
 
-    // ---------------- TITLE (FULL STRING, NO SPLITTING) ----------------
     const title = document.createElement("h3");
-
-    // Normalize fancy hyphens (–, —) to a simple ASCII dash for consistency
-    const normalizedTitle = (prod.title || "").replace(/[\u2013\u2014]/g, "-");
-
-    // Show exactly what you typed in JSON/admin: "AC/DC - Back In Black"
-    title.textContent = normalizedTitle;
+    title.textContent = displayTitle;
 
     const grade = document.createElement("p");
     grade.className = "record-grade";
@@ -207,7 +208,7 @@ function renderShopPage() {
 
     const price = document.createElement("p");
     price.className = "record-price";
-    price.textContent = "$" + Number(prod.price).toFixed(2);
+    price.textContent = "$" + prod.price.toFixed(2);
 
     const desc = document.createElement("p");
     desc.className = "record-desc";
