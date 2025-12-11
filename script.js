@@ -6,23 +6,17 @@
 // - Shipping + discount + PayPal flow preserved
 // - Products are shuffled so the shop feels fresh every visit
 // - Products with available === false are hidden from the shop
-// - NEW: Artist + Title are combined for display: "Artist – Title"
+// - NEW: artist + title combined for display
+// - NEW: front/back image fields normalized so admin uploads work
 // ================================================================
 
-// Global cart storage key
 const CART_KEY = "korndog_cart_v1";
-
-// Pagination settings
 const PRODUCTS_PER_PAGE = 10;
 
-// Global product list (filled by loadProducts)
 let allProducts = [];
-
-// Current Shop page
 let currentPage = 1;
 
 // ----------------------- UTIL: SHUFFLE ----------------------------
-// Fisher–Yates shuffle so the product order is random each page load
 function shuffleArray(arr) {
   const copy = arr.slice();
   for (let i = copy.length - 1; i > 0; i--) {
@@ -32,7 +26,7 @@ function shuffleArray(arr) {
   return copy;
 }
 
-// Helper: build the display title ("Artist – Title")
+// Build display title: "Artist – Title"
 function buildDisplayTitle(prod) {
   const artist = prod.artist && String(prod.artist).trim();
   const title = prod.title && String(prod.title).trim();
@@ -54,28 +48,51 @@ async function loadProducts() {
 
     const raw = await res.json();
 
-    // Attach quantity + availability to each record
     const mapped = raw
       // hide things explicitly marked as unavailable
       .filter((p) => p.available !== false)
       .map((p) => {
-        // If quantity already exists in JSON, keep it
-        if (typeof p.quantity === "number") return p;
-
-        // Default: every record is quantity 1
-        let qty = 1;
-
-        // Special case: 10 dolla holla gets quantity 3
-        const id = (p.id || "").toLowerCase();
-        const title = (p.title || "").toLowerCase();
-        if (id.includes("10-dolla") || title.includes("10 dolla holla")) {
-          qty = 3;
+        // ----- quantity handling -----
+        let qty;
+        if (typeof p.quantity === "number") {
+          qty = p.quantity;
+        } else {
+          qty = 1;
+          const id = (p.id || "").toLowerCase();
+          const title = (p.title || "").toLowerCase();
+          if (id.includes("10-dolla") || title.includes("10 dolla holla")) {
+            qty = 3;
+          }
         }
 
-        return { ...p, quantity: qty };
+        // ----- image handling (normalize front & back) -----
+        const frontImage =
+          p.imageFront ||
+          p.frontImage ||
+          p.image_front ||
+          p.front_image ||
+          p.image ||
+          "";
+
+        const backImage =
+          p.imageBack ||
+          p.backImage ||
+          p.image_back ||
+          p.back_image ||
+          p.imageBack || // just in case
+          "";
+
+        const base = { ...p };
+        base.quantity = qty;
+        base.image = frontImage; // always set a front image for the shop
+
+        if (backImage) {
+          base.imageBack = backImage;
+        }
+
+        return base;
       });
 
-    // Randomize the order so the shop feels fresh
     allProducts = shuffleArray(mapped);
     return allProducts;
   } catch (e) {
@@ -108,7 +125,6 @@ function updateCartBadge() {
   if (badge) badge.textContent = count;
 }
 
-// Add one item to cart, respecting stock quantity
 function addToCart(productId) {
   if (!allProducts || allProducts.length === 0) return;
 
@@ -167,7 +183,6 @@ async function renderShop() {
   const container = document.getElementById("products");
   if (!container) return;
 
-  // Load products only once
   if (!allProducts || allProducts.length === 0) {
     await loadProducts();
   }
@@ -193,7 +208,7 @@ function renderShopPage() {
     const displayTitle = buildDisplayTitle(prod);
 
     const img = document.createElement("img");
-    img.src = prod.image;
+    img.src = prod.image || "";
     img.alt = displayTitle;
     img.onerror = () => {
       img.classList.add("image-missing");
@@ -241,7 +256,6 @@ function renderPagination() {
   const container = document.getElementById("products");
   if (!container) return;
 
-  // Remove any previous pagination bar
   const existing = document.querySelector(".shop-pagination");
   if (existing) existing.remove();
 
@@ -251,7 +265,6 @@ function renderPagination() {
   const nav = document.createElement("div");
   nav.className = "shop-pagination";
 
-  // Center the buttons at the bottom
   nav.style.display = "flex";
   nav.style.justifyContent = "center";
   nav.style.alignItems = "center";
@@ -263,9 +276,8 @@ function renderPagination() {
     btn.textContent = i;
     btn.className = "page-btn";
 
-    // Inline styles so nothing can override them
-    btn.style.backgroundColor = "#a8ff60"; // neon-ish green
-    btn.style.color = "#02010a"; // dark text
+    btn.style.backgroundColor = "#a8ff60";
+    btn.style.color = "#02010a";
     btn.style.border = "none";
     btn.style.padding = "12px 18px";
     btn.style.fontSize = "1.05rem";
@@ -364,7 +376,6 @@ function renderCart() {
       const plus = document.createElement("button");
       plus.textContent = "+";
       plus.addEventListener("click", () => {
-        // enforce the same max-quantity rule in the cart view
         const product = allProducts.find((p) => p.id === item.id);
         const maxQty =
           product && typeof product.quantity === "number" ? product.quantity : 1;
@@ -427,10 +438,7 @@ function submitPayPal(cart, shipping, discount) {
   const form = document.getElementById("paypal-form");
   if (!form) return;
 
-  // Clear old inputs
-  while (form.firstChild) {
-    form.removeChild(form.firstChild);
-  }
+  while (form.firstChild) form.removeChild(form.firstChild);
 
   const addField = (name, value) => {
     const input = document.createElement("input");
@@ -453,7 +461,6 @@ function submitPayPal(cart, shipping, discount) {
     index++;
   });
 
-  // Shipping as separate line
   const shippingTotal = calcShipping(cart.reduce((s, i) => s + i.qty, 0));
   if (shippingTotal > 0) {
     addField(`item_name_${index}`, "Shipping");
@@ -467,7 +474,6 @@ function submitPayPal(cart, shipping, discount) {
 }
 
 // ---------------------- ADMIN PAGE (PLACEHOLDER) ------------------
-// Real admin logic now lives entirely in admin.html
 async function initAdmin() {
   return;
 }
