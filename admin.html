@@ -362,8 +362,7 @@
           placeholder="Start typing: randy, hendrix, acdc..."
         />
         <p class="hint">
-          Uses the <code>id</code> from <code>products.json</code>. You can type
-          part of the id or title, then tap a pill below.
+          Type part of the artist or title and tap a pill, then save.
         </p>
       </div>
 
@@ -400,11 +399,6 @@
           Quick: Mark Available (Show on Shop Now)
         </button>
       </div>
-
-      <p class="hint" style="margin-top:6px;">
-        The green <strong>Save Change to Site</strong> button works just like the
-        “Save to Site” button above – it writes straight to GitHub.
-      </p>
     </section>
   </main>
 
@@ -426,6 +420,11 @@
       statusEl.classList.remove("ok", "error");
       if (kind === "ok") statusEl.classList.add("ok");
       if (kind === "error") statusEl.classList.add("error");
+    }
+
+    // normalize for search: lower-case, strip spaces/punctuation
+    function norm(str) {
+      return (str || "").toLowerCase().replace(/[^a-z0-9]/g, "");
     }
 
     // === TOKEN HANDLING ===
@@ -688,7 +687,8 @@
     const availabilitySaveBtn = document.getElementById("availability-save-btn");
 
     async function refreshSearchSuggestions() {
-      const term = toggleIdInput.value.trim().toLowerCase();
+      const termRaw = toggleIdInput.value.trim();
+      const term = norm(termRaw);
       searchResults.innerHTML = "";
       if (!term) return;
 
@@ -707,8 +707,8 @@
 
         const matches = combined
           .filter((p) => {
-            const id = (p.id || "").toLowerCase();
-            const title = (p.title || "").toLowerCase();
+            const id = norm(p.id);
+            const title = norm(p.title);
             return id.includes(term) || title.includes(term);
           })
           .slice(0, 10);
@@ -717,10 +717,10 @@
           const pill = document.createElement("button");
           pill.type = "button";
           pill.className = "search-pill";
-          pill.textContent = p.id || p.title;
+          pill.textContent = (p.title || p.id || "Unknown");
           if (p._bucket === "sold") pill.textContent += " (sold)";
           pill.addEventListener("click", () => {
-            toggleIdInput.value = p.id;
+            toggleIdInput.value = p.id || p.title;
             searchResults.innerHTML = "";
           });
           searchResults.appendChild(pill);
@@ -734,7 +734,6 @@
       refreshSearchSuggestions();
     });
 
-    // --- setAvailability: moves between products.json and sold.json ---
     async function setAvailability(flag) {
       const rawInput = toggleIdInput.value.trim();
       if (!rawInput) {
@@ -751,7 +750,7 @@
         return;
       }
 
-      const search = rawInput.toLowerCase();
+      const search = norm(rawInput);
 
       setStatus("Loading records from GitHub…", "ok");
 
@@ -765,8 +764,7 @@
           // MARK SOLD: move from products.json -> sold.json
           let idx = products.findIndex(
             (p) =>
-              (p.id || "").toLowerCase().includes(search) ||
-              (p.title || "").toLowerCase().includes(search)
+              norm(p.id).includes(search) || norm(p.title).includes(search)
           );
           if (idx === -1) {
             setStatus("No live record found matching: " + rawInput, "error");
@@ -775,9 +773,8 @@
 
           const product = products[idx];
 
-          // if already in sold, don't duplicate
           const alreadySoldIndex = sold.findIndex(
-            (p) => (p.id || "").toLowerCase() === (product.id || "").toLowerCase()
+            (p) => norm(p.id) === norm(product.id)
           );
           if (alreadySoldIndex !== -1) {
             setStatus("That record is already marked SOLD.", "ok");
@@ -808,16 +805,14 @@
           // MARK AVAILABLE: move from sold.json -> products.json
           let idx = sold.findIndex(
             (p) =>
-              (p.id || "").toLowerCase().includes(search) ||
-              (p.title || "").toLowerCase().includes(search)
+              norm(p.id).includes(search) || norm(p.title).includes(search)
           );
 
           if (idx === -1) {
             // maybe already live
             const liveIdx = products.findIndex(
               (p) =>
-                (p.id || "").toLowerCase().includes(search) ||
-                (p.title || "").toLowerCase().includes(search)
+                norm(p.id).includes(search) || norm(p.title).includes(search)
             );
             if (liveIdx !== -1) {
               products[liveIdx].available = true;
@@ -841,11 +836,8 @@
             const product = sold[idx];
             product.available = true;
 
-            // remove any old copy in products
             const filteredProducts = products.filter(
-              (p) =>
-                (p.id || "").toLowerCase() !==
-                (product.id || "").toLowerCase()
+              (p) => norm(p.id) !== norm(product.id)
             );
 
             filteredProducts.push(product);
