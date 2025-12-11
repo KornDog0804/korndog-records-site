@@ -217,6 +217,28 @@
       display: inline-block;
       margin-top: 0.15rem;
     }
+
+    /* search suggestion pills */
+    .search-results {
+      margin-top: 0.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .search-pill {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 0.25rem 0.6rem;
+      font-size: 0.78rem;
+      background: rgba(15,5,40,0.95);
+      color: #f8f8ff;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .search-pill:hover {
+      border-color: #a8ff60;
+      background: rgba(168,255,96,0.12);
+    }
   </style>
 </head>
 <body>
@@ -318,14 +340,16 @@
     <section>
       <h2 class="section-title">3. Mark Sold / Back in Stock</h2>
       <p class="hint">
-        Use the <strong>id</strong> from <code>products.json</code> (same as “Artist / ID” above).
+        Use the <strong>id</strong> from <code>products.json</code> (same as “Artist / ID” above).  
+        Or just type part of the <strong>artist</strong> or <strong>title</strong> and tap a pill.
         Example:
         <span class="id-chip">sleep-token-even-in-arcadia</span>
       </p>
 
       <div class="field-group">
         <label for="toggle-id">Record ID</label>
-        <input id="toggle-id" type="text" placeholder="sleep-token-even-in-arcadia" />
+        <input id="toggle-id" type="text" placeholder="randy, travis, storms..." />
+        <div id="search-results" class="search-results"></div>
       </div>
 
       <div class="inline" style="margin-top: 0.5rem;">
@@ -445,10 +469,12 @@
       for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
       const base64 = btoa(binary);
 
-      // Build a clean filename based on time + original name
       const safeName = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9_.-]/g, "_");
       const path = IMAGES_FOLDER + "/" + safeName;
-      await putFile(path, atob(base64), "Add image " + safeName);
+
+      // NOTE: simple text-based upload; fine for web-sized JPG/PNG
+      const binaryText = atob(base64);
+      await putFile(path, binaryText, "Add image " + safeName);
       return path;
     }
 
@@ -471,6 +497,15 @@
     async function saveProductsJson(products, sha, message) {
       const text = JSON.stringify(products, null, 2);
       await putFile(PRODUCTS_PATH, text, message, sha);
+    }
+
+    // cache for quick searching
+    let adminProductsCache = null;
+    async function getAdminProducts() {
+      if (adminProductsCache) return adminProductsCache;
+      const { products } = await loadProductsJson();
+      adminProductsCache = products;
+      return adminProductsCache;
     }
 
     // === ADD FORM LOGIC ===
@@ -515,7 +550,6 @@
 
         const { products, sha } = await loadProductsJson();
 
-        // Check for existing id
         const existingIndex = products.findIndex((p) => p.id === id);
         const newProduct = {
           id,
@@ -540,9 +574,10 @@
           (existingIndex >= 0 ? "Update record " : "Add record ") + id
         );
 
+        adminProductsCache = products; // keep cache fresh
+
         setStatus("Saved! " + title + " is now in the JSON and ready to sell.", "ok");
 
-        // Reset form
         addForm.reset();
         qtyInput.value = "1";
         availableInput.checked = true;
@@ -552,15 +587,55 @@
       }
     });
 
-    // === SOLD / AVAILABLE TOGGLE ===
+    // === SOLD / AVAILABLE TOGGLE + SEARCH ===
     const toggleIdInput = document.getElementById("toggle-id");
+    const searchResults = document.getElementById("search-results");
     const markSoldBtn = document.getElementById("mark-sold-btn");
     const markAvailableBtn = document.getElementById("mark-available-btn");
 
+    async function refreshSearchSuggestions() {
+      const term = toggleIdInput.value.trim().toLowerCase();
+      searchResults.innerHTML = "";
+      if (!term) return;
+
+      try {
+        requireToken();
+      } catch {
+        return;
+      }
+
+      try {
+        const products = await getAdminProducts();
+        const matches = products.filter((p) => {
+          const id = (p.id || "").toLowerCase();
+          const title = (p.title || "").toLowerCase();
+          return id.includes(term) || title.includes(term);
+        }).slice(0, 8);
+
+        matches.forEach((p) => {
+          const pill = document.createElement("button");
+          pill.type = "button";
+          pill.className = "search-pill";
+          pill.textContent = p.id || p.title;
+          pill.addEventListener("click", () => {
+            toggleIdInput.value = p.id;
+            searchResults.innerHTML = "";
+          });
+          searchResults.appendChild(pill);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    toggleIdInput.addEventListener("input", () => {
+      refreshSearchSuggestions();
+    });
+
     async function setAvailability(flag) {
-      const id = toggleIdInput.value.trim();
-      if (!id) {
-        setStatus("Type the record ID you want to flip.", "error");
+      const rawInput = toggleIdInput.value.trim();
+      if (!rawInput) {
+        setStatus("Type part of the artist / title, then tap a pill or enter the id.", "error");
         return;
       }
 
@@ -571,38 +646,14 @@
       }
 
       try {
-        setStatus("Updating availability for " + id + "…");
+        setStatus("Updating availability for " + rawInput + "…");
 
         const { products, sha } = await loadProductsJson();
-        const idx = products.findIndex((p) => p.id === id);
+        const search = rawInput.toLowerCase();
+
+        let idx = products.findIndex(
+          (p) => (p.id || "").toLowerCase() === search
+        );
 
         if (idx === -1) {
-          setStatus("No record found with id: " + id, "error");
-          return;
-        }
-
-        products[idx].available = flag;
-
-        await saveProductsJson(
-          products,
-          sha,
-          (flag ? "Mark available " : "Mark sold ") + id
-        );
-
-        setStatus(
-          "Done. " +
-          products[idx].title +
-          (flag ? " is back on the shop." : " is now hidden / sold."),
-          "ok"
-        );
-      } catch (err) {
-        console.error(err);
-        setStatus("Could not update availability. Check console / token.", "error");
-      }
-    }
-
-    markSoldBtn.addEventListener("click", () => setAvailability(false));
-    markAvailableBtn.addEventListener("click", () => setAvailability(true));
-  </script>
-</body>
-</html>
+          
