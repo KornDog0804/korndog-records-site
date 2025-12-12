@@ -326,6 +326,12 @@
     "price": 39.99,
     "grade": "NM/NM",
     "image": "images/1765487884585-4999.jpg",
+    "imageFront": "images/1765487884585-4999.jpg",
+    "imageBack": "images/1765487892539-5000.jpg",
+    "images": {
+      "front": "images/1765487884585-4999.jpg",
+      "back": "images/1765487892539-5000.jpg"
+    },
     "description": "The last 50 years of Hip-Hop’s growth with Various Artists.",
     "quantity": 1,
     "available": true
