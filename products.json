@@ -33,11 +33,18 @@
     "id": "bob-seger-night-moves",
     "artist": "Bob Seger & Silver Bullet Band",
     "title": "Night Moves",
-    "price": 4.99,
+    "price": 7,
     "grade": "VG/VG",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
     "description": "Super clean OG.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
+    "imageBack": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
+    "images": {
+      "front": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
+      "back": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg"
+    }
   },
   {
     "id": "bob-seger-stranger-in-town",
@@ -312,7 +319,7 @@
     "image": "images/PXL_20251211_210552651.jpg",
     "imageFront": "images/PXL_20251211_210552651.jpg",
     "imageBack": "images/PXL_20251211_210603941.jpg",
-    "description": "The last 50 years of Hip-HopÃ¢ÂÂs growth with Various Artists.",
+    "description": "The last 50 years of Hip-HopÃÂ¢ÃÂÃÂs growth with Various Artists.",
     "quantity": 1,
     "available": true
   },
