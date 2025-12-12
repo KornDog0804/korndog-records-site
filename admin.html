@@ -282,7 +282,7 @@
       <h2>2. Add a New Record</h2>
       <form id="add-form">
         <div class="field">
-          <label for="artist-id">Artist / ID (no spaces)</label>
+          <label for="artist-id">Record ID (no spaces)</label>
           <input
             id="artist-id"
             type="text"
@@ -295,11 +295,20 @@
         </div>
 
         <div class="field">
+          <label for="artist">Artist Name</label>
+          <input
+            id="artist"
+            type="text"
+            placeholder="Sleep Token"
+          />
+        </div>
+
+        <div class="field">
           <label for="title">Title (what the customer sees)</label>
           <input
             id="title"
             type="text"
-            placeholder="Sleep Token – Even in Arcadia"
+            placeholder="Even in Arcadia"
           />
         </div>
 
@@ -332,7 +341,7 @@
           </div>
         </div>
 
-        <!-- NEW: front & back photo uploads -->
+        <!-- front & back photo uploads -->
         <div class="field">
           <label for="cover-front">Front Cover Photo</label>
           <input id="cover-front" type="file" accept="image/*" />
@@ -526,40 +535,18 @@
       });
     }
 
-    // UPDATED: uploadImage now takes a targetBaseName and overwrites same file if it exists
-    async function uploadImage(file, targetBaseName) {
+    async function uploadImage(file) {
       const arrayBuffer = await file.arrayBuffer();
       const bytes = new Uint8Array(arrayBuffer);
       let binary = "";
       for (let i = 0; i < bytes.length; i++) {
         binary += String.fromCharCode(bytes[i]);
       }
-
-      // pull extension from original filename
-      const extMatch = file.name.match(/\.[a-zA-Z0-9]+$/);
-      const ext = extMatch ? extMatch[0].toLowerCase() : ".jpg";
-
-      // clean base name (from record id)
-      const cleanBase =
-        (targetBaseName || "record")
-          .toLowerCase()
-          .replace(/[^a-z0-9_-]/g, "-")
-          .replace(/-+/g, "-")
-          .replace(/^-+|-+$/g, "") || "record";
-
-      const safeName = cleanBase + ext;
+      const safeName =
+        Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9_.-]/g, "_");
       const path = IMAGES_FOLDER + "/" + safeName;
 
-      // if file already exists, get its SHA so GitHub updates instead of failing
-      let sha;
-      try {
-        const existing = await getFile(path);
-        sha = existing.sha;
-      } catch (e) {
-        sha = undefined; // not found, will create new
-      }
-
-      await putFile(path, binary, "Add/Update image " + safeName, sha);
+      await putFile(path, binary, "Add image " + safeName);
       return path;
     }
 
@@ -629,6 +616,7 @@
     // === ADD FORM LOGIC ===
     const addForm = document.getElementById("add-form");
     const artistIdInput = document.getElementById("artist-id");
+    const artistInput = document.getElementById("artist");
     const titleInput = document.getElementById("title");
     const priceInput = document.getElementById("price");
     const gradeInput = document.getElementById("grade");
@@ -647,6 +635,7 @@
       }
 
       const id = artistIdInput.value.trim();
+      const artist = artistInput.value.trim();
       const title = titleInput.value.trim();
       const price = parseFloat(priceInput.value);
       const grade = gradeInput.value.trim();
@@ -656,7 +645,7 @@
       const frontFile = coverFrontInput.files[0];
       const backFile = coverBackInput.files[0];
 
-      if (!id || !title || !grade || !frontFile || isNaN(price)) {
+      if (!id || !artist || !title || !grade || !frontFile || isNaN(price)) {
         setStatus("Missing required fields. Double-check the form.", "error");
         return;
       }
@@ -664,18 +653,10 @@
       setStatus("Uploading cover photo(s) to GitHub…");
 
       try {
-        // base name derived from ID for clean, predictable filenames
-        const safeBase =
-          id
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/-+/g, "-")
-            .replace(/^-+|-+$/g, "") || "record";
-
-        const frontPath = await uploadImage(frontFile, safeBase + "-front");
+        const frontPath = await uploadImage(frontFile);
         let backPath = frontPath;
         if (backFile) {
-          backPath = await uploadImage(backFile, safeBase + "-back");
+          backPath = await uploadImage(backFile);
         }
 
         setStatus("Updating products.json…");
@@ -686,19 +667,20 @@
 
         const newProduct = {
           id,
+          artist,
           title,
           price,
           grade,
-          // legacy field for current site
           image: frontPath,
-          // new structure for future flip feature
+          imageFront: frontPath,
+          imageBack: backPath,
           images: {
             front: frontPath,
-            back: backPath || frontPath,
+            back: backPath
           },
           description,
           quantity,
-          available,
+          available
         };
 
         if (existingIndex >= 0) {
@@ -763,7 +745,8 @@
           .filter((p) => {
             const id = norm(p.id);
             const title = norm(p.title);
-            return id.includes(term) || title.includes(term);
+            const artist = norm(p.artist);
+            return id.includes(term) || title.includes(term) || artist.includes(term);
           })
           .slice(0, 10);
 
@@ -771,8 +754,10 @@
           const pill = document.createElement("button");
           pill.type = "button";
           pill.className = "search-pill";
-          pill.textContent = (p.title || p.id || "Unknown");
-          if (p._bucket === "sold") pill.textContent += " (sold)";
+          const label =
+            (p.artist ? p.artist + " – " : "") +
+            (p.title || p.id || "Unknown");
+          pill.textContent = label + (p._bucket === "sold" ? " (sold)" : "");
           pill.addEventListener("click", () => {
             toggleIdInput.value = p.id || p.title;
             searchResults.innerHTML = "";
@@ -818,7 +803,9 @@
           // MARK SOLD: move from products.json -> sold.json
           let idx = products.findIndex(
             (p) =>
-              norm(p.id).includes(search) || norm(p.title).includes(search)
+              norm(p.id).includes(search) ||
+              norm(p.title).includes(search) ||
+              norm(p.artist).includes(search)
           );
           if (idx === -1) {
             setStatus("No live record found matching: " + rawInput, "error");
@@ -859,14 +846,18 @@
           // MARK AVAILABLE: move from sold.json -> products.json
           let idx = sold.findIndex(
             (p) =>
-              norm(p.id).includes(search) || norm(p.title).includes(search)
+              norm(p.id).includes(search) ||
+              norm(p.title).includes(search) ||
+              norm(p.artist).includes(search)
           );
 
           if (idx === -1) {
             // maybe already live
             const liveIdx = products.findIndex(
               (p) =>
-                norm(p.id).includes(search) || norm(p.title).includes(search)
+                norm(p.id).includes(search) ||
+                norm(p.title).includes(search) ||
+                norm(p.artist).includes(search)
             );
             if (liveIdx !== -1) {
               products[liveIdx].available = true;
