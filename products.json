@@ -50,11 +50,18 @@
     "id": "bob-seger-stranger-in-town",
     "artist": "Bob Seger & Silver Bullet Band",
     "title": "Stranger In Town",
-    "price": 4.99,
+    "price": 7,
     "grade": "VG/VG",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
     "description": "Nice clean OG.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
+    "imageBack": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
+    "images": {
+      "front": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
+      "back": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg"
+    }
   },
   {
     "id": "boston-1",
@@ -319,7 +326,7 @@
     "image": "images/PXL_20251211_210552651.jpg",
     "imageFront": "images/PXL_20251211_210552651.jpg",
     "imageBack": "images/PXL_20251211_210603941.jpg",
-    "description": "The last 50 years of Hip-HopÃÂ¢ÃÂÃÂs growth with Various Artists.",
+    "description": "The last 50 years of Hip-HopÃÂÃÂ¢ÃÂÃÂÃÂÃÂs growth with Various Artists.",
     "quantity": 1,
     "available": true
   },
