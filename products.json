@@ -320,18 +320,16 @@
     "available": true
   },
   {
-    "id": "compilation-album-hiphop-50yrs",
-    "artist": "Various Artists",
-    "title": "Compilation Album - 50 Years of Hip-Hop",
-    "price": 39.99,
-    "grade": "NM/NM",
-
-    "image": "images/PXL_20251211_210552651.jpg",        // front (for cart, etc.)
-    "imageFront": "images/PXL_20251211_210552651.jpg",   // front
-    "imageBack":  "images/PXL_20251211_210603941.jpg",   // back
-
-    "description": "The last 50 years of Hip-Hop’s growth with Various Artists.",
-    "quantity": 1,
-    "available": true
+  "id": "compilation-album-hiphop-50yrs",
+  "artist": "Various Artists",
+  "title": "Compilation Album - 50 Years of Hip-Hop",
+  "price": 39.99,
+  "grade": "NM/NM",
+  "image": "images/PXL_20251211_210552651.jpg",
+  "imageFront": "images/PXL_20251211_210552651.jpg",
+  "imageBack": "images/PXL_20251211_210603941.jpg",
+  "description": "The last 50 years of Hip-Hop’s growth with Various Artists.",
+  "quantity": 1,
+  "available": true
   }
 ]
