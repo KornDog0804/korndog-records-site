@@ -2,940 +2,360 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>KornDog Admin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Korndog Admin</title>
   <style>
-    :root {
-      --bg: #0b0018;
-      --bg2: #2b0044;
-      --accent: #b8ff4a;
-      --accent-soft: #7ef7ff;
-      --danger: #ff6b6b;
-      --text-main: #f5f5ff;
-      --text-soft: #c0c0e6;
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at top, var(--bg2), var(--bg));
-      color: var(--text-main);
-      display: flex;
-      justify-content: center;
-      padding: 24px 12px;
-    }
-
-    .shell {
-      width: 100%;
-      max-width: 900px;
-      background: linear-gradient(135deg, #140028, #05000f);
-      border-radius: 18px;
-      padding: 24px 20px 32px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    h1 {
-      margin: 0 0 4px;
-      font-size: 1.9rem;
-      letter-spacing: 0.04em;
-    }
-
-    .subtitle {
-      margin-bottom: 20px;
-      color: var(--text-soft);
-      font-size: 0.9rem;
-    }
-
-    h2 {
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      margin: 24px 0 8px;
-      color: var(--accent-soft);
-    }
-
-    .section {
-      margin-bottom: 20px;
-      padding: 16px 14px;
-      border-radius: 14px;
-      background: radial-gradient(circle at top left, #260044, #080012);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    label {
-      display: block;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-soft);
-      margin-bottom: 4px;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    textarea {
-      width: 100%;
-      padding: 10px 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(5, 0, 15, 0.9);
-      color: var(--text-main);
-      font-size: 0.95rem;
-      outline: none;
-    }
-
-    textarea {
-      border-radius: 12px;
-      min-height: 80px;
-      resize: vertical;
-      line-height: 1.35;
-      padding-top: 8px;
-    }
-
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(184, 255, 74, 0.4);
-    }
-
-    .row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .row > .field {
-      flex: 1;
-      min-width: 130px;
-    }
-
-    .field {
-      margin-bottom: 10px;
-    }
-
-    .hint {
-      font-size: 0.78rem;
-      color: var(--text-soft);
-      margin-top: 3px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 20px;
-      border-radius: 999px;
-      border: none;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: transform 0.05s ease, box-shadow 0.1s ease,
-        background 0.1s ease, filter 0.1s ease;
-      white-space: nowrap;
-    }
-
-    .btn:active {
-      transform: translateY(1px);
-      box-shadow: none;
-      filter: brightness(0.98);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #05000b;
-      box-shadow: 0 0 20px rgba(184, 255, 74, 0.45);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid rgba(184, 255, 74, 0.5);
-    }
-
-    .btn-danger {
-      background: var(--danger);
-      color: #1a0000;
-      box-shadow: 0 0 18px rgba(255, 107, 107, 0.45);
-    }
-
-    .btn-soft {
-      background: #3f1a7a;
-      color: var(--text-main);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .status {
-      margin-top: 8px;
-      padding: 8px 11px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      background: rgba(5, 255, 163, 0.08);
-      color: var(--accent);
-      border: 1px solid rgba(184, 255, 74, 0.35);
-    }
-
-    .status.error {
-      background: rgba(255, 107, 107, 0.08);
-      color: var(--danger);
-      border-color: rgba(255, 107, 107, 0.35);
-    }
-
-    .status.ok {
-      background: rgba(184, 255, 74, 0.06);
-    }
-
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .checkbox-row input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-    }
-
-    .checkbox-row span {
-      font-size: 0.8rem;
-      color: var(--text-soft);
-    }
-
-    .pill-row {
-      margin-top: 6px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .search-pill {
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--text-soft);
-      padding: 5px 10px;
-      font-size: 0.75rem;
-      cursor: pointer;
-    }
-
-    .search-pill:hover {
-      background: rgba(184, 255, 74, 0.12);
-      color: var(--accent);
-    }
-
-    .btn-row {
-      margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    @media (max-width: 600px) {
-      .shell {
-        padding: 18px 14px 24px;
-      }
-    }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b0620;color:#e9e9ff;margin:0;padding:16px}
+    .wrap{max-width:900px;margin:0 auto}
+    h1{margin:0 0 12px}
+    .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;margin:12px 0}
+    label{display:block;font-weight:700;margin:10px 0 6px}
+    input,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.25);color:#fff;box-sizing:border-box}
+    textarea{min-height:90px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    button{border:0;border-radius:999px;padding:12px 16px;font-weight:800;cursor:pointer}
+    .primary{background:#8dff6a;color:#10200f}
+    .ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25)}
+    .danger{background:#ff4d4d;color:#2a0a0a}
+    .muted{opacity:.8;font-size:.92rem}
+    pre{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;overflow:auto}
+    .toggle{display:flex;align-items:center;gap:10px;margin-top:10px}
+    .toggle input{width:auto}
+    .preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .preview img{width:160px;height:160px;object-fit:cover;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:#000}
+    .small{font-size:.85rem;opacity:.85}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(141,255,106,.15);border:1px solid rgba(141,255,106,.35);margin-left:8px}
   </style>
 </head>
+
 <body>
-  <main class="shell">
-    <header>
-      <h1>KornDog Admin</h1>
-      <p class="subtitle">Whatnot-style upload · No more JSON headaches.</p>
-    </header>
+  <div class="wrap">
+    <h1>Korndog Admin <span class="pill">JSON Builder</span></h1>
+    <div class="muted">
+      This page **does not upload to GitHub by itself** (Netlify static site).  
+      It builds clean JSON + file paths so you can upload images to `/images` and replace `products.json` without phone-splicing pain.
+    </div>
 
-    <!-- 1. GITHUB TOKEN -->
-    <section class="section">
-      <h2>1. GitHub Token</h2>
-      <div class="field">
-        <label for="token-input">Personal Access Token</label>
-        <input
-          id="token-input"
-          type="text"
-          placeholder="Paste a GitHub token with repo access"
-        />
-        <p class="hint">
-          Stays in your browser only (localStorage). Needed so this page can talk
-          to your repo.
-        </p>
-      </div>
-      <button id="save-token-btn" class="btn btn-outline">
-        Set / Change GitHub Token
-      </button>
-      <div id="status" class="status">
-        <span id="status-text">Waiting for input…</span>
-      </div>
-    </section>
+    <div class="card">
+      <h2 style="margin:0 0 10px">1) Add / Build a Product</h2>
 
-    <!-- 2. ADD A NEW RECORD -->
-    <section class="section">
-      <h2>2. Add a New Record</h2>
-      <form id="add-form">
-        <div class="field">
-          <label for="artist-id">Record ID (no spaces)</label>
-          <input
-            id="artist-id"
-            type="text"
-            placeholder="sleep-token-even-in-arcadia"
-          />
-          <p class="hint">
-            This becomes the <code>id</code> in <code>products.json</code>.
-            Keep it unique — no spaces, use dashes.
-          </p>
+      <div class="row">
+        <div>
+          <label>Artist</label>
+          <input id="artist" placeholder="Various Artists" />
         </div>
-
-        <div class="field">
-          <label for="artist">Artist Name</label>
-          <input
-            id="artist"
-            type="text"
-            placeholder="Sleep Token"
-          />
-        </div>
-
-        <div class="field">
-          <label for="title">Title (what the customer sees)</label>
-          <input
-            id="title"
-            type="text"
-            placeholder="Even in Arcadia"
-          />
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label for="price">Price (e.g. 17.99)</label>
-            <input id="price" type="number" step="0.01" />
-          </div>
-          <div class="field">
-            <label for="grade">Grade (e.g. NM/NM)</label>
-            <input id="grade" type="text" placeholder="NM/NM" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="description">Description</label>
-          <textarea
-            id="description"
-            placeholder="Short hype line – variant, color, story, etc."
-          ></textarea>
-        </div>
-
-        <div class="row">
-          <div class="field">
-            <label for="quantity">Stock / Quantity</label>
-            <input id="quantity" type="number" min="1" value="1" />
-            <p class="hint">
-              Defaults to 1. For $10 Dolla Holla you can set 3, 5, etc.
-            </p>
-          </div>
-        </div>
-
-        <!-- front & back photo uploads -->
-        <div class="field">
-          <label for="cover-front">Front Cover Photo</label>
-          <input id="cover-front" type="file" accept="image/*" />
-          <p class="hint">
-            Front of the sleeve. Will be uploaded into the repo’s
-            <code>images/</code> folder.
-          </p>
-        </div>
-
-        <div class="field">
-          <label for="cover-back">Back / Vinyl Photo (optional)</label>
-          <input id="cover-back" type="file" accept="image/*" />
-          <p class="hint">
-            Back of the sleeve or vinyl shot. Optional — if you skip it, we’ll
-            reuse the front image.
-          </p>
-        </div>
-
-        <div class="checkbox-row">
-          <input id="available" type="checkbox" checked />
-          <span>Available on the site (uncheck to add as hidden / coming soon)</span>
-        </div>
-
-        <div style="margin-top: 14px;">
-          <button type="submit" class="btn btn-primary">Save to Site</button>
-        </div>
-      </form>
-    </section>
-
-    <!-- 3. MARK SOLD / BACK IN STOCK -->
-    <section class="section">
-      <h2>3. Mark Sold / Back in Stock</h2>
-      <div class="field">
-        <label for="toggle-id">Record ID or Title</label>
-        <input
-          id="toggle-id"
-          type="text"
-          placeholder="Start typing: randy, hendrix, acdc..."
-        />
-        <p class="hint">
-          Type part of the artist or title and tap a pill, then save.
-        </p>
-      </div>
-
-      <div id="search-results" class="pill-row"></div>
-
-      <div class="row" style="margin-top:12px;">
-        <div class="field">
-          <label for="availability-action">Action</label>
-          <select
-            id="availability-action"
-            style="width:100%;padding:10px 11px;border-radius:999px;border:1px solid rgba(255,255,255,0.12);background:rgba(5,0,15,0.9);color:#f5f5ff;"
-          >
-            <option value="sold">Save as SOLD (hide &amp; archive)</option>
-            <option value="available">Save as AVAILABLE (show on shop)</option>
-          </select>
-          <p class="hint">
-            Pick what you want to do with this record, then hit the big green
-            button to save it to GitHub.
-          </p>
+        <div>
+          <label>Title</label>
+          <input id="title" placeholder="Compilation Album - 50 Years of Hip-Hop" />
         </div>
       </div>
 
-      <div style="margin-top:10px;">
-        <button id="availability-save-btn" type="button" class="btn btn-primary">
-          Save Change to Site
-        </button>
+      <div class="row">
+        <div>
+          <label>Price (USD)</label>
+          <input id="price" type="number" step="0.01" placeholder="39.99" />
+        </div>
+        <div>
+          <label>Grade</label>
+          <input id="grade" placeholder="NM/NM" />
+        </div>
       </div>
 
-      <div class="btn-row" style="margin-top:10px;">
-        <button id="mark-sold-btn" type="button" class="btn btn-danger">
-          Quick: Mark Sold (Hide &amp; Archive Now)
-        </button>
-        <button id="mark-available-btn" type="button" class="btn btn-soft">
-          Quick: Mark Available (Show on Shop Now)
-        </button>
+      <div class="row">
+        <div>
+          <label>Quantity</label>
+          <input id="quantity" type="number" step="1" value="1" />
+        </div>
+        <div>
+          <label>ID (auto-generated, you can edit)</label>
+          <input id="id" placeholder="auto-generated" />
+          <div class="small">Tip: keep IDs unique. Use dashes only.</div>
+        </div>
       </div>
-    </section>
-  </main>
 
-  <script>
-    // === CONFIG: YOUR REPO ===
-    const OWNER = "KornDog0804";
-    const REPO = "korndog-records-site";
-    const BRANCH = "main";
-    const PRODUCTS_PATH = "products.json";
-    const SOLD_PATH = "sold.json";
-    const IMAGES_FOLDER = "images";
+      <label>Description</label>
+      <textarea id="description" placeholder="Short punchy description..."></textarea>
 
-    // === STATUS HELPERS ===
-    const statusEl = document.getElementById("status");
-    const statusText = document.getElementById("status-text");
+      <div class="toggle">
+        <input id="hasBack" type="checkbox" />
+        <label for="hasBack" style="margin:0;font-weight:800">Has back photo (special editions)</label>
+      </div>
 
-    function setStatus(message, kind = "ok") {
-      statusText.textContent = message;
-      statusEl.classList.remove("ok", "error");
-      if (kind === "ok") statusEl.classList.add("ok");
-      if (kind === "error") statusEl.classList.add("error");
+      <div class="row">
+        <div>
+          <label>Front photo (choose from phone)</label>
+          <input id="frontFile" type="file" accept="image/*" />
+          <div class="small">This uses the file name as-is. Upload that exact file to `/images` in GitHub.</div>
+        </div>
+        <div id="backWrap" style="display:none">
+          <label>Back photo</label>
+          <input id="backFile" type="file" accept="image/*" />
+          <div class="small">Upload this exact file name to `/images` too.</div>
+        </div>
+      </div>
+
+      <div class="preview" id="preview"></div>
+
+      <div class="btns">
+        <button class="primary" id="addBtn">Add to Draft List</button>
+        <button class="ghost" id="copyOneBtn">Copy JSON Entry</button>
+        <button class="ghost" id="clearFormBtn">Clear Form</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 10px">2) Draft Products (what will become products.json)</h2>
+      <div class="muted">These are stored in your phone/browser (local). You can download the full JSON when ready.</div>
+
+      <div class="btns">
+        <button class="primary" id="downloadBtn">Download products.json</button>
+        <button class="ghost" id="copyAllBtn">Copy Full products.json</button>
+        <button class="danger" id="wipeBtn">Wipe Draft List</button>
+      </div>
+
+      <pre id="allOut">[]</pre>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 10px">3) Quick sanity checks</h2>
+      <ul>
+        <li><b>No comments</b> in JSON. Ever. (No <code>//</code> or <code>/* */</code>)</li>
+        <li>Image paths must start with <code>images/</code> and match the uploaded file name <b>exactly</b>.</li>
+        <li>If you check “Has back photo”, the product will include <code>imageFront</code> + <code>imageBack</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+<script>
+  const STORAGE_KEY = "korndog_admin_draft_products_v1";
+
+  const $ = (id) => document.getElementById(id);
+
+  const el = {
+    artist: $("artist"),
+    title: $("title"),
+    price: $("price"),
+    grade: $("grade"),
+    quantity: $("quantity"),
+    id: $("id"),
+    description: $("description"),
+    hasBack: $("hasBack"),
+    frontFile: $("frontFile"),
+    backFile: $("backFile"),
+    backWrap: $("backWrap"),
+    preview: $("preview"),
+    allOut: $("allOut"),
+    addBtn: $("addBtn"),
+    copyOneBtn: $("copyOneBtn"),
+    downloadBtn: $("downloadBtn"),
+    copyAllBtn: $("copyAllBtn"),
+    wipeBtn: $("wipeBtn"),
+    clearFormBtn: $("clearFormBtn"),
+  };
+
+  function slugify(str) {
+    return String(str || "")
+      .toLowerCase()
+      .trim()
+      .replace(/['"]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80);
+  }
+
+  function getDraft() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    } catch {
+      return [];
+    }
+  }
+
+  function saveDraft(list) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list, null, 2));
+    renderDraft();
+  }
+
+  function buildProductFromForm() {
+    const artist = el.artist.value.trim();
+    const title = el.title.value.trim();
+    const price = Number(el.price.value || 0);
+    const grade = el.grade.value.trim();
+    const quantity = Number(el.quantity.value || 1);
+    const description = el.description.value.trim();
+
+    const frontName = el.frontFile.files?.[0]?.name || "";
+    const backName = el.backFile.files?.[0]?.name || "";
+
+    const baseId = el.id.value.trim() || slugify(`${artist}-${title}`) || slugify(title) || "new-record";
+    const id = slugify(baseId);
+
+    // Always require front image
+    const imageFrontPath = frontName ? `images/${frontName}` : "";
+    const imageBackPath = backName ? `images/${backName}` : "";
+
+    const p = {
+      id,
+      artist,
+      title,
+      price: Number.isFinite(price) ? price : 0,
+      grade,
+      image: imageFrontPath, // keep legacy support
+      description,
+      quantity: Number.isFinite(quantity) ? quantity : 1,
+      available: true,
+    };
+
+    // If user checked "has back", include imageFront/imageBack
+    if (el.hasBack.checked) {
+      p.imageFront = imageFrontPath;
+      p.imageBack = imageBackPath;
     }
 
-    // normalize for search: lower-case, strip spaces/punctuation
-    function norm(str) {
-      return (str || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-    }
-
-    // === TOKEN HANDLING ===
-    const TOKEN_KEY = "korndog_github_token";
-    const tokenInput = document.getElementById("token-input");
-    const saveTokenBtn = document.getElementById("save-token-btn");
-
-    function getToken() {
-      return localStorage.getItem(TOKEN_KEY) || "";
-    }
-
-    function requireToken() {
-      const token = getToken();
-      if (!token) {
-        setStatus("No GitHub token set. Paste it above first.", "error");
-        throw new Error("Missing GitHub token");
-      }
-      return token;
-    }
-
-    (function initTokenDisplay() {
-      const existing = getToken();
-      if (existing) {
-        tokenInput.placeholder =
-          "Token already set (•••" + existing.slice(-6) + ")";
-        setStatus("GitHub token loaded. You’re ready to go.", "ok");
-      }
-    })();
-
-    saveTokenBtn.addEventListener("click", () => {
-      const value = tokenInput.value.trim();
-      if (!value) {
-        localStorage.removeItem(TOKEN_KEY);
-        setStatus(
-          "GitHub token cleared. Paste a new one before saving records.",
-          "error"
-        );
-        return;
-      }
-      localStorage.setItem(TOKEN_KEY, value);
-      tokenInput.value = "";
-      tokenInput.placeholder = "Token set (•••" + value.slice(-6) + ")";
-      setStatus("GitHub token saved. You’re wired into the repo.", "ok");
+    // Clean: remove empty optional fields
+    Object.keys(p).forEach((k) => {
+      if (p[k] === "" || p[k] === null || p[k] === undefined) delete p[k];
     });
 
-    // === GITHUB HELPERS ===
-    async function githubRequest(path, options = {}) {
-      const token = requireToken();
-      const headers = {
-        Authorization: "token " + token,
-        Accept: "application/vnd.github+json",
-      };
-      const res = await fetch(
-        "https://api.github.com/repos/" +
-          OWNER +
-          "/" +
-          REPO +
-          "/contents/" +
-          path,
-        { ...options, headers: { ...headers, ...(options.headers || {}) } }
-      );
-      if (!res.ok) {
-        const msg = await res.text();
-        console.error("GitHub error:", res.status, msg);
-        throw new Error("GitHub API error: " + res.status);
-      }
-      return res.json();
+    return p;
+  }
+
+  function renderDraft() {
+    const list = getDraft();
+    el.allOut.textContent = JSON.stringify(list, null, 2);
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert("Copied.");
+    } catch {
+      alert("Copy failed. (Some phones block clipboard.) Long-press the JSON and copy it manually.");
+    }
+  }
+
+  function downloadFile(filename, content) {
+    const blob = new Blob([content], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function updatePreview() {
+    el.preview.innerHTML = "";
+
+    const f = el.frontFile.files?.[0];
+    const b = el.backFile.files?.[0];
+
+    if (f) {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(f);
+      img.title = "Front";
+      el.preview.appendChild(img);
+    }
+    if (el.hasBack.checked && b) {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(b);
+      img.title = "Back";
+      el.preview.appendChild(img);
+    }
+  }
+
+  // ---- Events ----
+  function autoIdIfEmpty() {
+    const artist = el.artist.value.trim();
+    const title = el.title.value.trim();
+    if (!el.id.value.trim() && (artist || title)) {
+      el.id.value = slugify(`${artist}-${title}`) || slugify(title);
+    }
+  }
+
+  el.artist.addEventListener("input", autoIdIfEmpty);
+  el.title.addEventListener("input", autoIdIfEmpty);
+
+  el.hasBack.addEventListener("change", () => {
+    el.backWrap.style.display = el.hasBack.checked ? "block" : "none";
+    updatePreview();
+  });
+
+  el.frontFile.addEventListener("change", updatePreview);
+  el.backFile.addEventListener("change", updatePreview);
+
+  el.addBtn.addEventListener("click", () => {
+    const p = buildProductFromForm();
+
+    if (!p.artist || !p.title) {
+      alert("Add Artist + Title first.");
+      return;
+    }
+    if (!p.image) {
+      alert("Pick a FRONT photo first.");
+      return;
+    }
+    if (el.hasBack.checked && !p.imageBack) {
+      alert("You checked back photo — pick the BACK photo too.");
+      return;
     }
 
-    async function getFile(path) {
-      const data = await githubRequest(path, { method: "GET" });
-      const decoded = atob(data.content.replace(/\n/g, ""));
-      return { text: decoded, sha: data.sha };
+    const list = getDraft();
+    const existsIndex = list.findIndex(x => x.id === p.id);
+
+    if (existsIndex >= 0) {
+      const ok = confirm("That ID already exists in draft. Replace it?");
+      if (!ok) return;
+      list[existsIndex] = p;
+    } else {
+      list.push(p);
     }
 
-    async function putFile(path, contentText, message, sha) {
-      const encoded = btoa(unescape(encodeURIComponent(contentText)));
-      const body = {
-        message,
-        content: encoded,
-        branch: BRANCH,
-      };
-      if (sha) body.sha = sha;
-      return githubRequest(path, {
-        method: "PUT",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    saveDraft(list);
+    alert("Added to draft list.");
+  });
 
-    async function uploadImage(file) {
-      const arrayBuffer = await file.arrayBuffer();
-      const bytes = new Uint8Array(arrayBuffer);
-      let binary = "";
-      for (let i = 0; i < bytes.length; i++) {
-        binary += String.fromCharCode(bytes[i]);
-      }
-      const safeName =
-        Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9_.-]/g, "_");
-      const path = IMAGES_FOLDER + "/" + safeName;
+  el.copyOneBtn.addEventListener("click", () => {
+    const p = buildProductFromForm();
+    copyText(JSON.stringify(p, null, 2));
+  });
 
-      await putFile(path, binary, "Add image " + safeName);
-      return path;
-    }
+  el.copyAllBtn.addEventListener("click", () => {
+    const list = getDraft();
+    copyText(JSON.stringify(list, null, 2));
+  });
 
-    // === GENERIC JSON LOAD/SAVE HELPERS ===
-    async function loadJsonArray(path) {
-      try {
-        const { text, sha } = await getFile(path);
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (e) {
-          console.error("Bad JSON in", path, e);
-          throw new Error(path + " is not valid JSON");
-        }
-        if (!Array.isArray(data)) {
-          throw new Error(path + " must be an array");
-        }
-        return { items: data, sha };
-      } catch (e) {
-        console.warn("loadJsonArray fallback for", path, e.message);
-        return { items: [], sha: undefined };
-      }
-    }
+  el.downloadBtn.addEventListener("click", () => {
+    const list = getDraft();
+    downloadFile("products.json", JSON.stringify(list, null, 2));
+  });
 
-    async function saveJsonArray(path, items, sha, message) {
-      const text = JSON.stringify(items, null, 2);
-      await putFile(path, text, message, sha);
-    }
+  el.wipeBtn.addEventListener("click", () => {
+    const ok = confirm("Wipe the entire draft list?");
+    if (!ok) return;
+    saveDraft([]);
+  });
 
-    async function loadProductsJson() {
-      const { items, sha } = await loadJsonArray(PRODUCTS_PATH);
-      return { products: items, sha };
-    }
+  el.clearFormBtn.addEventListener("click", () => {
+    el.artist.value = "";
+    el.title.value = "";
+    el.price.value = "";
+    el.grade.value = "";
+    el.quantity.value = "1";
+    el.id.value = "";
+    el.description.value = "";
+    el.hasBack.checked = false;
+    el.backWrap.style.display = "none";
+    el.frontFile.value = "";
+    el.backFile.value = "";
+    el.preview.innerHTML = "";
+  });
 
-    async function saveProductsJson(products, sha, message) {
-      await saveJsonArray(PRODUCTS_PATH, products, sha, message);
-    }
-
-    async function loadSoldJson() {
-      const { items, sha } = await loadJsonArray(SOLD_PATH);
-      return { sold: items, sha };
-    }
-
-    async function saveSoldJson(sold, sha, message) {
-      await saveJsonArray(SOLD_PATH, sold, sha, message);
-    }
-
-    // === CACHE FOR SEARCH ===
-    let cacheProducts = null;
-    let cacheSold = null;
-
-    async function refreshCaches() {
-      const { products } = await loadProductsJson();
-      const { sold } = await loadSoldJson();
-      cacheProducts = products;
-      cacheSold = sold;
-      return { products, sold };
-    }
-
-    async function getAllRecords() {
-      if (!cacheProducts || !cacheSold) {
-        return refreshCaches();
-      }
-      return { products: cacheProducts, sold: cacheSold };
-    }
-
-    // === ADD FORM LOGIC ===
-    const addForm = document.getElementById("add-form");
-    const artistIdInput = document.getElementById("artist-id");
-    const artistInput = document.getElementById("artist");
-    const titleInput = document.getElementById("title");
-    const priceInput = document.getElementById("price");
-    const gradeInput = document.getElementById("grade");
-    const descInput = document.getElementById("description");
-    const qtyInput = document.getElementById("quantity");
-    const coverFrontInput = document.getElementById("cover-front");
-    const coverBackInput = document.getElementById("cover-back");
-    const availableInput = document.getElementById("available");
-
-    addForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      try {
-        requireToken();
-      } catch {
-        return;
-      }
-
-      const id = artistIdInput.value.trim();
-      const artist = artistInput.value.trim();
-      const title = titleInput.value.trim();
-      const price = parseFloat(priceInput.value);
-      const grade = gradeInput.value.trim();
-      const description = descInput.value.trim();
-      const quantity = parseInt(qtyInput.value || "1", 10) || 1;
-      const available = availableInput.checked;
-      const frontFile = coverFrontInput.files[0];
-      const backFile = coverBackInput.files[0];
-
-      if (!id || !artist || !title || !grade || !frontFile || isNaN(price)) {
-        setStatus("Missing required fields. Double-check the form.", "error");
-        return;
-      }
-
-      setStatus("Uploading cover photo(s) to GitHub…");
-
-      try {
-        const frontPath = await uploadImage(frontFile);
-        let backPath = frontPath;
-        if (backFile) {
-          backPath = await uploadImage(backFile);
-        }
-
-        setStatus("Updating products.json…");
-
-        const { products, sha } = await loadProductsJson();
-
-        const existingIndex = products.findIndex((p) => p.id === id);
-
-        const newProduct = {
-          id,
-          artist,
-          title,
-          price,
-          grade,
-          image: frontPath,
-          imageFront: frontPath,
-          imageBack: backPath,
-          images: {
-            front: frontPath,
-            back: backPath
-          },
-          description,
-          quantity,
-          available
-        };
-
-        if (existingIndex >= 0) {
-          products[existingIndex] = { ...products[existingIndex], ...newProduct };
-        } else {
-          products.push(newProduct);
-        }
-
-        await saveProductsJson(
-          products,
-          sha,
-          (existingIndex >= 0 ? "Update record " : "Add record ") + id
-        );
-
-        await refreshCaches();
-
-        setStatus(
-          "Saved! " + title + " is now in the JSON and ready to sell.",
-          "ok"
-        );
-
-        addForm.reset();
-        qtyInput.value = "1";
-        availableInput.checked = true;
-      } catch (err) {
-        console.error(err);
-        setStatus(
-          "Something blew up talking to GitHub. Check console / token.",
-          "error"
-        );
-      }
-    });
-
-    // === SOLD / AVAILABLE TOGGLE + SEARCH ===
-    const toggleIdInput = document.getElementById("toggle-id");
-    const searchResults = document.getElementById("search-results");
-    const markSoldBtn = document.getElementById("mark-sold-btn");
-    const markAvailableBtn = document.getElementById("mark-available-btn");
-    const availabilityActionSelect = document.getElementById("availability-action");
-    const availabilitySaveBtn = document.getElementById("availability-save-btn");
-
-    async function refreshSearchSuggestions() {
-      const termRaw = toggleIdInput.value.trim();
-      const term = norm(termRaw);
-      searchResults.innerHTML = "";
-      if (!term) return;
-
-      try {
-        requireToken();
-      } catch {
-        return;
-      }
-
-      try {
-        const { products, sold } = await getAllRecords();
-        const combined = [
-          ...products.map((p) => ({ ...p, _bucket: "live" })),
-          ...sold.map((p) => ({ ...p, _bucket: "sold" })),
-        ];
-
-        const matches = combined
-          .filter((p) => {
-            const id = norm(p.id);
-            const title = norm(p.title);
-            const artist = norm(p.artist);
-            return id.includes(term) || title.includes(term) || artist.includes(term);
-          })
-          .slice(0, 10);
-
-        matches.forEach((p) => {
-          const pill = document.createElement("button");
-          pill.type = "button";
-          pill.className = "search-pill";
-          const label =
-            (p.artist ? p.artist + " – " : "") +
-            (p.title || p.id || "Unknown");
-          pill.textContent = label + (p._bucket === "sold" ? " (sold)" : "");
-          pill.addEventListener("click", () => {
-            toggleIdInput.value = p.id || p.title;
-            searchResults.innerHTML = "";
-          });
-          searchResults.appendChild(pill);
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    toggleIdInput.addEventListener("input", () => {
-      refreshSearchSuggestions();
-    });
-
-    async function setAvailability(flag) {
-      const rawInput = toggleIdInput.value.trim();
-      if (!rawInput) {
-        setStatus(
-          "Type part of the artist / title, then tap a pill or enter the id.",
-          "error"
-        );
-        return;
-      }
-
-      const token = getToken();
-      if (!token) {
-        setStatus("GitHub token missing. Set it at the top first.", "error");
-        return;
-      }
-
-      const search = norm(rawInput);
-
-      setStatus("Loading records from GitHub…", "ok");
-
-      try {
-        const { products, sha } = await loadProductsJson();
-        const { sold, sha: soldSha } = await loadSoldJson();
-
-        let message;
-
-        if (flag === "sold") {
-          // MARK SOLD: move from products.json -> sold.json
-          let idx = products.findIndex(
-            (p) =>
-              norm(p.id).includes(search) ||
-              norm(p.title).includes(search) ||
-              norm(p.artist).includes(search)
-          );
-          if (idx === -1) {
-            setStatus("No live record found matching: " + rawInput, "error");
-            return;
-          }
-
-          const product = products[idx];
-
-          const alreadySoldIndex = sold.findIndex(
-            (p) => norm(p.id) === norm(product.id)
-          );
-          if (alreadySoldIndex !== -1) {
-            setStatus("That record is already marked SOLD.", "ok");
-            return;
-          }
-
-          product.available = false;
-
-          products.splice(idx, 1);
-          sold.push(product);
-
-          products.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-
-          await saveProductsJson(
-            products,
-            sha,
-            "Mark sold & remove from products: " +
-              (product.id || product.title)
-          );
-          await saveSoldJson(
-            sold,
-            soldSha,
-            "Archive sold record: " + (product.id || product.title)
-          );
-
-          message = (product.title || product.id) + " moved to sold/archive.";
-        } else if (flag === "available") {
-          // MARK AVAILABLE: move from sold.json -> products.json
-          let idx = sold.findIndex(
-            (p) =>
-              norm(p.id).includes(search) ||
-              norm(p.title).includes(search) ||
-              norm(p.artist).includes(search)
-          );
-
-          if (idx === -1) {
-            // maybe already live
-            const liveIdx = products.findIndex(
-              (p) =>
-                norm(p.id).includes(search) ||
-                norm(p.title).includes(search) ||
-                norm(p.artist).includes(search)
-            );
-            if (liveIdx !== -1) {
-              products[liveIdx].available = true;
-              await saveProductsJson(
-                products,
-                sha,
-                "Mark available: " +
-                  (products[liveIdx].id || products[liveIdx].title)
-              );
-              message =
-                (products[liveIdx].title || products[liveIdx].id) +
-                " is now marked available.";
-            } else {
-              setStatus(
-                "No record found in sold or live matching: " + rawInput,
-                "error"
-              );
-              return;
-            }
-          } else {
-            const product = sold[idx];
-            product.available = true;
-
-            const filteredProducts = products.filter(
-              (p) => norm(p.id) !== norm(product.id)
-            );
-
-            filteredProducts.push(product);
-
-            filteredProducts.sort((a, b) =>
-              (a.title || "").localeCompare(b.title || "")
-            );
-
-            await saveProductsJson(
-              filteredProducts,
-              sha,
-              "Return record to products: " + (product.id || product.title)
-            );
-            sold.splice(idx, 1);
-            await saveSoldJson(
-              sold,
-              soldSha,
-              "Remove record from sold archive: " +
-                (product.id || product.title)
-            );
-
-            message = (product.title || product.id) + " is back on the shop.";
-          }
-        } else {
-          setStatus("Unknown flag passed to setAvailability().", "error");
-          return;
-        }
-
-        await refreshCaches();
-        toggleIdInput.value = "";
-        searchResults.innerHTML = "";
-
-        setStatus("Done. " + message, "ok");
-      } catch (err) {
-        console.error(err);
-        setStatus(
-          "Could not update availability. Check console / token.",
-          "error"
-        );
-      }
-    }
-
-    // quick buttons
-    markSoldBtn.addEventListener("click", () => setAvailability("sold"));
-    markAvailableBtn.addEventListener("click", () =>
-      setAvailability("available")
-    );
-
-    // big green save button
-    availabilitySaveBtn.addEventListener("click", () => {
-      const action = availabilityActionSelect.value; // "sold" or "available"
-      setAvailability(action);
-    });
-  </script>
+  // init
+  renderDraft();
+</script>
 </body>
 </html>
