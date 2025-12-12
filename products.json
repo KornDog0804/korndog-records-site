@@ -264,11 +264,18 @@
     "id": "reo-speedwagon-decade-of-rock-and-roll",
     "artist": "REO Speedwagon",
     "title": "A Decade Of Rock & Roll",
-    "price": 4.99,
+    "price": 7,
     "grade": "VG/VG",
     "image": "images/REO_SpeedWagon-1764233215456.jpg",
     "description": "Who doesn't love some Speedwagon?",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/REO_SpeedWagon-1764233215456.jpg",
+    "imageBack": "images/REO_SpeedWagon-1764233215456.jpg",
+    "images": {
+      "front": "images/REO_SpeedWagon-1764233215456.jpg",
+      "back": "images/REO_SpeedWagon-1764233215456.jpg"
+    }
   },
   {
     "id": "robert-plant-now-and-zen",
@@ -326,7 +333,7 @@
     "image": "images/PXL_20251211_210552651.jpg",
     "imageFront": "images/PXL_20251211_210552651.jpg",
     "imageBack": "images/PXL_20251211_210603941.jpg",
-    "description": "The last 50 years of Hip-HopÃÂÃÂ¢ÃÂÃÂÃÂÃÂs growth with Various Artists.",
+    "description": "The last 50 years of Hip-HopÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂs growth with Various Artists.",
     "quantity": 1,
     "available": true
   },
