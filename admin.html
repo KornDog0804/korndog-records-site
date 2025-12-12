@@ -240,6 +240,13 @@
       gap: 8px;
     }
 
+    .divider {
+      height: 1px;
+      margin: 10px 0 2px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+    }
+
     @media (max-width: 600px) {
       .shell {
         padding: 18px 14px 24px;
@@ -281,7 +288,6 @@
     <section class="section">
       <h2>2. Add a New Record</h2>
       <form id="add-form">
-        <!-- NEW: Artist field -->
         <div class="field">
           <label for="artist">Artist</label>
           <input id="artist" type="text" placeholder="Randy Travis" />
@@ -412,6 +418,93 @@
           Quick: Mark Available (Show on Shop Now)
         </button>
       </div>
+    </section>
+
+    <!-- 4. EDIT (LIVE OR SOLD) -->
+    <section class="section">
+      <h2>4. Edit a Record (Live or Sold)</h2>
+
+      <div class="field">
+        <label for="edit-search">Find record to edit (ID / artist / title)</label>
+        <input id="edit-search" type="text" placeholder="Start typing: sevendust, poison, californication..." />
+        <p class="hint">
+          Tap a pill to load it. This edits the JSON and deploys like everything else — no magic, just clean.
+        </p>
+      </div>
+
+      <div id="edit-results" class="pill-row"></div>
+
+      <div class="divider"></div>
+
+      <form id="edit-form" style="margin-top:12px; display:none;">
+        <div class="row">
+          <div class="field">
+            <label for="edit-bucket">Where it lives (locked)</label>
+            <input id="edit-bucket" type="text" disabled />
+            <p class="hint">Live = products.json · Sold = sold.json</p>
+          </div>
+          <div class="field">
+            <label for="edit-id">ID (locked)</label>
+            <input id="edit-id" type="text" disabled />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="edit-artist">Artist</label>
+          <input id="edit-artist" type="text" placeholder="Artist name" />
+        </div>
+
+        <div class="field">
+          <label for="edit-title">Title</label>
+          <input id="edit-title" type="text" placeholder="Title" />
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="edit-price">Price</label>
+            <input id="edit-price" type="number" step="0.01" />
+          </div>
+          <div class="field">
+            <label for="edit-grade">Grade</label>
+            <input id="edit-grade" type="text" placeholder="NM/NM" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="edit-description">Description</label>
+          <textarea id="edit-description" placeholder="Update the hype / variant / notes..."></textarea>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="edit-quantity">Stock / Quantity</label>
+            <input id="edit-quantity" type="number" min="0" />
+            <p class="hint">Set 0 if you want it basically “no stock” but still visible (if Available is checked).</p>
+          </div>
+        </div>
+
+        <div class="checkbox-row">
+          <input id="edit-available" type="checkbox" />
+          <span>Available on the site</span>
+        </div>
+
+        <div class="field" style="margin-top:12px;">
+          <label for="edit-front">Replace Front Photo (optional)</label>
+          <input id="edit-front" type="file" accept="image/*" />
+          <p class="hint">Leave blank to keep the current image.</p>
+        </div>
+
+        <div class="field">
+          <label for="edit-back">Replace Back/Vinyl Photo (optional)</label>
+          <input id="edit-back" type="file" accept="image/*" />
+          <p class="hint">Leave blank to keep the current image.</p>
+        </div>
+
+        <div class="btn-row" style="margin-top:10px;">
+          <button id="save-edit-btn" type="button" class="btn btn-primary">Save Edit to Site</button>
+          <button id="cancel-edit-btn" type="button" class="btn btn-outline">Cancel</button>
+        </div>
+      </form>
     </section>
   </main>
 
@@ -674,12 +767,9 @@
           price,
           grade,
 
-          // Compatibility for current site + older code
           image: frontPath,
           imageFront: frontPath,
           imageBack: backPath || frontPath,
-
-          // Future-ready structure if you ever want flip/slider views
           images: {
             front: frontPath,
             back: backPath || frontPath,
@@ -696,8 +786,10 @@
           products.push(newProduct);
         }
 
-        // Keep list tidy
-        products.sort((a, b) => (a.artist || "").localeCompare(b.artist || "") || (a.title || "").localeCompare(b.title || ""));
+        products.sort((a, b) =>
+          (a.artist || "").localeCompare(b.artist || "") ||
+          (a.title || "").localeCompare(b.title || "")
+        );
 
         await saveProductsJson(
           products,
@@ -883,9 +975,243 @@
     markAvailableBtn.addEventListener("click", () => setAvailability("available"));
 
     availabilitySaveBtn.addEventListener("click", () => {
-      const action = availabilityActionSelect.value; // "sold" or "available"
+      const action = availabilityActionSelect.value;
       setAvailability(action);
+    });
+
+    // === EDIT (LIVE OR SOLD) ===
+    const editSearch = document.getElementById("edit-search");
+    const editResults = document.getElementById("edit-results");
+    const editForm = document.getElementById("edit-form");
+
+    const editBucket = document.getElementById("edit-bucket");
+    const editId = document.getElementById("edit-id");
+    const editArtist = document.getElementById("edit-artist");
+    const editTitle = document.getElementById("edit-title");
+    const editPrice = document.getElementById("edit-price");
+    const editGrade = document.getElementById("edit-grade");
+    const editDescription = document.getElementById("edit-description");
+    const editQuantity = document.getElementById("edit-quantity");
+    const editAvailable = document.getElementById("edit-available");
+    const editFront = document.getElementById("edit-front");
+    const editBack = document.getElementById("edit-back");
+
+    const saveEditBtn = document.getElementById("save-edit-btn");
+    const cancelEditBtn = document.getElementById("cancel-edit-btn");
+
+    let loadedEdit = { id: null, bucket: null }; // bucket: "live" | "sold"
+
+    function showEditForm(record, bucket) {
+      loadedEdit = { id: record.id, bucket };
+
+      editBucket.value = bucket === "sold" ? "SOLD (sold.json)" : "LIVE (products.json)";
+      editId.value = record.id || "";
+
+      editArtist.value = record.artist || "";
+      editTitle.value = record.title || "";
+      editPrice.value = (typeof record.price === "number") ? record.price : parseFloat(record.price || "0");
+      editGrade.value = record.grade || "";
+      editDescription.value = record.description || "";
+      editQuantity.value = (typeof record.quantity === "number") ? record.quantity : parseInt(record.quantity || "1", 10);
+      editAvailable.checked = record.available !== false;
+
+      editFront.value = "";
+      editBack.value = "";
+
+      editForm.style.display = "block";
+    }
+
+    function hideEditForm() {
+      loadedEdit = { id: null, bucket: null };
+      editForm.style.display = "none";
+      editSearch.value = "";
+      editResults.innerHTML = "";
+    }
+
+    function recordLabel(r) {
+      return (r.artist ? (r.artist + " — ") : "") + (r.title || r.id || "Unknown");
+    }
+
+    async function refreshEditSuggestions() {
+      const term = norm(editSearch.value.trim());
+      editResults.innerHTML = "";
+      if (!term) return;
+
+      try { requireToken(); } catch { return; }
+
+      try {
+        const { products, sold } = await getAllRecords();
+        const combined = [
+          ...products.map((p) => ({ ...p, _bucket: "live" })),
+          ...sold.map((p) => ({ ...p, _bucket: "sold" })),
+        ];
+
+        const matches = combined
+          .filter((p) => {
+            const id = norm(p.id);
+            const title = norm(p.title);
+            const artist = norm(p.artist);
+            return id.includes(term) || title.includes(term) || artist.includes(term);
+          })
+          .slice(0, 12);
+
+        matches.forEach((p) => {
+          const pill = document.createElement("button");
+          pill.type = "button";
+          pill.className = "search-pill";
+          pill.textContent = recordLabel(p) + (p._bucket === "sold" ? " (sold)" : "");
+          pill.addEventListener("click", async () => {
+            try { requireToken(); } catch { return; }
+            setStatus("Loading record into editor…", "ok");
+
+            // Re-load from source of truth so we edit the latest version
+            if (p._bucket === "sold") {
+              const { sold } = await loadSoldJson();
+              const found = sold.find(x => x.id === p.id);
+              if (!found) {
+                setStatus("Couldn’t find that record in sold.json (it moved). Try again.", "error");
+                return;
+              }
+              showEditForm(found, "sold");
+            } else {
+              const { products } = await loadProductsJson();
+              const found = products.find(x => x.id === p.id);
+              if (!found) {
+                setStatus("Couldn’t find that record in products.json (it moved). Try again.", "error");
+                return;
+              }
+              showEditForm(found, "live");
+            }
+
+            editResults.innerHTML = "";
+            setStatus("Loaded. Make your changes and hit Save.", "ok");
+          });
+          editResults.appendChild(pill);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    editSearch.addEventListener("input", refreshEditSuggestions);
+
+    cancelEditBtn.addEventListener("click", () => {
+      hideEditForm();
+      setStatus("Edit cancelled.", "ok");
+    });
+
+    saveEditBtn.addEventListener("click", async () => {
+      if (!loadedEdit.id || !loadedEdit.bucket) {
+        setStatus("Pick a record first (tap a pill).", "error");
+        return;
+      }
+
+      try { requireToken(); } catch { return; }
+
+      const updatedArtist = editArtist.value.trim();
+      const updatedTitle = editTitle.value.trim();
+      const updatedPrice = parseFloat(editPrice.value);
+      const updatedGrade = editGrade.value.trim();
+      const updatedDescription = editDescription.value.trim();
+      const updatedQuantity = parseInt(editQuantity.value || "0", 10);
+      const updatedAvailable = !!editAvailable.checked;
+
+      if (!updatedArtist || !updatedTitle || isNaN(updatedPrice) || !updatedGrade) {
+        setStatus("Artist, Title, Price, and Grade are required.", "error");
+        return;
+      }
+
+      try {
+        setStatus("Saving edits…", "ok");
+
+        const isSold = loadedEdit.bucket === "sold";
+
+        // Load correct file
+        let list, sha;
+        if (isSold) {
+          const res = await loadSoldJson();
+          list = res.sold;
+          sha = res.sha;
+        } else {
+          const res = await loadProductsJson();
+          list = res.products;
+          sha = res.sha;
+        }
+
+        const idx = list.findIndex(p => p.id === loadedEdit.id);
+        if (idx === -1) {
+          setStatus("That record couldn’t be found in its JSON file. It may have moved. Search again.", "error");
+          return;
+        }
+
+        const current = list[idx] || {};
+
+        // Resolve existing image paths
+        let frontPath =
+          (current.images && current.images.front) ||
+          current.imageFront ||
+          current.image ||
+          "";
+        let backPath =
+          (current.images && current.images.back) ||
+          current.imageBack ||
+          frontPath;
+
+        if (editFront.files && editFront.files[0]) {
+          setStatus("Uploading new front photo…", "ok");
+          frontPath = await uploadImage(editFront.files[0]);
+        }
+
+        if (editBack.files && editBack.files[0]) {
+          setStatus("Uploading new back photo…", "ok");
+          backPath = await uploadImage(editBack.files[0]);
+        }
+
+        const updated = {
+          ...current,
+          id: current.id, // locked
+          artist: updatedArtist,
+          title: updatedTitle,
+          price: updatedPrice,
+          grade: updatedGrade,
+          description: updatedDescription,
+          quantity: updatedQuantity,
+          available: updatedAvailable,
+
+          // Keep all image compatibility fields
+          image: frontPath || current.image || "",
+          imageFront: frontPath || current.imageFront || current.image || "",
+          imageBack: backPath || current.imageBack || frontPath || current.image || "",
+          images: {
+            front: frontPath || (current.images && current.images.front) || current.imageFront || current.image || "",
+            back: backPath || (current.images && current.images.back) || current.imageBack || frontPath || current.image || "",
+          },
+        };
+
+        list[idx] = updated;
+
+        // Keep tidy
+        list.sort((a, b) =>
+          (a.artist || "").localeCompare(b.artist || "") ||
+          (a.title || "").localeCompare(b.title || "")
+        );
+
+        if (isSold) {
+          await saveSoldJson(list, sha, "Edit sold record: " + loadedEdit.id);
+        } else {
+          await saveProductsJson(list, sha, "Edit record: " + loadedEdit.id);
+        }
+
+        await refreshCaches();
+        hideEditForm();
+
+        setStatus("Saved! Changes are in GitHub and will go live after deploy.", "ok");
+      } catch (err) {
+        console.error(err);
+        setStatus("Edit failed. Token/permissions or GitHub issue. Check console.", "error");
+      }
     });
   </script>
 </body>
 </html>
+```0
