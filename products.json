@@ -26,7 +26,7 @@
     "price": 24.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
-    "description": "Psychedelic swirl for the ages. This 50th Anniversary picture disc reissue of the Dead's groundbreaking 1967 debut takes the acid-soaked vibe and makes it spin-ready art. Limited to 10,000 copies worldwide, this one's both a collectible and a sonic time capsule.",
+    "description": "Psychedelic swirl for the ages. Limited to 10,000 copies worldwide.",
     "available": true
   },
   {
@@ -66,7 +66,7 @@
     "price": 32.99,
     "grade": "NM/NM",
     "image": "images/PXL_20251124_210448795.TS-000.jpg",
-    "description": "Pop-punk chaos, no filler. NM/NM copy, black and blue smash.",
+    "description": "Pop-punk chaos, no filler. Black and blue smash.",
     "available": true
   },
   {
@@ -126,7 +126,7 @@
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Cheap_Trick-1764233303621.jpg",
-    "description": "Now this is no cheap trick. Super clean copy and yours today for 4.99.",
+    "description": "Super clean copy.",
     "available": true
   },
   {
@@ -136,7 +136,7 @@
     "price": 69.99,
     "grade": "NM/NM",
     "image": "images/Screenshot_20250826-210248.png",
-    "description": "House Veridian Edition. NM/NM copy.",
+    "description": "House Veridian Edition. NM/NM.",
     "available": true
   },
   {
@@ -146,7 +146,7 @@
     "price": 8.99,
     "grade": "VG/VG",
     "image": "images/PXL_20250915_125512318.jpg",
-    "description": "Funky, spacey soul trip. VG/VG copy.",
+    "description": "Funky, spacey soul trip.",
     "available": true
   },
   {
@@ -166,7 +166,7 @@
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Johnny_Cash-1764230221013.jpg",
-    "description": "You better walk the line when you get this one.",
+    "description": "Walk the Line with this one.",
     "available": true
   },
   {
@@ -176,7 +176,7 @@
     "price": 19.99,
     "grade": "NM/NM",
     "image": "images/PXL_20250915_125450366.jpg",
-    "description": "Debut EP. NM/NM copy.",
+    "description": "Debut EP. NM/NM.",
     "available": true
   },
   {
@@ -186,7 +186,7 @@
     "price": 19.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
-    "description": "2015 Rhino pressing. NM/NM.",
+    "description": "2015 Rhino pressing.",
     "available": true
   },
   {
@@ -196,7 +196,7 @@
     "price": 14.99,
     "grade": "NM/NM",
     "image": "images/PXL_20250907_203733675.jpg",
-    "description": "10th Anniversary Edition. NM/NM copy.",
+    "description": "10th Anniversary Edition.",
     "available": true
   },
   {
@@ -216,7 +216,7 @@
     "price": 4.99,
     "grade": "VG/VG+",
     "image": "images/Kansas-1764232880896.jpg",
-    "description": "Carry On Wayward Son lives here.",
+    "description": "Carry On Wayward Son.",
     "available": true
   },
   {
@@ -226,7 +226,7 @@
     "price": 44.99,
     "grade": "NM/NM",
     "image": "images/Screenshot_20250914-012633.png",
-    "description": "Crushing modern deathcore, Ghost variant. NM/NM copy.",
+    "description": "Ghost variant. NM/NM.",
     "available": true
   },
   {
@@ -236,7 +236,7 @@
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
-    "description": "Super clean OG copy.",
+    "description": "Super clean OG.",
     "available": true
   },
   {
@@ -256,7 +256,7 @@
     "price": 9.99,
     "grade": "VG/VG+",
     "image": "images/Kansas-1764299103385.jpg",
-    "description": "OG copy with original inner.",
+    "description": "Original inner.",
     "available": true
   },
   {
@@ -266,7 +266,7 @@
     "price": 14.99,
     "grade": "VG/VG",
     "image": "images/PXL_20251125_201153364.jpg",
-    "description": "Club repress. VG/VG+ copy.",
+    "description": "Club repress.",
     "available": true
   },
   {
@@ -276,7 +276,7 @@
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
-    "description": "Nice clean OG copy.",
+    "description": "Nice clean OG.",
     "available": true
   },
   {
@@ -286,7 +286,7 @@
     "price": 34.99,
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_4677e40d-5aff-403e-8216-cb3a0cd47fe2.jpg",
-    "description": "Limited 20th anniversary red. NM/NM.",
+    "description": "20th anniversary red.",
     "available": true
   },
   {
@@ -296,7 +296,7 @@
     "price": 4.99,
     "grade": "VG/VG",
     "image": "images/Willie_Nelson-1764232751664.jpg",
-    "description": "I know you can't wait to get on the road again with this one.",
+    "description": "On the road again...",
     "available": true
   },
   {
@@ -320,22 +320,14 @@
     "available": true
   },
   {
-  "id": "compilation-album-hiphop-50yrs",
-  "artist": "Various Artists",
-  "title": "Compilation Album",
-  "price": 39.99,
-  "grade": "NM/NM",
-  "description": "The last 50 yrs of Hip-Hop’s growth with Various Artists",
-  "quantity": 1,
-  "available": true,
-
-  "image": "images/1765487884585-4999.jpg",
-  "images": {
-    "front": "images/1765487884585-4999.jpg",
-    "back":  "images/1765487892539-5000.jpg"
-  },
-
-  "imageFront": "images/1765487884585-4999.jpg",
-  "imageBack":  "images/1765487892539-5000.jpg"
-}
+    "id": "compilation-album-hiphop-50yrs",
+    "artist": "Various Artists",
+    "title": "Compilation Album - 50 Years of Hip-Hop",
+    "price": 39.99,
+    "grade": "NM/NM",
+    "image": "images/1765487884585-4999.jpg",
+    "description": "The last 50 years of Hip-Hop’s growth with Various Artists.",
+    "quantity": 1,
+    "available": true
+  }
 ]
