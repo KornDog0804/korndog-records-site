@@ -1,361 +1,404 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Korndog Admin</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b0620;color:#e9e9ff;margin:0;padding:16px}
-    .wrap{max-width:900px;margin:0 auto}
-    h1{margin:0 0 12px}
-    .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;margin:12px 0}
-    label{display:block;font-weight:700;margin:10px 0 6px}
-    input,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.25);color:#fff;box-sizing:border-box}
-    textarea{min-height:90px;resize:vertical}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-    button{border:0;border-radius:999px;padding:12px 16px;font-weight:800;cursor:pointer}
-    .primary{background:#8dff6a;color:#10200f}
-    .ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25)}
-    .danger{background:#ff4d4d;color:#2a0a0a}
-    .muted{opacity:.8;font-size:.92rem}
-    pre{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;overflow:auto}
-    .toggle{display:flex;align-items:center;gap:10px;margin-top:10px}
-    .toggle input{width:auto}
-    .preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .preview img{width:160px;height:160px;object-fit:cover;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:#000}
-    .small{font-size:.85rem;opacity:.85}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(141,255,106,.15);border:1px solid rgba(141,255,106,.35);margin-left:8px}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; margin:0; background:#090014; color:#eae7ff;}
+    .wrap{max-width:900px; margin:0 auto; padding:22px;}
+    .card{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:18px; margin:14px 0;}
+    h1{margin:6px 0 2px; font-size:38px}
+    .sub{opacity:.8; margin:0 0 10px}
+    label{display:block; font-weight:700; margin:12px 0 6px}
+    input, textarea, button{width:100%; box-sizing:border-box; border-radius:14px; border:1px solid rgba(255,255,255,.15); background:rgba(0,0,0,.35); color:#fff; padding:12px 12px; font-size:16px}
+    textarea{min-height:90px; resize:vertical}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+    .pill{display:inline-block; padding:8px 12px; border-radius:999px; background:rgba(140,255,120,.18); border:1px solid rgba(140,255,120,.35); color:#baffb0; font-weight:800}
+    .btn{background:#92ff6a; color:#081100; font-weight:900; border:none; cursor:pointer}
+    .btn:disabled{opacity:.5; cursor:not-allowed}
+    .mini{font-size:13px; opacity:.75}
+    .ok{margin-top:10px; padding:10px 12px; border-radius:14px; background:rgba(140,255,120,.12); border:1px solid rgba(140,255,120,.25)}
+    .err{margin-top:10px; padding:10px 12px; border-radius:14px; background:rgba(255,90,90,.12); border:1px solid rgba(255,90,90,.25)}
+    .checkline{display:flex; gap:10px; align-items:center; margin-top:10px}
+    .checkline input{width:auto; transform:scale(1.25)}
+    .divider{height:1px; background:rgba(255,255,255,.12); margin:14px 0}
   </style>
 </head>
-
 <body>
   <div class="wrap">
-    <h1>Korndog Admin <span class="pill">JSON Builder</span></h1>
-    <div class="muted">
-      This page **does not upload to GitHub by itself** (Netlify static site).  
-      It builds clean JSON + file paths so you can upload images to `/images` and replace `products.json` without phone-splicing pain.
-    </div>
+    <h1>Korndog Admin</h1>
+    <p class="sub">Whatnot-style upload — you upload photos, it auto-updates products behind the scenes. <span class="pill">No more manual JSON edits</span></p>
 
     <div class="card">
-      <h2 style="margin:0 0 10px">1) Add / Build a Product</h2>
+      <h2 style="margin:0 0 8px">1) GitHub Connection</h2>
+      <p class="mini" style="margin:0 0 10px">
+        Token stays in your browser only (localStorage). Needs <b>repo</b> permission.
+      </p>
 
       <div class="row">
         <div>
-          <label>Artist</label>
-          <input id="artist" placeholder="Various Artists" />
+          <label>Repo Owner</label>
+          <input id="ghOwner" placeholder="KornDog0804" />
         </div>
         <div>
-          <label>Title</label>
-          <input id="title" placeholder="Compilation Album - 50 Years of Hip-Hop" />
+          <label>Repo Name</label>
+          <input id="ghRepo" placeholder="korndog-records-site" />
         </div>
       </div>
 
       <div class="row">
         <div>
-          <label>Price (USD)</label>
+          <label>Branch</label>
+          <input id="ghBranch" placeholder="main" />
+        </div>
+        <div>
+          <label>Personal Access Token</label>
+          <input id="ghToken" type="password" placeholder="ghp_..." />
+        </div>
+      </div>
+
+      <button class="btn" id="saveTokenBtn">Save Settings</button>
+      <div id="tokenStatus"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 8px">2) Add a New Record</h2>
+
+      <label>Artist</label>
+      <input id="artist" placeholder="Sleep Token" />
+
+      <label>Title</label>
+      <input id="title" placeholder="Even in Arcadia" />
+
+      <div class="row3">
+        <div>
+          <label>Price</label>
           <input id="price" type="number" step="0.01" placeholder="39.99" />
         </div>
         <div>
           <label>Grade</label>
           <input id="grade" placeholder="NM/NM" />
         </div>
-      </div>
-
-      <div class="row">
         <div>
           <label>Quantity</label>
           <input id="quantity" type="number" step="1" value="1" />
-        </div>
-        <div>
-          <label>ID (auto-generated, you can edit)</label>
-          <input id="id" placeholder="auto-generated" />
-          <div class="small">Tip: keep IDs unique. Use dashes only.</div>
         </div>
       </div>
 
       <label>Description</label>
       <textarea id="description" placeholder="Short punchy description..."></textarea>
 
-      <div class="toggle">
+      <div class="divider"></div>
+
+      <label>ID (auto-generated, you can edit)</label>
+      <input id="idField" placeholder="auto-generated" />
+
+      <div class="checkline">
         <input id="hasBack" type="checkbox" />
-        <label for="hasBack" style="margin:0;font-weight:800">Has back photo (special editions)</label>
+        <label for="hasBack" style="margin:0; font-weight:800">Has back photo (special editions)</label>
       </div>
 
-      <div class="row">
-        <div>
-          <label>Front photo (choose from phone)</label>
-          <input id="frontFile" type="file" accept="image/*" />
-          <div class="small">This uses the file name as-is. Upload that exact file to `/images` in GitHub.</div>
-        </div>
-        <div id="backWrap" style="display:none">
-          <label>Back photo</label>
-          <input id="backFile" type="file" accept="image/*" />
-          <div class="small">Upload this exact file name to `/images` too.</div>
-        </div>
+      <label>Front photo (required)</label>
+      <input id="frontFile" type="file" accept="image/*" />
+
+      <div id="backBlock" style="display:none">
+        <label>Back photo (optional)</label>
+        <input id="backFile" type="file" accept="image/*" />
       </div>
 
-      <div class="preview" id="preview"></div>
+      <button class="btn" id="uploadBtn">Upload + Go Live</button>
+      <div id="resultBox"></div>
 
-      <div class="btns">
-        <button class="primary" id="addBtn">Add to Draft List</button>
-        <button class="ghost" id="copyOneBtn">Copy JSON Entry</button>
-        <button class="ghost" id="clearFormBtn">Clear Form</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2 style="margin:0 0 10px">2) Draft Products (what will become products.json)</h2>
-      <div class="muted">These are stored in your phone/browser (local). You can download the full JSON when ready.</div>
-
-      <div class="btns">
-        <button class="primary" id="downloadBtn">Download products.json</button>
-        <button class="ghost" id="copyAllBtn">Copy Full products.json</button>
-        <button class="danger" id="wipeBtn">Wipe Draft List</button>
-      </div>
-
-      <pre id="allOut">[]</pre>
-    </div>
-
-    <div class="card">
-      <h2 style="margin:0 0 10px">3) Quick sanity checks</h2>
-      <ul>
-        <li><b>No comments</b> in JSON. Ever. (No <code>//</code> or <code>/* */</code>)</li>
-        <li>Image paths must start with <code>images/</code> and match the uploaded file name <b>exactly</b>.</li>
-        <li>If you check “Has back photo”, the product will include <code>imageFront</code> + <code>imageBack</code>.</li>
-      </ul>
+      <p class="mini" style="margin-top:12px">
+        This will upload image(s) into <b>/images</b> and auto-update <b>products.json</b> for you.
+      </p>
     </div>
   </div>
 
 <script>
-  const STORAGE_KEY = "korndog_admin_draft_products_v1";
+/* =========================
+   Korndog Admin (Auto GitHub Upload + Auto products.json update)
+   - front upload always
+   - optional back upload via checkbox
+   - writes products.json so Shop shows items immediately
+   ========================= */
 
-  const $ = (id) => document.getElementById(id);
+const LS_KEY = "korndog_github_settings_v1";
 
-  const el = {
-    artist: $("artist"),
-    title: $("title"),
-    price: $("price"),
-    grade: $("grade"),
-    quantity: $("quantity"),
-    id: $("id"),
-    description: $("description"),
-    hasBack: $("hasBack"),
-    frontFile: $("frontFile"),
-    backFile: $("backFile"),
-    backWrap: $("backWrap"),
-    preview: $("preview"),
-    allOut: $("allOut"),
-    addBtn: $("addBtn"),
-    copyOneBtn: $("copyOneBtn"),
-    downloadBtn: $("downloadBtn"),
-    copyAllBtn: $("copyAllBtn"),
-    wipeBtn: $("wipeBtn"),
-    clearFormBtn: $("clearFormBtn"),
+const el = (id) => document.getElementById(id);
+
+function slugify(str) {
+  return (str || "")
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function setStatus(html, ok=true) {
+  const box = el("resultBox");
+  box.className = ok ? "ok" : "err";
+  box.innerHTML = html;
+}
+
+function setTokenStatus(html, ok=true) {
+  const box = el("tokenStatus");
+  box.className = ok ? "ok" : "err";
+  box.innerHTML = html;
+}
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function saveSettings(settings) {
+  localStorage.setItem(LS_KEY, JSON.stringify(settings));
+}
+
+function getSettingsOrThrow() {
+  const owner = el("ghOwner").value.trim();
+  const repo = el("ghRepo").value.trim();
+  const branch = el("ghBranch").value.trim() || "main";
+  const token = el("ghToken").value.trim();
+
+  if (!owner || !repo || !branch || !token) {
+    throw new Error("Missing GitHub settings (owner/repo/branch/token).");
+  }
+  return { owner, repo, branch, token };
+}
+
+// ---- GitHub API helpers (Contents API) ----
+async function ghRequest(settings, path, method="GET", body=null) {
+  const url = `https://api.github.com/repos/${settings.owner}/${settings.repo}/contents/${encodeURIComponent(path).replace(/%2F/g, "/")}${method==="GET" ? `?ref=${encodeURIComponent(settings.branch)}` : ""}`;
+
+  const headers = {
+    "Accept": "application/vnd.github+json",
+    "Authorization": `Bearer ${settings.token}`
   };
 
-  function slugify(str) {
-    return String(str || "")
-      .toLowerCase()
-      .trim()
-      .replace(/['"]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 80);
+  const opts = { method, headers };
+  if (body) {
+    opts.body = JSON.stringify(body);
+    headers["Content-Type"] = "application/json";
   }
 
-  function getDraft() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    } catch {
-      return [];
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    const txt = await res.text().catch(()=>"(no details)");
+    throw new Error(`GitHub API error (${res.status}): ${txt}`);
+  }
+  return res.json();
+}
+
+async function getFile(settings, path) {
+  // returns { contentText, sha } if exists, else null
+  try {
+    const data = await ghRequest(settings, path, "GET");
+    if (!data || !data.content) return null;
+    const contentText = atob(data.content.replace(/\n/g, ""));
+    return { contentText, sha: data.sha };
+  } catch (e) {
+    // If it's truly missing, GitHub returns 404 -> would have thrown, but we keep it simple:
+    if (String(e.message || "").includes("(404)")) return null;
+    throw e;
+  }
+}
+
+function readAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => {
+      const result = String(fr.result || "");
+      // result looks like: data:image/jpeg;base64,XXXX
+      const base64 = result.split(",")[1];
+      resolve(base64);
+    };
+    fr.onerror = reject;
+    fr.readAsDataURL(file);
+  });
+}
+
+async function putFile(settings, path, base64Content, message) {
+  // If file exists, include sha to overwrite
+  let existing = null;
+  try { existing = await ghRequest(settings, path, "GET"); } catch {}
+
+  const body = {
+    message,
+    content: base64Content,
+    branch: settings.branch
+  };
+  if (existing && existing.sha) body.sha = existing.sha;
+
+  return ghRequest(settings, path, "PUT", body);
+}
+
+// ---- products.json update ----
+function safeParseProducts(jsonText) {
+  try {
+    const parsed = JSON.parse(jsonText);
+    if (Array.isArray(parsed)) return parsed;
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+async function upsertProduct(settings, product) {
+  const PRODUCTS_PATH = "products.json";
+
+  const existingFile = await getFile(settings, PRODUCTS_PATH);
+  const currentList = existingFile ? safeParseProducts(existingFile.contentText) : [];
+
+  // Remove any existing product with same id, then add newest
+  const filtered = currentList.filter(p => p && p.id !== product.id);
+  filtered.push(product);
+
+  // Keep it readable
+  const nextText = JSON.stringify(filtered, null, 2);
+
+  const base64 = btoa(unescape(encodeURIComponent(nextText)));
+
+  const msg = `Korndog Admin: add/update ${product.id}`;
+  const body = {
+    message: msg,
+    content: base64,
+    branch: settings.branch
+  };
+  if (existingFile && existingFile.sha) body.sha = existingFile.sha;
+
+  return ghRequest(settings, PRODUCTS_PATH, "PUT", body);
+}
+
+// ---- UI wiring ----
+function autoId() {
+  const a = el("artist").value;
+  const t = el("title").value;
+  const base = slugify(`${a}-${t}`);
+  if (base) el("idField").value = base;
+}
+
+el("artist").addEventListener("input", autoId);
+el("title").addEventListener("input", autoId);
+
+el("hasBack").addEventListener("change", (e) => {
+  el("backBlock").style.display = e.target.checked ? "block" : "none";
+});
+
+el("saveTokenBtn").addEventListener("click", () => {
+  try {
+    const settings = getSettingsOrThrow();
+    saveSettings(settings);
+    setTokenStatus(`Saved. Token set (…${settings.token.slice(-6)}).`, true);
+  } catch (e) {
+    setTokenStatus(e.message, false);
+  }
+});
+
+el("uploadBtn").addEventListener("click", async () => {
+  el("uploadBtn").disabled = true;
+  setStatus("Working… uploading to GitHub and updating products.json", true);
+
+  try {
+    const settings = getSettingsOrThrow();
+
+    // Basic fields
+    const artist = el("artist").value.trim();
+    const title = el("title").value.trim();
+    const price = Number(el("price").value || 0);
+    const grade = el("grade").value.trim() || "—";
+    const quantity = Number(el("quantity").value || 1);
+    const description = el("description").value.trim();
+    const id = (el("idField").value.trim() || slugify(`${artist}-${title}`));
+
+    if (!artist || !title) throw new Error("Artist + Title are required.");
+    if (!id) throw new Error("Could not generate an ID.");
+    if (!Number.isFinite(price) || price <= 0) throw new Error("Price must be > 0.");
+    if (!Number.isFinite(quantity) || quantity < 1) throw new Error("Quantity must be 1 or more.");
+
+    const frontFile = el("frontFile").files[0];
+    if (!frontFile) throw new Error("Front photo is required.");
+
+    const hasBack = el("hasBack").checked;
+    const backFile = hasBack ? el("backFile").files[0] : null;
+
+    // Choose extensions (keep original if possible)
+    const frontExt = (frontFile.name.split(".").pop() || "jpg").toLowerCase();
+    const backExt = backFile ? (backFile.name.split(".").pop() || "jpg").toLowerCase() : "jpg";
+
+    const frontPath = `images/${id}-front.${frontExt}`;
+    const backPath  = backFile ? `images/${id}-back.${backExt}` : "";
+
+    // Upload images
+    const frontB64 = await readAsBase64(frontFile);
+    await putFile(settings, frontPath, frontB64, `Korndog Admin: upload ${id} front`);
+
+    if (backFile) {
+      const backB64 = await readAsBase64(backFile);
+      await putFile(settings, backPath, backB64, `Korndog Admin: upload ${id} back`);
     }
-  }
 
-  function saveDraft(list) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list, null, 2));
-    renderDraft();
-  }
-
-  function buildProductFromForm() {
-    const artist = el.artist.value.trim();
-    const title = el.title.value.trim();
-    const price = Number(el.price.value || 0);
-    const grade = el.grade.value.trim();
-    const quantity = Number(el.quantity.value || 1);
-    const description = el.description.value.trim();
-
-    const frontName = el.frontFile.files?.[0]?.name || "";
-    const backName = el.backFile.files?.[0]?.name || "";
-
-    const baseId = el.id.value.trim() || slugify(`${artist}-${title}`) || slugify(title) || "new-record";
-    const id = slugify(baseId);
-
-    // Always require front image
-    const imageFrontPath = frontName ? `images/${frontName}` : "";
-    const imageBackPath = backName ? `images/${backName}` : "";
-
-    const p = {
+    // Build product object
+    const product = {
       id,
       artist,
       title,
-      price: Number.isFinite(price) ? price : 0,
+      price,
       grade,
-      image: imageFrontPath, // keep legacy support
       description,
-      quantity: Number.isFinite(quantity) ? quantity : 1,
+      quantity,
       available: true,
+      image: `./${frontPath}`,
+      imageFront: `./${frontPath}`
     };
 
-    // If user checked "has back", include imageFront/imageBack
-    if (el.hasBack.checked) {
-      p.imageFront = imageFrontPath;
-      p.imageBack = imageBackPath;
+    if (backFile) {
+      product.imageBack = `./${backPath}`;
     }
 
-    // Clean: remove empty optional fields
-    Object.keys(p).forEach((k) => {
-      if (p[k] === "" || p[k] === null || p[k] === undefined) delete p[k];
-    });
+    // Update products.json automatically
+    await upsertProduct(settings, product);
 
-    return p;
+    setStatus(
+      `✅ Done. <b>${artist} – ${title}</b> is now live (or will be as soon as Netlify finishes deploying).<br>
+       Front: <code>${frontPath}</code>${backFile ? `<br>Back: <code>${backPath}</code>` : ""}`,
+      true
+    );
+
+    // Clear form files only
+    el("frontFile").value = "";
+    el("backFile").value = "";
+    el("hasBack").checked = false;
+    el("backBlock").style.display = "none";
+
+  } catch (e) {
+    setStatus(`❌ ${e.message}`, false);
+  } finally {
+    el("uploadBtn").disabled = false;
   }
+});
 
-  function renderDraft() {
-    const list = getDraft();
-    el.allOut.textContent = JSON.stringify(list, null, 2);
+// Load saved settings at startup
+(() => {
+  const saved = loadSettings();
+  el("ghOwner").value = saved?.owner || "KornDog0804";
+  el("ghRepo").value = saved?.repo || "korndog-records-site";
+  el("ghBranch").value = saved?.branch || "main";
+  if (saved?.token) {
+    el("ghToken").value = saved.token;
+    setTokenStatus(`Token already set (…${saved.token.slice(-6)}).`, true);
   }
-
-  async function copyText(text) {
-    try {
-      await navigator.clipboard.writeText(text);
-      alert("Copied.");
-    } catch {
-      alert("Copy failed. (Some phones block clipboard.) Long-press the JSON and copy it manually.");
-    }
-  }
-
-  function downloadFile(filename, content) {
-    const blob = new Blob([content], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  function updatePreview() {
-    el.preview.innerHTML = "";
-
-    const f = el.frontFile.files?.[0];
-    const b = el.backFile.files?.[0];
-
-    if (f) {
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(f);
-      img.title = "Front";
-      el.preview.appendChild(img);
-    }
-    if (el.hasBack.checked && b) {
-      const img = document.createElement("img");
-      img.src = URL.createObjectURL(b);
-      img.title = "Back";
-      el.preview.appendChild(img);
-    }
-  }
-
-  // ---- Events ----
-  function autoIdIfEmpty() {
-    const artist = el.artist.value.trim();
-    const title = el.title.value.trim();
-    if (!el.id.value.trim() && (artist || title)) {
-      el.id.value = slugify(`${artist}-${title}`) || slugify(title);
-    }
-  }
-
-  el.artist.addEventListener("input", autoIdIfEmpty);
-  el.title.addEventListener("input", autoIdIfEmpty);
-
-  el.hasBack.addEventListener("change", () => {
-    el.backWrap.style.display = el.hasBack.checked ? "block" : "none";
-    updatePreview();
-  });
-
-  el.frontFile.addEventListener("change", updatePreview);
-  el.backFile.addEventListener("change", updatePreview);
-
-  el.addBtn.addEventListener("click", () => {
-    const p = buildProductFromForm();
-
-    if (!p.artist || !p.title) {
-      alert("Add Artist + Title first.");
-      return;
-    }
-    if (!p.image) {
-      alert("Pick a FRONT photo first.");
-      return;
-    }
-    if (el.hasBack.checked && !p.imageBack) {
-      alert("You checked back photo — pick the BACK photo too.");
-      return;
-    }
-
-    const list = getDraft();
-    const existsIndex = list.findIndex(x => x.id === p.id);
-
-    if (existsIndex >= 0) {
-      const ok = confirm("That ID already exists in draft. Replace it?");
-      if (!ok) return;
-      list[existsIndex] = p;
-    } else {
-      list.push(p);
-    }
-
-    saveDraft(list);
-    alert("Added to draft list.");
-  });
-
-  el.copyOneBtn.addEventListener("click", () => {
-    const p = buildProductFromForm();
-    copyText(JSON.stringify(p, null, 2));
-  });
-
-  el.copyAllBtn.addEventListener("click", () => {
-    const list = getDraft();
-    copyText(JSON.stringify(list, null, 2));
-  });
-
-  el.downloadBtn.addEventListener("click", () => {
-    const list = getDraft();
-    downloadFile("products.json", JSON.stringify(list, null, 2));
-  });
-
-  el.wipeBtn.addEventListener("click", () => {
-    const ok = confirm("Wipe the entire draft list?");
-    if (!ok) return;
-    saveDraft([]);
-  });
-
-  el.clearFormBtn.addEventListener("click", () => {
-    el.artist.value = "";
-    el.title.value = "";
-    el.price.value = "";
-    el.grade.value = "";
-    el.quantity.value = "1";
-    el.id.value = "";
-    el.description.value = "";
-    el.hasBack.checked = false;
-    el.backWrap.style.display = "none";
-    el.frontFile.value = "";
-    el.backFile.value = "";
-    el.preview.innerHTML = "";
-  });
-
-  // init
-  renderDraft();
+})();
 </script>
 </body>
 </html>
