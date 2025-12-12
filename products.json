@@ -174,11 +174,18 @@
     "id": "johnny-cash-greatest-hits-vol-1",
     "artist": "Johnny Cash",
     "title": "Greatest Hits Volume 1",
-    "price": 4.99,
+    "price": 5,
     "grade": "VG/VG",
     "image": "images/Johnny_Cash-1764230221013.jpg",
     "description": "Walk the Line with this one.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Johnny_Cash-1764230221013.jpg",
+    "imageBack": "images/Johnny_Cash-1764230221013.jpg",
+    "images": {
+      "front": "images/Johnny_Cash-1764230221013.jpg",
+      "back": "images/Johnny_Cash-1764230221013.jpg"
+    }
   },
   {
     "id": "johnny-guitar-watson-giant",
@@ -333,7 +340,7 @@
     "image": "images/PXL_20251211_210552651.jpg",
     "imageFront": "images/PXL_20251211_210552651.jpg",
     "imageBack": "images/PXL_20251211_210603941.jpg",
-    "description": "The last 50 years of Hip-HopÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂs growth with Various Artists.",
+    "description": "The last 50 years of Hip-HopÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂs growth with Various Artists.",
     "quantity": 1,
     "available": true
   },
