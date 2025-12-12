@@ -53,11 +53,18 @@
     "id": "boston-1",
     "artist": "Boston",
     "title": "Boston 1",
-    "price": 4.99,
+    "price": 7,
     "grade": "VG/VG+",
     "image": "images/Boston-1764230862646.jpg",
     "description": "Very nice (in my Borat voice).",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Boston-1764230862646.jpg",
+    "imageBack": "images/Boston-1764230862646.jpg",
+    "images": {
+      "front": "images/Boston-1764230862646.jpg",
+      "back": "images/Boston-1764230862646.jpg"
+    }
   },
   {
     "id": "bullet-for-my-valentine-the-poison-20th",
@@ -305,7 +312,7 @@
     "image": "images/PXL_20251211_210552651.jpg",
     "imageFront": "images/PXL_20251211_210552651.jpg",
     "imageBack": "images/PXL_20251211_210603941.jpg",
-    "description": "The last 50 years of Hip-Hopâs growth with Various Artists.",
+    "description": "The last 50 years of Hip-HopÃ¢ÂÂs growth with Various Artists.",
     "quantity": 1,
     "available": true
   },
