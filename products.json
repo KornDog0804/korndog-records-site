@@ -329,7 +329,13 @@
   "quantity": 1,
   "available": true,
 
+  "image": "images/1765487884585-4999.jpg",
+  "images": {
+    "front": "images/1765487884585-4999.jpg",
+    "back": "images/1765487892539-5000.jpg"
+  },
+
   "imageFront": "images/1765487884585-4999.jpg",
-  "imageBack":  "images/1765487892539-5000.jpg"
+  "imageBack": "images/1765487892539-5000.jpg"
   }
 ]
