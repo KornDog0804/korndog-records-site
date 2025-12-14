@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KornDog Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root{
+      --bg:#050013;
+      --bg2:#2a0a60;
+      --card:#12052b;
+      --border:#2b1550;
+      --text:#f5f5ff;
+      --muted:#a1a1c5;
+      --accent:#7bff5a;
+      --accent2:#7ef7ff;
+      --danger:#ff4b6a;
+    }
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{
+      margin:0; min-height:100vh; color:var(--text);
+      background: radial-gradient(circle at top, var(--bg2) 0, var(--bg) 55%);
+    }
+    a{color:inherit;text-decoration:none}
+
+    /* HEADER / NAV (match Shop/Cart) */
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(to right, rgba(10,1,30,.95), rgba(10,1,25,.9));
+      border-bottom: 1px solid rgba(123,255,90,.2);
+    }
+    .nav-inner{
+      max-width:1100px; margin:0 auto;
+      padding:.75rem 1.25rem;
+      display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    }
+    .logo-link{display:inline-flex; align-items:center; justify-content:center}
+    .logo-circle{
+      width:44px;height:44px;border-radius:999px;
+      border:2px solid var(--accent);
+      background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
+      overflow:hidden;
+    }
+    .logo-circle img{width:100%;height:100%;object-fit:cover}
+    nav{display:flex; align-items:center; gap:.75rem}
+    .nav-link{
+      padding:.6rem 1.6rem;border-radius:999px;
+      font-size:.92rem;color:var(--muted);
+      border:1px solid transparent;font-weight:500;
+      transition:background .15s ease,color .15s ease,border-color .15s ease;
+    }
+    .nav-link:hover{border-color:rgba(123,255,90,.6);color:var(--text)}
+    .nav-link.active{background:var(--accent);color:#02010a;font-weight:700}
+
+    /* PAGE */
+    main{max-width:1100px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+    h1{margin:.25rem 0 .25rem;font-size:2rem;letter-spacing:.02em}
+    .subtitle{color:var(--muted);margin:0 0 1.25rem;font-size:.95rem}
+
+    .section{
+      margin-top:1.25rem;
+      background: rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius: 1.4rem;
+      padding: 1.1rem 1.1rem 1.25rem;
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    }
+    .section-title{
+      margin:0 0 .75rem;
+      font-size:1.05rem;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color: var(--accent2);
+    }
+
+    label{
+      display:block;
+      font-size:.78rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color: var(--muted);
+      margin:0 0 .35rem;
+    }
+    input[type="text"], input[type="number"], textarea, select{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(5,0,15,.9);
+      color: var(--text);
+      outline:none;
+      font-size:.95rem;
+    }
+    textarea{
+      border-radius: 14px;
+      min-height: 90px;
+      resize: vertical;
+      line-height: 1.35;
+      padding-top: 10px;
+    }
+    input:focus, textarea:focus, select:focus{
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(123,255,90,.35);
+    }
+
+    .row{display:flex; gap:12px; flex-wrap:wrap}
+    .field{flex:1; min-width:180px; margin-bottom:10px}
+    .hint{font-size:.82rem;color:var(--muted);margin-top:.35rem}
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border:none;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      cursor:pointer;
+      font-size:.8rem;
+      transition: transform .05s ease, filter .1s ease, background .1s ease;
+      white-space:nowrap;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn-primary{background:var(--accent);color:#02010a}
+    .btn-outline{background:transparent;color:var(--accent);border:1px solid rgba(123,255,90,.55)}
+    .btn-danger{background:var(--danger);color:#fff}
+    .btn-soft{background: rgba(123,255,90,.16); border:1px solid rgba(123,255,90,.5); color: var(--accent)}
+    .btn-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+
+    .status{
+      margin-top:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size:.85rem;
+      border:1px solid rgba(123,255,90,.35);
+      background: rgba(123,255,90,.06);
+      color: var(--accent);
+    }
+    .status.error{
+      border-color: rgba(255,75,106,.45);
+      background: rgba(255,75,106,.08);
+      color: var(--danger);
+    }
+
+    /* Inventory list */
+    .inv-toolbar{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end}
+    .inv-list{display:flex; flex-direction:column; gap:12px; margin-top:12px}
+    .inv-card{
+      display:flex; gap:12px; align-items:flex-start;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.18);
+    }
+    .inv-thumb{
+      width:78px; height:78px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      overflow:hidden;
+      flex: 0 0 auto;
+    }
+    .inv-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .inv-meta{flex:1; min-width:0}
+    .inv-title{margin:0 0 4px;font-weight:900;font-size:1rem}
+    .inv-sub{margin:0;color:var(--muted);font-size:.86rem;line-height:1.25}
+    .badges{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+    .badge{
+      font-size:.72rem; padding:4px 8px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+    }
+    .badge.live{border-color: rgba(123,255,90,.35); color: var(--accent)}
+    .badge.hidden{border-color: rgba(255,75,106,.35); color: var(--danger)}
+    .actions{display:flex; gap:8px; flex-wrap:wrap}
+
+    .pill-row{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+    .search-pill{
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      padding: 6px 10px;
+      font-size:.78rem;
+      cursor:pointer;
+    }
+    .search-pill:hover{background: rgba(123,255,90,.12); color: var(--accent)}
+
+    .checkbox-row{display:flex; align-items:center; gap:8px; margin-top:6px}
+    .checkbox-row input{width:16px;height:16px}
+
+    @media (max-width: 720px){
+      .inv-card{flex-direction:column}
+      .inv-thumb{width:100%;height:auto;aspect-ratio: 1/1}
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="nav-inner">
+      <a href="index.html" class="logo-link" aria-label="Home">
+        <div class="logo-circle">
+          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
+        </div>
+      </a>
+      <nav>
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="cart.html" class="nav-link">Cart</a>
+        <a href="admin.html" class="nav-link active">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>KornDog Admin</h1>
+    <p class="subtitle">4 sections · Whatnot-style uploads · Live inventory edits · <b>products.json2 only</b>.</p>
+
+    <!-- SECTION 1: TOKEN -->
+    <section class="section">
+      <div class="section-title">1. GitHub Token</div>
+
+      <div class="field">
+        <label for="token-input">Personal Access Token</label>
+        <input id="token-input" type="text" placeholder="Paste a GitHub token with repo access" />
+        <div class="hint">Stays in your browser only (localStorage). Needed for this page to update your repo.</div>
+      </div>
+
+      <div class="btn-row">
+        <button id="save-token-btn" class="btn btn-outline" type="button">Set / Change Token</button>
+        <button id="refresh-btn" class="btn btn-soft" type="button">Refresh Inventory</button>
+      </div>
+
+      <div id="status" class="status"><span id="status-text">Waiting for input…</span></div>
+    </section>
+
+    <!-- SECTION 2: ADD / EDIT -->
+    <section class="section">
+      <div class="section-title">2. Add / Edit Record</div>
+
+      <div class="hint" id="edit-mode-hint" style="display:none;margin-bottom:10px;">
+        <b>EDIT MODE:</b> You’re updating an existing record. Photos optional unless replacing.
+      </div>
+
+      <form id="record-form">
+        <div class="field">
+          <label for="record-id">Unique ID (no spaces)</label>
+          <input id="record-id" type="text" placeholder="sleep-token-even-in-arcadia" />
+          <div class="hint">This is the key. In edit mode it locks so nothing gets “lost.”</div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="artist">Artist</label>
+            <input id="artist" type="text" placeholder="Sleep Token" />
+          </div>
+          <div class="field">
+            <label for="title">Title</label>
+            <input id="title" type="text" placeholder="Even in Arcadia" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="price">Price</label>
+            <input id="price" type="number" step="0.01" placeholder="69.99" />
+          </div>
+          <div class="field">
+            <label for="grade">Grade</label>
+            <input id="grade" type="text" placeholder="NM/NM" />
+          </div>
+          <div class="field">
+            <label for="quantity">Qty Available</label>
+            <input id="quantity" type="number" min="0" value="1" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="tier">Tier</label>
+            <select id="tier">
+              <option value="premium">Premium</option>
+              <option value="tenbin">$10 Bin</option>
+              <option value="threefor25">3 for $25</option>
+              <option value="budget">Budget</option>
+              <option value="sealed">Sealed</option>
+            </select>
+            <div class="hint">$10 records can be tagged “$10 Bin”, but cart discount also triggers by price = 10.</div>
+          </div>
+          <div class="field">
+            <label for="available">Visible on Site</label>
+            <div class="checkbox-row">
+              <input id="available" type="checkbox" checked />
+              <span class="hint" style="margin:0;">Checked = live. Unchecked = hidden.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea id="description" placeholder="Variant, color, hype line, condition notes…"></textarea>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="front-photo">Front Photo</label>
+            <input id="front-photo" type="file" accept="image/*" />
+            <div class="hint">Required for NEW records. Optional on edits.</div>
+          </div>
+          <div class="field">
+            <label for="back-photo">Back / Vinyl Photo</label>
+            <input id="back-photo" type="file" accept="image/*" />
+            <div class="hint">Optional. Leave blank to keep current.</div>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:14px;">
+          <button id="save-record-btn" type="submit" class="btn btn-primary">Save Record</button>
+          <button id="cancel-edit-btn" type="button" class="btn btn-outline" style="display:none;">Cancel Edit</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- SECTION 3: HIDE / SHOW -->
+    <section class="section">
+      <div class="section-title">3. Hide / Show (Availability)</div>
+
+      <div class="field">
+        <label for="toggle-search">Search a record (artist/title/id)</label>
+        <input id="toggle-search" type="text" placeholder="Type: kansas, seger, sleep…" />
+        <div class="hint">Tap a suggestion pill to select it.</div>
+      </div>
+
+      <div id="toggle-pills" class="pill-row"></div>
+
+      <div class="row" style="margin-top:10px;">
+        <div class="field">
+          <label for="toggle-action">Action</label>
+          <select id="toggle-action">
+            <option value="show">Show (available = true)</option>
+            <option value="hide">Hide (available = false)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button id="toggle-save" type="button" class="btn btn-primary">Save Change</button>
+        <button id="quick-hide" type="button" class="btn btn-danger">Quick: Hide</button>
+        <button id="quick-show" type="button" class="btn btn-soft">Quick: Show</button>
+      </div>
+    </section>
+
+    <!-- SECTION 4: LIVE INVENTORY -->
+    <section class="section">
+      <div class="section-title">4. Inventory (Live Edit)</div>
+
+      <div class="inv-toolbar">
+        <div class="field" style="margin:0; flex:1; min-width:220px;">
+          <label for="inv-search">Search</label>
+          <input id="inv-search" type="text" placeholder="Search artist, title, id, tier…" />
+        </div>
+        <div class="field" style="margin:0; min-width:200px;">
+          <label for="inv-filter">Filter</label>
+          <select id="inv-filter">
+            <option value="all">All</option>
+            <option value="live">Visible Only</option>
+            <option value="hidden">Hidden Only</option>
+            <option value="premium">Premium</option>
+            <option value="tenbin">$10 Bin</option>
+            <option value="threefor25">3 for $25</option>
+            <option value="budget">Budget</option>
+            <option value="sealed">Sealed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="hint" style="margin-top:8px;">Tap <b>Edit</b> to load it into Section 2, then save.</div>
+      <div id="inv-list" class="inv-list"></div>
+    </section>
+
+  </main>
+
+  <script>
+    // =========================
+    //  KORNDOG ADMIN (LOCKED)
+    //  - products.json2 ONLY
+    //  - uploads front/back images
+    //  - live inventory edit
+    // =========================
+
+    // === CONFIG: YOUR REPO ===
+    const OWNER = "KornDog0804";
+    const REPO  = "korndog-records-site";
+    const BRANCH = "main";
+
+    // 🔥 LOCKED IN: NEVER products.json
+    const PRODUCTS_PATH = "products.json2";
+    const IMAGES_FOLDER = "images";
+
+    // === DOM ===
+    const statusEl = document.getElementById("status");
+    const statusText = document.getElementById("status-text");
+
+    const tokenInput = document.getElementById("token-input");
+    const saveTokenBtn = document.getElementById("save-token-btn");
+    const refreshBtn = document.getElementById("refresh-btn");
+
+    const form = document.getElementById("record-form");
+    const editHint = document.getElementById("edit-mode-hint");
+    const cancelEditBtn = document.getElementById("cancel-edit-btn");
+    const saveRecordBtn = document.getElementById("save-record-btn");
+
+    const idInput = document.getElementById("record-id");
+    const artistInput = document.getElementById("artist");
+    const titleInput = document.getElementById("title");
+    const priceInput = document.getElementById("price");
+    const gradeInput = document.getElementById("grade");
+    const qtyInput = document.getElementById("quantity");
+    const tierSelect = document.getElementById("tier");
+    const availableInput = document.getElementById("available");
+    const descInput = document.getElementById("description");
+    const frontInput = document.getElementById("front-photo");
+    const backInput = document.getElementById("back-photo");
+
+    const toggleSearch = document.getElementById("toggle-search");
+    const togglePills = document.getElementById("toggle-pills");
+    const toggleAction = document.getElementById("toggle-action");
+    const toggleSave = document.getElementById("toggle-save");
+    const quickHide = document.getElementById("quick-hide");
+    const quickShow = document.getElementById("quick-show");
+
+    const invSearch = document.getElementById("inv-search");
+    const invFilter = document.getElementById("inv-filter");
+    const invList = document.getElementById("inv-list");
+
+    // === STATUS ===
+    function setStatus(msg, kind="ok"){
+      statusText.textContent = msg;
+      statusEl.classList.remove("error");
+      if(kind === "error") statusEl.classList.add("error");
+    }
+
+    // === TOKEN ===
+    const TOKEN_KEY = "korndog_github_token";
+    function getToken(){ return localStorage.getItem(TOKEN_KEY) || ""; }
+    function requireToken(){
+      const t = getToken();
+      if(!t){ setStatus("No GitHub token set. Paste it in Section 1 first.", "error"); throw new Error("Missing token"); }
+      return t;
+    }
+
+    (function initToken(){
+      const t = getToken();
+      if(t){
+        tokenInput.placeholder = "Token already set (•••" + t.slice(-6) + ")";
+        setStatus("Token loaded. Ready to edit inventory.");
+      }
+    })();
+
+    saveTokenBtn.addEventListener("click", () => {
+      const v = tokenInput.value.trim();
+      if(!v){
+        localStorage.removeItem(TOKEN_KEY);
+        tokenInput.value = "";
+        setStatus("Token cleared. Paste a new one to edit the repo.", "error");
+        return;
+      }
+      localStorage.setItem(TOKEN_KEY, v);
+      tokenInput.value = "";
+      tokenInput.placeholder = "Token set (•••" + v.slice(-6) + ")";
+      setStatus("Token saved. You’re wired into the repo.");
+      refreshCaches().then(renderInventory).catch(()=>{});
+    });
+
+    // === HELPERS ===
+    function norm(str){ return (str||"").toLowerCase().replace(/[^a-z0-9]/g, ""); }
+
+    async function githubRequest(path, options = {}){
+      const token = requireToken();
+      const headers = {
+        Authorization: "token " + token,
+        Accept: "application/vnd.github+json"
+      };
+
+      const res = await fetch(
+        "https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" + path,
+        { ...options, headers: { ...headers, ...(options.headers || {}) } }
+      );
+
+      if(!res.ok){
+        const msg = await res.text();
+        console.error("GitHub error:", res.status, msg);
+        throw new Error("GitHub API error: " + res.status);
+      }
+      return res.json();
+    }
+
+    async function getFile(path){
+      const data = await githubRequest(path, { method: "GET" });
+      const decoded = atob((data.content || "").replace(/\n/g, ""));
+      return { text: decoded, sha: data.sha };
+    }
+
+    async function putFile(path, contentText, message, sha){
+      const encoded = btoa(unescape(encodeURIComponent(contentText)));
+      const body = { message, content: encoded, branch: BRANCH };
+      if(sha) body.sha = sha;
+
+      return githubRequest(path, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    async function putFileBase64(path, base64Content, message, sha){
+      const body = { message, content: base64Content, branch: BRANCH };
+      if(sha) body.sha = sha;
+
+      return githubRequest(path, {
+        method: "PUT",
+        body: JSON.stringify(body),
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    async function uploadImage(file){
+      const safeName = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9_.-]/g, "_");
+      const path = IMAGES_FOLDER + "/" + safeName;
+
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = String(reader.result || "");
+          const comma = result.indexOf(",");
+          if(comma === -1) return reject(new Error("Bad data URL"));
+          resolve(result.slice(comma + 1));
+        };
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+
+      await putFileBase64(path, base64, "Add image " + safeName);
+      return path;
+    }
+
+    // === LOAD/SAVE products.json2 ===
+    async function loadProducts(){
+      try{
+        const { text, sha } = await getFile(PRODUCTS_PATH);
+        const data = JSON.parse(text);
+        if(!Array.isArray(data)) throw new Error("products.json2 must be an array");
+        return { products: data, sha };
+      }catch(e){
+        console.warn("loadProducts fallback:", e.message);
+        return { products: [], sha: undefined };
+      }
+    }
+
+    async function saveProducts(products, sha, message){
+      const text = JSON.stringify(products, null, 2);
+      await putFile(PRODUCTS_PATH, text, message, sha);
+    }
+
+    // === CACHE ===
+    let cacheProducts = null;
+    async function refreshCaches(){
+      const { products } = await loadProducts();
+      cacheProducts = products;
+      return products;
+    }
+    async function getProducts(){
+      if(!cacheProducts) await refreshCaches();
+      return cacheProducts;
+    }
+
+    // === EDIT MODE ===
+    let editMode = { active:false, id:"" };
+
+    function enterEditMode(record){
+      editMode = { active:true, id: record.id };
+
+      editHint.style.display = "block";
+      cancelEditBtn.style.display = "inline-flex";
+      saveRecordBtn.textContent = "Save Update";
+
+      idInput.value = record.id || "";
+      idInput.disabled = true;
+
+      artistInput.value = record.artist || "";
+      titleInput.value = record.title || "";
+      priceInput.value = (record.price != null ? record.price : "");
+      gradeInput.value = record.grade || "";
+      qtyInput.value = (record.quantity != null ? record.quantity : 1);
+      tierSelect.value = record.tier || "premium";
+      availableInput.checked = (record.available !== false);
+      descInput.value = record.description || "";
+
+      frontInput.value = "";
+      backInput.value = "";
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setStatus("Editing: " + (record.artist ? record.artist + " — " : "") + (record.title || record.id));
+    }
+
+    function exitEditMode(){
+      editMode = { active:false, id:"" };
+      editHint.style.display = "none";
+      cancelEditBtn.style.display = "none";
+      saveRecordBtn.textContent = "Save Record";
+
+      form.reset();
+      qtyInput.value = 1;
+      tierSelect.value = "premium";
+      availableInput.checked = true;
+
+      idInput.disabled = false;
+      setStatus("Edit cancelled. Ready for a new record.");
+    }
+
+    cancelEditBtn.addEventListener("click", exitEditMode);
+
+    // === SAVE (ADD/EDIT) ===
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try{ requireToken(); }catch{ return; }
+
+      const id = idInput.value.trim();
+      const artist = artistInput.value.trim();
+      const title = titleInput.value.trim();
+      const price = parseFloat(priceInput.value);
+      const grade = gradeInput.value.trim();
+      const quantity = parseInt(qtyInput.value || "0", 10);
+      const tier = (tierSelect.value || "premium").trim();
+      const available = !!availableInput.checked;
+      const description = descInput.value.trim();
+
+      const frontFile = frontInput.files[0];
+      const backFile  = backInput.files[0];
+
+      if(!id || !artist || !title || !grade || Number.isNaN(price)){
+        setStatus("Missing required fields: ID, Artist, Title, Price, Grade.", "error");
+        return;
+      }
+
+      if(!editMode.active && !frontFile){
+        setStatus("Front photo is required for NEW records.", "error");
+        return;
+      }
+
+      setStatus(editMode.active ? "Saving update to products.json2…" : "Uploading photos + saving…");
+
+      try{
+        const { products, sha } = await loadProducts();
+        const idx = products.findIndex(p => String(p.id) === String(id));
+        const existing = (idx >= 0 ? products[idx] : {});
+
+        // keep existing images on edit unless replaced
+        let frontPath = existing.imageFront || existing.image || (existing.images && existing.images.front) || "";
+        let backPath  = existing.imageBack  || (existing.images && existing.images.back) || frontPath;
+
+        if(frontFile) frontPath = await uploadImage(frontFile);
+        if(backFile)  backPath  = await uploadImage(backFile);
+        if(!backPath) backPath = frontPath;
+
+        const updated = {
+          id,
+          artist,
+          title,
+          price,
+          grade,
+          quantity: Number.isFinite(quantity) ? quantity : 0,
+          tier,
+          available,
+          description,
+
+          // compatibility fields for your shop
+          image: frontPath,
+          imageFront: frontPath,
+          imageBack: backPath,
+          images: { front: frontPath, back: backPath }
+        };
+
+        if(idx >= 0) products[idx] = { ...products[idx], ...updated };
+        else products.push(updated);
+
+        // tidy sort
+        products.sort((a,b) =>
+          (a.artist||"").localeCompare(b.artist||"") ||
+          (a.title||"").localeCompare(b.title||"")
+        );
+
+        await saveProducts(products, sha, (idx>=0 ? "Update record: " : "Add record: ") + id);
+
+        await refreshCaches();
+        await renderInventory();
+
+        setStatus("Saved ✅ " + artist + " — " + title + " (products.json2)");
+
+        // keep edit mode if editing
+        if(editMode.active){
+          const fresh = await getProducts();
+          const rec = fresh.find(r => String(r.id) === String(id));
+          if(rec) enterEditMode(rec);
+        }else{
+          form.reset();
+          qtyInput.value = 1;
+          tierSelect.value = "premium";
+          availableInput.checked = true;
+        }
+      }catch(err){
+        console.error(err);
+        setStatus("Save failed. Check token permissions / repo name / console.", "error");
+      }
+    });
+
+    // === SECTION 3: Hide/Show ===
+    let selectedToggleId = "";
+
+    async function buildTogglePills(){
+      togglePills.innerHTML = "";
+      selectedToggleId = "";
+
+      const term = norm(toggleSearch.value.trim());
+      if(!term) return;
+
+      try{ requireToken(); }catch{ return; }
+
+      const products = await getProducts();
+      const matches = products.filter(p => {
+        return norm(p.id).includes(term) || norm(p.artist).includes(term) || norm(p.title).includes(term);
+      }).slice(0, 10);
+
+      matches.forEach(p => {
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "search-pill";
+        pill.textContent = (p.artist ? p.artist + " — " : "") + (p.title || p.id);
+        pill.addEventListener("click", () => {
+          selectedToggleId = p.id;
+          toggleSearch.value = p.id;
+          togglePills.innerHTML = "";
+          setStatus("Selected: " + (p.artist ? p.artist + " — " : "") + (p.title || p.id));
+        });
+        togglePills.appendChild(pill);
+      });
+    }
+
+    toggleSearch.addEventListener("input", () => buildTogglePills().catch(()=>{}));
+
+    async function applyAvailability(mode){
+      const raw = (toggleSearch.value || "").trim();
+      const query = norm(raw);
+      if(!query){
+        setStatus("Type something in Section 3 to find a record.", "error");
+        return;
+      }
+      try{ requireToken(); }catch{ return; }
+
+      setStatus("Updating availability in products.json2…");
+
+      try{
+        const { products, sha } = await loadProducts();
+        const idx = products.findIndex(p =>
+          norm(p.id).includes(query) || norm(p.artist).includes(query) || norm(p.title).includes(query)
+        );
+        if(idx === -1){
+          setStatus("No match found for: " + raw, "error");
+          return;
+        }
+
+        products[idx].available = (mode === "show");
+
+        await saveProducts(products, sha, "Toggle availability: " + (products[idx].id || products[idx].title));
+
+        await refreshCaches();
+        await renderInventory();
+
+        toggleSearch.value = "";
+        togglePills.innerHTML = "";
+        setStatus("Done ✅ Availability updated.");
+      }catch(err){
+        console.error(err);
+        setStatus("Could not update availability. Check token permissions.", "error");
+      }
+    }
+
+    toggleSave.addEventListener("click", () => applyAvailability(toggleAction.value));
+    quickHide.addEventListener("click", () => applyAvailability("hide"));
+    quickShow.addEventListener("click", () => applyAvailability("show"));
+
+    // === INVENTORY RENDER ===
+    function makeBadge(text, cls){
+      const s = document.createElement("span");
+      s.className = "badge " + (cls || "");
+      s.textContent = text;
+      return s;
+    }
+
+    function passesInvFilter(r){
+      const f = invFilter.value;
+      if(f === "all") return true;
+      if(f === "live") return r.available !== false;
+      if(f === "hidden") return r.available === false;
+      return (r.tier || "premium") === f;
+    }
+
+    function passesInvSearch(r){
+      const q = norm(invSearch.value.trim());
+      if(!q) return true;
+      return norm(r.id).includes(q) || norm(r.artist).includes(q) || norm(r.title).includes(q) || norm(r.tier).includes(q);
+    }
+
+    async function renderInventory(){
+      invList.innerHTML = "";
+      try{ requireToken(); }catch{ return; }
+
+      const products = await getProducts();
+      const filtered = products.filter(p => passesInvFilter(p) && passesInvSearch(p));
+
+      if(!filtered.length){
+        const d = document.createElement("div");
+        d.className = "hint";
+        d.textContent = "No matches. Try another search/filter.";
+        invList.appendChild(d);
+        return;
+      }
+
+      filtered.slice(0, 250).forEach(r => {
+        const card = document.createElement("div");
+        card.className = "inv-card";
+
+        const thumb = document.createElement("div");
+        thumb.className = "inv-thumb";
+        const img = document.createElement("img");
+        const src = r.imageFront || r.image || (r.images && r.images.front) || "";
+        img.src = src || "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+            <rect width="100%" height="100%" fill="#1a1030"/>
+            <text x="50%" y="50%" fill="#a1a1c5" font-size="18" font-family="Arial" text-anchor="middle" dominant-baseline="middle">
+              No Image
+            </text>
+          </svg>`
+        );
+        img.alt = (r.artist ? r.artist + " — " : "") + (r.title || r.id || "Record");
+        thumb.appendChild(img);
+
+        const meta = document.createElement("div");
+        meta.className = "inv-meta";
+
+        const title = document.createElement("p");
+        title.className = "inv-title";
+        title.textContent = (r.artist ? r.artist + " — " : "") + (r.title || r.id || "Unknown");
+
+        const sub = document.createElement("p");
+        sub.className = "inv-sub";
+        sub.textContent = "ID: " + (r.id || "") +
+          " · $" + (r.price ?? "") +
+          " · " + (r.grade || "") +
+          " · Qty: " + (r.quantity ?? 0);
+
+        const badges = document.createElement("div");
+        badges.className = "badges";
+        badges.appendChild(makeBadge(r.available === false ? "HIDDEN" : "LIVE", r.available === false ? "hidden" : "live"));
+        badges.appendChild(makeBadge("Tier: " + (r.tier || "premium")));
+        if(Number(r.price) === 10) badges.appendChild(makeBadge("$10 PRICE", "live"));
+
+        meta.appendChild(title);
+        meta.appendChild(sub);
+        meta.appendChild(badges);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "btn btn-primary";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", () => enterEditMode(r));
+
+        actions.appendChild(editBtn);
+
+        card.appendChild(thumb);
+        card.appendChild(meta);
+        card.appendChild(actions);
+
+        invList.appendChild(card);
+      });
+    }
+
+    invSearch.addEventListener("input", () => renderInventory().catch(()=>{}));
+    invFilter.addEventListener("change", () => renderInventory().catch(()=>{}));
+
+    refreshBtn.addEventListener("click", async () => {
+      try{ requireToken(); }catch{ return; }
+      setStatus("Refreshing inventory…");
+      await refreshCaches();
+      await renderInventory();
+      setStatus("Inventory refreshed ✅");
+    });
+
+    // === BOOT ===
+    (async function boot(){
+      if(!getToken()) return;
+      try{
+        await refreshCaches();
+        await renderInventory();
+        setStatus("Admin loaded. Live inventory ready.");
+      }catch(e){
+        console.warn(e);
+      }
+    })();
+  </script>
+</body>
+</html>
