@@ -104,11 +104,19 @@
     "id": "cheap-trick-dream-police",
     "artist": "Cheap Trick",
     "title": "Dream Police",
-    "price": 4.99,
+    "price": 10,
     "grade": "VG/VG+",
     "image": "images/Cheap_Trick-1764233303621.jpg",
     "description": "Super clean copy.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "tenbin",
+    "imageFront": "images/Cheap_Trick-1764233303621.jpg",
+    "imageBack": "images/Cheap_Trick-1764233303621.jpg",
+    "images": {
+      "front": "images/Cheap_Trick-1764233303621.jpg",
+      "back": "images/Cheap_Trick-1764233303621.jpg"
+    }
   },
   {
     "id": "david-lee-roth-crazy-from-the-heat-ep",
