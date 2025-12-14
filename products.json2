@@ -325,7 +325,7 @@
     "id": "night-ranger-7-wishes",
     "artist": "Night Ranger",
     "title": "7 Wishes",
-    "price": 5,
+    "price": 8,
     "grade": "VG/VG",
     "image": "images/Night_Ranger-1764233043019.jpg",
     "description": "Very nice copy.",
@@ -336,7 +336,8 @@
     "images": {
       "front": "images/Night_Ranger-1764233043019.jpg",
       "back": "images/Night_Ranger-1764233043019.jpg"
-    }
+    },
+    "tier": "budget"
   },
   {
     "id": "pantera-history-of-hostility",
