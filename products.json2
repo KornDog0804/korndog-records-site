@@ -228,7 +228,8 @@
     "images": {
       "front": "images/Johnny_Cash-1764230221013.jpg",
       "back": "images/Johnny_Cash-1764230221013.jpg"
-    }
+    },
+    "tier": "budget"
   },
   {
     "id": "johnny-guitar-watson-giant",
