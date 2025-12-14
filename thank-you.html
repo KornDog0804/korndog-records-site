@@ -13,6 +13,7 @@
       --muted:#a1a1c5;
       --card:#12052b;
       --border:#2b1550;
+      --warn:#ffeb3b;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{
@@ -56,6 +57,7 @@
     }
     h1{font-size:2.1rem;margin-bottom:.5rem}
     p{color:var(--muted);font-size:1rem;line-height:1.55}
+
     .btn{
       display:inline-block;
       margin-top:1.25rem;
@@ -63,14 +65,37 @@
       border-radius:999px;
       background:var(--accent);
       color:#02010a;
-      font-weight:800;
+      font-weight:900;
       font-size:1rem;
     }
+    .btn.secondary{
+      background:transparent;
+      color:var(--accent);
+      border:2px solid rgba(123,255,90,.55);
+      margin-left:.6rem;
+    }
+
     .small{
       margin-top:.75rem;
       font-size:.85rem;
       color:var(--muted);
     }
+
+    .pay-note{
+      margin-top:1rem;
+      font-size:.85rem;
+      color:rgba(255,255,255,.72);
+      border:1px solid rgba(255,235,59,.22);
+      background:rgba(255,235,59,.07);
+      border-radius:1rem;
+      padding:.75rem 1rem;
+      text-align:left;
+      max-width:720px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .pay-note strong{color:var(--warn)}
+
     footer{
       max-width:1100px;margin:0 auto;
       padding:0 1.25rem 2rem;
@@ -80,11 +105,11 @@
     }
     footer strong{color:var(--accent)}
 
-    /* ZOMBIE KITTY OVERLAY (same slide-in behavior as your 💬 button) */
+    /* ZOMBIE KITTY OVERLAY */
     .zk-overlay{
       position:fixed;
       bottom:90px;
-      left:-420px;  /* hidden off-screen */
+      left:-420px;
       display:flex;
       align-items:flex-end;
       gap:10px;
@@ -117,14 +142,15 @@
       background:#ffeb3b;
       color:#000;
       padding:12px 16px;
-      font-weight:700;
+      font-weight:800;
       border-radius:12px;
       box-shadow:0 4px 12px rgba(0,0,0,.3);
-      max-width:260px;
+      max-width:270px;
       pointer-events:auto;
       position:relative;
       font-size:.92rem;
       line-height:1.35;
+      text-align:left;
     }
     .zk-tail{
       width:0;height:0;
@@ -148,7 +174,7 @@
       border-radius:999px;
       background:#000;
       color:#ffeb3b;
-      font-weight:800;
+      font-weight:900;
       font-size:.85rem;
     }
   </style>
@@ -173,8 +199,15 @@
         Joey’s packing it up and getting it out the door.
       </p>
 
-      <a class="btn" href="shop.html">Back to Shop</a>
+      <a class="btn" href="shop.html" id="shopBtn">Back to Shop</a>
+      <a class="btn secondary" href="index.html">Home</a>
+
       <div class="small" id="redirectHint">Zombie Kitty is about to walk you back to the shop…</div>
+
+      <div class="pay-note" id="payNote" style="display:none;">
+        <strong>Heads up:</strong> some phones open PayPal in a separate app and won’t auto-return.
+        If that happens, just tap <strong>Back to Shop</strong> above — you’re good.
+      </div>
     </div>
   </main>
 
@@ -182,12 +215,11 @@
     © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
 
-  <!-- ZOMBIE KITTY (slide-in, wait, slide-out, redirect) -->
+  <!-- ZOMBIE KITTY -->
   <div id="zkOverlay" class="zk-overlay">
     <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
     <div class="zk-bubble" id="zkBubble">
       <div class="zk-tail"></div>
-      <!-- text injected by JS -->
     </div>
   </div>
 
@@ -196,25 +228,31 @@
       const overlay = document.getElementById('zkOverlay');
       const bubble = document.getElementById('zkBubble');
       const hint = document.getElementById('redirectHint');
+      const note = document.getElementById('payNote');
+
       if (!overlay || !bubble) return;
 
-      // match the same “flow” timing you liked:
-      // show -> wait -> hide -> redirect
-      const SHOW_DELAY = 700;      // slight pause after load
-      const SHOW_TIME  = 5500;     // how long kitty hangs out (same as your SMS flow)
-      const HIDE_TIME  = 650;      // slide-out time before redirect
+      // ======= SETTINGS (easy to tweak) =======
       const REDIRECT_TO = "shop.html";
 
-      // If PayPal ever hits this page multiple times, avoid loop-y chaos
-      let running = false;
+      // show -> countdown -> hide -> redirect
+      const SHOW_DELAY_MS = 500;     // pause after load
+      const COUNTDOWN_SECONDS = 6;   // kitty countdown number
+      const SHOW_TOTAL_MS = 5200;    // total time kitty is visible (includes countdown)
+      const SLIDE_OUT_MS = 650;      // slide-out time before redirect
+      const FAILSAFE_NOTE_MS = 3500; // show “paypal app won’t return” note after a bit
 
-      function setBubble(countdown) {
+      // Prevent double-run
+      if (window.__zkThankYouRan) return;
+      window.__zkThankYouRan = true;
+
+      function setBubble(secondsLeft) {
         bubble.innerHTML =
           '<div class="zk-tail"></div>' +
-          'Hi! I\\'m Zombie Kitty — your crate-digging assistant.<br><br>' +
-          '<strong>THANK YOU</strong> for your order. You\\'re officially KornDog family.<br>' +
-          'KornDog\\'s packing your wax now…<br><br>' +
-          'Sending you back to the shop in <strong>' + countdown + 's</strong>.' +
+          'Yo! I\\'m <strong>Zombie Kitty</strong> 🧟‍🐱<br><br>' +
+          '<strong>THANK YOU</strong> for your order — you\\'re officially KornDog family.<br>' +
+          'Your wax is getting packed right now.<br><br>' +
+          'Taking you back to the shop in <strong>' + secondsLeft + 's</strong>…' +
           '<div class="zk-actions">' +
             '<a href="shop.html">Shop More Wax</a>' +
             '<a href="index.html">Home</a>' +
@@ -231,28 +269,31 @@
         }, 1000);
       }
 
-      window.addEventListener("load", () => {
-        if (running) return;
-        running = true;
+      function safeRedirect() {
+        // Use replace so the back button doesn’t keep them stuck on thank-you
+        window.location.replace(REDIRECT_TO);
+      }
 
-        // show kitty
+      window.addEventListener("load", () => {
+        // Show a PayPal note in case user came here manually or return flow is weird
+        setTimeout(() => { if (note) note.style.display = "block"; }, FAILSAFE_NOTE_MS);
+
         setTimeout(() => {
           overlay.classList.add('active');
-          startCountdown(6);
+          startCountdown(COUNTDOWN_SECONDS);
 
-          // hide kitty then redirect
+          // Hide -> Redirect
           setTimeout(() => {
             overlay.classList.remove('active');
-
             if (hint) hint.textContent = "Taking you back to the shop…";
 
             setTimeout(() => {
-              window.location.href = REDIRECT_TO;
-            }, HIDE_TIME);
+              safeRedirect();
+            }, SLIDE_OUT_MS);
 
-          }, SHOW_TIME);
+          }, SHOW_TOTAL_MS);
 
-        }, SHOW_DELAY);
+        }, SHOW_DELAY_MS);
       });
     })();
   </script>
