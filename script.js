@@ -1,624 +1,526 @@
-/* ================================
-   KORNDOG RECORDS — script.js (FULL)
-   - LOCKED: uses products.json2 ONLY
-   - Shop: shuffle + pagination + only available items
-   - Cart:
-       Shipping = $7.99 up to 3, then +$0.50 per record AFTER 3
-       3 for $25 = ANY record priced $10.00
-       10% off $130+ = ONLY premium records (does not need to “bundle” with other discounts)
-   - PayPal: builds cart from contents + applies shipping + combined discount amount
-================================== */
+// ================== KORNDOG SCRIPT (SHOP + CART) ==================
+// - Uses ONLY products.json2 (never products.json)
+// - Pagination + scroll-to-top fix
+// - Shipping: $7.99 up to 3 records, then $0.50 per record after that
+// - Discounts:
+//    1) 3 for $25 => any record priced EXACTLY $10 (by quantity)
+//    2) 10% off $130+ => PREMIUM tier subtotal only (doesn't apply to $10 items)
+// - PayPal submits correct totals using discount_amount_cart
+// ================================================================
 
-(() => {
-  // ----------------------------
-  // CONFIG
-  // ----------------------------
-  const PRODUCTS_URL = "products.json2"; // 🔥 NEVER products.json
-  const CART_KEY = "korndog_cart_v2";
-  const PAGE_SIZE = 6;
+const CART_KEY = "korndog_cart_v1";
+const PRODUCTS_PER_PAGE = 10;
 
-  const PAYPAL_BUSINESS = "titans.rule1215@gmail.com";
-  const PAYPAL_CURRENCY = "USD";
+// 🔥 LOCKED: never products.json, never product.json
+const PRODUCTS_FILE = "./products.json2";
 
-  // ----------------------------
-  // HELPERS
-  // ----------------------------
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+let allProducts = [];
+let currentPage = 1;
 
-  const money = (n) => (Number(n || 0)).toFixed(2);
-
-  function safeNum(n, fallback = 0) {
-    const x = Number(n);
-    return Number.isFinite(x) ? x : fallback;
+// ----------------------- UTIL: SHUFFLE ----------------------------
+function shuffleArray(arr) {
+  const copy = arr.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
   }
+  return copy;
+}
 
-  function clamp(n, min, max) {
-    return Math.max(min, Math.min(max, n));
-  }
-
-  function normalize(str) {
-    return String(str || "").toLowerCase().trim();
-  }
-
-  function isTenDollar(price) {
-    // tolerate tiny float drift
-    return Math.abs(safeNum(price, 0) - 10) < 0.001;
-  }
-
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
-  function getImageFront(p) {
-    return p.imageFront || (p.images && p.images.front) || p.image || "";
-  }
-  function getImageBack(p) {
-    return p.imageBack || (p.images && p.images.back) || getImageFront(p) || "";
-  }
-
-  // ----------------------------
-  // CART STORAGE
-  // ----------------------------
-  function readCart() {
-    try {
-      const raw = localStorage.getItem(CART_KEY);
-      const data = raw ? JSON.parse(raw) : [];
-      if (!Array.isArray(data)) return [];
-      return data
-        .filter((x) => x && x.id)
-        .map((x) => ({ id: String(x.id), qty: Math.max(1, parseInt(x.qty || 1, 10)) }));
-    } catch {
+// -------------------- LOAD PRODUCTS + QUANTITY --------------------
+async function loadProducts() {
+  try {
+    const res = await fetch(PRODUCTS_FILE, { cache: "no-store" });
+    if (!res.ok) {
+      console.error("Failed to load products.json2");
+      allProducts = [];
       return [];
     }
-  }
 
-  function writeCart(cart) {
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    updateCartCountPills();
-  }
-
-  function clearCart() {
-    writeCart([]);
-    renderCartIfOnPage();
-  }
-  window.clearCart = clearCart;
-
-  function cartTotalQty(cart) {
-    return cart.reduce((sum, line) => sum + (Number(line.qty) || 0), 0);
-  }
-
-  function updateCartCountPills() {
-    const cart = readCart();
-    const count = cartTotalQty(cart);
-    $$("[data-cart-count]").forEach((el) => (el.textContent = String(count)));
-  }
-
-  // ----------------------------
-  // PRODUCTS LOAD
-  // ----------------------------
-  async function loadProducts() {
-    const url = `${PRODUCTS_URL}?v=${Date.now()}`;
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error(`Failed to load ${PRODUCTS_URL}`);
-    const data = await res.json();
-    if (!Array.isArray(data)) throw new Error("products.json2 must be an array");
-    return data;
-  }
-
-  function productsById(products) {
-    const map = {};
-    for (const p of products) {
-      if (p && p.id) map[String(p.id)] = p;
-    }
-    return map;
-  }
-
-  // ----------------------------
-  // SHIPPING + DISCOUNTS
-  // ----------------------------
-
-  // Shipping: $7.99 up to 3 records, then +$0.50 each record AFTER 3
-  function calcShipping(totalQty) {
-    const base = 7.99;
-    const extraPer = 0.50;
-    if (totalQty <= 0) return 0;
-    if (totalQty <= 3) return base;
-    return +(base + (totalQty - 3) * extraPer).toFixed(2);
-  }
-
-  // 3-for-$25 discount: ANY record priced $10.00
-  function calcTenDollarBundleDiscount(cartItems, byId) {
-    const unitPrices = [];
-
-    for (const line of cartItems) {
-      const p = byId[line.id];
-      if (!p) continue;
-
-      const price = safeNum(p.price, 0);
-      if (!isTenDollar(price)) continue;
-
-      const q = Math.max(1, Number(line.qty) || 1);
-      for (let i = 0; i < q; i++) unitPrices.push(price);
+    const raw = await res.json();
+    if (!Array.isArray(raw)) {
+      console.error("products.json2 is not an array");
+      allProducts = [];
+      return [];
     }
 
-    // Sorting high->low makes discount never worse if you ever mix $10-ish items
-    unitPrices.sort((a, b) => b - a);
-
-    const bundles = Math.floor(unitPrices.length / 3);
-    let discount = 0;
-
-    for (let b = 0; b < bundles; b++) {
-      const i = b * 3;
-      const groupSum = unitPrices[i] + unitPrices[i + 1] + unitPrices[i + 2];
-      discount += Math.max(0, groupSum - 25);
-    }
-
-    return +discount.toFixed(2);
-  }
-
-  // 10% off $130+ — ONLY premium records
-  function calcPremiumOnlyDiscount(cartItems, byId) {
-    let premiumSubtotal = 0;
-
-    for (const line of cartItems) {
-      const p = byId[line.id];
-      if (!p) continue;
-
-      const tier = normalize(p.tier || "premium"); // default premium if missing
-      if (tier !== "premium") continue;
-
-      const price = safeNum(p.price, 0);
-      const qty = Math.max(1, Number(line.qty) || 1);
-
-      premiumSubtotal += price * qty;
-    }
-
-    premiumSubtotal = +premiumSubtotal.toFixed(2);
-
-    if (premiumSubtotal >= 130) {
-      return +(premiumSubtotal * 0.10).toFixed(2);
-    }
-    return 0;
-  }
-
-  function calcCartTotals(cartItems, byId) {
-    let subtotal = 0;
-    let totalQty = 0;
-
-    for (const line of cartItems) {
-      const p = byId[line.id];
-      if (!p) continue;
-
-      const price = safeNum(p.price, 0);
-      const qty = Math.max(1, Number(line.qty) || 1);
-
-      subtotal += price * qty;
-      totalQty += qty;
-    }
-
-    subtotal = +subtotal.toFixed(2);
-
-    const tenDollarDiscount = calcTenDollarBundleDiscount(cartItems, byId);
-
-    // Premium discount is computed independently (not “bundled” for eligibility)
-    const premiumDiscount = calcPremiumOnlyDiscount(cartItems, byId);
-
-    const shipping = calcShipping(totalQty);
-
-    const total = Math.max(
-      0,
-      +(subtotal - tenDollarDiscount - premiumDiscount + shipping).toFixed(2)
-    );
-
-    return {
-      subtotal,
-      totalQty,
-      tenDollarDiscount,
-      premiumDiscount,
-      shipping,
-      total
-    };
-  }
-
-  // ----------------------------
-  // SHOP PAGE RENDER
-  // ----------------------------
-  async function renderShop() {
-    const grid = $("#products");
-    const pager = $("#pagination");
-    if (!grid || !pager) return;
-
-    updateCartCountPills();
-
-    let products = await loadProducts();
-
-    // ONLY show items not hidden
-    products = products.filter((p) => p && p.id && p.available !== false);
-
-    // shuffle so it feels fresh
-    products = shuffle(products);
-
-    const stateKey = "korndog_shop_page";
-    let currentPage = parseInt(sessionStorage.getItem(stateKey) || "1", 10);
-    if (!Number.isFinite(currentPage) || currentPage < 1) currentPage = 1;
-
-    const totalPages = Math.max(1, Math.ceil(products.length / PAGE_SIZE));
-    currentPage = clamp(currentPage, 1, totalPages);
-
-    function renderPage(page) {
-      currentPage = clamp(page, 1, totalPages);
-      sessionStorage.setItem(stateKey, String(currentPage));
-
-      grid.innerHTML = "";
-
-      const start = (currentPage - 1) * PAGE_SIZE;
-      const pageItems = products.slice(start, start + PAGE_SIZE);
-
-      for (const p of pageItems) {
-        const front = getImageFront(p);
-        const back = getImageBack(p);
-        const qtyAvail = Math.max(0, parseInt(p.quantity ?? 1, 10) || 1);
-
-        const card = document.createElement("article");
-        card.className = "record-card";
-
-        const imgWrap = document.createElement("div");
-        imgWrap.className = "record-image";
-
-        const flipWrap = document.createElement("div");
-        flipWrap.className = "flip-wrapper";
-
-        const flipInner = document.createElement("div");
-        flipInner.className = "flip-inner";
-
-        const frontDiv = document.createElement("div");
-        frontDiv.className = "flip-front " + (front ? "" : "image-missing");
-
-        const backDiv = document.createElement("div");
-        backDiv.className = "flip-back " + (back ? "" : "image-missing");
-
-        if (front) {
-          const img = document.createElement("img");
-          img.src = front;
-          img.alt = `${p.artist || ""} ${p.title || ""}`.trim() || "Record";
-          frontDiv.appendChild(img);
-        }
-
-        if (back) {
-          const img2 = document.createElement("img");
-          img2.src = back;
-          img2.alt = "Back / vinyl";
-          backDiv.appendChild(img2);
-        }
-
-        flipInner.appendChild(frontDiv);
-        flipInner.appendChild(backDiv);
-        flipWrap.appendChild(flipInner);
-        imgWrap.appendChild(flipWrap);
-
-        const title = document.createElement("h3");
-        title.textContent =
-          `${p.artist ? p.artist + " — " : ""}${p.title || ""}`.trim() || p.id;
-
-        const grade = document.createElement("div");
-        grade.className = "record-grade";
-        grade.textContent = `Grade: ${p.grade || "—"}`;
-
-        const price = document.createElement("div");
-        price.className = "record-price";
-        price.textContent = `$${money(p.price)}`;
-
-        const desc = document.createElement("div");
-        desc.className = "record-desc";
-        desc.textContent = p.description || "";
-
-        const qty = document.createElement("div");
-        qty.className = "qty-text";
-        qty.textContent = `Qty available: ${qtyAvail}`;
-
-        const btn = document.createElement("button");
-        btn.className = "btn-primary";
-        btn.textContent = "Add to Cart";
-
-        if (qtyAvail <= 0) {
-          btn.disabled = true;
-          btn.textContent = "Sold Out";
-          btn.style.opacity = "0.6";
-          btn.style.cursor = "not-allowed";
-        }
-
-        btn.addEventListener("click", () => {
-          addToCart(p, qtyAvail);
-        });
-
-        card.appendChild(imgWrap);
-        card.appendChild(title);
-        card.appendChild(grade);
-        card.appendChild(price);
-        if (p.description) card.appendChild(desc);
-        card.appendChild(qty);
-        card.appendChild(btn);
-
-        grid.appendChild(card);
-      }
-
-      renderPager();
-    }
-
-    function renderPager() {
-      pager.innerHTML = "";
-      for (let i = 1; i <= totalPages; i++) {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.textContent = String(i);
-        if (i === currentPage) b.classList.add("active");
-        b.addEventListener("click", () => renderPage(i));
-        pager.appendChild(b);
-      }
-    }
-
-    function addToCart(product, maxQty) {
-      const cart = readCart();
-      const idx = cart.findIndex((x) => x.id === product.id);
-
-      if (idx === -1) {
-        cart.push({ id: String(product.id), qty: 1 });
-      } else {
-        cart[idx].qty = Math.min(maxQty || 9999, (cart[idx].qty || 1) + 1);
-      }
-
-      writeCart(cart);
-    }
-
-    renderPage(currentPage);
-  }
-
-  // ----------------------------
-  // CART PAGE RENDER
-  // ----------------------------
-  async function renderCartIfOnPage() {
-    const itemsEl = $("#cart-items");
-    const summaryEl = $("#cart-summary");
-    if (!itemsEl || !summaryEl) {
-      updateCartCountPills();
-      return;
-    }
-
-    updateCartCountPills();
-
-    let products = [];
-    try {
-      products = await loadProducts();
-    } catch {
-      itemsEl.innerHTML = `<p style="color:#a1a1c5;">Couldn’t load inventory. Try refreshing.</p>`;
-      summaryEl.innerHTML = "";
-      return;
-    }
-
-    const byId = productsById(products);
-    let cart = readCart();
-
-    cart = cart.filter((line) => !!byId[line.id]);
-    writeCart(cart);
-
-    cart = cart.map((line) => {
-      const p = byId[line.id];
-      const maxQty = Math.max(0, parseInt(p.quantity ?? 1, 10) || 1);
-      return { ...line, qty: clamp(line.qty, 1, Math.max(1, maxQty)) };
-    });
-    writeCart(cart);
-
-    function setQty(id, newQty) {
-      const p = byId[id];
-      if (!p) return;
-
-      const maxQty = Math.max(0, parseInt(p.quantity ?? 1, 10) || 1);
-      const qty = clamp(newQty, 0, Math.max(0, maxQty));
-
-      let next = readCart();
-      const idx = next.findIndex((x) => x.id === id);
-      if (idx === -1) return;
-
-      if (qty <= 0) next.splice(idx, 1);
-      else next[idx].qty = qty;
-
-      writeCart(next);
-      renderNow();
-    }
-
-    function renderNow() {
-      cart = readCart();
-      itemsEl.innerHTML = "";
-
-      if (!cart.length) {
-        itemsEl.innerHTML = `<p style="color:#a1a1c5;">Cart is empty. Grab some wax.</p>`;
-      } else {
-        for (const line of cart) {
-          const p = byId[line.id];
-          if (!p) continue;
-
-          const qtyAvail = Math.max(0, parseInt(p.quantity ?? 1, 10) || 1);
-          const title = `${p.artist ? p.artist + " — " : ""}${p.title || ""}`.trim() || p.id;
-          const grade = p.grade || "—";
-          const unit = safeNum(p.price, 0);
-          const lineTotal = +(unit * line.qty).toFixed(2);
-
-          const row = document.createElement("div");
-          row.className = "cart-row";
-
-          const left = document.createElement("div");
-          left.style.flex = "1";
-
-          const t = document.createElement("p");
-          t.className = "cart-title";
-          t.textContent = title;
-
-          const g = document.createElement("p");
-          g.className = "cart-grade";
-          g.textContent = `Grade: ${grade}`;
-
-          left.appendChild(t);
-          left.appendChild(g);
-
-          const qtyWrap = document.createElement("div");
-          qtyWrap.className = "cart-qty";
-
-          const minus = document.createElement("button");
-          minus.type = "button";
-          minus.textContent = "–";
-          minus.addEventListener("click", () => setQty(line.id, line.qty - 1));
-
-          const num = document.createElement("span");
-          num.textContent = String(line.qty);
-          num.style.minWidth = "18px";
-          num.style.textAlign = "center";
-
-          const plus = document.createElement("button");
-          plus.type = "button";
-          plus.textContent = "+";
-          plus.addEventListener("click", () => setQty(line.id, line.qty + 1));
-
-          if (line.qty >= qtyAvail) {
-            plus.style.opacity = "0.4";
-            plus.style.cursor = "not-allowed";
-          }
-
-          qtyWrap.appendChild(minus);
-          qtyWrap.appendChild(num);
-          qtyWrap.appendChild(plus);
-
-          const priceEl = document.createElement("div");
-          priceEl.className = "cart-line-price";
-          priceEl.textContent = `$${money(lineTotal)}`;
-
-          row.appendChild(left);
-          row.appendChild(qtyWrap);
-          row.appendChild(priceEl);
-
-          itemsEl.appendChild(row);
-        }
-      }
-
-      const totals = calcCartTotals(cart, byId);
-
-      summaryEl.innerHTML = `
-        <div class="cart-total">
-          <div>Subtotal: $${money(totals.subtotal)}</div>
-          <div>Shipping (7.99 up to 3, +0.50 after): $${money(totals.shipping)}</div>
-          <div>3 for $25 ($10 records): -$${money(totals.tenDollarDiscount)}</div>
-          <div>10% Discount (Premium $130+): -$${money(totals.premiumDiscount)}</div>
-          <div style="margin-top:6px;font-weight:800;">Total: $${money(totals.total)}</div>
-        </div>
-      `;
-
-      wirePayPal(cart, byId, totals);
-    }
-
-    renderNow();
-  }
-
-  // ----------------------------
-  // PAYPAL CART BUILDER
-  // ----------------------------
-  function wirePayPal(cart, byId, totals) {
-    const payBtn = $("#paypal-button");
-    const form = $("#paypal-form");
-    if (!payBtn || !form) return;
-
-    if (!cart.length || totals.total <= 0) {
-      payBtn.disabled = true;
-      payBtn.style.opacity = "0.6";
-      payBtn.style.cursor = "not-allowed";
-      return;
-    }
-
-    payBtn.disabled = false;
-    payBtn.style.opacity = "1";
-    payBtn.style.cursor = "pointer";
-
-    function buildForm() {
-      form.innerHTML = "";
-      form.method = "POST";
-      form.action = "https://www.paypal.com/cgi-bin/webscr";
-
-      const add = (name, value) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = name;
-        input.value = String(value);
-        form.appendChild(input);
+    // NOTE: We do NOT hide available=false here automatically,
+    // because YOU decide what’s live from your admin / data.
+    // If you want to hide sold items, set available:false in the JSON.
+
+    const mapped = raw.map((p) => {
+      // default quantity to 1 if missing
+      const qty = typeof p.quantity === "number" ? p.quantity : 1;
+
+      // normalize tier
+      const tier = (p.tier || "premium").toLowerCase();
+
+      // Support legacy fields but keep what you already use
+      return {
+        ...p,
+        quantity: qty,
+        tier,
+        // make sure front/back fields exist if provided
+        imageFront: p.imageFront || (p.images && p.images.front) || p.image || "",
+        imageBack: p.imageBack || (p.images && p.images.back) || p.imageFront || p.image || "",
       };
+    });
 
-      add("cmd", "_cart");
-      add("upload", "1");
-      add("business", PAYPAL_BUSINESS);
-      add("currency_code", PAYPAL_CURRENCY);
+    allProducts = shuffleArray(mapped);
+    return allProducts;
+  } catch (e) {
+    console.error("Failed to load products.json2", e);
+    allProducts = [];
+    return [];
+  }
+}
 
-      let itemIndex = 1;
-      for (const line of cart) {
-        const p = byId[line.id];
-        if (!p) continue;
+// ------------------------ CART HELPERS ----------------------------
+function getCart() {
+  try {
+    const raw = localStorage.getItem(CART_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error("Cart parse error", e);
+    return [];
+  }
+}
 
-        const title = `${p.artist ? p.artist + " — " : ""}${p.title || ""}`.trim() || p.id;
-        const unit = safeNum(p.price, 0);
-        const qty = Math.max(1, Number(line.qty) || 1);
+function saveCart(cart) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  updateCartBadge();
+}
 
-        add(`item_name_${itemIndex}`, title);
-        add(`amount_${itemIndex}`, money(unit));
-        add(`quantity_${itemIndex}`, String(qty));
-        itemIndex++;
-      }
+function updateCartBadge() {
+  const cart = getCart();
+  const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+  const badge = document.querySelector("[data-cart-count]");
+  if (badge) badge.textContent = count;
+}
 
-      add("handling_cart", money(totals.shipping));
+// ---------------------- PRICING RULES -----------------------------
+function calcShipping(itemCount) {
+  if (itemCount <= 0) return 0;
+  if (itemCount <= 3) return 7.99;
+  return 7.99 + (itemCount - 3) * 0.5; // ✅ $0.50 after 3
+}
 
-      // PayPal only accepts one cart discount number, so we send the combined *amount* (eligibility is handled in our math)
-      const combinedDiscount = +(safeNum(totals.tenDollarDiscount, 0) + safeNum(totals.premiumDiscount, 0)).toFixed(2);
-      if (combinedDiscount > 0) add("discount_amount_cart", money(combinedDiscount));
+// 3 for $25 applies to ANY item priced exactly $10 (by quantity)
+function calcTenBundleDiscount(cart) {
+  const tenCount = cart.reduce((sum, item) => {
+    const price = Number(item.price) || 0;
+    const qty = Number(item.qty) || 0;
+    return sum + (price === 10 ? qty : 0);
+  }, 0);
 
-      add("no_note", "0");
-      add("cn", "Order notes for Joey");
-    }
+  const bundles = Math.floor(tenCount / 3);
+  // Regular price for 3 items is $30, bundle price is $25 => discount $5 per bundle
+  return bundles * 5;
+}
 
-    buildForm();
+// Premium 10% discount only on premium-tier subtotal >= 130,
+// and DOES NOT apply to $10 items (those are bundle-eligible)
+function calcPremiumDiscount(cart) {
+  const premiumSubtotal = cart.reduce((sum, item) => {
+    const tier = String(item.tier || "premium").toLowerCase();
+    const price = Number(item.price) || 0;
+    const qty = Number(item.qty) || 0;
 
-    payBtn.onclick = (e) => {
-      e.preventDefault();
-      buildForm();
-      form.submit();
-    };
+    // Exclude $10 items from premium discount
+    if (price === 10) return sum;
+
+    // Only premium tier counts
+    if (tier !== "premium") return sum;
+
+    return sum + price * qty;
+  }, 0);
+
+  if (premiumSubtotal >= 130) return premiumSubtotal * 0.1;
+  return 0;
+}
+
+// ----------------------- ADD TO CART ------------------------------
+function addToCart(productId) {
+  if (!allProducts || allProducts.length === 0) return;
+
+  const product = allProducts.find((p) => p.id === productId);
+  if (!product) return;
+
+  // If a product is marked available:false, don’t add it
+  if (product.available === false) {
+    alert("That record is not available right now.");
+    return;
   }
 
-  // ----------------------------
-  // BOOT
-  // ----------------------------
-  async function boot() {
-    updateCartCountPills();
+  const maxQty = typeof product.quantity === "number" ? product.quantity : 1;
 
-    try {
-      await renderShop();
-    } catch {
-      const grid = $("#products");
-      if (grid) grid.innerHTML = `<p style="color:#a1a1c5;">Couldn’t load inventory. Check products.json2.</p>`;
-    }
+  const cart = getCart();
+  const existing = cart.find((item) => item.id === productId);
 
-    try {
-      await renderCartIfOnPage();
-    } catch {
-      const itemsEl = $("#cart-items");
-      if (itemsEl) itemsEl.innerHTML = `<p style="color:#a1a1c5;">Cart error. Refresh and try again.</p>`;
+  if (existing) {
+    if ((Number(existing.qty) || 0) >= maxQty) {
+      alert(
+        maxQty === 1
+          ? "You only have 1 copy of this record in stock."
+          : `You only have ${maxQty} copies of this record in stock.`
+      );
+      return;
     }
+    existing.qty += 1;
+  } else {
+    const imageForCart =
+      product.imageFront || product.image || product.imageBack || "";
+
+    cart.push({
+      id: product.id,
+      title: product.title,
+      artist: product.artist || "",
+      price: Number(product.price || 0),
+      grade: product.grade || "",
+      tier: (product.tier || "premium").toLowerCase(),
+      image: imageForCart,
+      qty: 1,
+    });
   }
 
-  window.addEventListener("focus", updateCartCountPills);
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) updateCartCountPills();
+  saveCart(cart);
+  alert("Dropped in the cart.");
+}
+
+function clearCart() {
+  saveCart([]);
+  renderCart();
+}
+
+// -------------------- SHOP RENDERING + PAGES ----------------------
+async function renderShop() {
+  const container = document.getElementById("products");
+  if (!container) return; // not on shop page
+
+  if (!allProducts || allProducts.length === 0) {
+    await loadProducts();
+  }
+
+  currentPage = 1;
+  renderShopPage();
+}
+
+function renderShopPage() {
+  const container = document.getElementById("products");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const end = start + PRODUCTS_PER_PAGE;
+
+  // only show items that are NOT explicitly available:false
+  const visible = allProducts.filter((p) => p.available !== false);
+
+  const pageProducts = visible.slice(start, end);
+
+  pageProducts.forEach((prod) => {
+    const card = document.createElement("div");
+    card.className = "record-card";
+
+    // --------- IMAGE FLIP ----------
+    const recordImage = document.createElement("div");
+    recordImage.className = "record-image";
+
+    const flipWrapper = document.createElement("div");
+    flipWrapper.className = "flip-wrapper";
+
+    const flipInner = document.createElement("div");
+    flipInner.className = "flip-inner";
+
+    const frontDiv = document.createElement("div");
+    frontDiv.className = "flip-front";
+
+    const backDiv = document.createElement("div");
+    backDiv.className = "flip-back";
+
+    const frontSrc = prod.imageFront || prod.image || prod.imageBack || "";
+    const backSrc = prod.imageBack || prod.imageFront || prod.image || "";
+
+    if (frontSrc) {
+      const frontImg = document.createElement("img");
+      frontImg.src = frontSrc;
+      frontImg.alt = prod.title || prod.id || "Record front";
+      frontImg.onerror = () => frontImg.classList.add("image-missing");
+      frontDiv.appendChild(frontImg);
+    } else {
+      const placeholder = document.createElement("div");
+      placeholder.className = "image-missing";
+      frontDiv.appendChild(placeholder);
+    }
+
+    if (backSrc) {
+      const backImg = document.createElement("img");
+      backImg.src = backSrc;
+      backImg.alt = prod.title || prod.id || "Record back";
+      backImg.onerror = () => backImg.classList.add("image-missing");
+      backDiv.appendChild(backImg);
+    } else {
+      const placeholderBack = document.createElement("div");
+      placeholderBack.className = "image-missing";
+      backDiv.appendChild(placeholderBack);
+    }
+
+    flipInner.appendChild(frontDiv);
+    flipInner.appendChild(backDiv);
+    flipWrapper.appendChild(flipInner);
+    recordImage.appendChild(flipWrapper);
+
+    // --------- TEXT ----------
+    const title = document.createElement("h3");
+    title.textContent = prod.artist
+      ? `${prod.artist} – ${prod.title}`
+      : (prod.title || prod.id || "Untitled");
+
+    const grade = document.createElement("p");
+    grade.className = "record-grade";
+    grade.textContent = "Grade: " + (prod.grade || "—");
+
+    const price = document.createElement("p");
+    price.className = "record-price";
+    price.textContent = "$" + Number(prod.price || 0).toFixed(2);
+
+    const desc = document.createElement("p");
+    desc.className = "record-desc";
+    desc.textContent = prod.description || "";
+
+    const qtyNote = document.createElement("p");
+    qtyNote.className = "qty-text";
+    qtyNote.textContent = "Qty available: " + (prod.quantity ?? 1);
+
+    const btn = document.createElement("button");
+    btn.textContent = "Add to Cart";
+    btn.className = "btn-primary";
+    btn.addEventListener("click", () => addToCart(prod.id));
+
+    card.appendChild(recordImage);
+    card.appendChild(title);
+    card.appendChild(grade);
+    card.appendChild(price);
+    if (prod.description) card.appendChild(desc);
+    card.appendChild(qtyNote);
+    card.appendChild(btn);
+
+    container.appendChild(card);
   });
 
-  boot();
-})();
+  renderPagination(visible.length);
+}
+
+function renderPagination(visibleCount) {
+  const pagination = document.getElementById("pagination");
+  if (!pagination) return;
+
+  pagination.innerHTML = "";
+
+  const totalPages = Math.ceil(visibleCount / PRODUCTS_PER_PAGE);
+  if (totalPages <= 1) return;
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === currentPage) btn.classList.add("active");
+
+    btn.addEventListener("click", () => {
+      currentPage = i;
+      renderShopPage();
+
+      // ✅ FIX: always go back to top on page change
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    pagination.appendChild(btn);
+  }
+}
+
+// -------------------------- CART RENDERING ------------------------
+function renderCart() {
+  const container = document.getElementById("cart-items");
+  const summaryBox = document.getElementById("cart-summary");
+  if (!container || !summaryBox) return; // not on cart page
+
+  const cart = getCart();
+  container.innerHTML = "";
+
+  if (cart.length === 0) {
+    container.innerHTML = "<p>Cart is empty. Grab some wax.</p>";
+    summaryBox.innerHTML = "";
+    updateCartBadge();
+    return;
+  }
+
+  // Render cart rows
+  cart.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "cart-row";
+
+    const info = document.createElement("div");
+    info.className = "cart-info";
+
+    const title = document.createElement("p");
+    title.className = "cart-title";
+    title.textContent =
+      (item.artist ? `${item.artist} – ` : "") + (item.title || item.id);
+
+    const grade = document.createElement("p");
+    grade.className = "cart-grade";
+    grade.textContent = "Grade: " + (item.grade || "—");
+
+    info.appendChild(title);
+    info.appendChild(grade);
+
+    const qtyBox = document.createElement("div");
+    qtyBox.className = "cart-qty";
+
+    const minus = document.createElement("button");
+    minus.textContent = "-";
+    minus.addEventListener("click", () => {
+      if ((Number(item.qty) || 1) > 1) {
+        item.qty -= 1;
+      } else {
+        cart.splice(index, 1);
+      }
+      saveCart(cart);
+      renderCart();
+    });
+
+    const qty = document.createElement("span");
+    qty.textContent = item.qty;
+
+    const plus = document.createElement("button");
+    plus.textContent = "+";
+    plus.addEventListener("click", () => {
+      // Respect max quantity if product list is loaded
+      const product = allProducts.find((p) => p.id === item.id);
+      const maxQty =
+        product && typeof product.quantity === "number" ? product.quantity : 99;
+
+      if ((Number(item.qty) || 0) >= maxQty) {
+        alert(
+          maxQty === 1
+            ? "You only have 1 copy of this record in stock."
+            : `You only have ${maxQty} copies of this record in stock.`
+        );
+        return;
+      }
+
+      item.qty += 1;
+      saveCart(cart);
+      renderCart();
+    });
+
+    qtyBox.appendChild(minus);
+    qtyBox.appendChild(qty);
+    qtyBox.appendChild(plus);
+
+    const linePrice = document.createElement("p");
+    linePrice.className = "cart-line-price";
+    linePrice.textContent =
+      "$" + ((Number(item.price) || 0) * (Number(item.qty) || 0)).toFixed(2);
+
+    row.appendChild(info);
+    row.appendChild(qtyBox);
+    row.appendChild(linePrice);
+
+    container.appendChild(row);
+  });
+
+  // Totals
+  const itemCount = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+  const regularSubtotal = cart.reduce(
+    (sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 0),
+    0
+  );
+
+  const shipping = calcShipping(itemCount);
+
+  const tenBundleDiscount = calcTenBundleDiscount(cart);
+  const premiumDiscount = calcPremiumDiscount(cart);
+
+  const discountTotal = tenBundleDiscount + premiumDiscount;
+  const total = regularSubtotal + shipping - discountTotal;
+
+  summaryBox.innerHTML =
+    `Subtotal: $${regularSubtotal.toFixed(2)}<br>` +
+    `Shipping: $${shipping.toFixed(2)}<br>` +
+    `3 for $25 Discount: -$${tenBundleDiscount.toFixed(2)}<br>` +
+    `Premium $130+ Discount (10%): -$${premiumDiscount.toFixed(2)}<br>` +
+    `<strong>Total: $${total.toFixed(2)}</strong>`;
+
+  const payBtn = document.getElementById("paypal-button");
+  if (payBtn) {
+    payBtn.onclick = () => submitPayPal(cart, shipping, discountTotal);
+  }
+
+  updateCartBadge();
+}
+
+// -------------------------- PAYPAL SUBMIT -------------------------
+function submitPayPal(cart, shipping, discountTotal) {
+  if (!cart || cart.length === 0) {
+    alert("Cart is empty.");
+    return;
+  }
+
+  const form = document.getElementById("paypal-form");
+  if (!form) return;
+
+  // clear
+  while (form.firstChild) form.removeChild(form.firstChild);
+
+  const addField = (name, value) => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  };
+
+  addField("cmd", "_cart");
+  addField("upload", "1");
+  addField("business", "titans.rule1215@gmail.com");
+  addField("currency_code", "USD");
+
+  // Item lines (regular prices)
+  let index = 1;
+  cart.forEach((item) => {
+    addField(`item_name_${index}`, (item.artist ? `${item.artist} – ` : "") + item.title);
+    addField(`amount_${index}`, (Number(item.price) || 0).toFixed(2));
+    addField(`quantity_${index}`, String(Number(item.qty) || 1));
+    index++;
+  });
+
+  // Shipping
+  if (shipping > 0) {
+    addField("handling_cart", shipping.toFixed(2));
+  }
+
+  // Total discount as a single cart discount
+  if (discountTotal > 0) {
+    addField("discount_amount_cart", discountTotal.toFixed(2));
+  }
+
+  form.action = "https://www.paypal.com/cgi-bin/webscr";
+  form.method = "post";
+  form.submit();
+}
+
+// ----------------------------- INIT -------------------------------
+document.addEventListener("DOMContentLoaded", async () => {
+  // ✅ Fix annoying "page 2 stays at bottom" behavior on load
+  window.scrollTo(0, 0);
+
+  updateCartBadge();
+
+  // Load products once so cart qty limits work too
+  await loadProducts();
+
+  // Only run what exists on that page
+  renderShop();
+  renderCart();
+});
