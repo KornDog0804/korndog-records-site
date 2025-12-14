@@ -392,7 +392,8 @@
     "images": {
       "front": "images/Robert_Plant-1764232983897.jpg",
       "back": "images/Robert_Plant-1764232983897.jpg"
-    }
+    },
+    "tier": "tenbin"
   },
   {
     "id": "sleep-token-even-in-arcadia",
