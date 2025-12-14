@@ -293,7 +293,15 @@
     "grade": "VG/VG",
     "image": "images/Screenshot_20250822-074904.png",
     "description": "Random mystery pull from the stack. VG/VG.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "tenbin",
+    "imageFront": "images/Screenshot_20250822-074904.png",
+    "imageBack": "images/Screenshot_20250822-074904.png",
+    "images": {
+      "front": "images/Screenshot_20250822-074904.png",
+      "back": "images/Screenshot_20250822-074904.png"
+    }
   },
   {
     "id": "neil-young-zuma",
