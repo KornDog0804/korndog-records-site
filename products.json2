@@ -140,11 +140,19 @@
     "id": "dazz-band-keep-it-live",
     "artist": "Dazz Band",
     "title": "Keep It Live",
-    "price": 4.99,
+    "price": 8,
     "grade": "VG/VG+",
     "image": "images/Dazz_Band-1764298272765.jpg",
     "description": "Very clean copy.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "budget",
+    "imageFront": "images/Dazz_Band-1764298272765.jpg",
+    "imageBack": "images/Dazz_Band-1764298272765.jpg",
+    "images": {
+      "front": "images/Dazz_Band-1764298272765.jpg",
+      "back": "images/Dazz_Band-1764298272765.jpg"
+    }
   },
   {
     "id": "dokken-back-for-the-attack",
