@@ -1,958 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>KornDog Admin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg: #0b0018;
-      --bg2: #2b0044;
-      --accent: #b8ff4a;
-      --accent-soft: #7ef7ff;
-      --danger: #ff6b6b;
-      --text-main: #f5f5ff;
-      --text-soft: #c0c0e6;
-    }
+<meta charset="UTF-8" />
+<title>KornDog Admin (products.json2 ONLY)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at top, var(--bg2), var(--bg));
-      color: var(--text-main);
-      display: flex;
-      justify-content: center;
-      padding: 24px 12px;
-    }
-
-    .shell {
-      width: 100%;
-      max-width: 980px;
-      background: linear-gradient(135deg, #140028, #05000f);
-      border-radius: 18px;
-      padding: 24px 20px 32px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    h1 { margin: 0 0 4px; font-size: 1.9rem; letter-spacing: 0.04em; }
-    .subtitle { margin-bottom: 20px; color: var(--text-soft); font-size: 0.9rem; }
-
-    h2 {
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      margin: 24px 0 8px;
-      color: var(--accent-soft);
-    }
-
-    .section {
-      margin-bottom: 20px;
-      padding: 16px 14px;
-      border-radius: 14px;
-      background: radial-gradient(circle at top left, #260044, #080012);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    label {
-      display: block;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-soft);
-      margin-bottom: 4px;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    textarea, select {
-      width: 100%;
-      padding: 10px 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(5, 0, 15, 0.9);
-      color: var(--text-main);
-      font-size: 0.95rem;
-      outline: none;
-    }
-
-    textarea {
-      border-radius: 12px;
-      min-height: 80px;
-      resize: vertical;
-      line-height: 1.35;
-      padding-top: 8px;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(184, 255, 74, 0.4);
-    }
-
-    .row { display: flex; gap: 12px; flex-wrap: wrap; }
-    .row > .field { flex: 1; min-width: 160px; }
-    .field { margin-bottom: 10px; }
-
-    .hint { font-size: 0.78rem; color: var(--text-soft); margin-top: 3px; }
-
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px 20px; border-radius: 999px; border: none;
-      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-      cursor: pointer; font-size: 0.8rem;
-      transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.1s ease, filter 0.1s ease;
-      white-space: nowrap;
-    }
-    .btn:active { transform: translateY(1px); box-shadow: none; filter: brightness(0.98); }
-
-    .btn-primary { background: var(--accent); color: #05000b; box-shadow: 0 0 20px rgba(184, 255, 74, 0.45); }
-    .btn-outline { background: transparent; color: var(--accent); border: 1px solid rgba(184, 255, 74, 0.5); }
-    .btn-danger { background: var(--danger); color: #1a0000; box-shadow: 0 0 18px rgba(255, 107, 107, 0.45); }
-    .btn-soft { background: #3f1a7a; color: var(--text-main); border: 1px solid rgba(255, 255, 255, 0.08); }
-
-    .status {
-      margin-top: 8px; padding: 8px 11px; border-radius: 999px;
-      font-size: 0.8rem; background: rgba(5, 255, 163, 0.08);
-      color: var(--accent); border: 1px solid rgba(184, 255, 74, 0.35);
-    }
-    .status.error { background: rgba(255, 107, 107, 0.08); color: var(--danger); border-color: rgba(255, 107, 107, 0.35); }
-    .status.ok { background: rgba(184, 255, 74, 0.06); }
-
-    .checkbox-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-    .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; }
-    .checkbox-row span { font-size: 0.8rem; color: var(--text-soft); }
-
-    .pill-row { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
-    .search-pill {
-      border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.18);
-      background: rgba(255, 255, 255, 0.03); color: var(--text-soft);
-      padding: 5px 10px; font-size: 0.75rem; cursor: pointer;
-    }
-    .search-pill:hover { background: rgba(184, 255, 74, 0.12); color: var(--accent); }
-
-    .btn-row { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
-
-    /* Inventory list */
-    .inv-toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
-    .inv-list { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
-    .inv-card {
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
-      padding: 12px;
-      display:flex;
-      gap: 12px;
-      align-items:flex-start;
-    }
-    .inv-meta { flex:1; min-width: 0; }
-    .inv-title { font-weight:800; margin:0 0 4px; }
-    .inv-sub { margin:0; color: var(--text-soft); font-size:0.85rem; }
-    .inv-badges { margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; }
-    .badge {
-      font-size: 0.72rem;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.14);
-      color: var(--text-soft);
-      background: rgba(0,0,0,0.15);
-    }
-    .badge.live { border-color: rgba(184,255,74,0.35); color: var(--accent); }
-    .badge.sold { border-color: rgba(255,107,107,0.35); color: var(--danger); }
-
-    @media (max-width: 600px) {
-      .shell { padding: 18px 14px 24px; }
-      .inv-card { flex-direction: column; }
-    }
-  </style>
+<style>
+body {
+  margin:0;
+  font-family: system-ui, sans-serif;
+  background:#0b0018;
+  color:#f5f5ff;
+}
+main {
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
+h1 { margin-bottom:4px; }
+h2 { margin-top:30px; color:#7ef7ff; }
+.section {
+  background:#140028;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:20px;
+}
+input, select, textarea {
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:10px;
+  border:none;
+}
+button {
+  padding:10px 16px;
+  border-radius:999px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+}
+.btn-primary { background:#b8ff4a; color:#05000b; }
+.btn-outline { background:transparent; color:#b8ff4a; border:1px solid #b8ff4a; }
+.inv-card {
+  background:#1c0038;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+.badge {
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:12px;
+  margin-right:6px;
+}
+.badge.premium { background:#7ef7ff; color:#000; }
+.badge.tenbin { background:#b8ff4a; color:#000; }
+.badge.bundle { background:#ff9f43; color:#000; }
+</style>
 </head>
+
 <body>
-  <main class="shell">
-    <header>
-      <h1>KornDog Admin</h1>
-      <p class="subtitle">Whatnot-style upload · Inventory edit mode · Tier-based pricing ready.</p>
-    </header>
+<main>
 
-    <!-- 1. GITHUB TOKEN -->
-    <section class="section">
-      <h2>1. GitHub Token</h2>
-      <div class="field">
-        <label for="token-input">Personal Access Token</label>
-        <input id="token-input" type="text" placeholder="Paste a GitHub token with repo access" />
-        <p class="hint">Stays in your browser only (localStorage). Needed so this page can talk to your repo.</p>
-      </div>
-      <button id="save-token-btn" class="btn btn-outline">Set / Change GitHub Token</button>
-      <div id="status" class="status"><span id="status-text">Waiting for input…</span></div>
-    </section>
+<h1>KornDog Admin</h1>
+<p>Single source of truth · products.json2 only · no bullshit</p>
 
-    <!-- 2. ADD / EDIT RECORD -->
-    <section class="section">
-      <h2>2. Add / Edit a Record</h2>
+<!-- TOKEN -->
+<section class="section">
+<h2>GitHub Token</h2>
+<input id="token" placeholder="Paste GitHub token" />
+<button class="btn-outline" onclick="saveToken()">Save Token</button>
+<p id="status"></p>
+</section>
 
-      <div class="hint" id="edit-mode-hint" style="display:none;margin-bottom:10px;">
-        <b>EDIT MODE:</b> You’re editing an existing record. Photos are optional unless you want to replace them.
-      </div>
+<!-- ADD / EDIT -->
+<section class="section">
+<h2>Add / Edit Record</h2>
 
-      <form id="add-form">
-        <div class="row">
-          <div class="field">
-            <label for="artist">Artist</label>
-            <input id="artist" type="text" placeholder="Randy Travis" />
-          </div>
+<input id="id" placeholder="unique-id (no spaces)" />
+<input id="artist" placeholder="Artist" />
+<input id="title" placeholder="Title" />
+<input id="price" type="number" step="0.01" placeholder="Price" />
+<input id="grade" placeholder="Grade (VG+/VG+)" />
+<input id="quantity" type="number" min="0" value="1" />
 
-          <div class="field">
-            <label for="tier">Tier</label>
-            <select id="tier">
-              <option value="premium">Premium</option>
-              <option value="tenbin">$10 Bin</option>
-              <option value="budget">Budget</option>
-              <option value="sealed">Sealed</option>
-            </select>
-            <p class="hint">This is how we do $10 bundles without touching premium.</p>
-          </div>
-        </div>
+<select id="tier">
+  <option value="premium">Premium</option>
+  <option value="tenbin">$10 Bin</option>
+  <option value="bundle">Bundle</option>
+</select>
 
-        <div class="field">
-          <label for="artist-id">Record ID (no spaces)</label>
-          <input id="artist-id" type="text" placeholder="randy-travis-storms-of-life" />
-          <p class="hint">Unique key for this record. In edit mode we lock it so nothing gets “lost”.</p>
-        </div>
+<textarea id="description" placeholder="Description"></textarea>
 
-        <div class="field">
-          <label for="title">Title</label>
-          <input id="title" type="text" placeholder="Storms of Life" />
-        </div>
+<button class="btn-primary" onclick="saveRecord()">Save Record</button>
+</section>
 
-        <div class="row">
-          <div class="field">
-            <label for="price">Price</label>
-            <input id="price" type="number" step="0.01" placeholder="10.00" />
-          </div>
-          <div class="field">
-            <label for="grade">Grade</label>
-            <input id="grade" type="text" placeholder="VG+/VG+" />
-          </div>
-          <div class="field">
-            <label for="quantity">Qty</label>
-            <input id="quantity" type="number" min="1" value="1" />
-          </div>
-        </div>
+<!-- INVENTORY -->
+<section class="section">
+<h2>Inventory (Live Edit)</h2>
+<input id="search" placeholder="Search…" oninput="renderInventory()" />
+<div id="inventory"></div>
+</section>
 
-        <div class="field">
-          <label for="description">Description</label>
-          <textarea id="description" placeholder="Short hype line – variant, color, story, etc."></textarea>
-        </div>
+</main>
 
-        <div class="row">
-          <div class="field">
-            <label for="cover-front">Front Cover Photo</label>
-            <input id="cover-front" type="file" accept="image/*" />
-            <p class="hint">Required for NEW records. Optional for edits (leave blank to keep current).</p>
-          </div>
+<script>
+const OWNER = "KornDog0804";
+const REPO = "korndog-records-site";
+const BRANCH = "main";
+const PRODUCTS_PATH = "products.json2";
 
-          <div class="field">
-            <label for="cover-back">Back / Vinyl Photo (optional)</label>
-            <input id="cover-back" type="file" accept="image/*" />
-            <p class="hint">Optional. Leave blank to keep current.</p>
-          </div>
-        </div>
+let products = [];
+let sha = null;
 
-        <div class="checkbox-row">
-          <input id="available" type="checkbox" checked />
-          <span>Available on the site</span>
-        </div>
+function setStatus(msg){ document.getElementById("status").textContent = msg; }
 
-        <div class="btn-row" style="margin-top: 14px;">
-          <button type="submit" class="btn btn-primary" id="save-record-btn">Save to Site</button>
-          <button type="button" class="btn btn-outline" id="cancel-edit-btn" style="display:none;">Cancel Edit</button>
-        </div>
-      </form>
-    </section>
+function token(){ return localStorage.getItem("gh_token"); }
+function saveToken(){
+  localStorage.setItem("gh_token", document.getElementById("token").value.trim());
+  setStatus("Token saved");
+  loadProducts();
+}
 
-    <!-- 3. MARK SOLD / BACK IN STOCK -->
-    <section class="section">
-      <h2>3. Mark Sold / Back in Stock</h2>
-      <div class="field">
-        <label for="toggle-id">Record ID or Title or Artist</label>
-        <input id="toggle-id" type="text" placeholder="Start typing: randy, hendrix, acdc..." />
-        <p class="hint">Type part of the artist or title and tap a pill, then save.</p>
-      </div>
-
-      <div id="search-results" class="pill-row"></div>
-
-      <div class="row" style="margin-top:12px;">
-        <div class="field">
-          <label for="availability-action">Action</label>
-          <select id="availability-action">
-            <option value="sold">Save as SOLD (hide &amp; archive)</option>
-            <option value="available">Save as AVAILABLE (show on shop)</option>
-          </select>
-          <p class="hint">Pick what you want to do with this record, then hit save.</p>
-        </div>
-      </div>
-
-      <div style="margin-top:10px;">
-        <button id="availability-save-btn" type="button" class="btn btn-primary">Save Change to Site</button>
-      </div>
-
-      <div class="btn-row" style="margin-top:10px;">
-        <button id="mark-sold-btn" type="button" class="btn btn-danger">Quick: Mark Sold</button>
-        <button id="mark-available-btn" type="button" class="btn btn-soft">Quick: Mark Available</button>
-      </div>
-    </section>
-
-    <!-- 4. INVENTORY VIEW + EDIT -->
-    <section class="section">
-      <h2>4. Inventory (View + Edit)</h2>
-
-      <div class="inv-toolbar">
-        <div style="flex:1;min-width:220px;">
-          <label for="inv-search">Search</label>
-          <input id="inv-search" type="text" placeholder="Search artist, title, id, tier..." />
-        </div>
-
-        <div style="min-width:180px;">
-          <label for="inv-filter">Filter</label>
-          <select id="inv-filter">
-            <option value="all">All (Live + Sold)</option>
-            <option value="live">Live Only</option>
-            <option value="sold">Sold Only</option>
-            <option value="tenbin">$10 Bin</option>
-            <option value="premium">Premium</option>
-            <option value="budget">Budget</option>
-            <option value="sealed">Sealed</option>
-          </select>
-        </div>
-
-        <div style="display:flex; gap:8px; align-items:flex-end;">
-          <button id="inv-refresh" class="btn btn-outline" type="button">Refresh List</button>
-        </div>
-      </div>
-
-      <div class="hint">Tap <b>Edit</b> to load a record into the form above. Then hit Save.</div>
-      <div id="inv-list" class="inv-list"></div>
-    </section>
-  </main>
-
-  <script>
-    // === CONFIG: YOUR REPO ===
-    const OWNER = "KornDog0804";
-    const REPO = "korndog-records-site";
-    const BRANCH = "main";
-    const PRODUCTS_PATH = "products.json";
-    const SOLD_PATH = "sold.json";
-    const IMAGES_FOLDER = "images";
-
-    // === STATUS HELPERS ===
-    const statusEl = document.getElementById("status");
-    const statusText = document.getElementById("status-text");
-    function setStatus(message, kind = "ok") {
-      statusText.textContent = message;
-      statusEl.classList.remove("ok", "error");
-      if (kind === "ok") statusEl.classList.add("ok");
-      if (kind === "error") statusEl.classList.add("error");
+async function gh(path, method="GET", body){
+  const res = await fetch(
+    `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`,
+    {
+      method,
+      headers:{
+        Authorization:`token ${token()}`,
+        Accept:"application/vnd.github+json"
+      },
+      body
     }
+  );
+  if(!res.ok) throw new Error("GitHub error");
+  return res.json();
+}
 
-    // normalize for search
-    function norm(str) { return (str || "").toLowerCase().replace(/[^a-z0-9]/g, ""); }
+async function loadProducts(){
+  const file = await gh(PRODUCTS_PATH);
+  sha = file.sha;
+  products = JSON.parse(atob(file.content));
+  renderInventory();
+}
 
-    // === TOKEN HANDLING ===
-    const TOKEN_KEY = "korndog_github_token";
-    const tokenInput = document.getElementById("token-input");
-    const saveTokenBtn = document.getElementById("save-token-btn");
-
-    function getToken() { return localStorage.getItem(TOKEN_KEY) || ""; }
-    function requireToken() {
-      const token = getToken();
-      if (!token) { setStatus("No GitHub token set. Paste it above first.", "error"); throw new Error("Missing GitHub token"); }
-      return token;
-    }
-
-    (function initTokenDisplay() {
-      const existing = getToken();
-      if (existing) {
-        tokenInput.placeholder = "Token already set (•••" + existing.slice(-6) + ")";
-        setStatus("GitHub token loaded. You’re ready to go.", "ok");
-      }
-    })();
-
-    saveTokenBtn.addEventListener("click", () => {
-      const value = tokenInput.value.trim();
-      if (!value) {
-        localStorage.removeItem(TOKEN_KEY);
-        setStatus("GitHub token cleared. Paste a new one before saving records.", "error");
-        return;
-      }
-      localStorage.setItem(TOKEN_KEY, value);
-      tokenInput.value = "";
-      tokenInput.placeholder = "Token set (•••" + value.slice(-6) + ")";
-      setStatus("GitHub token saved. You’re wired into the repo.", "ok");
-      // auto refresh inventory after token set
-      refreshCaches().then(renderInventory).catch(()=>{});
+function renderInventory(){
+  const q = document.getElementById("search").value.toLowerCase();
+  const box = document.getElementById("inventory");
+  box.innerHTML = "";
+  products
+    .filter(p =>
+      p.artist.toLowerCase().includes(q) ||
+      p.title.toLowerCase().includes(q) ||
+      p.id.toLowerCase().includes(q)
+    )
+    .forEach(p=>{
+      const div = document.createElement("div");
+      div.className="inv-card";
+      div.innerHTML = `
+        <b>${p.artist} – ${p.title}</b><br>
+        $${p.price} · ${p.grade} · Qty ${p.quantity}<br>
+        <span class="badge ${p.tier}">${p.tier}</span>
+        <br><br>
+        <button class="btn-outline" onclick='edit("${p.id}")'>Edit</button>
+        <button class="btn-outline" onclick='remove("${p.id}")'>Delete</button>
+      `;
+      box.appendChild(div);
     });
-
-    // === GITHUB HELPERS ===
-    async function githubRequest(path, options = {}) {
-      const token = requireToken();
-      const headers = { Authorization: "token " + token, Accept: "application/vnd.github+json" };
-
-      const res = await fetch(
-        "https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" + path,
-        { ...options, headers: { ...headers, ...(options.headers || {}) } }
-      );
-
-      if (!res.ok) {
-        const msg = await res.text();
-        console.error("GitHub error:", res.status, msg);
-        throw new Error("GitHub API error: " + res.status);
-      }
-      return res.json();
-    }
-
-    async function getFile(path) {
-      const data = await githubRequest(path, { method: "GET" });
-      const decoded = atob((data.content || "").replace(/\n/g, ""));
-      return { text: decoded, sha: data.sha };
-    }
-
-    // TEXT put (json/html/etc)
-    async function putFile(path, contentText, message, sha) {
-      const encoded = btoa(unescape(encodeURIComponent(contentText)));
-      const body = { message, content: encoded, branch: BRANCH };
-      if (sha) body.sha = sha;
-      return githubRequest(path, {
-        method: "PUT",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    // BINARY put (images)
-    async function putFileBase64(path, base64Content, message, sha) {
-      const body = { message, content: base64Content, branch: BRANCH };
-      if (sha) body.sha = sha;
-      return githubRequest(path, {
-        method: "PUT",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    async function uploadImage(file) {
-      const safeName = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9_.-]/g, "_");
-      const path = IMAGES_FOLDER + "/" + safeName;
-
-      const base64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = String(reader.result || "");
-          const comma = result.indexOf(",");
-          if (comma === -1) return reject(new Error("Bad data URL"));
-          resolve(result.slice(comma + 1));
-        };
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(file);
-      });
-
-      await putFileBase64(path, base64, "Add image " + safeName);
-      return path;
-    }
-
-    // === GENERIC JSON LOAD/SAVE HELPERS ===
-    async function loadJsonArray(path) {
-      try {
-        const { text, sha } = await getFile(path);
-        let data = JSON.parse(text);
-        if (!Array.isArray(data)) throw new Error(path + " must be an array");
-        return { items: data, sha };
-      } catch (e) {
-        console.warn("loadJsonArray fallback for", path, e.message);
-        return { items: [], sha: undefined };
-      }
-    }
-
-    async function saveJsonArray(path, items, sha, message) {
-      const text = JSON.stringify(items, null, 2);
-      await putFile(path, text, message, sha);
-    }
-
-    async function loadProductsJson() {
-      const { items, sha } = await loadJsonArray(PRODUCTS_PATH);
-      return { products: items, sha };
-    }
-    async function saveProductsJson(products, sha, message) {
-      await saveJsonArray(PRODUCTS_PATH, products, sha, message);
-    }
-
-    async function loadSoldJson() {
-      const { items, sha } = await loadJsonArray(SOLD_PATH);
-      return { sold: items, sha };
-    }
-    async function saveSoldJson(sold, sha, message) {
-      await saveJsonArray(SOLD_PATH, sold, sha, message);
-    }
-
-    // === CACHE FOR SEARCH + INVENTORY ===
-    let cacheProducts = null, cacheSold = null;
-    async function refreshCaches() {
-      const { products } = await loadProductsJson();
-      const { sold } = await loadSoldJson();
-      cacheProducts = products;
-      cacheSold = sold;
-      return { products, sold };
-    }
-    async function getAllRecords() {
-      if (!cacheProducts || !cacheSold) return refreshCaches();
-      return { products: cacheProducts, sold: cacheSold };
-    }
-
-    // === EDIT MODE STATE ===
-    let editMode = { active: false, bucket: "live", id: "" };
-
-    const editModeHint = document.getElementById("edit-mode-hint");
-    const cancelEditBtn = document.getElementById("cancel-edit-btn");
-    const saveRecordBtn = document.getElementById("save-record-btn");
-
-    function enterEditMode(bucket, record) {
-      editMode = { active: true, bucket, id: record.id };
-      editModeHint.style.display = "block";
-      cancelEditBtn.style.display = "inline-flex";
-      saveRecordBtn.textContent = "Save Update";
-
-      // lock ID to prevent accidental “new item” creation
-      artistIdInput.value = record.id || "";
-      artistIdInput.disabled = true;
-
-      artistInput.value = record.artist || "";
-      titleInput.value = record.title || "";
-      priceInput.value = (record.price != null ? record.price : "");
-      gradeInput.value = record.grade || "";
-      descInput.value = record.description || "";
-      qtyInput.value = record.quantity || 1;
-      availableInput.checked = (record.available !== false);
-
-      // Tier default
-      tierSelect.value = record.tier || "premium";
-
-      // clear photo inputs (optional on edit)
-      coverFrontInput.value = "";
-      coverBackInput.value = "";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-
-      setStatus("Editing: " + (record.artist ? record.artist + " — " : "") + (record.title || record.id), "ok");
-    }
-
-    function exitEditMode() {
-      editMode = { active: false, bucket: "live", id: "" };
-      editModeHint.style.display = "none";
-      cancelEditBtn.style.display = "none";
-      saveRecordBtn.textContent = "Save to Site";
-      addForm.reset();
-      qtyInput.value = "1";
-      availableInput.checked = true;
-      tierSelect.value = "premium";
-      artistIdInput.disabled = false;
-    }
-
-    cancelEditBtn.addEventListener("click", exitEditMode);
-
-    // === ADD / EDIT FORM LOGIC ===
-    const addForm = document.getElementById("add-form");
-    const artistInput = document.getElementById("artist");
-    const tierSelect = document.getElementById("tier");
-    const artistIdInput = document.getElementById("artist-id");
-    const titleInput = document.getElementById("title");
-    const priceInput = document.getElementById("price");
-    const gradeInput = document.getElementById("grade");
-    const descInput = document.getElementById("description");
-    const qtyInput = document.getElementById("quantity");
-    const coverFrontInput = document.getElementById("cover-front");
-    const coverBackInput = document.getElementById("cover-back");
-    const availableInput = document.getElementById("available");
-
-    addForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      try { requireToken(); } catch { return; }
-
-      const artist = artistInput.value.trim();
-      const tier = (tierSelect.value || "premium").trim();
-      const id = artistIdInput.value.trim();
-      const title = titleInput.value.trim();
-      const price = parseFloat(priceInput.value);
-      const grade = gradeInput.value.trim();
-      const description = descInput.value.trim();
-      const quantity = parseInt(qtyInput.value || "1", 10) || 1;
-      const available = availableInput.checked;
-
-      const frontFile = coverFrontInput.files[0];
-      const backFile = coverBackInput.files[0];
-
-      // required fields differ for add vs edit
-      if (!artist || !id || !title || !grade || isNaN(price)) {
-        setStatus("Missing required fields. Artist, ID, Title, Price, Grade are required.", "error");
-        return;
-      }
-      if (!editMode.active && !frontFile) {
-        setStatus("Front photo required for NEW records.", "error");
-        return;
-      }
-
-      setStatus(editMode.active ? "Saving update to GitHub…" : "Uploading cover photo(s) to GitHub…");
-
-      try {
-        // Load target bucket file
-        const { products, sha } = await loadProductsJson();
-        const { sold, sha: soldSha } = await loadSoldJson();
-
-        const bucketArray = (editMode.active && editMode.bucket === "sold") ? sold : products;
-        const bucketSha = (editMode.active && editMode.bucket === "sold") ? soldSha : sha;
-
-        const idx = bucketArray.findIndex((p) => p.id === id);
-
-        // Keep existing images on edit unless replaced
-        const existing = idx >= 0 ? bucketArray[idx] : {};
-
-        let frontPath = existing.imageFront || existing.image || (existing.images && existing.images.front) || "";
-        let backPath = existing.imageBack || (existing.images && existing.images.back) || frontPath;
-
-        if (frontFile) {
-          frontPath = await uploadImage(frontFile);
-        }
-        if (backFile) {
-          backPath = await uploadImage(backFile);
-        } else {
-          backPath = backPath || frontPath;
-        }
-
-        const newProduct = {
-          id,
-          artist,
-          title,
-          tier,
-          price,
-          grade,
-          description,
-          quantity,
-          available,
-
-          // Compatibility fields
-          image: frontPath,
-          imageFront: frontPath,
-          imageBack: backPath,
-
-          images: { front: frontPath, back: backPath }
-        };
-
-        if (idx >= 0) {
-          bucketArray[idx] = { ...bucketArray[idx], ...newProduct };
-        } else {
-          bucketArray.push(newProduct);
-        }
-
-        // Sort tidy
-        bucketArray.sort((a, b) =>
-          (a.artist || "").localeCompare(b.artist || "") ||
-          (a.title || "").localeCompare(b.title || "")
-        );
-
-        if (editMode.active && editMode.bucket === "sold") {
-          await saveSoldJson(bucketArray, bucketSha, "Update record (sold): " + id);
-        } else {
-          await saveProductsJson(bucketArray, bucketSha, "Update/Add record: " + id);
-        }
-
-        await refreshCaches();
-        renderInventory();
-
-        setStatus("Saved! " + artist + " — " + title + " (" + tier + ")", "ok");
-
-        // If we were editing, keep edit mode but refresh form state cleanly
-        if (editMode.active) {
-          // reload record into form from cache so you see truth
-          const { products: p2, sold: s2 } = await getAllRecords();
-          const source = (editMode.bucket === "sold") ? s2 : p2;
-          const rec = source.find(r => r.id === id);
-          if (rec) enterEditMode(editMode.bucket, rec);
-        } else {
-          addForm.reset();
-          qtyInput.value = "1";
-          availableInput.checked = true;
-          tierSelect.value = "premium";
-        }
-
-      } catch (err) {
-        console.error(err);
-        setStatus("GitHub save failed. Check token permissions / console.", "error");
-      }
-    });
-
-    // === SOLD / AVAILABLE TOGGLE + SEARCH ===
-    const toggleIdInput = document.getElementById("toggle-id");
-    const searchResults = document.getElementById("search-results");
-    const markSoldBtn = document.getElementById("mark-sold-btn");
-    const markAvailableBtn = document.getElementById("mark-available-btn");
-    const availabilityActionSelect = document.getElementById("availability-action");
-    const availabilitySaveBtn = document.getElementById("availability-save-btn");
-
-    async function refreshSearchSuggestions() {
-      const termRaw = toggleIdInput.value.trim();
-      const term = norm(termRaw);
-      searchResults.innerHTML = "";
-      if (!term) return;
-
-      try { requireToken(); } catch { return; }
-
-      try {
-        const { products, sold } = await getAllRecords();
-        const combined = [
-          ...products.map((p) => ({ ...p, _bucket: "live" })),
-          ...sold.map((p) => ({ ...p, _bucket: "sold" })),
-        ];
-
-        const matches = combined
-          .filter((p) => {
-            const id = norm(p.id);
-            const title = norm(p.title);
-            const artist = norm(p.artist);
-            return id.includes(term) || title.includes(term) || artist.includes(term);
-          })
-          .slice(0, 10);
-
-        matches.forEach((p) => {
-          const pill = document.createElement("button");
-          pill.type = "button";
-          pill.className = "search-pill";
-          const label = (p.artist ? (p.artist + " — ") : "") + (p.title || p.id || "Unknown");
-          pill.textContent = label + (p._bucket === "sold" ? " (sold)" : "");
-          pill.addEventListener("click", () => {
-            toggleIdInput.value = p.id || p.title || "";
-            searchResults.innerHTML = "";
-          });
-          searchResults.appendChild(pill);
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    toggleIdInput.addEventListener("input", refreshSearchSuggestions);
-
-    async function setAvailability(flag) {
-      const rawInput = toggleIdInput.value.trim();
-      if (!rawInput) { setStatus("Type part of the artist/title/id, then tap a pill or enter the id.", "error"); return; }
-      if (!getToken()) { setStatus("GitHub token missing. Set it at the top first.", "error"); return; }
-
-      const search = norm(rawInput);
-      setStatus("Loading records from GitHub…", "ok");
-
-      try {
-        const { products, sha } = await loadProductsJson();
-        const { sold, sha: soldSha } = await loadSoldJson();
-
-        let message;
-
-        if (flag === "sold") {
-          let idx = products.findIndex((p) =>
-            norm(p.id).includes(search) || norm(p.title).includes(search) || norm(p.artist).includes(search)
-          );
-          if (idx === -1) { setStatus("No live record found matching: " + rawInput, "error"); return; }
-
-          const product = products[idx];
-          if (sold.findIndex((p) => norm(p.id) === norm(product.id)) !== -1) {
-            setStatus("That record is already marked SOLD.", "ok"); return;
-          }
-
-          product.available = false;
-          products.splice(idx, 1);
-          sold.push(product);
-
-          products.sort((a, b) => (a.artist || "").localeCompare(b.artist || "") || (a.title || "").localeCompare(b.title || ""));
-          sold.sort((a, b) => (a.artist || "").localeCompare(b.artist || "") || (a.title || "").localeCompare(b.title || ""));
-
-          await saveProductsJson(products, sha, "Mark sold & remove from products: " + (product.id || product.title));
-          await saveSoldJson(sold, soldSha, "Archive sold record: " + (product.id || product.title));
-
-          message = (product.artist ? product.artist + " — " : "") + (product.title || product.id) + " moved to sold/archive.";
-        } else if (flag === "available") {
-          let idx = sold.findIndex((p) =>
-            norm(p.id).includes(search) || norm(p.title).includes(search) || norm(p.artist).includes(search)
-          );
-
-          if (idx === -1) {
-            const liveIdx = products.findIndex((p) =>
-              norm(p.id).includes(search) || norm(p.title).includes(search) || norm(p.artist).includes(search)
-            );
-            if (liveIdx !== -1) {
-              products[liveIdx].available = true;
-              await saveProductsJson(products, sha, "Mark available: " + (products[liveIdx].id || products[liveIdx].title));
-              message = (products[liveIdx].artist ? products[liveIdx].artist + " — " : "") + (products[liveIdx].title || products[liveIdx].id) + " is now marked available.";
-            } else {
-              setStatus("No record found in sold or live matching: " + rawInput, "error"); return;
-            }
-          } else {
-            const product = sold[idx];
-            product.available = true;
-
-            const filteredProducts = products.filter((p) => norm(p.id) !== norm(product.id));
-            filteredProducts.push(product);
-
-            filteredProducts.sort((a, b) => (a.artist || "").localeCompare(b.artist || "") || (a.title || "").localeCompare(b.title || ""));
-            await saveProductsJson(filteredProducts, sha, "Return record to products: " + (product.id || product.title));
-
-            sold.splice(idx, 1);
-            sold.sort((a, b) => (a.artist || "").localeCompare(b.artist || "") || (a.title || "").localeCompare(b.title || ""));
-
-            await saveSoldJson(sold, soldSha, "Remove record from sold archive: " + (product.id || product.title));
-            message = (product.artist ? product.artist + " — " : "") + (product.title || product.id) + " is back on the shop.";
-          }
-        } else {
-          setStatus("Unknown flag passed to setAvailability().", "error"); return;
-        }
-
-        await refreshCaches();
-        renderInventory();
-        toggleIdInput.value = "";
-        searchResults.innerHTML = "";
-        setStatus("Done. " + message, "ok");
-      } catch (err) {
-        console.error(err);
-        setStatus("Could not update availability. Check token permissions.", "error");
-      }
-    }
-
-    markSoldBtn.addEventListener("click", () => setAvailability("sold"));
-    markAvailableBtn.addEventListener("click", () => setAvailability("available"));
-    availabilitySaveBtn.addEventListener("click", () => setAvailability(availabilityActionSelect.value));
-
-    // === INVENTORY VIEW + EDIT ===
-    const invSearch = document.getElementById("inv-search");
-    const invFilter = document.getElementById("inv-filter");
-    const invRefreshBtn = document.getElementById("inv-refresh");
-    const invList = document.getElementById("inv-list");
-
-    function recordLabel(r) {
-      const artist = r.artist ? r.artist + " — " : "";
-      return artist + (r.title || r.id || "Unknown");
-    }
-
-    function badge(text, cls) {
-      const span = document.createElement("span");
-      span.className = "badge " + (cls || "");
-      span.textContent = text;
-      return span;
-    }
-
-    function passesFilter(r, bucket) {
-      const f = invFilter.value;
-      if (f === "all") return true;
-      if (f === "live") return bucket === "live";
-      if (f === "sold") return bucket === "sold";
-      // tier filter
-      return (r.tier || "premium") === f;
-    }
-
-    function passesSearch(r) {
-      const q = norm(invSearch.value.trim());
-      if (!q) return true;
-      return (
-        norm(r.id).includes(q) ||
-        norm(r.title).includes(q) ||
-        norm(r.artist).includes(q) ||
-        norm(r.tier).includes(q)
-      );
-    }
-
-    async function renderInventory() {
-      invList.innerHTML = "";
-      try { requireToken(); } catch { return; }
-
-      const { products, sold } = await getAllRecords();
-      const combined = [
-        ...products.map(r => ({ r, bucket: "live" })),
-        ...sold.map(r => ({ r, bucket: "sold" })),
-      ];
-
-      const filtered = combined.filter(({r, bucket}) => passesFilter(r, bucket) && passesSearch(r));
-
-      if (!filtered.length) {
-        const empty = document.createElement("div");
-        empty.className = "hint";
-        empty.style.marginTop = "10px";
-        empty.textContent = "No matches. Try another search or filter.";
-        invList.appendChild(empty);
-        return;
-      }
-
-      filtered.slice(0, 200).forEach(({ r, bucket }) => {
-        const card = document.createElement("div");
-        card.className = "inv-card";
-
-        const meta = document.createElement("div");
-        meta.className = "inv-meta";
-
-        const title = document.createElement("p");
-        title.className = "inv-title";
-        title.textContent = recordLabel(r);
-
-        const sub = document.createElement("p");
-        sub.className = "inv-sub";
-        const tier = (r.tier || "premium");
-        sub.textContent = "ID: " + (r.id || "") + " · $" + (r.price ?? "") + " · " + (r.grade || "") + " · Qty: " + (r.quantity ?? 1);
-
-        const badges = document.createElement("div");
-        badges.className = "inv-badges";
-        badges.appendChild(badge(bucket === "live" ? "LIVE" : "SOLD", bucket === "live" ? "live" : "sold"));
-        badges.appendChild(badge("Tier: " + tier));
-        badges.appendChild(badge(r.available === false ? "Hidden" : "Visible"));
-
-        meta.appendChild(title);
-        meta.appendChild(sub);
-        meta.appendChild(badges);
-
-        const actions = document.createElement("div");
-        actions.style.display = "flex";
-        actions.style.gap = "8px";
-        actions.style.flexWrap = "wrap";
-
-        const editBtn = document.createElement("button");
-        editBtn.type = "button";
-        editBtn.className = "btn btn-primary";
-        editBtn.textContent = "Edit";
-        editBtn.addEventListener("click", () => enterEditMode(bucket, r));
-
-        actions.appendChild(editBtn);
-
-        card.appendChild(meta);
-        card.appendChild(actions);
-        invList.appendChild(card);
-      });
-    }
-
-    invRefreshBtn.addEventListener("click", async () => {
-      try { requireToken(); } catch { return; }
-      setStatus("Refreshing inventory…", "ok");
-      await refreshCaches();
-      await renderInventory();
-      setStatus("Inventory refreshed.", "ok");
-    });
-
-    invSearch.addEventListener("input", () => renderInventory().catch(()=>{}));
-    invFilter.addEventListener("change", () => renderInventory().catch(()=>{}));
-
-    // initial inventory load if token exists
-    (async function boot() {
-      if (!getToken()) return;
-      try {
-        await refreshCaches();
-        await renderInventory();
-      } catch (e) {
-        console.warn(e);
-      }
-    })();
-  </script>
+}
+
+function edit(id){
+  const p = products.find(x=>x.id===id);
+  Object.keys(p).forEach(k=>{
+    const el = document.getElementById(k);
+    if(el) el.value = p[k];
+  });
+}
+
+function remove(id){
+  if(!confirm("Delete this record?")) return;
+  products = products.filter(p=>p.id!==id);
+  saveAll("Delete record");
+}
+
+function saveRecord(){
+  const p = {
+    id: id.value.trim(),
+    artist: artist.value.trim(),
+    title: title.value.trim(),
+    price: +price.value,
+    grade: grade.value.trim(),
+    quantity: +quantity.value,
+    tier: tier.value,
+    description: description.value.trim()
+  };
+
+  const i = products.findIndex(x=>x.id===p.id);
+  if(i>=0) products[i]=p;
+  else products.push(p);
+
+  saveAll("Save record");
+}
+
+async function saveAll(msg){
+  await gh(PRODUCTS_PATH,"PUT",JSON.stringify({
+    message:msg,
+    content:btoa(JSON.stringify(products,null,2)),
+    sha,
+    branch:BRANCH
+  }));
+  loadProducts();
+}
+
+if(token()) loadProducts();
+</script>
 </body>
 </html>
