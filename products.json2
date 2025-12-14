@@ -70,7 +70,8 @@
     "images": {
       "front": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
       "back": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg"
-    }
+    },
+    "tier": "tenbin"
   },
   {
     "id": "boston-1",
