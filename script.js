@@ -1,10 +1,13 @@
 // ================== KORNDOG SCRIPT (SHOP + CART) ==================
-// - All records default to quantity 1 (10 Dolla Holla gets 3)
-// - Shop is paginated
+// - Uses ONLY products.json2
+// - All records default to quantity 1 (10 Dolla Holla defaults to 3)
+// - Shop paginated
 // - Cart respects quantity limits
-// - Shipping + discount + PayPal flow
-// - Hides products with available === false
-// - NEW: Uses artist + title, and supports front/back flip images
+// - Shipping: 7.99 up to 3, then +0.50 per additional
+// - Discounts:
+//    * 3-for-$25 bundle for tier === "tenbin" (never increases price)
+//    * 10% off orders $130+ (after bundle)
+// - Supports artist + title, and front/back flip images
 // ================================================================
 
 const CART_KEY = "korndog_cart_v1";
@@ -23,38 +26,62 @@ function shuffleArray(arr) {
   return copy;
 }
 
+function safeNumber(n, fallback = 0) {
+  const x = Number(n);
+  return Number.isFinite(x) ? x : fallback;
+}
+
 // -------------------- LOAD PRODUCTS + QUANTITY --------------------
 async function loadProducts() {
   try {
-    const res = await fetch("./products.json");
+    const res = await fetch("./products.json2", { cache: "no-store" });
     if (!res.ok) {
-      console.error("Failed to load products");
+      console.error("Failed to load products.json2");
       allProducts = [];
       return [];
     }
 
     const raw = await res.json();
+    if (!Array.isArray(raw)) {
+      console.error("products.json2 must be an array");
+      allProducts = [];
+      return [];
+    }
 
-    const mapped = raw
-      .filter((p) => p.available !== false)
-      .map((p) => {
-        if (typeof p.quantity === "number") return p;
+    const mapped = raw.map((p) => {
+      // Ensure quantity exists
+      let qty = typeof p.quantity === "number" ? p.quantity : 1;
 
-        let qty = 1;
-        const id = (p.id || "").toLowerCase();
-        const title = (p.title || "").toLowerCase();
+      const id = String(p.id || "").toLowerCase();
+      const title = String(p.title || "").toLowerCase();
 
-        if (id.includes("10-dolla") || title.includes("10 dolla holla")) {
-          qty = 3;
-        }
+      // 10 Dolla Holla defaults to 3 available
+      if (id.includes("ten-dolla-holla") || id.includes("10-dolla") || title.includes("10 dolla holla")) {
+        qty = typeof p.quantity === "number" ? p.quantity : 3;
+      }
 
-        return { ...p, quantity: qty };
-      });
+      // Normalize tier
+      const tier = (p.tier || "premium").toLowerCase();
+
+      // Normalize image fields
+      const imageFront = p.imageFront || (p.images && p.images.front) || p.image || "";
+      const imageBack = p.imageBack || (p.images && p.images.back) || imageFront || p.image || "";
+
+      return {
+        ...p,
+        tier,
+        quantity: qty,
+        imageFront,
+        imageBack,
+        images: { front: imageFront, back: imageBack },
+        price: safeNumber(p.price, 0),
+      };
+    });
 
     allProducts = shuffleArray(mapped);
     return allProducts;
   } catch (e) {
-    console.error("Failed to load products", e);
+    console.error("Failed to load products.json2", e);
     allProducts = [];
     return [];
   }
@@ -78,62 +105,47 @@ function saveCart(cart) {
 
 function updateCartBadge() {
   const cart = getCart();
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
+  const count = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
   const badge = document.querySelector("[data-cart-count]");
   if (badge) badge.textContent = count;
 }
 
-// Add one item to cart, respecting stock quantity
-function addToCart(productId) {
-  if (!allProducts || allProducts.length === 0) return;
-
-  const product = allProducts.find((p) => p.id === productId);
-  if (!product) return;
-
-  const maxQty = typeof product.quantity === "number" ? product.quantity : 1;
-  const cart = getCart();
-  const existing = cart.find((item) => item.id === productId);
-
-  if (existing) {
-    if (existing.qty >= maxQty) {
-      alert(
-        maxQty === 1
-          ? "You only have 1 copy of this record in stock."
-          : `You only have ${maxQty} copies of this record in stock.`
-      );
-      return;
-    }
-    existing.qty += 1;
-  } else {
-    const imageForCart = product.imageFront || product.image || product.imageBack || "";
-    cart.push({
-      id: product.id,
-      title: product.title,
-      price: product.price,
-      grade: product.grade,
-      image: imageForCart,
-      qty: 1,
-    });
-  }
-
-  saveCart(cart);
-  alert("Dropped in the cart.");
-}
-
-function clearCart() {
-  saveCart([]);
-  renderCart();
-}
-
 // ----------------- SHIPPING + DISCOUNT RULES ----------------------
 function calcShipping(itemCount) {
-  if (itemCount === 0) return 0;
+  if (itemCount <= 0) return 0;
   if (itemCount <= 3) return 7.99;
-  return 7.99 + (itemCount - 3) * 2;
+  return 7.99 + (itemCount - 3) * 0.5;
 }
 
-function calcDiscount(subtotal) {
-  return subtotal >= 130 ? subtotal * 0.1 : 0;
+// 3-for-25 on tier tenbin — DISCOUNT ONLY (never increases price)
+function calcTenBinBundleDiscount(cart) {
+  // Expand prices for tenbin items by qty
+  const tenbinUnitPrices = [];
+
+  cart.forEach((item) => {
+    if ((item.tier || "").toLowerCase() !== "tenbin") return;
+    const unitPrice = safeNumber(item.price, 0);
+    const qty = Math.max(0, parseInt(item.qty || 0, 10));
+    for (let i = 0; i < qty; i++) tenbinUnitPrices.push(unitPrice);
+  });
+
+  if (tenbinUnitPrices.length < 3) return 0;
+
+  // Sort descending to maximize customer discount fairness
+  tenbinUnitPrices.sort((a, b) => b - a);
+
+  let discount = 0;
+  for (let i = 0; i + 2 < tenbinUnitPrices.length; i += 3) {
+    const sum3 = tenbinUnitPrices[i] + tenbinUnitPrices[i + 1] + tenbinUnitPrices[i + 2];
+    const bundlePrice = Math.min(25, sum3); // never increase
+    discount += Math.max(0, sum3 - bundlePrice);
+  }
+
+  return Number(discount.toFixed(2));
+}
+
+function calcTenPercentDiscount(subtotalAfterBundle) {
+  return subtotalAfterBundle >= 130 ? subtotalAfterBundle * 0.1 : 0;
 }
 
 // -------------------- SHOP RENDERING + PAGES ----------------------
@@ -186,9 +198,7 @@ function renderShopPage() {
       const frontImg = document.createElement("img");
       frontImg.src = frontSrc;
       frontImg.alt = prod.title || prod.id || "Record front";
-      frontImg.onerror = () => {
-        frontImg.classList.add("image-missing");
-      };
+      frontImg.onerror = () => frontImg.classList.add("image-missing");
       frontDiv.appendChild(frontImg);
     } else {
       const placeholder = document.createElement("div");
@@ -200,9 +210,7 @@ function renderShopPage() {
       const backImg = document.createElement("img");
       backImg.src = backSrc;
       backImg.alt = prod.title || prod.id || "Record back";
-      backImg.onerror = () => {
-        backImg.classList.add("image-missing");
-      };
+      backImg.onerror = () => backImg.classList.add("image-missing");
       backDiv.appendChild(backImg);
     } else {
       const placeholderBack = document.createElement("div");
@@ -217,11 +225,7 @@ function renderShopPage() {
 
     // --------- TEXT ----------
     const title = document.createElement("h3");
-    if (prod.artist) {
-      title.textContent = `${prod.artist} – ${prod.title}`;
-    } else {
-      title.textContent = prod.title || prod.id || "Untitled";
-    }
+    title.textContent = prod.artist ? `${prod.artist} – ${prod.title}` : (prod.title || prod.id || "Untitled");
 
     const grade = document.createElement("p");
     grade.className = "record-grade";
@@ -229,7 +233,11 @@ function renderShopPage() {
 
     const price = document.createElement("p");
     price.className = "record-price";
-    price.textContent = "$" + Number(prod.price || 0).toFixed(2);
+    price.textContent = "$" + safeNumber(prod.price, 0).toFixed(2);
+
+    const tier = document.createElement("p");
+    tier.className = "record-tier";
+    tier.textContent = (prod.tier === "tenbin") ? "Tier: $10 BIN (3 for $25)" : ("Tier: " + (prod.tier || "premium").toUpperCase());
 
     const desc = document.createElement("p");
     desc.className = "record-desc";
@@ -249,6 +257,7 @@ function renderShopPage() {
     card.appendChild(title);
     card.appendChild(grade);
     card.appendChild(price);
+    card.appendChild(tier);
     if (prod.description) card.appendChild(desc);
     card.appendChild(qtyNote);
     card.appendChild(btn);
@@ -271,9 +280,7 @@ function renderPagination() {
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement("button");
     btn.textContent = i;
-    if (i === currentPage) {
-      btn.classList.add("active");
-    }
+    if (i === currentPage) btn.classList.add("active");
 
     btn.addEventListener("click", () => {
       currentPage = i;
@@ -283,6 +290,46 @@ function renderPagination() {
 
     pagination.appendChild(btn);
   }
+}
+
+// ------------------------ ADD TO CART -----------------------------
+function addToCart(productId) {
+  if (!allProducts || allProducts.length === 0) return;
+
+  const product = allProducts.find((p) => p.id === productId);
+  if (!product) return;
+
+  const maxQty = typeof product.quantity === "number" ? product.quantity : 1;
+  const cart = getCart();
+  const existing = cart.find((item) => item.id === productId);
+
+  if (existing) {
+    if (existing.qty >= maxQty) {
+      alert(maxQty === 1 ? "Only 1 copy in stock." : `Only ${maxQty} copies in stock.`);
+      return;
+    }
+    existing.qty += 1;
+  } else {
+    const imageForCart = product.imageFront || product.image || product.imageBack || "";
+    cart.push({
+      id: product.id,
+      artist: product.artist || "",
+      title: product.title || product.id,
+      price: safeNumber(product.price, 0),
+      grade: product.grade || "",
+      image: imageForCart,
+      tier: product.tier || "premium",
+      qty: 1,
+    });
+  }
+
+  saveCart(cart);
+  alert("Dropped in the cart.");
+}
+
+function clearCart() {
+  saveCart([]);
+  renderCart();
 }
 
 // -------------------------- CART RENDERING ------------------------
@@ -306,14 +353,19 @@ function renderCart() {
 
       const title = document.createElement("p");
       title.className = "cart-title";
-      title.textContent = item.title;
+      title.textContent = (item.artist ? item.artist + " – " : "") + (item.title || item.id);
 
       const grade = document.createElement("p");
       grade.className = "cart-grade";
-      grade.textContent = "Grade: " + item.grade;
+      grade.textContent = "Grade: " + (item.grade || "—");
+
+      const tier = document.createElement("p");
+      tier.className = "cart-tier";
+      tier.textContent = "Tier: " + ((item.tier || "premium").toUpperCase());
 
       info.appendChild(title);
       info.appendChild(grade);
+      info.appendChild(tier);
 
       const qtyBox = document.createElement("div");
       qtyBox.className = "cart-qty";
@@ -321,11 +373,8 @@ function renderCart() {
       const minus = document.createElement("button");
       minus.textContent = "-";
       minus.addEventListener("click", () => {
-        if (item.qty > 1) {
-          item.qty -= 1;
-        } else {
-          cart.splice(index, 1);
-        }
+        if (item.qty > 1) item.qty -= 1;
+        else cart.splice(index, 1);
         saveCart(cart);
         renderCart();
       });
@@ -337,15 +386,10 @@ function renderCart() {
       plus.textContent = "+";
       plus.addEventListener("click", () => {
         const product = allProducts.find((p) => p.id === item.id);
-        const maxQty =
-          product && typeof product.quantity === "number" ? product.quantity : 1;
+        const maxQty = product && typeof product.quantity === "number" ? product.quantity : 1;
 
         if (item.qty >= maxQty) {
-          alert(
-            maxQty === 1
-              ? "You only have 1 copy of this record in stock."
-              : `You only have ${maxQty} copies of this record in stock.`
-          );
+          alert(maxQty === 1 ? "Only 1 copy in stock." : `Only ${maxQty} copies in stock.`);
           return;
         }
 
@@ -360,7 +404,7 @@ function renderCart() {
 
       const linePrice = document.createElement("p");
       linePrice.className = "cart-line-price";
-      linePrice.textContent = "$" + (item.price * item.qty).toFixed(2);
+      linePrice.textContent = "$" + (safeNumber(item.price, 0) * item.qty).toFixed(2);
 
       row.appendChild(info);
       row.appendChild(qtyBox);
@@ -370,27 +414,35 @@ function renderCart() {
     });
   }
 
-  const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const itemCount = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
+
+  const subtotalRaw = cart.reduce((sum, item) => sum + safeNumber(item.price, 0) * (item.qty || 0), 0);
+  const bundleDiscount = calcTenBinBundleDiscount(cart);
+  const subtotalAfterBundle = Math.max(0, subtotalRaw - bundleDiscount);
+
+  const tenPercentDiscount = calcTenPercentDiscount(subtotalAfterBundle);
+  const totalDiscount = bundleDiscount + tenPercentDiscount;
+
   const shipping = calcShipping(itemCount);
-  const discount = calcDiscount(subtotal);
-  const total = subtotal + shipping - discount;
+  const total = subtotalAfterBundle + shipping - tenPercentDiscount;
 
   summaryBox.innerHTML =
-    `Subtotal: $${subtotal.toFixed(2)}<br>` +
+    `Subtotal: $${subtotalRaw.toFixed(2)}<br>` +
+    (bundleDiscount > 0 ? `3-for-$25 Bundle Savings: -$${bundleDiscount.toFixed(2)}<br>` : "") +
     `Shipping: $${shipping.toFixed(2)}<br>` +
-    `Discount (10% @ $130+): -$${discount.toFixed(2)}<br>` +
+    (tenPercentDiscount > 0 ? `Discount (10% @ $130+): -$${tenPercentDiscount.toFixed(2)}<br>` : "") +
     `<strong>Total: $${total.toFixed(2)}</strong>`;
 
   const payBtn = document.getElementById("paypal-button");
   if (payBtn) {
-    payBtn.onclick = () => submitPayPal(cart, shipping, discount);
+    payBtn.onclick = () =>
+      submitPayPal(cart, shipping, totalDiscount);
   }
 }
 
 // -------------------------- PAYPAL SUBMIT -------------------------
-function submitPayPal(cart, shipping, discount) {
-  if (cart.length === 0) {
+function submitPayPal(cart, shipping, totalDiscount) {
+  if (!cart || cart.length === 0) {
     alert("Cart is empty.");
     return;
   }
@@ -398,9 +450,7 @@ function submitPayPal(cart, shipping, discount) {
   const form = document.getElementById("paypal-form");
   if (!form) return;
 
-  while (form.firstChild) {
-    form.removeChild(form.firstChild);
-  }
+  while (form.firstChild) form.removeChild(form.firstChild);
 
   const addField = (name, value) => {
     const input = document.createElement("input");
@@ -417,17 +467,24 @@ function submitPayPal(cart, shipping, discount) {
 
   let index = 1;
   cart.forEach((item) => {
-    addField(`item_name_${index}`, item.title);
-    addField(`amount_${index}`, item.price.toFixed(2));
+    const name = (item.artist ? item.artist + " – " : "") + (item.title || item.id);
+    addField(`item_name_${index}`, name);
+    addField(`amount_${index}`, safeNumber(item.price, 0).toFixed(2));
     addField(`quantity_${index}`, item.qty);
     index++;
   });
 
-  const shippingTotal = calcShipping(cart.reduce((s, i) => s + i.qty, 0));
-  if (shippingTotal > 0) {
+  // Shipping as a line item
+  if (shipping > 0) {
     addField(`item_name_${index}`, "Shipping");
-    addField(`amount_${index}`, shippingTotal.toFixed(2));
+    addField(`amount_${index}`, Number(shipping).toFixed(2));
     addField(`quantity_${index}`, 1);
+    index++;
+  }
+
+  // Total discount for entire cart (bundle + 10% discount)
+  if (totalDiscount > 0) {
+    addField("discount_amount_cart", Number(totalDiscount).toFixed(2));
   }
 
   form.action = "https://www.paypal.com/cgi-bin/webscr";
@@ -435,15 +492,10 @@ function submitPayPal(cart, shipping, discount) {
   form.submit();
 }
 
-// ---------------------- ADMIN PAGE (NOP) ------------------
-async function initAdmin() {
-  return;
-}
-
 // ----------------------------- INIT -------------------------------
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   updateCartBadge();
+  await loadProducts();      // ensure allProducts exists before cart +/-
   renderShop();
   renderCart();
-  initAdmin();
 });
