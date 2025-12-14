@@ -1,20 +1,18 @@
 // ================== KORNDOG SCRIPT (SHOP + CART) ==================
-// - Uses ONLY products.json2 (never products.json)
+// - Uses ONLY products.json2 (never products.json / product.json)
 // - Pagination + scroll-to-top fix
-// - Shipping: $7.99 up to 3 records, then $0.50 per record after that
+// - Shipping (LOCKED):
+//    $7.99 flat up to 3 records, then $2.00 per record after that
 // - Discounts:
 //    1) 3 for $25 => any record priced EXACTLY $10 (by quantity)
 //    2) 10% off $130+ => PREMIUM tier subtotal only (doesn't apply to $10 items)
-// - PayPal submits correct totals using discount_amount_cart
-// - PayPal returns to KornDog (thankyou) + cancel returns to cart
+// - PayPal submits correct totals using discount_amount_cart + handling_cart
+// - PayPal returns to thank-you.html + cancel returns to cart
 // ================================================================
 
-// ================= TEST MODE =================
-// ⚠️ Set to true for ONE test purchase, then set back to false.
-const TEST_MODE = true;
-
-// If TEST_MODE is true, shipping becomes this value so you can confirm payment hits your live PayPal.
-const TEST_SHIPPING = 0.01;
+// ================= LIVE MODE =================
+const TEST_MODE = false;      // ✅ MUST stay false for live
+const TEST_SHIPPING = 0.01;   // (kept for future tests, ignored when TEST_MODE=false)
 
 // Your LIVE PayPal receiver email:
 const PAYPAL_BUSINESS_EMAIL = "korndogrecords@gmail.com";
@@ -23,7 +21,7 @@ const PAYPAL_BUSINESS_EMAIL = "korndogrecords@gmail.com";
 const SITE_BASE = "https://korndogrecords.com";
 
 // Where PayPal should send them back:
-const PAYPAL_RETURN_URL = `${SITE_BASE}/thankyou.html`;
+const PAYPAL_RETURN_URL = `${SITE_BASE}/thank-you.html`; // ✅ correct filename
 const PAYPAL_CANCEL_URL = `${SITE_BASE}/cart.html`;
 
 const CART_KEY = "korndog_cart_v1";
@@ -109,12 +107,12 @@ function updateCartBadge() {
 
 // ---------------------- PRICING RULES -----------------------------
 function calcShipping(itemCount) {
-  // ✅ Test override so you can confirm live PayPal gets money
+  // Optional test override (OFF in live)
   if (TEST_MODE) return TEST_SHIPPING;
 
   if (itemCount <= 0) return 0;
   if (itemCount <= 3) return 7.99;
-  return 7.99 + (itemCount - 3) * 0.5; // $0.50 after 3
+  return 7.99 + (itemCount - 3) * 2.0; // ✅ $2 after 3 (LOCKED)
 }
 
 // 3 for $25 applies to ANY item priced exactly $10 (by quantity)
@@ -137,7 +135,7 @@ function calcPremiumDiscount(cart) {
     const price = Number(item.price) || 0;
     const qty = Number(item.qty) || 0;
 
-    if (price === 10) return sum;      // exclude $10 items
+    if (price === 10) return sum;       // exclude $10 items
     if (tier !== "premium") return sum; // premium only
 
     return sum + price * qty;
@@ -444,19 +442,22 @@ function renderCart() {
   const premiumDiscount = calcPremiumDiscount(cart);
 
   const discountTotal = tenBundleDiscount + premiumDiscount;
-  const total = regularSubtotal + shipping - discountTotal;
+
+  // Guard: never allow discounts to exceed subtotal (keeps PayPal sane)
+  const safeDiscountTotal = Math.min(discountTotal, regularSubtotal);
+
+  const total = regularSubtotal + shipping - safeDiscountTotal;
 
   summaryBox.innerHTML =
     `Subtotal: $${regularSubtotal.toFixed(2)}<br>` +
     `Shipping: $${shipping.toFixed(2)}<br>` +
     `3 for $25 Discount: -$${tenBundleDiscount.toFixed(2)}<br>` +
     `Premium $130+ Discount (10%): -$${premiumDiscount.toFixed(2)}<br>` +
-    `<strong>Total: $${total.toFixed(2)}</strong>` +
-    (TEST_MODE ? `<br><span style="color:#7bff5a;font-weight:600;">TEST MODE: Shipping forced to $${TEST_SHIPPING.toFixed(2)}</span>` : "");
+    `<strong>Total: $${total.toFixed(2)}</strong>`;
 
   const payBtn = document.getElementById("paypal-button");
   if (payBtn) {
-    payBtn.onclick = () => submitPayPal(cart, shipping, discountTotal);
+    payBtn.onclick = () => submitPayPal(cart, shipping, safeDiscountTotal);
   }
 
   updateCartBadge();
@@ -488,10 +489,10 @@ function submitPayPal(cart, shipping, discountTotal) {
   addField("business", PAYPAL_BUSINESS_EMAIL); // ✅ LIVE receiver
   addField("currency_code", "USD");
 
-  // ✅ Return experience
+  // Return experience
   addField("return", PAYPAL_RETURN_URL);
   addField("cancel_return", PAYPAL_CANCEL_URL);
-  addField("rm", "2"); // makes PayPal POST back to your return URL
+  addField("rm", "2");     // PayPal POST back to return URL
   addField("no_note", "0"); // allow customer note
   addField("charset", "utf-8");
 
@@ -512,7 +513,7 @@ function submitPayPal(cart, shipping, discountTotal) {
     addField("handling_cart", shipping.toFixed(2));
   }
 
-  // Discount as one cart discount
+  // Discount as one cart discount (must be positive number)
   if (discountTotal > 0) {
     addField("discount_amount_cart", discountTotal.toFixed(2));
   }
