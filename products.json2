@@ -262,7 +262,8 @@
     "images": {
       "front": "images/Kansas-1764232880896.jpg",
       "back": "images/Kansas-1764232880896.jpg"
-    }
+    },
+    "tier": "tenbin"
   },
   {
     "id": "kansas-point-of-know-return",
