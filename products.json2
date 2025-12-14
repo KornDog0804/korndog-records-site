@@ -363,7 +363,7 @@
     "id": "reo-speedwagon-decade-of-rock-and-roll",
     "artist": "REO Speedwagon",
     "title": "A Decade Of Rock & Roll",
-    "price": 7,
+    "price": 10,
     "grade": "VG/VG",
     "image": "images/REO_SpeedWagon-1764233215456.jpg",
     "description": "Who doesn't love some Speedwagon?",
@@ -374,7 +374,8 @@
     "images": {
       "front": "images/REO_SpeedWagon-1764233215456.jpg",
       "back": "images/REO_SpeedWagon-1764233215456.jpg"
-    }
+    },
+    "tier": "tenbin"
   },
   {
     "id": "robert-plant-now-and-zen",
