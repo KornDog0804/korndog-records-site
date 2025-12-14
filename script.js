@@ -6,6 +6,7 @@
 //    1) 3 for $25 => any record priced EXACTLY $10 (by quantity)
 //    2) 10% off $130+ => PREMIUM tier subtotal only (doesn't apply to $10 items)
 // - PayPal submits correct totals using discount_amount_cart
+// - LIVE PayPal + Return URLs included
 // ================================================================
 
 const CART_KEY = "korndog_cart_v1";
@@ -13,6 +14,11 @@ const PRODUCTS_PER_PAGE = 10;
 
 // 🔥 LOCKED: never products.json, never product.json
 const PRODUCTS_FILE = "./products.json2";
+
+// ✅ LIVE PAYPAL + RETURN LINKS (LOCKED)
+const PAYPAL_BUSINESS = "korndogrecords@gmail.com";
+const RETURN_URL = "https://korndogrecords.com/thank-you.html";
+const CANCEL_URL = "https://korndogrecords.com/cart.html";
 
 let allProducts = [];
 let currentPage = 1;
@@ -44,23 +50,14 @@ async function loadProducts() {
       return [];
     }
 
-    // NOTE: We do NOT hide available=false here automatically,
-    // because YOU decide what’s live from your admin / data.
-    // If you want to hide sold items, set available:false in the JSON.
-
     const mapped = raw.map((p) => {
-      // default quantity to 1 if missing
       const qty = typeof p.quantity === "number" ? p.quantity : 1;
-
-      // normalize tier
       const tier = (p.tier || "premium").toLowerCase();
 
-      // Support legacy fields but keep what you already use
       return {
         ...p,
         quantity: qty,
         tier,
-        // make sure front/back fields exist if provided
         imageFront: p.imageFront || (p.images && p.images.front) || p.image || "",
         imageBack: p.imageBack || (p.images && p.images.back) || p.imageFront || p.image || "",
       };
@@ -102,10 +99,9 @@ function updateCartBadge() {
 function calcShipping(itemCount) {
   if (itemCount <= 0) return 0;
   if (itemCount <= 3) return 7.99;
-  return 7.99 + (itemCount - 3) * 0.5; // ✅ $0.50 after 3
+  return 7.99 + (itemCount - 3) * 0.5;
 }
 
-// 3 for $25 applies to ANY item priced exactly $10 (by quantity)
 function calcTenBundleDiscount(cart) {
   const tenCount = cart.reduce((sum, item) => {
     const price = Number(item.price) || 0;
@@ -114,23 +110,17 @@ function calcTenBundleDiscount(cart) {
   }, 0);
 
   const bundles = Math.floor(tenCount / 3);
-  // Regular price for 3 items is $30, bundle price is $25 => discount $5 per bundle
-  return bundles * 5;
+  return bundles * 5; // $30 -> $25 = $5 off per bundle
 }
 
-// Premium 10% discount only on premium-tier subtotal >= 130,
-// and DOES NOT apply to $10 items (those are bundle-eligible)
 function calcPremiumDiscount(cart) {
   const premiumSubtotal = cart.reduce((sum, item) => {
     const tier = String(item.tier || "premium").toLowerCase();
     const price = Number(item.price) || 0;
     const qty = Number(item.qty) || 0;
 
-    // Exclude $10 items from premium discount
-    if (price === 10) return sum;
-
-    // Only premium tier counts
-    if (tier !== "premium") return sum;
+    if (price === 10) return sum;       // exclude $10 items
+    if (tier !== "premium") return sum; // premium-only
 
     return sum + price * qty;
   }, 0);
@@ -146,7 +136,6 @@ function addToCart(productId) {
   const product = allProducts.find((p) => p.id === productId);
   if (!product) return;
 
-  // If a product is marked available:false, don’t add it
   if (product.available === false) {
     alert("That record is not available right now.");
     return;
@@ -168,8 +157,7 @@ function addToCart(productId) {
     }
     existing.qty += 1;
   } else {
-    const imageForCart =
-      product.imageFront || product.image || product.imageBack || "";
+    const imageForCart = product.imageFront || product.image || product.imageBack || "";
 
     cart.push({
       id: product.id,
@@ -195,7 +183,7 @@ function clearCart() {
 // -------------------- SHOP RENDERING + PAGES ----------------------
 async function renderShop() {
   const container = document.getElementById("products");
-  if (!container) return; // not on shop page
+  if (!container) return;
 
   if (!allProducts || allProducts.length === 0) {
     await loadProducts();
@@ -214,16 +202,13 @@ function renderShopPage() {
   const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const end = start + PRODUCTS_PER_PAGE;
 
-  // only show items that are NOT explicitly available:false
   const visible = allProducts.filter((p) => p.available !== false);
-
   const pageProducts = visible.slice(start, end);
 
   pageProducts.forEach((prod) => {
     const card = document.createElement("div");
     card.className = "record-card";
 
-    // --------- IMAGE FLIP ----------
     const recordImage = document.createElement("div");
     recordImage.className = "record-image";
 
@@ -271,11 +256,8 @@ function renderShopPage() {
     flipWrapper.appendChild(flipInner);
     recordImage.appendChild(flipWrapper);
 
-    // --------- TEXT ----------
     const title = document.createElement("h3");
-    title.textContent = prod.artist
-      ? `${prod.artist} – ${prod.title}`
-      : (prod.title || prod.id || "Untitled");
+    title.textContent = prod.artist ? `${prod.artist} – ${prod.title}` : (prod.title || prod.id || "Untitled");
 
     const grade = document.createElement("p");
     grade.className = "record-grade";
@@ -329,8 +311,6 @@ function renderPagination(visibleCount) {
     btn.addEventListener("click", () => {
       currentPage = i;
       renderShopPage();
-
-      // ✅ FIX: always go back to top on page change
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
@@ -342,7 +322,7 @@ function renderPagination(visibleCount) {
 function renderCart() {
   const container = document.getElementById("cart-items");
   const summaryBox = document.getElementById("cart-summary");
-  if (!container || !summaryBox) return; // not on cart page
+  if (!container || !summaryBox) return;
 
   const cart = getCart();
   container.innerHTML = "";
@@ -354,7 +334,6 @@ function renderCart() {
     return;
   }
 
-  // Render cart rows
   cart.forEach((item, index) => {
     const row = document.createElement("div");
     row.className = "cart-row";
@@ -364,8 +343,7 @@ function renderCart() {
 
     const title = document.createElement("p");
     title.className = "cart-title";
-    title.textContent =
-      (item.artist ? `${item.artist} – ` : "") + (item.title || item.id);
+    title.textContent = (item.artist ? `${item.artist} – ` : "") + (item.title || item.id);
 
     const grade = document.createElement("p");
     grade.className = "cart-grade";
@@ -380,11 +358,8 @@ function renderCart() {
     const minus = document.createElement("button");
     minus.textContent = "-";
     minus.addEventListener("click", () => {
-      if ((Number(item.qty) || 1) > 1) {
-        item.qty -= 1;
-      } else {
-        cart.splice(index, 1);
-      }
+      if ((Number(item.qty) || 1) > 1) item.qty -= 1;
+      else cart.splice(index, 1);
       saveCart(cart);
       renderCart();
     });
@@ -395,17 +370,11 @@ function renderCart() {
     const plus = document.createElement("button");
     plus.textContent = "+";
     plus.addEventListener("click", () => {
-      // Respect max quantity if product list is loaded
       const product = allProducts.find((p) => p.id === item.id);
-      const maxQty =
-        product && typeof product.quantity === "number" ? product.quantity : 99;
+      const maxQty = product && typeof product.quantity === "number" ? product.quantity : 99;
 
       if ((Number(item.qty) || 0) >= maxQty) {
-        alert(
-          maxQty === 1
-            ? "You only have 1 copy of this record in stock."
-            : `You only have ${maxQty} copies of this record in stock.`
-        );
+        alert(maxQty === 1 ? "You only have 1 copy of this record in stock." : `You only have ${maxQty} copies of this record in stock.`);
         return;
       }
 
@@ -420,8 +389,7 @@ function renderCart() {
 
     const linePrice = document.createElement("p");
     linePrice.className = "cart-line-price";
-    linePrice.textContent =
-      "$" + ((Number(item.price) || 0) * (Number(item.qty) || 0)).toFixed(2);
+    linePrice.textContent = "$" + ((Number(item.price) || 0) * (Number(item.qty) || 0)).toFixed(2);
 
     row.appendChild(info);
     row.appendChild(qtyBox);
@@ -430,15 +398,10 @@ function renderCart() {
     container.appendChild(row);
   });
 
-  // Totals
   const itemCount = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
-  const regularSubtotal = cart.reduce(
-    (sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 0),
-    0
-  );
+  const regularSubtotal = cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 0), 0);
 
   const shipping = calcShipping(itemCount);
-
   const tenBundleDiscount = calcTenBundleDiscount(cart);
   const premiumDiscount = calcPremiumDiscount(cart);
 
@@ -460,7 +423,7 @@ function renderCart() {
   updateCartBadge();
 }
 
-// -------------------------- PAYPAL SUBMIT -------------------------
+// -------------------------- PAYPAL SUBMIT (LIVE + RETURN) ---------
 function submitPayPal(cart, shipping, discountTotal) {
   if (!cart || cart.length === 0) {
     alert("Cart is empty.");
@@ -470,7 +433,6 @@ function submitPayPal(cart, shipping, discountTotal) {
   const form = document.getElementById("paypal-form");
   if (!form) return;
 
-  // clear
   while (form.firstChild) form.removeChild(form.firstChild);
 
   const addField = (name, value) => {
@@ -481,26 +443,37 @@ function submitPayPal(cart, shipping, discountTotal) {
     form.appendChild(input);
   };
 
+  // Cart mode
   addField("cmd", "_cart");
   addField("upload", "1");
-  addField("business", "titans.rule1215@gmail.com");
+
+  // ✅ LIVE business
+  addField("business", PAYPAL_BUSINESS);
   addField("currency_code", "USD");
+
+  // ✅ Return + cancel (customer comes back to you)
+  addField("return", RETURN_URL);
+  addField("cancel_return", CANCEL_URL);
+
+  // ✅ Force POST return (cleaner + more reliable)
+  addField("rm", "2");
+  addField("cbt", "Back to KornDog Records");
 
   // Item lines (regular prices)
   let index = 1;
   cart.forEach((item) => {
-    addField(`item_name_${index}`, (item.artist ? `${item.artist} – ` : "") + item.title);
+    addField(`item_name_${index}`, (item.artist ? `${item.artist} – ` : "") + (item.title || item.id || "Record"));
     addField(`amount_${index}`, (Number(item.price) || 0).toFixed(2));
     addField(`quantity_${index}`, String(Number(item.qty) || 1));
     index++;
   });
 
-  // Shipping
+  // ✅ Shipping as shipping_1 (best for cart)
   if (shipping > 0) {
-    addField("handling_cart", shipping.toFixed(2));
+    addField("shipping_1", shipping.toFixed(2));
   }
 
-  // Total discount as a single cart discount
+  // ✅ Total discount as one cart discount (positive number)
   if (discountTotal > 0) {
     addField("discount_amount_cart", discountTotal.toFixed(2));
   }
@@ -512,15 +485,11 @@ function submitPayPal(cart, shipping, discountTotal) {
 
 // ----------------------------- INIT -------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
-  // ✅ Fix annoying "page 2 stays at bottom" behavior on load
   window.scrollTo(0, 0);
 
   updateCartBadge();
-
-  // Load products once so cart qty limits work too
   await loadProducts();
 
-  // Only run what exists on that page
   renderShop();
   renderCart();
 });
