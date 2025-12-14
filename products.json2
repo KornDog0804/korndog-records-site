@@ -1,0 +1,389 @@
+[
+  {
+    "id": "acdc-back-in-black",
+    "artist": "AC/DC",
+    "title": "Back In Black",
+    "price": 17.99,
+    "grade": "VG/VG",
+    "image": "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg",
+    "description": "Back In Black ICONIC VG/VG+.",
+    "available": true
+  },
+  {
+    "id": "billy-joel-52nd-street",
+    "artist": "Billy Joel",
+    "title": "52nd Street",
+    "price": 5.99,
+    "grade": "VG/VG+",
+    "image": "images/Billy_Joel-1764298491999.jpg",
+    "description": "Original inner sleeve. Very nice copy.",
+    "available": true,
+    "tier": "tenbin",
+    "quantity": 1,
+    "imageFront": "images/Billy_Joel-1764298491999.jpg",
+    "imageBack": "images/Billy_Joel-1764298491999.jpg",
+    "images": {
+      "front": "images/Billy_Joel-1764298491999.jpg",
+      "back": "images/Billy_Joel-1764298491999.jpg"
+    }
+  },
+  {
+    "id": "blessthefall-hollow-bodies",
+    "artist": "BlessTheFall",
+    "title": "Hollow Bodies",
+    "price": 14.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20250907_203733675.jpg",
+    "description": "10th Anniversary Edition.",
+    "available": true
+  },
+  {
+    "id": "bob-seger-night-moves",
+    "artist": "Bob Seger & Silver Bullet Band",
+    "title": "Night Moves",
+    "price": 10,
+    "grade": "VG/VG",
+    "image": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
+    "description": "Super clean OG.",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
+    "imageBack": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
+    "images": {
+      "front": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
+      "back": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg"
+    },
+    "tier": "tenbin"
+  },
+  {
+    "id": "bob-seger-stranger-in-town",
+    "artist": "Bob Seger & Silver Bullet Band",
+    "title": "Stranger In Town",
+    "price": 10,
+    "grade": "VG/VG",
+    "image": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
+    "description": "Nice clean OG.",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
+    "imageBack": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
+    "images": {
+      "front": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
+      "back": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg"
+    }
+  },
+  {
+    "id": "boston-1",
+    "artist": "Boston",
+    "title": "Boston 1",
+    "price": 7,
+    "grade": "VG/VG+",
+    "image": "images/Boston-1764230862646.jpg",
+    "description": "Very nice (in my Borat voice).",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Boston-1764230862646.jpg",
+    "imageBack": "images/Boston-1764230862646.jpg",
+    "images": {
+      "front": "images/Boston-1764230862646.jpg",
+      "back": "images/Boston-1764230862646.jpg"
+    },
+    "tier": "tenbin"
+  },
+  {
+    "id": "bullet-for-my-valentine-the-poison-20th",
+    "artist": "Bullet For My Valentine",
+    "title": "The Poison (20th Anniversary Gatefold)",
+    "price": 34.99,
+    "grade": "NM/NM",
+    "image": "images/rn-image_picker_lib_temp_4677e40d-5aff-403e-8216-cb3a0cd47fe2.jpg",
+    "description": "20th anniversary red.",
+    "available": true
+  },
+  {
+    "id": "cheap-trick-dream-police",
+    "artist": "Cheap Trick",
+    "title": "Dream Police",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Cheap_Trick-1764233303621.jpg",
+    "description": "Super clean copy.",
+    "available": true
+  },
+  {
+    "id": "david-lee-roth-crazy-from-the-heat-ep",
+    "artist": "David Lee Roth",
+    "title": "Crazy From The Heat (EP)",
+    "price": 9.99,
+    "grade": "VG+/VG+",
+    "image": "images/David_Lee_Roth_EP-1764230391826.jpg",
+    "description": "Super clean.",
+    "available": true
+  },
+  {
+    "id": "dazz-band-keep-it-live",
+    "artist": "Dazz Band",
+    "title": "Keep It Live",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Dazz_Band-1764298272765.jpg",
+    "description": "Very clean copy.",
+    "available": true
+  },
+  {
+    "id": "dokken-back-for-the-attack",
+    "artist": "Dokken",
+    "title": "Back For The Attack",
+    "price": 19.99,
+    "grade": "VG/VG+",
+    "image": "images/Dokken-1764298922683.jpg",
+    "description": "OG copy with original inner.",
+    "available": true
+  },
+  {
+    "id": "foreigner-4",
+    "artist": "Foreigner",
+    "title": "4",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Foreigner-1764230780118.jpg",
+    "description": "You know it, you love it, now it can be yours.",
+    "available": true
+  },
+  {
+    "id": "grateful-dead-50th-anniversary-picture-disc",
+    "artist": "Grateful Dead",
+    "title": "50th Anniversary Edition (Picture Disc, Rhino 2017)",
+    "price": 24.99,
+    "grade": "NM/NM",
+    "image": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
+    "description": "Psychedelic swirl for the ages. Limited to 10,000 copies worldwide.",
+    "available": true
+  },
+  {
+    "id": "i-prevail-heart-vs-mind",
+    "artist": "I Prevail",
+    "title": "Heart vs Mind",
+    "price": 19.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20250915_125450366.jpg",
+    "description": "Debut EP. NM/NM.",
+    "available": true
+  },
+  {
+    "id": "jimi-hendrix-smash-hits",
+    "artist": "Jimi Hendrix Experience",
+    "title": "Smash Hits",
+    "price": 14.99,
+    "grade": "VG/VG",
+    "image": "images/PXL_20251125_201153364.jpg",
+    "description": "Club repress.",
+    "available": true
+  },
+  {
+    "id": "johnny-cash-greatest-hits-vol-1",
+    "artist": "Johnny Cash",
+    "title": "Greatest Hits Volume 1",
+    "price": 5,
+    "grade": "VG/VG",
+    "image": "images/Johnny_Cash-1764230221013.jpg",
+    "description": "Walk the Line with this one.",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Johnny_Cash-1764230221013.jpg",
+    "imageBack": "images/Johnny_Cash-1764230221013.jpg",
+    "images": {
+      "front": "images/Johnny_Cash-1764230221013.jpg",
+      "back": "images/Johnny_Cash-1764230221013.jpg"
+    }
+  },
+  {
+    "id": "johnny-guitar-watson-giant",
+    "artist": "Johnny Guitar Watson",
+    "title": "Giant",
+    "price": 8.99,
+    "grade": "VG/VG",
+    "image": "images/PXL_20250915_125512318.jpg",
+    "description": "Funky, spacey soul trip.",
+    "available": true
+  },
+  {
+    "id": "kansas-leftoverture",
+    "artist": "Kansas",
+    "title": "Leftoverture",
+    "price": 10,
+    "grade": "VG/VG+",
+    "image": "images/Kansas-1764232880896.jpg",
+    "description": "Carry On Wayward Son.",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Kansas-1764232880896.jpg",
+    "imageBack": "images/Kansas-1764232880896.jpg",
+    "images": {
+      "front": "images/Kansas-1764232880896.jpg",
+      "back": "images/Kansas-1764232880896.jpg"
+    }
+  },
+  {
+    "id": "kansas-point-of-know-return",
+    "artist": "Kansas",
+    "title": "Point Of Know Return",
+    "price": 10,
+    "grade": "VG/VG+",
+    "image": "images/Kansas-1764299103385.jpg",
+    "description": "Original inner.",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Kansas-1764299103385.jpg",
+    "imageBack": "images/Kansas-1764299103385.jpg",
+    "images": {
+      "front": "images/Kansas-1764299103385.jpg",
+      "back": "images/Kansas-1764299103385.jpg"
+    }
+  },
+  {
+    "id": "ten-dolla-holla",
+    "artist": "Mystery Pull",
+    "title": "$10 Dolla Holla Mystery Record",
+    "price": 10,
+    "grade": "VG/VG",
+    "image": "images/Screenshot_20250822-074904.png",
+    "description": "Random mystery pull from the stack. VG/VG.",
+    "available": true
+  },
+  {
+    "id": "neil-young-zuma",
+    "artist": "Neil Young",
+    "title": "Zuma",
+    "price": 4.99,
+    "grade": "VG/VG+",
+    "image": "images/Neil_Young-1764230307095.jpg",
+    "description": "Marker spot on cover but solid all around.",
+    "available": true
+  },
+  {
+    "id": "night-ranger-7-wishes",
+    "artist": "Night Ranger",
+    "title": "7 Wishes",
+    "price": 5,
+    "grade": "VG/VG",
+    "image": "images/Night_Ranger-1764233043019.jpg",
+    "description": "Very nice copy.",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Night_Ranger-1764233043019.jpg",
+    "imageBack": "images/Night_Ranger-1764233043019.jpg",
+    "images": {
+      "front": "images/Night_Ranger-1764233043019.jpg",
+      "back": "images/Night_Ranger-1764233043019.jpg"
+    }
+  },
+  {
+    "id": "pantera-history-of-hostility",
+    "artist": "Pantera",
+    "title": "History Of Hostility",
+    "price": 19.99,
+    "grade": "NM/NM",
+    "image": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
+    "description": "2015 Rhino pressing.",
+    "available": true
+  },
+  {
+    "id": "red-hot-chili-peppers-californication",
+    "artist": "Red Hot Chili Peppers",
+    "title": "Californication",
+    "price": 32.99,
+    "grade": "NM/NM",
+    "image": "images/Red_Hot_Chili_Peppers-1764287782972.jpg",
+    "description": "25th Anniversary 2 LP colored vinyl.",
+    "available": true
+  },
+  {
+    "id": "reo-speedwagon-decade-of-rock-and-roll",
+    "artist": "REO Speedwagon",
+    "title": "A Decade Of Rock & Roll",
+    "price": 7,
+    "grade": "VG/VG",
+    "image": "images/REO_SpeedWagon-1764233215456.jpg",
+    "description": "Who doesn't love some Speedwagon?",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/REO_SpeedWagon-1764233215456.jpg",
+    "imageBack": "images/REO_SpeedWagon-1764233215456.jpg",
+    "images": {
+      "front": "images/REO_SpeedWagon-1764233215456.jpg",
+      "back": "images/REO_SpeedWagon-1764233215456.jpg"
+    }
+  },
+  {
+    "id": "robert-plant-now-and-zen",
+    "artist": "Robert Plant",
+    "title": "Now And Zen",
+    "price": 10,
+    "grade": "VG/VG+",
+    "image": "images/Robert_Plant-1764232983897.jpg",
+    "description": "Super clean copy.",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/Robert_Plant-1764232983897.jpg",
+    "imageBack": "images/Robert_Plant-1764232983897.jpg",
+    "images": {
+      "front": "images/Robert_Plant-1764232983897.jpg",
+      "back": "images/Robert_Plant-1764232983897.jpg"
+    }
+  },
+  {
+    "id": "sleep-token-even-in-arcadia",
+    "artist": "Sleep Token",
+    "title": "Even in Arcadia",
+    "price": 69.99,
+    "grade": "NM/NM",
+    "image": "images/Screenshot_20250826-210248.png",
+    "description": "House Veridian Edition. NM/NM.",
+    "available": true
+  },
+  {
+    "id": "sum41-all-killer-no-filler",
+    "artist": "Sum 41",
+    "title": "All Killer No Filler",
+    "price": 25,
+    "grade": "NM/NM",
+    "image": "images/PXL_20251124_210448795.TS-000.jpg",
+    "description": "Pop-punk chaos, no filler. Black and blue smush.",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/PXL_20251124_210448795.TS-000.jpg",
+    "imageBack": "images/PXL_20251124_210448795.TS-000.jpg",
+    "images": {
+      "front": "images/PXL_20251124_210448795.TS-000.jpg",
+      "back": "images/PXL_20251124_210448795.TS-000.jpg"
+    }
+  },
+  {
+    "id": "the-police-zenyatta-mondatta",
+    "artist": "The Police",
+    "title": "Zenyatta Mondatta",
+    "price": 9.99,
+    "grade": "VG+/VG+",
+    "image": "images/The_Police-1764229577731.jpg",
+    "description": "Great copy. Super clean.",
+    "available": true
+  },
+  {
+    "id": "compilation-album-hiphop-50yrs",
+    "artist": "Various Artists",
+    "title": "Compilation Album - 50 Years of Hip-Hop",
+    "price": 39.99,
+    "grade": "NM/NM",
+    "image": "images/PXL_20251211_210552651.jpg",
+    "description": "50 Years of Hip-Hop compilation. NM/NM.",
+    "available": true,
+    "quantity": 1,
+    "imageFront": "images/PXL_20251211_210552651.jpg",
+    "imageBack": "images/PXL_20251211_210603941.jpg",
+    "images": {
+      "front": "images/PXL_20251211_210552651.jpg",
+      "back": "images/PXL_20251211_210603941.jpg"
+    }
+  }
+]
