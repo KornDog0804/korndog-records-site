@@ -122,11 +122,19 @@
     "id": "david-lee-roth-crazy-from-the-heat-ep",
     "artist": "David Lee Roth",
     "title": "Crazy From The Heat (EP)",
-    "price": 9.99,
+    "price": 10,
     "grade": "VG+/VG+",
     "image": "images/David_Lee_Roth_EP-1764230391826.jpg",
     "description": "Super clean.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "threefor25",
+    "imageFront": "images/David_Lee_Roth_EP-1764230391826.jpg",
+    "imageBack": "images/David_Lee_Roth_EP-1764230391826.jpg",
+    "images": {
+      "front": "images/David_Lee_Roth_EP-1764230391826.jpg",
+      "back": "images/David_Lee_Roth_EP-1764230391826.jpg"
+    }
   },
   {
     "id": "dazz-band-keep-it-live",
