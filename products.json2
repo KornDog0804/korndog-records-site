@@ -233,11 +233,19 @@
     "id": "johnny-guitar-watson-giant",
     "artist": "Johnny Guitar Watson",
     "title": "Giant",
-    "price": 8.99,
+    "price": 8,
     "grade": "VG/VG",
     "image": "images/PXL_20250915_125512318.jpg",
     "description": "Funky, spacey soul trip.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "budget",
+    "imageFront": "images/PXL_20250915_125512318.jpg",
+    "imageBack": "images/PXL_20250915_125512318.jpg",
+    "images": {
+      "front": "images/PXL_20250915_125512318.jpg",
+      "back": "images/PXL_20250915_125512318.jpg"
+    }
   },
   {
     "id": "kansas-leftoverture",
