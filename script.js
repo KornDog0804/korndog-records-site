@@ -2,17 +2,17 @@
 // - Uses ONLY products.json2 (never products.json / product.json)
 // - Pagination + scroll-to-top fix
 // - Shipping (LOCKED):
-//    $7.99 flat up to 3 records, then $2.00 per record after that
+//    $7.99 flat up to 3 records, then $0.50 per record after that
 // - Discounts:
 //    1) 3 for $25 => any record priced EXACTLY $10 (by quantity)
-//    2) 10% off $130+ => PREMIUM tier subtotal only (doesn't apply to $10 items)
+//    2) 10% off $130+ => PREMIUM tier subtotal only (excludes $10 items)
 // - PayPal submits correct totals using discount_amount_cart + handling_cart
 // - PayPal returns to thank-you.html + cancel returns to cart
 // ================================================================
 
 // ================= LIVE MODE =================
 const TEST_MODE = false;      // ✅ MUST stay false for live
-const TEST_SHIPPING = 0.01;   // (kept for future tests, ignored when TEST_MODE=false)
+const TEST_SHIPPING = 0.01;   // kept for future tests (ignored when TEST_MODE=false)
 
 // Your LIVE PayPal receiver email:
 const PAYPAL_BUSINESS_EMAIL = "korndogrecords@gmail.com";
@@ -21,7 +21,7 @@ const PAYPAL_BUSINESS_EMAIL = "korndogrecords@gmail.com";
 const SITE_BASE = "https://korndogrecords.com";
 
 // Where PayPal should send them back:
-const PAYPAL_RETURN_URL = `${SITE_BASE}/thank-you.html`; // ✅ correct filename
+const PAYPAL_RETURN_URL = `${SITE_BASE}/thank-you.html`; // ✅ hyphen filename
 const PAYPAL_CANCEL_URL = `${SITE_BASE}/cart.html`;
 
 const CART_KEY = "korndog_cart_v1";
@@ -111,8 +111,12 @@ function calcShipping(itemCount) {
   if (TEST_MODE) return TEST_SHIPPING;
 
   if (itemCount <= 0) return 0;
-  if (itemCount <= 3) return 7.99;
-  return 7.99 + (itemCount - 3) * 2.0; // ✅ $2 after 3 (LOCKED)
+
+  const BASE = 7.99;
+  const AFTER_3 = 0.50; // ✅ new rule
+
+  if (itemCount <= 3) return BASE;
+  return BASE + (itemCount - 3) * AFTER_3;
 }
 
 // 3 for $25 applies to ANY item priced exactly $10 (by quantity)
@@ -135,8 +139,8 @@ function calcPremiumDiscount(cart) {
     const price = Number(item.price) || 0;
     const qty = Number(item.qty) || 0;
 
-    if (price === 10) return sum;       // exclude $10 items
-    if (tier !== "premium") return sum; // premium only
+    if (price === 10) return sum;        // exclude $10 items
+    if (tier !== "premium") return sum;  // premium only
 
     return sum + price * qty;
   }, 0);
@@ -173,8 +177,7 @@ function addToCart(productId) {
     }
     existing.qty += 1;
   } else {
-    const imageForCart =
-      product.imageFront || product.image || product.imageBack || "";
+    const imageForCart = product.imageFront || product.image || product.imageBack || "";
 
     cart.push({
       id: product.id,
@@ -276,9 +279,7 @@ function renderShopPage() {
 
     // TEXT
     const title = document.createElement("h3");
-    title.textContent = prod.artist
-      ? `${prod.artist} – ${prod.title}`
-      : (prod.title || prod.id || "Untitled");
+    title.textContent = prod.artist ? `${prod.artist} – ${prod.title}` : (prod.title || prod.id || "Untitled");
 
     const grade = document.createElement("p");
     grade.className = "record-grade";
@@ -365,8 +366,7 @@ function renderCart() {
 
     const title = document.createElement("p");
     title.className = "cart-title";
-    title.textContent =
-      (item.artist ? `${item.artist} – ` : "") + (item.title || item.id);
+    title.textContent = (item.artist ? `${item.artist} – ` : "") + (item.title || item.id);
 
     const grade = document.createElement("p");
     grade.className = "cart-grade";
@@ -381,11 +381,8 @@ function renderCart() {
     const minus = document.createElement("button");
     minus.textContent = "-";
     minus.addEventListener("click", () => {
-      if ((Number(item.qty) || 1) > 1) {
-        item.qty -= 1;
-      } else {
-        cart.splice(index, 1);
-      }
+      if ((Number(item.qty) || 1) > 1) item.qty -= 1;
+      else cart.splice(index, 1);
       saveCart(cart);
       renderCart();
     });
@@ -397,15 +394,10 @@ function renderCart() {
     plus.textContent = "+";
     plus.addEventListener("click", () => {
       const product = allProducts.find((p) => p.id === item.id);
-      const maxQty =
-        product && typeof product.quantity === "number" ? product.quantity : 99;
+      const maxQty = product && typeof product.quantity === "number" ? product.quantity : 99;
 
       if ((Number(item.qty) || 0) >= maxQty) {
-        alert(
-          maxQty === 1
-            ? "You only have 1 copy of this record in stock."
-            : `You only have ${maxQty} copies of this record in stock.`
-        );
+        alert(maxQty === 1 ? "You only have 1 copy of this record in stock." : `You only have ${maxQty} copies of this record in stock.`);
         return;
       }
 
@@ -420,8 +412,7 @@ function renderCart() {
 
     const linePrice = document.createElement("p");
     linePrice.className = "cart-line-price";
-    linePrice.textContent =
-      "$" + ((Number(item.price) || 0) * (Number(item.qty) || 0)).toFixed(2);
+    linePrice.textContent = "$" + ((Number(item.price) || 0) * (Number(item.qty) || 0)).toFixed(2);
 
     row.appendChild(info);
     row.appendChild(qtyBox);
@@ -432,20 +423,14 @@ function renderCart() {
 
   // Totals
   const itemCount = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
-  const regularSubtotal = cart.reduce(
-    (sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 0),
-    0
-  );
+  const regularSubtotal = cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 0), 0);
 
   const shipping = calcShipping(itemCount);
   const tenBundleDiscount = calcTenBundleDiscount(cart);
   const premiumDiscount = calcPremiumDiscount(cart);
 
   const discountTotal = tenBundleDiscount + premiumDiscount;
-
-  // Guard: never allow discounts to exceed subtotal (keeps PayPal sane)
-  const safeDiscountTotal = Math.min(discountTotal, regularSubtotal);
-
+  const safeDiscountTotal = Math.min(discountTotal, regularSubtotal); // PayPal safety
   const total = regularSubtotal + shipping - safeDiscountTotal;
 
   summaryBox.innerHTML =
@@ -453,7 +438,8 @@ function renderCart() {
     `Shipping: $${shipping.toFixed(2)}<br>` +
     `3 for $25 Discount: -$${tenBundleDiscount.toFixed(2)}<br>` +
     `Premium $130+ Discount (10%): -$${premiumDiscount.toFixed(2)}<br>` +
-    `<strong>Total: $${total.toFixed(2)}</strong>`;
+    `<strong>Total: $${total.toFixed(2)}</strong>` +
+    (TEST_MODE ? `<br><span style="color:#7bff5a;font-weight:600;">TEST MODE: Shipping forced to $${TEST_SHIPPING.toFixed(2)}</span>` : "");
 
   const payBtn = document.getElementById("paypal-button");
   if (payBtn) {
@@ -486,37 +472,30 @@ function submitPayPal(cart, shipping, discountTotal) {
   // PayPal "Add to Cart" POST
   addField("cmd", "_cart");
   addField("upload", "1");
-  addField("business", PAYPAL_BUSINESS_EMAIL); // ✅ LIVE receiver
+  addField("business", PAYPAL_BUSINESS_EMAIL);
   addField("currency_code", "USD");
 
   // Return experience
   addField("return", PAYPAL_RETURN_URL);
   addField("cancel_return", PAYPAL_CANCEL_URL);
-  addField("rm", "2");     // PayPal POST back to return URL
-  addField("no_note", "0"); // allow customer note
+  addField("rm", "2");       // PayPal POST back to return URL
+  addField("no_note", "0");  // allow customer note
   addField("charset", "utf-8");
 
   // Item lines
   let index = 1;
   cart.forEach((item) => {
-    addField(
-      `item_name_${index}`,
-      (item.artist ? `${item.artist} – ` : "") + (item.title || item.id || "Record")
-    );
+    addField(`item_name_${index}`, (item.artist ? `${item.artist} – ` : "") + (item.title || item.id || "Record"));
     addField(`amount_${index}`, (Number(item.price) || 0).toFixed(2));
     addField(`quantity_${index}`, String(Number(item.qty) || 1));
     index++;
   });
 
   // Shipping as handling_cart
-  if (shipping > 0) {
-    addField("handling_cart", shipping.toFixed(2));
-  }
+  if (shipping > 0) addField("handling_cart", shipping.toFixed(2));
 
-  // Discount as one cart discount (must be positive number)
-  if (discountTotal > 0) {
-    addField("discount_amount_cart", discountTotal.toFixed(2));
-  }
+  // Discount as one cart discount
+  if (discountTotal > 0) addField("discount_amount_cart", discountTotal.toFixed(2));
 
   form.action = "https://www.paypal.com/cgi-bin/webscr";
   form.method = "post";
@@ -526,7 +505,6 @@ function submitPayPal(cart, shipping, discountTotal) {
 // ----------------------------- INIT -------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
   window.scrollTo(0, 0);
-
   updateCartBadge();
 
   // Load products once so cart qty limits work
