@@ -217,55 +217,57 @@
   </div>
 
   <script>
-    (function () {
-      const overlay = document.getElementById('zkOverlay');
-      const bubble = document.getElementById('zkBubble');
-      const hint = document.getElementById('redirectHint');
-      const jsOk = document.getElementById('jsOk');
+(function () {
+  let hasRun = false;
 
-      if (jsOk) jsOk.innerHTML = 'JS status: <strong>running ✅</strong>';
+  function runKitty() {
+    if (hasRun) return;
+    hasRun = true;
 
-      if (!overlay || !bubble) return;
+    const overlay = document.getElementById('zkOverlay');
+    const bubble  = document.getElementById('zkBubble');
+    const hint    = document.getElementById('redirectHint');
 
-      const REDIRECT_TO = "shop.html";
-      const COUNTDOWN_SECONDS = 6;
+    if (!overlay || !bubble) return;
 
-      function setBubble(secondsLeft) {
-        bubble.innerHTML =
-          '<div class="zk-tail"></div>' +
-          'Yo! I\\'m <strong>Zombie Kitty</strong> 🧟‍🐱<br><br>' +
-          '<strong>THANK YOU</strong> for your order — you\\'re officially KornDog family.<br>' +
-          'Taking you back to the shop in <strong>' + secondsLeft + 's</strong>…' +
-          '<div class="zk-actions">' +
-            '<a href="shop.html">Shop More Wax</a>' +
-            '<a href="index.html">Home</a>' +
-          '</div>';
+    const REDIRECT_TO = "shop.html";
+    let seconds = 6;
+
+    function render() {
+      bubble.innerHTML =
+        '<div class="zk-tail"></div>' +
+        'Yo! I’m <strong>Zombie Kitty</strong> 🧟‍🐱<br><br>' +
+        '<strong>THANK YOU</strong> for your order.<br>' +
+        'Taking you back to the shop in <strong>' + seconds + 's</strong>…' +
+        '<div class="zk-actions">' +
+          '<a href="shop.html">Shop More Wax</a>' +
+          '<a href="index.html">Home</a>' +
+        '</div>';
+    }
+
+    overlay.classList.add('active');
+    render();
+
+    const timer = setInterval(() => {
+      seconds--;
+      if (seconds <= 0) {
+        clearInterval(timer);
+        overlay.classList.remove('active');
+        if (hint) hint.textContent = "Taking you back to the shop…";
+        setTimeout(() => {
+          window.location.replace(REDIRECT_TO);
+        }, 600);
+      } else {
+        render();
       }
+    }, 1000);
+  }
 
-      function safeRedirect() {
-        window.location.replace(REDIRECT_TO);
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        // show kitty immediately (no waiting on images/fonts)
-        overlay.classList.add('active');
-
-        let s = COUNTDOWN_SECONDS;
-        setBubble(s);
-
-        const timer = setInterval(() => {
-          s -= 1;
-          if (s <= 0) {
-            clearInterval(timer);
-            overlay.classList.remove('active');
-            if (hint) hint.textContent = "Taking you back to the shop…";
-            setTimeout(safeRedirect, 650);
-            return;
-          }
-          setBubble(s);
-        }, 1000);
-      });
-    })();
-  </script>
+  // 🔥 THIS IS THE SECRET SAUCE
+  runKitty();                         // immediate
+  window.addEventListener('pageshow', runKitty); // PayPal/mobile-safe
+})();
+</script>
+  
 </body>
 </html>
