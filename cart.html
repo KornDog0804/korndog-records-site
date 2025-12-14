@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <title>Your Cart • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Optional shared stylesheet (fine if it 404s) -->
+  <link rel="stylesheet" href="style.css">
+
   <style>
     :root {
       --bg: #050013;
@@ -17,9 +21,7 @@
       --danger: #ff4b6a;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -29,23 +31,15 @@
       background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+    a { color: inherit; text-decoration: none; }
 
-    /* HEADER / NAV – matches Home + Shop */
-
+    /* HEADER / NAV */
     header {
       position: sticky;
       top: 0;
       z-index: 10;
       backdrop-filter: blur(12px);
-      background: linear-gradient(
-        to right,
-        rgba(10, 1, 30, 0.95),
-        rgba(10, 1, 25, 0.9)
-      );
+      background: linear-gradient(to right, rgba(10, 1, 30, 0.95), rgba(10, 1, 25, 0.9));
       border-bottom: 1px solid rgba(123, 255, 90, 0.2);
     }
 
@@ -71,16 +65,17 @@
       border-radius: 999px;
       border: 2px solid var(--accent);
       background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
     }
 
     .brand-logo img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
 
     .brand-text {
@@ -147,27 +142,15 @@
     }
 
     /* MAIN / CART */
-
     main {
       max-width: 1100px;
       margin: 0 auto;
       padding: 1.5rem 1.25rem 3rem;
     }
 
-    .section {
-      margin-top: 1.5rem;
-    }
-
-    .section h2 {
-      margin: 0 0 0.75rem;
-      font-size: 1.8rem;
-    }
-
-    .section p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
+    .section { margin-top: 1.5rem; }
+    .section h2 { margin: 0 0 0.75rem; font-size: 1.8rem; }
+    .section p { margin: 0; color: var(--muted); font-size: 0.95rem; }
 
     .cart-layout {
       display: grid;
@@ -192,20 +175,10 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     }
 
-    .cart-row:last-child {
-      border-bottom: none;
-    }
+    .cart-row:last-child { border-bottom: none; }
 
-    .cart-title {
-      font-size: 0.95rem;
-      margin: 0 0 0.15rem;
-    }
-
-    .cart-grade {
-      margin: 0;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
+    .cart-title { font-size: 0.95rem; margin: 0 0 0.15rem; }
+    .cart-grade { margin: 0; font-size: 0.8rem; color: var(--muted); }
 
     .cart-qty {
       display: inline-flex;
@@ -226,21 +199,10 @@
       cursor: pointer;
     }
 
-    .cart-line-price {
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
+    .cart-line-price { font-weight: 600; font-size: 0.95rem; }
 
-    .cart-total {
-      margin-top: 0.6rem;
-      font-size: 1.05rem;
-    }
-
-    /* Neon pill buttons */
-
-    .btn-primary,
-    .btn-secondary,
-    .btn-danger {
+    /* Buttons */
+    .btn-primary, .btn-secondary, .btn-danger {
       border-radius: 999px;
       padding: 0.6rem 1.3rem;
       font-size: 0.92rem;
@@ -249,29 +211,16 @@
       font-weight: 600;
     }
 
-    .btn-primary {
-      background: var(--accent);
-      color: #02010a;
-    }
-
+    .btn-primary { background: var(--accent); color: #02010a; }
     .btn-secondary {
       background: rgba(123, 255, 90, 0.16);
       border: 1px solid rgba(123, 255, 90, 0.5);
       color: var(--accent);
     }
+    .btn-danger { background: var(--danger); color: #fff; }
 
-    .btn-danger {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.05);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(123, 255, 90, 0.24);
-    }
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-secondary:hover { background: rgba(123, 255, 90, 0.24); }
 
     footer {
       max-width: 1100px;
@@ -279,33 +228,27 @@
       padding: 0 1.25rem 2rem;
       font-size: 0.78rem;
       color: var(--muted);
+      text-align: center;
     }
 
-    footer strong {
-      color: var(--accent);
-    }
+    footer strong { color: var(--accent); }
 
     @media (max-width: 800px) {
-      .cart-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .nav-inner {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      .brand-text {
-        display: none;
-      }
+      .cart-layout { grid-template-columns: minmax(0, 1fr); }
+      .nav-inner { flex-wrap: wrap; justify-content: center; }
+      .brand-text { display: none; }
     }
   </style>
+
+  <!-- Your site logic -->
   <script defer src="script.js"></script>
 </head>
+
 <body>
   <header>
     <div class="nav-inner">
       <div class="brand">
         <div class="brand-logo">
-          <!-- Same circle logo as Home/Shop -->
           <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
         </div>
         <div class="brand-text">
@@ -313,6 +256,7 @@
           <span>Nashville Born · Bowling Green Driven</span>
         </div>
       </div>
+
       <nav>
         <a href="index.html" class="nav-link">Home</a>
         <a href="shop.html" class="nav-link">Shop</a>
@@ -329,21 +273,33 @@
       <p>Double-check titles and grades before you pay. Once it ships, the therapy session begins.</p>
 
       <div class="cart-layout">
+        <!-- LEFT: ITEMS -->
         <div class="card">
-          <h3>Records</h3>
+          <h3 style="margin:0;">Records</h3>
           <div id="cart-items" style="margin-top:0.75rem;"></div>
-          <button class="btn-secondary" style="margin-top:0.75rem;" onclick="clearCart()">Clear Cart</button>
+
+          <button class="btn-secondary" style="margin-top:0.75rem;" onclick="clearCart()">
+            Clear Cart
+          </button>
         </div>
 
+        <!-- RIGHT: SUMMARY -->
         <div class="card">
-          <h3>Summary</h3>
-          <p style="font-size:0.85rem;color:var(--muted);">
-            Shipping: $7.99 flat for up to 3 records, then $2 per extra record.
-            Orders $130+ get an automatic 10% discount before shipping.
+          <h3 style="margin:0;">Summary</h3>
+
+          <p style="font-size:0.85rem;color:var(--muted); margin-top:0.5rem;">
+            Shipping: <b>$7.99</b> base + <b>$0.50</b> per record.
+            Orders <b>$130+</b> get an automatic <b>10% discount</b> before shipping.
           </p>
+
           <div id="cart-summary" style="margin-top:0.75rem;"></div>
-          <button id="paypal-button" class="btn-primary" style="margin-top:1rem;width:100%;">Pay with PayPal</button>
+
+          <button id="paypal-button" class="btn-primary" style="margin-top:1rem;width:100%;">
+            Pay with PayPal
+          </button>
+
           <form id="paypal-form" style="display:none;"></form>
+
           <p style="margin-top:0.75rem;font-size:0.8rem;color:var(--muted);">
             Questions or special requests? Add a note in PayPal and Joey will hit you back.
           </p>
@@ -353,7 +309,7 @@
   </main>
 
   <footer>
-    <p>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</p>
+    © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
 </body>
 </html>
