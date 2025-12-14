@@ -282,7 +282,8 @@
     "images": {
       "front": "images/Kansas-1764299103385.jpg",
       "back": "images/Kansas-1764299103385.jpg"
-    }
+    },
+    "tier": "tenbin"
   },
   {
     "id": "ten-dolla-holla",
