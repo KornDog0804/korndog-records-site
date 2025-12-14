@@ -426,11 +426,19 @@
     "id": "the-police-zenyatta-mondatta",
     "artist": "The Police",
     "title": "Zenyatta Mondatta",
-    "price": 9.99,
+    "price": 10,
     "grade": "VG+/VG+",
     "image": "images/The_Police-1764229577731.jpg",
     "description": "Great copy. Super clean.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "tenbin",
+    "imageFront": "images/The_Police-1764229577731.jpg",
+    "imageBack": "images/The_Police-1764229577731.jpg",
+    "images": {
+      "front": "images/The_Police-1764229577731.jpg",
+      "back": "images/The_Police-1764229577731.jpg"
+    }
   },
   {
     "id": "compilation-album-hiphop-50yrs",
