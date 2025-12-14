@@ -168,11 +168,19 @@
     "id": "foreigner-4",
     "artist": "Foreigner",
     "title": "4",
-    "price": 4.99,
+    "price": 10,
     "grade": "VG/VG+",
     "image": "images/Foreigner-1764230780118.jpg",
     "description": "You know it, you love it, now it can be yours.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "tenbin",
+    "imageFront": "images/Foreigner-1764230780118.jpg",
+    "imageBack": "images/Foreigner-1764230780118.jpg",
+    "images": {
+      "front": "images/Foreigner-1764230780118.jpg",
+      "back": "images/Foreigner-1764230780118.jpg"
+    }
   },
   {
     "id": "grateful-dead-50th-anniversary-picture-disc",
