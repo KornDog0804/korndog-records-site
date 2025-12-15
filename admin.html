@@ -1,204 +1,107 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>KornDog Admin — Mark Sold</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>KornDog Admin — Mark Sold</title>
 
-  <style>
-    body {
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background:#0b0620;
-      color:#eae6ff;
-    }
-    .wrap { max-width: 1000px; margin: 0 auto; padding: 18px; }
-    .card {
-      background: rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius:16px;
-      padding:16px;
-    }
-    h1 { margin:0 0 10px; font-size:22px; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0; }
-    button {
-      cursor:pointer;
-      border:0;
-      border-radius:12px;
-      padding:10px 14px;
-      font-weight:800;
-    }
-    .btn { background:#7bff5a; color:#0b0620; }
-    .btn2 {
-      background:transparent;
-      color:#7bff5a;
-      border:1px solid rgba(123,255,90,0.6);
-    }
-    .btnDanger { background:#ff4d4d; color:#14060a; }
-    input {
-      padding:10px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.25);
-      color:#eae6ff;
-      flex:1;
-    }
-    table { width:100%; border-collapse: collapse; margin-top: 10px; }
-    th, td {
-      text-align:left;
-      padding:10px;
-      border-bottom:1px solid rgba(255,255,255,0.10);
-      vertical-align: top;
-    }
-    th {
-      font-size:12px;
-      letter-spacing:.06em;
-      text-transform: uppercase;
-      opacity:.8;
-    }
-    .pill {
-      display:inline-block;
-      padding:4px 10px;
-      border-radius:999px;
-      font-weight:800;
-      font-size:12px;
-    }
-    .ok {
-      background: rgba(123,255,90,0.18);
-      color:#7bff5a;
-      border:1px solid rgba(123,255,90,0.35);
-    }
-    .sold {
-      background: rgba(255,77,77,0.18);
-      color:#ff7a7a;
-      border:1px solid rgba(255,77,77,0.35);
-    }
-    .small { opacity:.85; font-size:13px; line-height:1.4; }
-    .mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size:12px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .topbar {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-  </style>
+<style>
+body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background:#0b0620; color:#eae6ff; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
+.card { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:16px; }
+h1 { margin: 0 0 10px; font-size: 22px; }
+.row { display:flex; gap:10px; flex-wrap:wrap; margin: 12px 0; }
+button { cursor:pointer; border:0; border-radius: 12px; padding: 10px 12px; font-weight: 700; }
+.btn { background:#7bff5a; color:#0b0620; }
+.btn2 { background: transparent; color:#7bff5a; border:1px solid rgba(123,255,90,0.6); }
+.btnDanger { background:#ff4d4d; color:#14060a; }
+input { padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.25); color:#eae6ff; }
+table { width:100%; border-collapse: collapse; margin-top: 10px; }
+th, td { text-align:left; padding:10px; border-bottom:1px solid rgba(255,255,255,0.10); vertical-align: top; }
+th { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; opacity: .8; }
+.pill { display:inline-block; padding:4px 10px; border-radius:999px; font-weight:800; font-size:12px; }
+.ok { background: rgba(123,255,90,0.18); color:#7bff5a; border:1px solid rgba(123,255,90,0.35); }
+.sold { background: rgba(255,77,77,0.18); color:#ff7a7a; border:1px solid rgba(255,77,77,0.35); }
+.small { opacity:.85; font-size: 13px; line-height: 1.4; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; white-space: pre-wrap; }
+.topbar { display:flex; align-items:center; justify-content:space-between; }
+</style>
 </head>
 
 <body>
 <div class="wrap">
-  <div class="card">
-    <div class="topbar">
-      <h1>KornDog Admin — Mark Sold</h1>
-      <span class="small" id="status">Locked</span>
-    </div>
+<div class="card">
+<div class="topbar">
+<h1>Korndog Admin — Mark Sold</h1>
+<span class="small" id="status">Locked</span>
+</div>
 
-    <!-- LOCK -->
-    <div id="lockBox">
-      <p class="small">
-        Static admin. This generates a new <b>products.json2</b> you download and upload to GitHub.
-      </p>
-      <div class="row">
-        <input id="pw" type="password" placeholder="Enter admin passphrase" />
-        <button class="btn" id="unlockBtn">Unlock</button>
-      </div>
-    </div>
+<div id="lockBox">
+<p class="small">Static admin. Generates a new <b>products.json2</b> for upload.</p>
+<div class="row">
+<input id="pw" type="password" placeholder="Admin passphrase" />
+<button class="btn" id="unlockBtn">Unlock</button>
+</div>
+</div>
 
-    <!-- APP -->
-    <div id="app" style="display:none;">
-      <div class="row">
-        <button class="btn2" id="reloadBtn">Reload products.json2</button>
-        <button class="btn" id="downloadBtn">Download updated products.json2</button>
-        <button class="btn2" id="copyBtn">Copy JSON</button>
-        <button class="btnDanger" id="resetBtn">Reset local changes</button>
-      </div>
+<div id="app" style="display:none;">
+<div class="row">
+<button class="btn2" id="reloadBtn">Reload</button>
+<button class="btn" id="downloadBtn">Download products.json2</button>
+<button class="btn2" id="copyBtn">Copy JSON</button>
+<button class="btnDanger" id="resetBtn">Reset</button>
+</div>
 
-      <div class="row">
-        <input id="filter" placeholder="Search artist / title / id..." />
-      </div>
+<input id="filter" placeholder="Search…" style="width:100%; margin:10px 0;" />
+<div class="small" id="counts"></div>
 
-      <div class="small" id="counts"></div>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Item</th>
+<th>Price</th>
+<th>Qty</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="rows"></tbody>
+</table>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Status</th>
-            <th>Item</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-
-      <div style="margin-top:12px;">
-        <div class="small">Preview (first 2 items):</div>
-        <div class="card mono" id="preview" style="margin-top:8px;"></div>
-      </div>
-    </div>
-  </div>
+<pre class="card mono" id="preview"></pre>
+</div>
+</div>
 </div>
 
 <script>
-/* =========================
-   KORNDOG ADMIN (STATIC)
-   ========================= */
-
 const PRODUCTS_FILE = "./products.json2";
-const ADMIN_PASSPHRASE = "korndogonly2025"; // 🔐 SET
-const LS_KEY = "korndog_admin_products_override_v1";
 
+/* 🔐 PASSWORD IS SET HERE */
+const ADMIN_PASSPHRASE = "korndogonly2025";
+
+const LS_KEY = "korndog_admin_products_override_v1";
 let products = [];
+
 const $ = id => document.getElementById(id);
 
-const isSold = p => (p.available === false) || Number(p.quantity ?? 1) <= 0;
+const isSold = p => (p.available === false || Number(p.quantity) <= 0);
 
 const normalize = p => ({
   ...p,
-  id: p.id ?? "",
-  title: p.title ?? "",
-  artist: p.artist ?? "",
-  price: Number(p.price ?? 0),
+  price: Number(p.price || 0),
   quantity: typeof p.quantity === "number" ? p.quantity : 1,
-  tier: p.tier ?? "premium",
+  available: p.available !== false
 });
 
 async function loadFresh() {
-  const res = await fetch(PRODUCTS_FILE, { cache:"no-store" });
-  if (!res.ok) throw new Error("Failed to load products.json2");
-  const raw = await res.json();
-  if (!Array.isArray(raw)) throw new Error("products.json2 must be an array");
-  return raw.map(normalize);
-}
-
-function loadLocal() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.map(normalize) : null;
-  } catch { return null; }
+  const res = await fetch(PRODUCTS_FILE, { cache: "no-store" });
+  return (await res.json()).map(normalize);
 }
 
 function saveLocal() {
   localStorage.setItem(LS_KEY, JSON.stringify(products, null, 2));
-  updatePreview();
-}
-
-function resetLocal() {
-  localStorage.removeItem(LS_KEY);
-}
-
-function updatePreview() {
   $("preview").textContent = JSON.stringify(products.slice(0,2), null, 2);
 }
-
-function setStatus(t) { $("status").textContent = t; }
 
 function render() {
   const rows = $("rows");
@@ -209,21 +112,17 @@ function render() {
     `${p.artist} ${p.title} ${p.id}`.toLowerCase().includes(q)
   );
 
-  const soldCount = products.filter(isSold).length;
-  $("counts").textContent =
-    `Total: ${products.length} • Available: ${products.length - soldCount} • Sold: ${soldCount}`;
+  const sold = products.filter(isSold).length;
+  $("counts").textContent = `Total: ${products.length} | Live: ${products.length-sold} | Sold: ${sold}`;
 
   visible.forEach(p => {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${isSold(p) ? `<span class="pill sold">SOLD</span>` : `<span class="pill ok">LIVE</span>`}</td>
-      <td>
-        <b>${p.artist ? `${p.artist} — ${p.title}` : p.title}</b>
-        <div class="small mono">ID: ${p.id}</div>
-      </td>
+      <td>${isSold(p) ? '<span class="pill sold">SOLD</span>' : '<span class="pill ok">LIVE</span>'}</td>
+      <td><b>${p.artist ? p.artist+" — " : ""}${p.title}</b><br><span class="small mono">${p.id}</span></td>
       <td>$${p.price.toFixed(2)}</td>
-      <td class="mono">${p.quantity}</td>
+      <td>${p.quantity}</td>
       <td></td>
     `;
 
@@ -250,76 +149,39 @@ function render() {
       render();
     };
 
-    const qtyBtn = document.createElement("button");
-    qtyBtn.className = "btn2";
-    qtyBtn.textContent = "Set Qty";
-    qtyBtn.style.marginLeft = "6px";
-    qtyBtn.onclick = () => {
-      const n = prompt("New quantity (0 hides item):", p.quantity);
-      if (n === null) return;
-      const q = Math.max(0, Number(n));
-      p.quantity = q;
-      p.available = q > 0;
-      saveLocal();
-      render();
-    };
-
-    actions.append(soldBtn, liveBtn, qtyBtn);
+    actions.appendChild(soldBtn);
+    actions.appendChild(liveBtn);
     rows.appendChild(tr);
   });
-
-  updatePreview();
-}
-
-async function boot() {
-  setStatus("Loading…");
-  const local = loadLocal();
-  if (local) {
-    products = local;
-    setStatus("Unlocked • Local edits loaded");
-  } else {
-    products = await loadFresh();
-    saveLocal();
-    setStatus("Unlocked • Loaded from products.json2");
-  }
-  render();
 }
 
 $("unlockBtn").onclick = async () => {
   if ($("pw").value !== ADMIN_PASSPHRASE) {
-    alert("Wrong passphrase.");
+    alert("Wrong passphrase");
     return;
   }
   $("lockBox").style.display = "none";
   $("app").style.display = "block";
-  await boot();
-};
-
-$("reloadBtn").onclick = async () => {
-  if (!confirm("Reload fresh and wipe local edits?")) return;
-  resetLocal();
-  products = await loadFresh();
+  products = JSON.parse(localStorage.getItem(LS_KEY)) || await loadFresh();
   saveLocal();
   render();
 };
 
 $("downloadBtn").onclick = () => {
-  const blob = new Blob([JSON.stringify(products, null, 2)], { type:"application/json" });
+  const blob = new Blob([JSON.stringify(products, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "products.json2";
   a.click();
-  URL.revokeObjectURL(a.href);
 };
 
 $("copyBtn").onclick = async () => {
   await navigator.clipboard.writeText(JSON.stringify(products, null, 2));
-  alert("Copied products.json2 to clipboard");
+  alert("Copied");
 };
 
 $("resetBtn").onclick = async () => {
-  if (!confirm("Reset local edits?")) return;
-  resetLocal();
+  localStorage.removeItem(LS_KEY);
   products = await loadFresh();
   saveLocal();
   render();
