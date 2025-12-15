@@ -1,263 +1,210 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>KornDog Admin</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KornDog Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-:root{--bg:#050013;--bg2:#2a0a60;--t:#f5f5ff;--m:#a1a1c5;--a:#7bff5a;--a2:#7ef7ff;--d:#ff4b6a}
-*{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,sans-serif}body{margin:0;min-height:100vh;color:var(--t);background:radial-gradient(circle at top,var(--bg2) 0,var(--bg) 55%)}a{color:inherit;text-decoration:none}
-header{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);background:linear-gradient(to right,rgba(10,1,30,.95),rgba(10,1,25,.9));border-bottom:1px solid rgba(123,255,90,.2)}
-.nav{max-width:1100px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.logo{width:44px;height:44px;border-radius:999px;border:2px solid var(--a);background:radial-gradient(circle at 30% 30%,#5a00ff,#140032);overflow:hidden}
-.logo img{width:100%;height:100%;object-fit:cover}
-.links{display:flex;gap:.75rem;align-items:center}.lnk{padding:.6rem 1.6rem;border-radius:999px;font-size:.92rem;color:var(--m);border:1px solid transparent}
-.lnk:hover{border-color:rgba(123,255,90,.6);color:var(--t)}.lnk.on{background:var(--a);color:#02010a;font-weight:800}
-main{max-width:1100px;margin:0 auto;padding:1.5rem 1.25rem 3rem}h1{margin:.25rem 0;font-size:2rem}p.sub{margin:0 0 1.25rem;color:var(--m);font-size:.95rem}
-.sec{margin-top:1.25rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:1.4rem;padding:1.1rem 1.1rem 1.25rem;box-shadow:0 18px 40px rgba(0,0,0,.35)}
-.st{margin:0 0 .75rem;font-size:1.05rem;letter-spacing:.14em;text-transform:uppercase;color:var(--a2)}
-label{display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--m);margin:0 0 .35rem}
-input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(5,0,15,.9);color:var(--t);outline:none;font-size:.95rem}
-textarea{border-radius:14px;min-height:90px;resize:vertical;line-height:1.35}
-input:focus,textarea:focus,select:focus{border-color:var(--a);box-shadow:0 0 0 1px rgba(123,255,90,.35)}
-.row{display:flex;gap:12px;flex-wrap:wrap}.f{flex:1;min-width:180px;margin-bottom:10px}.hint{font-size:.82rem;color:var(--m);margin-top:.35rem}
-.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:999px;border:none;font-weight:900;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-size:.8rem;white-space:nowrap}
-.btn:active{transform:translateY(1px)}.pri{background:var(--a);color:#02010a}.out{background:transparent;color:var(--a);border:1px solid rgba(123,255,90,.55)}
-.soft{background:rgba(123,255,90,.16);border:1px solid rgba(123,255,90,.5);color:var(--a)}.dang{background:var(--d);color:#fff}
-.stat{margin-top:10px;padding:10px 12px;border-radius:999px;font-size:.85rem;border:1px solid rgba(123,255,90,.35);background:rgba(123,255,90,.06);color:var(--a)}
-.stat.err{border-color:rgba(255,75,106,.45);background:rgba(255,75,106,.08);color:var(--d)}
-.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-.list{display:flex;flex-direction:column;gap:12px;margin-top:12px}
-.card{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18)}
-.thumb{width:78px;height:78px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);overflow:hidden;flex:0 0 auto}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.meta{flex:1;min-width:0}.ttl{margin:0 0 4px;font-weight:950;font-size:1rem}.sub2{margin:0;color:var(--m);font-size:.86rem;line-height:1.25}
-.badges{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
-.badge{font-size:.72rem;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.18);color:var(--m)}
-.badge.live{border-color:rgba(123,255,90,.35);color:var(--a)}.badge.hidden{border-color:rgba(255,75,106,.35);color:var(--d)}
-.pills{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}.pill{border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.03);color:var(--m);padding:6px 10px;font-size:.78rem;cursor:pointer}
-.pill:hover{background:rgba(123,255,90,.12);color:var(--a)}
-.chk{display:flex;align-items:center;gap:8px;margin-top:6px}.chk input{width:16px;height:16px}
-@media(max-width:720px){.card{flex-direction:column}.thumb{width:100%;height:auto;aspect-ratio:1/1}}
-</style></head>
+body {
+  margin:0;
+  font-family: system-ui, sans-serif;
+  background:#0b0018;
+  color:#f5f5ff;
+}
+main {
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+.section {
+  background:#140028;
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:20px;
+}
+h1,h2 { margin-top:0; }
+input,textarea {
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border-radius:10px;
+  border:none;
+}
+button {
+  padding:10px 16px;
+  border-radius:999px;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+}
+.primary { background:#b8ff4a; color:#05000b; }
+.outline { background:transparent; color:#b8ff4a; border:1px solid #b8ff4a; }
+.danger { background:#ff5f5f; color:#000; }
+.card {
+  background:#1c0038;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+.badge {
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:12px;
+}
+.live { background:#7ef7ff; color:#000; }
+.sold { background:#666; }
+</style>
+</head>
+
 <body>
-<header><div class="nav">
-<a href="index.html" aria-label="Home"><div class="logo"><img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo"/></div></a>
-<div class="links"><a class="lnk" href="index.html">Home</a><a class="lnk" href="shop.html">Shop</a><a class="lnk" href="cart.html">Cart</a><a class="lnk on" href="admin.html">Admin</a></div>
-</div></header>
-
 <main>
+
 <h1>KornDog Admin</h1>
-<p class="sub">Whatnot-style uploads · Live edits · <b>products.json2 only</b> · Mark Sold included.</p>
 
-<section class="sec"><div class="st">1. GitHub Token</div>
-<div class="f"><label>Personal Access Token</label><input id="tok" type="text" placeholder="Paste token (repo access)"/><div class="hint">Stored only in this browser (localStorage).</div></div>
-<div class="btns"><button class="btn out" id="setTok" type="button">Set / Change Token</button><button class="btn soft" id="ref" type="button">Refresh Inventory</button></div>
-<div id="stat" class="stat"><span id="statTxt">Waiting…</span></div></section>
-
-<section class="sec"><div class="st">2. Add / Edit Record</div>
-<div class="hint" id="editHint" style="display:none;margin-bottom:10px"><b>EDIT MODE:</b> ID locked. Photos optional unless replacing.</div>
-<form id="frm">
-<div class="f"><label>Record ID (no spaces)</label><input id="rid" type="text" placeholder="sleep-token-even-in-arcadia"/></div>
-<div class="row"><div class="f"><label>Artist</label><input id="artist" type="text"/></div><div class="f"><label>Title</label><input id="title" type="text"/></div></div>
-<div class="row"><div class="f"><label>Price</label><input id="price" type="number" step="0.01"/></div><div class="f"><label>Grade</label><input id="grade" type="text" placeholder="NM/NM"/></div><div class="f"><label>Qty</label><input id="qty" type="number" min="0" value="1"/></div></div>
-<div class="row">
-<div class="f"><label>Tier</label>
-<select id="tier"><option value="premium">Premium</option><option value="tenbin">$10 Bin</option><option value="threefor25">3 for $25</option><option value="budget">Budget</option><option value="sealed">Sealed</option></select>
-</div>
-<div class="f"><label>Visible on Site</label><div class="chk"><input id="avail" type="checkbox" checked/><span class="hint" style="margin:0">Checked = live</span></div></div>
-</div>
-<div class="f"><label>Description</label><textarea id="desc"></textarea></div>
-<div class="row"><div class="f"><label>Front Photo</label><input id="front" type="file" accept="image/*"/><div class="hint">Required for NEW.</div></div>
-<div class="f"><label>Back / Vinyl Photo</label><input id="back" type="file" accept="image/*"/><div class="hint">Optional.</div></div></div>
-<div class="btns" style="margin-top:14px"><button id="saveBtn" class="btn pri" type="submit">Save Record</button><button id="cancel" class="btn out" type="button" style="display:none">Cancel Edit</button></div>
-</form></section>
-
-<section class="sec"><div class="st">3. Mark Sold / Back In Stock</div>
-<div class="f"><label>Search (artist/title/id)</label><input id="msSearch" type="text" placeholder="Type: randy, hendrix, acdc…"/><div class="hint">Tap a pill to select.</div></div>
-<div id="msPills" class="pills"></div>
-<div class="row">
-<div class="f"><label>Action</label>
-<select id="msAction">
-<option value="sold">Save as SOLD (hide + archive)</option>
-<option value="available">Back in stock (show + unsold)</option>
-<option value="hide">Hide only (available=false)</option>
-<option value="show">Show only (available=true)</option>
-</select>
-</div>
-<div class="f"><label>Back-in-stock Qty</label><input id="msQty" type="number" min="0" value="1"/><div class="hint">Only used for “Back in stock”.</div></div>
-</div>
-<div class="btns"><button class="btn pri" type="button" id="msSave">Save change to site</button><button class="btn dang" type="button" id="qSold">Quick: Mark SOLD</button><button class="btn soft" type="button" id="qAvail">Quick: Mark AVAILABLE</button></div>
+<section class="section">
+<h2>GitHub Token</h2>
+<input id="tokenInput" placeholder="Paste GitHub token">
+<button class="outline" onclick="saveToken()">Save Token</button>
+<p id="status"></p>
 </section>
 
-<section class="sec"><div class="st">4. Inventory (View + Edit)</div>
-<div class="tools">
-<div class="f" style="margin:0;flex:1;min-width:220px"><label>Search</label><input id="invQ" type="text" placeholder="Search artist, title, id, tier…"/></div>
-<div class="f" style="margin:0;min-width:220px"><label>Filter</label>
-<select id="invF">
-<option value="live">Live Only</option><option value="all">All (Live + Sold)</option><option value="hidden">Hidden Only</option><option value="sold">Sold Only</option>
-<option value="premium">Premium</option><option value="tenbin">$10 Bin</option><option value="threefor25">3 for $25</option><option value="budget">Budget</option><option value="sealed">Sealed</option>
-</select></div>
-</div>
-<div class="hint" style="margin-top:8px">Tap <b>Edit</b> to load into Section 2, then save.</div>
-<div id="list" class="list"></div>
+<section class="section">
+<h2>Add / Edit Record</h2>
+<input id="id" placeholder="unique-id">
+<input id="artist" placeholder="Artist">
+<input id="title" placeholder="Title">
+<input id="price" type="number" step="0.01" placeholder="Price">
+<input id="grade" placeholder="Grade (NM/NM)">
+<input id="quantity" type="number" min="0" value="1">
+<textarea id="description" placeholder="Description"></textarea>
+<button class="primary" onclick="saveRecord()">Save Record</button>
 </section>
+
+<section class="section">
+<h2>Live Inventory</h2>
+<input id="search" placeholder="Search..." oninput="render()">
+<div id="inventory"></div>
+</section>
+
 </main>
 
 <script>
-const OWNER="KornDog0804",REPO="korndog-records-site",BRANCH="main",PRODUCTS_PATH="products.json2",IMAGES_FOLDER="images";
-const stat=document.getElementById("stat"),statTxt=document.getElementById("statTxt");
-const tok=document.getElementById("tok"),setTok=document.getElementById("setTok"),ref=document.getElementById("ref");
-const frm=document.getElementById("frm"),editHint=document.getElementById("editHint"),cancel=document.getElementById("cancel"),saveBtn=document.getElementById("saveBtn");
-const rid=document.getElementById("rid"),artist=document.getElementById("artist"),title=document.getElementById("title"),price=document.getElementById("price"),grade=document.getElementById("grade"),qty=document.getElementById("qty"),tier=document.getElementById("tier"),avail=document.getElementById("avail"),desc=document.getElementById("desc"),front=document.getElementById("front"),back=document.getElementById("back");
-const msSearch=document.getElementById("msSearch"),msPills=document.getElementById("msPills"),msAction=document.getElementById("msAction"),msSave=document.getElementById("msSave"),qSold=document.getElementById("qSold"),qAvail=document.getElementById("qAvail"),msQty=document.getElementById("msQty");
-const invQ=document.getElementById("invQ"),invF=document.getElementById("invF"),list=document.getElementById("list");
-const TOKEN_KEY="korndog_github_token";
-let cache=null,editMode={on:false,id:""};
+const OWNER = "KornDog0804";
+const REPO = "korndog-records-site";
+const PATH = "products.json2";
+let products = [];
+let sha = "";
 
-function setStatus(msg,k="ok"){statTxt.textContent=msg;stat.classList.toggle("err",k==="err")}
-function getToken(){return localStorage.getItem(TOKEN_KEY)||""}
-function needToken(){const t=getToken();if(!t){setStatus("No GitHub token set. Paste it in Section 1 first.","err");throw Error("no token")}return t}
-function norm(s){return (s||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
-async function gh(path,opt={}){
-  const t=needToken();
-  const res=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`,{...opt,headers:{Authorization:"token "+t,Accept:"application/vnd.github+json",...(opt.headers||{})}});
-  if(!res.ok){console.error("GitHub",res.status,await res.text());throw Error("GitHub API "+res.status)}
+const $ = id => document.getElementById(id);
+
+function setStatus(msg){ $("status").textContent = msg; }
+
+function saveToken(){
+  localStorage.setItem("gh_token", $("tokenInput").value.trim());
+  setStatus("Token saved");
+  load();
+}
+
+function token(){
+  return localStorage.getItem("gh_token");
+}
+
+async function gh(method, body){
+  const res = await fetch(
+    `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`,
+    {
+      method,
+      headers:{
+        Authorization:`token ${token()}`,
+        Accept:"application/vnd.github+json"
+      },
+      body
+    }
+  );
+  if(!res.ok) throw new Error("GitHub error");
   return res.json();
 }
-async function getFile(path){
-  const d=await gh(path,{method:"GET"});
-  const txt=atob((d.content||"").replace(/\n/g,""));
-  return {txt,sha:d.sha};
-}
-async function putText(path,txt,message,sha){
-  const content=btoa(unescape(encodeURIComponent(txt)));
-  const body={message,content,branch:BRANCH}; if(sha) body.sha=sha;
-  return gh(path,{method:"PUT",body:JSON.stringify(body),headers:{"Content-Type":"application/json"}});
-}
-async function putB64(path,b64,message,sha){
-  const body={message,content:b64,branch:BRANCH}; if(sha) body.sha=sha;
-  return gh(path,{method:"PUT",body:JSON.stringify(body),headers:{"Content-Type":"application/json"}});
-}
-async function uploadImage(file){
-  const safe=Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9_.-]/g,"_");
-  const path=`${IMAGES_FOLDER}/${safe}`;
-  const b64=await new Promise((ok,fail)=>{const r=new FileReader();r.onload=()=>{const s=String(r.result||"");const i=s.indexOf(",");if(i<0) return fail(Error("bad data"));ok(s.slice(i+1))};r.onerror=()=>fail(r.error);r.readAsDataURL(file)});
-  await putB64(path,b64,"Add image "+safe);
-  return path;
-}
-async function loadProducts(){
-  try{const {txt,sha}=await getFile(PRODUCTS_PATH);const arr=JSON.parse(txt);if(!Array.isArray(arr)) throw Error("products must be array");return {arr,sha}}
-  catch(e){console.warn("loadProducts fallback",e.message);return {arr:[],sha:void 0}}
-}
-async function saveProducts(arr,sha,message){await putText(PRODUCTS_PATH,JSON.stringify(arr,null,2),message,sha)}
-async function refresh(){const {arr}=await loadProducts();cache=arr;return arr}
-async function products(){if(!cache) await refresh();return cache}
 
-function enterEdit(r){
-  editMode={on:true,id:r.id};
-  editHint.style.display="block"; cancel.style.display="inline-flex"; saveBtn.textContent="Save Update";
-  rid.value=r.id||""; rid.disabled=true;
-  artist.value=r.artist||""; title.value=r.title||""; price.value=(r.price!=null?r.price:""); grade.value=r.grade||""; qty.value=(r.quantity!=null?r.quantity:1);
-  tier.value=r.tier||"premium"; avail.checked=(r.available!==false); desc.value=r.description||"";
-  front.value=""; back.value="";
-  setStatus("Editing: "+((r.artist?r.artist+" — ":"")+(r.title||r.id)));
-  window.scrollTo({top:0,behavior:"smooth"});
+async function load(){
+  const file = await gh("GET");
+  sha = file.sha;
+  products = JSON.parse(atob(file.content));
+  render();
 }
-function exitEdit(){
-  editMode={on:false,id:""}; editHint.style.display="none"; cancel.style.display="none"; saveBtn.textContent="Save Record";
-  frm.reset(); qty.value=1; tier.value="premium"; avail.checked=true; rid.disabled=false;
-  setStatus("Edit cancelled. Ready.");
+
+function render(){
+  const q = $("search").value.toLowerCase();
+  $("inventory").innerHTML = "";
+
+  products
+    .filter(p => (p.quantity ?? 1) > 0)
+    .filter(p =>
+      p.artist.toLowerCase().includes(q) ||
+      p.title.toLowerCase().includes(q) ||
+      p.id.toLowerCase().includes(q)
+    )
+    .forEach(p=>{
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <b>${p.artist} – ${p.title}</b><br>
+        $${p.price} · ${p.grade} · Qty ${p.quantity}<br>
+        <span class="badge ${p.quantity>0?'live':'sold'}">
+          ${p.quantity>0?'LIVE':'SOLD'}
+        </span><br><br>
+        <button class="outline" onclick="edit('${p.id}')">Edit</button>
+        <button class="outline" onclick="markSold('${p.id}')">Mark Sold</button>
+        <button class="danger" onclick="removeRec('${p.id}')">Delete</button>
+      `;
+      $("inventory").appendChild(div);
+    });
 }
-cancel.addEventListener("click",exitEdit);
 
-function svgNoImg(){return"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><rect width="100%" height="100%" fill="#1a1030"/><text x="50%" y="50%" fill="#a1a1c5" font-size="18" font-family="Arial" text-anchor="middle" dominant-baseline="middle">No Image</text></svg>`)}
-function badge(text,cls){const s=document.createElement("span");s.className="badge "+(cls||"");s.textContent=text;return s}
-
-function passFilter(r){
-  const f=invF.value;
-  if(f==="live") return r.available!==false && r.sold!==true;
-  if(f==="all") return true;
-  if(f==="hidden") return r.available===false;
-  if(f==="sold") return r.sold===true;
-  return (r.tier||"premium")===f;
-}
-function passSearch(r){
-  const q=norm(invQ.value.trim()); if(!q) return true;
-  return norm(r.id).includes(q)||norm(r.artist).includes(q)||norm(r.title).includes(q)||norm(r.tier).includes(q);
-}
-async function render(){
-  list.innerHTML="";
-  try{needToken()}catch{return}
-  const arr=(await products()).filter(r=>passFilter(r)&&passSearch(r));
-  if(!arr.length){const d=document.createElement("div");d.className="hint";d.textContent="No matches. Try another search/filter.";list.appendChild(d);return}
-  arr.slice(0,250).forEach(r=>{
-    const card=document.createElement("div");card.className="card";
-    const thumb=document.createElement("div");thumb.className="thumb";
-    const img=document.createElement("img");
-    const src=r.imageFront||r.image||(r.images&&r.images.front)||"";
-    img.src=src||svgNoImg(); img.alt=(r.artist?r.artist+" — ":"")+(r.title||r.id||"Record");
-    thumb.appendChild(img);
-
-    const meta=document.createElement("div");meta.className="meta";
-    const ttl=document.createElement("p");ttl.className="ttl";ttl.textContent=(r.artist?r.artist+" — ":"")+(r.title||r.id||"Unknown");
-    const sub=document.createElement("p");sub.className="sub2";
-    sub.textContent=`ID: ${r.id||""} · $${(r.price??"")} · ${(r.grade||"")} · Qty: ${(r.quantity??0)}`;
-    const b=document.createElement("div");b.className="badges";
-    b.appendChild(badge(r.sold===true?"SOLD":"LIVE",r.sold===true?"hidden":"live"));
-    b.appendChild(badge("Tier: "+(r.tier||"premium")));
-    if(r.available===false) b.appendChild(badge("Hidden","hidden"));
-    if(Number(r.price)===10) b.appendChild(badge("$10 PRICE","live"));
-    meta.appendChild(ttl);meta.appendChild(sub);meta.appendChild(b);
-
-    const btn=document.createElement("button");btn.type="button";btn.className="btn pri";btn.textContent="Edit";btn.onclick=()=>enterEdit(r);
-    card.appendChild(thumb);card.appendChild(meta);card.appendChild(btn);
-    list.appendChild(card);
+function edit(id){
+  const p = products.find(x=>x.id===id);
+  Object.keys(p).forEach(k=>{
+    if($(k)) $(k).value = p[k];
   });
 }
-invQ.addEventListener("input",()=>render().catch(()=>{}));
-invF.addEventListener("change",()=>render().catch(()=>{}));
 
-setTok.addEventListener("click",async()=>{
-  const v=tok.value.trim();
-  if(!v){localStorage.removeItem(TOKEN_KEY);tok.value="";setStatus("Token cleared.","err");return}
-  localStorage.setItem(TOKEN_KEY,v);tok.value="";tok.placeholder="Token set (•••"+v.slice(-6)+")";setStatus("Token saved. Wired in.");
-  await refresh(); await render();
-});
-ref.addEventListener("click",async()=>{try{needToken()}catch{return}setStatus("Refreshing…");await refresh();await render();setStatus("Inventory refreshed ✅")});
+function markSold(id){
+  const p = products.find(x=>x.id===id);
+  p.quantity = 0;
+  saveAll("Mark sold");
+}
 
-frm.addEventListener("submit",async(e)=>{
-  e.preventDefault(); try{needToken()}catch{return}
-  const id=rid.value.trim(),a=artist.value.trim(),t=title.value.trim(),p=parseFloat(price.value),g=grade.value.trim(),q=parseInt(qty.value||"0",10),ti=(tier.value||"premium").trim(),av=!!avail.checked,d=desc.value.trim();
-  const ff=front.files[0],bf=back.files[0];
-  if(!id||!a||!t||!g||Number.isNaN(p)){setStatus("Missing: ID, Artist, Title, Price, Grade.","err");return}
-  if(!editMode.on && !ff){setStatus("Front photo required for NEW records.","err");return}
-  setStatus(editMode.on?"Saving update…":"Uploading + saving…");
-  try{
-    const {arr,sha}=await loadProducts();
-    const i=arr.findIndex(x=>String(x.id)===String(id));
-    const old=i>=0?arr[i]:{};
-    let frontPath=old.imageFront||old.image||(old.images&&old.images.front)||"";
-    let backPath =old.imageBack ||(old.images&&old.images.back)||frontPath;
-    if(ff) frontPath=await uploadImage(ff);
-    if(bf) backPath=await uploadImage(bf);
-    if(!backPath) backPath=frontPath;
+function removeRec(id){
+  if(!confirm("Delete record?")) return;
+  products = products.filter(p=>p.id!==id);
+  saveAll("Delete record");
+}
 
-    const upd={id,artist:a,title:t,price:p,grade:g,quantity:Number.isFinite(q)?q:0,tier:ti,available:av,description:d,
-      image:frontPath,imageFront:frontPath,imageBack:backPath,images:{front:frontPath,back:backPath}
-    };
-    if(i>=0) arr[i]={...arr[i],...upd}; else arr.push(upd);
-    arr.sort((x,y)=>(x.artist||"").localeCompare(y.artist||"")||(x.title||"").localeCompare(y.title||""));
-    await saveProducts(arr,sha,(i>=0?"Update record: ":"Add record: ")+id);
-    await refresh(); await render();
-    setStatus("Saved ✅ "+a+" — "+t);
-    if(!editMode.on){frm.reset();qty.value=1;tier.value="premium";avail.checked=true}
-  }catch(err){console.error(err);setStatus("Save failed. Check token perms / repo / console.","err")}
-});
+function saveRecord(){
+  const p = {
+    id: id.value.trim(),
+    artist: artist.value.trim(),
+    title: title.value.trim(),
+    price: +price.value,
+    grade: grade.value.trim(),
+    quantity: +quantity.value,
+    description: description.value.trim()
+  };
+  const i = products.findIndex(x=>x.id===p.id);
+  i>=0 ? products[i]=p : products.push(p);
+  saveAll("Save record");
+}
 
-let msSelected="";
-async function buildPills(){
-  msPills.innerHTML=""; msSelected="";
-  const term=norm(msSearch.value.trim()); if(!term) return;
-  try{needToken()}catch{return}
-  const arr=await products();
-  arr.filter(p=>norm(p.id).includes(term)||norm(p.artist).includes(term)||norm(p.title).includes(term)).slice(0,10).forEach(p=>{
-    const b=document.createElement("button");b.type="button";b.className="pill";
-    b.textContent=(p.artist?p.artist+" — ":"")+(p.title||p.id); b.onclick=()=>{msSelected=p.id;msSearch.value=p.id;msPills.innerHTML="";setStatus("Selected: "+b.textContent)};
-    msPill
+async function saveAll(msg){
+  await gh("PUT", JSON.stringify({
+    message: msg,
+    content: btoa(JSON.stringify(products,null,2)),
+    sha
+  }));
+  load();
+}
+
+if(token()) load();
+</script>
+</body>
+</html>
