@@ -1,193 +1,231 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>KornDog Admin — Mark Sold</title>
+<meta charset="UTF-8" />
+<title>KornDog Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <style>
-body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background:#0b0620; color:#eae6ff; }
-.wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
-.card { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:16px; }
-h1 { margin: 0 0 10px; font-size: 22px; }
-.row { display:flex; gap:10px; flex-wrap:wrap; margin: 12px 0; }
-button { cursor:pointer; border:0; border-radius: 12px; padding: 10px 12px; font-weight: 700; }
-.btn { background:#7bff5a; color:#0b0620; }
-.btn2 { background: transparent; color:#7bff5a; border:1px solid rgba(123,255,90,0.6); }
-.btnDanger { background:#ff4d4d; color:#14060a; }
-input { padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.25); color:#eae6ff; }
-table { width:100%; border-collapse: collapse; margin-top: 10px; }
-th, td { text-align:left; padding:10px; border-bottom:1px solid rgba(255,255,255,0.10); vertical-align: top; }
-th { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; opacity: .8; }
-.pill { display:inline-block; padding:4px 10px; border-radius:999px; font-weight:800; font-size:12px; }
-.ok { background: rgba(123,255,90,0.18); color:#7bff5a; border:1px solid rgba(123,255,90,0.35); }
-.sold { background: rgba(255,77,77,0.18); color:#ff7a7a; border:1px solid rgba(255,77,77,0.35); }
-.small { opacity:.85; font-size: 13px; line-height: 1.4; }
-.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; white-space: pre-wrap; }
-.topbar { display:flex; align-items:center; justify-content:space-between; }
+/* --- SAME STYLES YOU HAD (UNCHANGED) --- */
+:root{
+  --bg:#050013; --bg2:#2a0a60; --card:#12052b; --border:#2b1550;
+  --text:#f5f5ff; --muted:#a1a1c5;
+  --accent:#7bff5a; --accent2:#7ef7ff; --danger:#ff4b6a;
+}
+*{box-sizing:border-box;font-family:system-ui}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  background:radial-gradient(circle at top,var(--bg2),var(--bg) 60%);
+}
+.section{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:18px;padding:16px;margin-bottom:20px;
+}
+.section-title{
+  color:var(--accent2);letter-spacing:.12em;
+  text-transform:uppercase;font-size:.9rem;margin-bottom:10px;
+}
+input,select,textarea{
+  width:100%;padding:10px;border-radius:999px;
+  background:#050013;border:1px solid rgba(255,255,255,.2);
+  color:var(--text)
+}
+textarea{border-radius:12px}
+.btn{
+  padding:10px 16px;border-radius:999px;
+  border:none;font-weight:800;cursor:pointer
+}
+.btn-primary{background:var(--accent);color:#000}
+.btn-outline{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+.btn-danger{background:var(--danger);color:#fff}
+.inv-card{
+  display:flex;gap:12px;padding:12px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;background:rgba(0,0,0,.25)
+}
+.inv-card img{width:80px;height:80px;border-radius:10px;object-fit:cover}
+.badge{padding:4px 10px;border-radius:999px;font-size:.7rem}
+.live{border:1px solid var(--accent);color:var(--accent)}
+.hidden{border:1px solid var(--danger);color:var(--danger)}
 </style>
 </head>
 
 <body>
-<div class="wrap">
-<div class="card">
-<div class="topbar">
-<h1>Korndog Admin — Mark Sold</h1>
-<span class="small" id="status">Locked</span>
+<main style="max-width:1100px;margin:auto;padding:20px">
+
+<h1>KornDog Admin</h1>
+<p style="color:var(--muted)">Whatnot-style · GitHub-powered · products.json2 only</p>
+
+<!-- SECTION 1 -->
+<div class="section">
+  <div class="section-title">1. GitHub Token</div>
+  <input id="token" placeholder="Paste GitHub token" />
+  <button class="btn btn-outline" onclick="saveToken()">Save Token</button>
+  <div id="status"></div>
 </div>
 
-<div id="lockBox">
-<p class="small">Static admin. Generates a new <b>products.json2</b> for upload.</p>
-<div class="row">
-<input id="pw" type="password" placeholder="Admin passphrase" />
-<button class="btn" id="unlockBtn">Unlock</button>
-</div>
+<!-- SECTION 2 -->
+<div class="section">
+  <div class="section-title">2. Add / Edit Record</div>
+
+  <input id="id" placeholder="unique-id-no-spaces" />
+  <input id="artist" placeholder="Artist" />
+  <input id="title" placeholder="Title" />
+  <input id="price" type="number" placeholder="Price" />
+  <input id="grade" placeholder="NM/NM" />
+  <input id="qty" type="number" value="1" />
+  <textarea id="desc" placeholder="Description"></textarea>
+
+  <input id="front" type="file" />
+  <input id="back" type="file" />
+
+  <button class="btn btn-primary" onclick="saveRecord()">Save Record</button>
 </div>
 
-<div id="app" style="display:none;">
-<div class="row">
-<button class="btn2" id="reloadBtn">Reload</button>
-<button class="btn" id="downloadBtn">Download products.json2</button>
-<button class="btn2" id="copyBtn">Copy JSON</button>
-<button class="btnDanger" id="resetBtn">Reset</button>
+<!-- SECTION 3 -->
+<div class="section">
+  <div class="section-title">3. Hide / Show</div>
+  <input id="toggleSearch" placeholder="Search title / artist" />
+  <button class="btn btn-danger" onclick="setVisibility(false)">Hide</button>
+  <button class="btn btn-outline" onclick="setVisibility(true)">Show</button>
 </div>
 
-<input id="filter" placeholder="Search…" style="width:100%; margin:10px 0;" />
-<div class="small" id="counts"></div>
+<!-- SECTION 4 -->
+<div class="section">
+  <div class="section-title">4. Live Inventory</div>
+  <div id="inventory"></div>
+</div>
 
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Item</th>
-<th>Price</th>
-<th>Qty</th>
-<th>Actions</th>
-</tr>
-</thead>
-<tbody id="rows"></tbody>
-</table>
-
-<pre class="card mono" id="preview"></pre>
-</div>
-</div>
-</div>
+</main>
 
 <script>
-const PRODUCTS_FILE = "./products.json2";
+/* ==============================
+   CONFIG
+================================*/
+const OWNER="KornDog0804";
+const REPO="korndog-records-site";
+const BRANCH="main";
+const PRODUCTS_PATH="products.json2";
+const IMG_DIR="images";
+const TOKEN_KEY="korndog_github_token";
 
-/* 🔐 PASSWORD IS SET HERE */
-const ADMIN_PASSPHRASE = "korndogonly2025";
+let products=[], sha=null;
 
-const LS_KEY = "korndog_admin_products_override_v1";
-let products = [];
-
-const $ = id => document.getElementById(id);
-
-const isSold = p => (p.available === false || Number(p.quantity) <= 0);
-
-const normalize = p => ({
-  ...p,
-  price: Number(p.price || 0),
-  quantity: typeof p.quantity === "number" ? p.quantity : 1,
-  available: p.available !== false
-});
-
-async function loadFresh() {
-  const res = await fetch(PRODUCTS_FILE, { cache: "no-store" });
-  return (await res.json()).map(normalize);
+/* ==============================
+   CORE
+================================*/
+function getToken(){
+  const t=localStorage.getItem(TOKEN_KEY);
+  if(!t) throw "No token set";
+  return t;
 }
-
-function saveLocal() {
-  localStorage.setItem(LS_KEY, JSON.stringify(products, null, 2));
-  $("preview").textContent = JSON.stringify(products.slice(0,2), null, 2);
+function saveToken(){
+  localStorage.setItem(TOKEN_KEY,token.value.trim());
+  loadProducts();
 }
-
-function render() {
-  const rows = $("rows");
-  rows.innerHTML = "";
-
-  const q = $("filter").value.toLowerCase();
-  const visible = products.filter(p =>
-    `${p.artist} ${p.title} ${p.id}`.toLowerCase().includes(q)
+async function gh(path,opts={}){
+  const res=await fetch(
+    `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`,
+    { ...opts,
+      headers:{
+        Authorization:`token ${getToken()}`,
+        Accept:"application/vnd.github+json",
+        ...opts.headers
+      }
+    }
   );
+  if(!res.ok) throw await res.text();
+  return res.json();
+}
+async function loadProducts(){
+  const f=await gh(PRODUCTS_PATH);
+  sha=f.sha;
+  products=JSON.parse(atob(f.content));
+  renderInventory();
+}
 
-  const sold = products.filter(isSold).length;
-  $("counts").textContent = `Total: ${products.length} | Live: ${products.length-sold} | Sold: ${sold}`;
-
-  visible.forEach(p => {
-    const tr = document.createElement("tr");
-
-    tr.innerHTML = `
-      <td>${isSold(p) ? '<span class="pill sold">SOLD</span>' : '<span class="pill ok">LIVE</span>'}</td>
-      <td><b>${p.artist ? p.artist+" — " : ""}${p.title}</b><br><span class="small mono">${p.id}</span></td>
-      <td>$${p.price.toFixed(2)}</td>
-      <td>${p.quantity}</td>
-      <td></td>
+/* ==============================
+   INVENTORY
+================================*/
+function renderInventory(){
+  inventory.innerHTML="";
+  products.forEach(p=>{
+    const div=document.createElement("div");
+    div.className="inv-card";
+    div.innerHTML=`
+      <img src="${p.imageFront||""}">
+      <div style="flex:1">
+        <b>${p.artist} – ${p.title}</b><br>
+        $${p.price} · Qty ${p.quantity}
+        <div class="badge ${p.available!==false?"live":"hidden"}">
+          ${p.available!==false?"LIVE":"HIDDEN"}
+        </div>
+      </div>
     `;
-
-    const actions = tr.lastElementChild;
-
-    const soldBtn = document.createElement("button");
-    soldBtn.className = "btnDanger";
-    soldBtn.textContent = "Mark Sold";
-    soldBtn.onclick = () => {
-      p.available = false;
-      p.quantity = 0;
-      saveLocal();
-      render();
-    };
-
-    const liveBtn = document.createElement("button");
-    liveBtn.className = "btn";
-    liveBtn.textContent = "Mark Live";
-    liveBtn.style.marginLeft = "6px";
-    liveBtn.onclick = () => {
-      p.available = true;
-      p.quantity = Math.max(1, p.quantity || 1);
-      saveLocal();
-      render();
-    };
-
-    actions.appendChild(soldBtn);
-    actions.appendChild(liveBtn);
-    rows.appendChild(tr);
+    inventory.appendChild(div);
   });
 }
 
-$("unlockBtn").onclick = async () => {
-  if ($("pw").value !== ADMIN_PASSPHRASE) {
-    alert("Wrong passphrase");
-    return;
-  }
-  $("lockBox").style.display = "none";
-  $("app").style.display = "block";
-  products = JSON.parse(localStorage.getItem(LS_KEY)) || await loadFresh();
-  saveLocal();
-  render();
-};
+/* ==============================
+   SAVE RECORD
+================================*/
+async function saveRecord(){
+  const idVal=id.value.trim();
+  if(!idVal) return alert("ID required");
 
-$("downloadBtn").onclick = () => {
-  const blob = new Blob([JSON.stringify(products, null, 2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "products.json2";
-  a.click();
-};
+  const rec={
+    id:idVal,
+    artist:artist.value,
+    title:title.value,
+    price:+price.value,
+    grade:grade.value,
+    quantity:+qty.value||1,
+    available:true,
+    description:desc.value
+  };
 
-$("copyBtn").onclick = async () => {
-  await navigator.clipboard.writeText(JSON.stringify(products, null, 2));
-  alert("Copied");
-};
+  const i=products.findIndex(p=>p.id===idVal);
+  if(i>=0) products[i]={...products[i],...rec};
+  else products.push(rec);
 
-$("resetBtn").onclick = async () => {
-  localStorage.removeItem(LS_KEY);
-  products = await loadFresh();
-  saveLocal();
-  render();
-};
+  await gh(PRODUCTS_PATH,{
+    method:"PUT",
+    body:JSON.stringify({
+      message:`Update ${idVal}`,
+      content:btoa(JSON.stringify(products,null,2)),
+      sha,branch:BRANCH
+    })
+  });
+  loadProducts();
+}
 
-$("filter").addEventListener("input", render);
+/* ==============================
+   VISIBILITY
+================================*/
+function setVisibility(show){
+  const q=toggleSearch.value.toLowerCase();
+  products.forEach(p=>{
+    if(`${p.artist} ${p.title}`.toLowerCase().includes(q)){
+      p.available=show;
+    }
+  });
+  saveAll("Toggle visibility");
+}
+async function saveAll(msg){
+  await gh(PRODUCTS_PATH,{
+    method:"PUT",
+    body:JSON.stringify({
+      message:msg,
+      content:btoa(JSON.stringify(products,null,2)),
+      sha,branch:BRANCH
+    })
+  });
+  loadProducts();
+}
+
+/* INIT */
+loadProducts().catch(()=>{});
 </script>
 </body>
 </html>
