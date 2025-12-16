@@ -478,6 +478,25 @@
     "sold": false
   },
   {
+    "id": "Test Record",
+    "artist": "Test me",
+    "title": "Delta delete",
+    "price": 1,
+    "grade": "G/g",
+    "quantity": 1,
+    "tier": "sealed",
+    "available": true,
+    "description": "",
+    "sold": false,
+    "image": "images/1765861507087-5409.jpg",
+    "imageFront": "images/1765861507087-5409.jpg",
+    "imageBack": "images/1765861507087-5409.jpg",
+    "images": {
+      "front": "images/1765861507087-5409.jpg",
+      "back": "images/1765861507087-5409.jpg"
+    }
+  },
+  {
     "id": "the-police-zenyatta-mondatta",
     "artist": "The Police",
     "title": "Zenyatta Mondatta",
