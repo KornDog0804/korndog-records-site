@@ -7,7 +7,10 @@
     "grade": "VG/VG",
     "image": "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg",
     "description": "Back In Black ICONIC VG/VG+.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "billy-joel-52nd-street",
@@ -25,7 +28,8 @@
     "images": {
       "front": "images/Billy_Joel-1764298491999.jpg",
       "back": "images/Billy_Joel-1764298491999.jpg"
-    }
+    },
+    "sold": false
   },
   {
     "id": "blessthefall-hollow-bodies",
@@ -35,7 +39,10 @@
     "grade": "NM/NM",
     "image": "images/PXL_20250907_203733675.jpg",
     "description": "10th Anniversary Edition.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "bob-seger-night-moves",
@@ -53,7 +60,8 @@
       "front": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg",
       "back": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg"
     },
-    "tier": "tenbin"
+    "tier": "tenbin",
+    "sold": false
   },
   {
     "id": "bob-seger-stranger-in-town",
@@ -71,7 +79,8 @@
       "front": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg",
       "back": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg"
     },
-    "tier": "tenbin"
+    "tier": "tenbin",
+    "sold": false
   },
   {
     "id": "boston-1",
@@ -89,7 +98,8 @@
       "front": "images/Boston-1764230862646.jpg",
       "back": "images/Boston-1764230862646.jpg"
     },
-    "tier": "tenbin"
+    "tier": "tenbin",
+    "sold": false
   },
   {
     "id": "bullet-for-my-valentine-the-poison-20th",
@@ -99,7 +109,10 @@
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_4677e40d-5aff-403e-8216-cb3a0cd47fe2.jpg",
     "description": "20th anniversary red.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "cheap-trick-dream-police",
@@ -117,7 +130,8 @@
     "images": {
       "front": "images/Cheap_Trick-1764233303621.jpg",
       "back": "images/Cheap_Trick-1764233303621.jpg"
-    }
+    },
+    "sold": false
   },
   {
     "id": "david-lee-roth-crazy-from-the-heat-ep",
@@ -135,7 +149,8 @@
     "images": {
       "front": "images/David_Lee_Roth_EP-1764230391826.jpg",
       "back": "images/David_Lee_Roth_EP-1764230391826.jpg"
-    }
+    },
+    "sold": false
   },
   {
     "id": "dazz-band-keep-it-live",
@@ -153,7 +168,8 @@
     "images": {
       "front": "images/Dazz_Band-1764298272765.jpg",
       "back": "images/Dazz_Band-1764298272765.jpg"
-    }
+    },
+    "sold": false
   },
   {
     "id": "dokken-back-for-the-attack",
@@ -163,7 +179,10 @@
     "grade": "VG/VG+",
     "image": "images/Dokken-1764298922683.jpg",
     "description": "OG copy with original inner.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "foreigner-4",
@@ -181,7 +200,8 @@
     "images": {
       "front": "images/Foreigner-1764230780118.jpg",
       "back": "images/Foreigner-1764230780118.jpg"
-    }
+    },
+    "sold": false
   },
   {
     "id": "grateful-dead-50th-anniversary-picture-disc",
@@ -191,7 +211,10 @@
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
     "description": "Psychedelic swirl for the ages. Limited to 10,000 copies worldwide.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "i-prevail-heart-vs-mind",
@@ -201,17 +224,29 @@
     "grade": "NM/NM",
     "image": "images/PXL_20250915_125450366.jpg",
     "description": "Debut EP. NM/NM.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "jimi-hendrix-smash-hits",
     "artist": "Jimi Hendrix Experience",
     "title": "Smash Hits",
-    "price": 14.99,
-    "grade": "VG/VG",
+    "price": 15,
+    "grade": "VG/VG+",
     "image": "images/PXL_20251125_201153364.jpg",
     "description": "Club repress.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false,
+    "imageFront": "images/PXL_20251125_201153364.jpg",
+    "imageBack": "images/PXL_20251125_201153364.jpg",
+    "images": {
+      "front": "images/PXL_20251125_201153364.jpg",
+      "back": "images/PXL_20251125_201153364.jpg"
+    }
   },
   {
     "id": "johnny-cash-greatest-hits-vol-1",
@@ -229,7 +264,8 @@
       "front": "images/Johnny_Cash-1764230221013.jpg",
       "back": "images/Johnny_Cash-1764230221013.jpg"
     },
-    "tier": "budget"
+    "tier": "budget",
+    "sold": false
   },
   {
     "id": "johnny-guitar-watson-giant",
@@ -247,7 +283,8 @@
     "images": {
       "front": "images/PXL_20250915_125512318.jpg",
       "back": "images/PXL_20250915_125512318.jpg"
-    }
+    },
+    "sold": false
   },
   {
     "id": "kansas-leftoverture",
@@ -265,7 +302,8 @@
       "front": "images/Kansas-1764232880896.jpg",
       "back": "images/Kansas-1764232880896.jpg"
     },
-    "tier": "tenbin"
+    "tier": "tenbin",
+    "sold": false
   },
   {
     "id": "kansas-point-of-know-return",
@@ -283,7 +321,8 @@
       "front": "images/Kansas-1764299103385.jpg",
       "back": "images/Kansas-1764299103385.jpg"
     },
-    "tier": "tenbin"
+    "tier": "tenbin",
+    "sold": false
   },
   {
     "id": "ten-dolla-holla",
@@ -301,7 +340,8 @@
     "images": {
       "front": "images/Screenshot_20250822-074904.png",
       "back": "images/Screenshot_20250822-074904.png"
-    }
+    },
+    "sold": false
   },
   {
     "id": "neil-young-zuma",
@@ -319,7 +359,8 @@
     "images": {
       "front": "images/Neil_Young-1764230307095.jpg",
       "back": "images/Neil_Young-1764230307095.jpg"
-    }
+    },
+    "sold": false
   },
   {
     "id": "night-ranger-7-wishes",
@@ -337,7 +378,8 @@
       "front": "images/Night_Ranger-1764233043019.jpg",
       "back": "images/Night_Ranger-1764233043019.jpg"
     },
-    "tier": "budget"
+    "tier": "budget",
+    "sold": false
   },
   {
     "id": "pantera-history-of-hostility",
@@ -347,7 +389,10 @@
     "grade": "NM/NM",
     "image": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
     "description": "2015 Rhino pressing.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "red-hot-chili-peppers-californication",
@@ -357,7 +402,10 @@
     "grade": "NM/NM",
     "image": "images/Red_Hot_Chili_Peppers-1764287782972.jpg",
     "description": "25th Anniversary 2 LP colored vinyl.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "reo-speedwagon-decade-of-rock-and-roll",
@@ -375,7 +423,8 @@
       "front": "images/REO_SpeedWagon-1764233215456.jpg",
       "back": "images/REO_SpeedWagon-1764233215456.jpg"
     },
-    "tier": "tenbin"
+    "tier": "tenbin",
+    "sold": false
   },
   {
     "id": "robert-plant-now-and-zen",
@@ -393,7 +442,8 @@
       "front": "images/Robert_Plant-1764232983897.jpg",
       "back": "images/Robert_Plant-1764232983897.jpg"
     },
-    "tier": "tenbin"
+    "tier": "tenbin",
+    "sold": false
   },
   {
     "id": "sleep-token-even-in-arcadia",
@@ -403,7 +453,10 @@
     "grade": "NM/NM",
     "image": "images/Screenshot_20250826-210248.png",
     "description": "House Veridian Edition. NM/NM.",
-    "available": true
+    "available": true,
+    "quantity": 1,
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "sum41-all-killer-no-filler",
@@ -420,7 +473,9 @@
     "images": {
       "front": "images/PXL_20251124_210448795.TS-000.jpg",
       "back": "images/PXL_20251124_210448795.TS-000.jpg"
-    }
+    },
+    "tier": "premium",
+    "sold": false
   },
   {
     "id": "the-police-zenyatta-mondatta",
@@ -438,7 +493,8 @@
     "images": {
       "front": "images/The_Police-1764229577731.jpg",
       "back": "images/The_Police-1764229577731.jpg"
-    }
+    },
+    "sold": false
   },
   {
     "id": "compilation-album-hiphop-50yrs",
@@ -455,6 +511,8 @@
     "images": {
       "front": "images/PXL_20251211_210552651.jpg",
       "back": "images/PXL_20251211_210603941.jpg"
-    }
+    },
+    "tier": "premium",
+    "sold": false
   }
 ]
