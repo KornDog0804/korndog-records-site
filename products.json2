@@ -20,7 +20,7 @@
     "grade": "VG/VG+",
     "image": "images/Billy_Joel-1764298491999.jpg",
     "description": "Original inner sleeve. Very nice copy.",
-    "available": true,
+    "available": false,
     "tier": "tenbin",
     "quantity": 1,
     "imageFront": "images/Billy_Joel-1764298491999.jpg",
@@ -29,7 +29,7 @@
       "front": "images/Billy_Joel-1764298491999.jpg",
       "back": "images/Billy_Joel-1764298491999.jpg"
     },
-    "sold": false
+    "sold": true
   },
   {
     "id": "blessthefall-hollow-bodies",
