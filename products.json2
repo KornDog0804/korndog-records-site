@@ -535,6 +535,25 @@
     "sold": false
   },
   {
+    "id": "Supertramp",
+    "artist": "Supertramp",
+    "title": "Supertramp",
+    "price": 10,
+    "grade": "VG/VG+",
+    "quantity": 1,
+    "tier": "tenbin",
+    "available": true,
+    "description": "Jacket shows so ring wear on front and back. Original Inner has seam splits.",
+    "sold": false,
+    "image": "images/1766354714937-17663545265772743968535485619526.jpg",
+    "imageFront": "images/1766354714937-17663545265772743968535485619526.jpg",
+    "imageBack": "images/1766354716444-17663545516335335003154464222853.jpg",
+    "images": {
+      "front": "images/1766354714937-17663545265772743968535485619526.jpg",
+      "back": "images/1766354716444-17663545516335335003154464222853.jpg"
+    }
+  },
+  {
     "id": "the-police-zenyatta-mondatta",
     "artist": "The Police",
     "title": "Zenyatta Mondatta",
