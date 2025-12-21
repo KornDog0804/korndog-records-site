@@ -223,6 +223,25 @@
     "sold": false
   },
   {
+    "id": "Gary Wright",
+    "artist": "Gary Wright",
+    "title": "The Dreamweaver",
+    "price": 8,
+    "grade": "VG/VG+",
+    "quantity": 1,
+    "tier": "budget",
+    "available": true,
+    "description": "Jacket decent some sticker residue maybe on the top left. Vinyl solid VG+",
+    "sold": false,
+    "image": "images/1766355456946-17663553328173525859387670428710.jpg",
+    "imageFront": "images/1766355456946-17663553328173525859387670428710.jpg",
+    "imageBack": "images/1766355458452-17663553897891207198766079807379.jpg",
+    "images": {
+      "front": "images/1766355456946-17663553328173525859387670428710.jpg",
+      "back": "images/1766355458452-17663553897891207198766079807379.jpg"
+    }
+  },
+  {
     "id": "grateful-dead-50th-anniversary-picture-disc",
     "artist": "Grateful Dead",
     "title": "50th Anniversary Edition (Picture Disc, Rhino 2017)",
