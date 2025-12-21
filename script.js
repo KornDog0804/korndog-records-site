@@ -33,6 +33,9 @@ const PRODUCTS_FILE = "./products.json2";
 let allProducts = [];
 let currentPage = 1;
 
+// expose for modal + debugging (safe)
+window.allProducts = allProducts;
+
 // ----------------------- UTIL: SHUFFLE ----------------------------
 function shuffleArray(arr) {
   const copy = arr.slice();
@@ -50,6 +53,7 @@ async function loadProducts() {
     if (!res.ok) {
       console.error("Failed to load products.json2");
       allProducts = [];
+      window.allProducts = allProducts;
       return [];
     }
 
@@ -57,6 +61,7 @@ async function loadProducts() {
     if (!Array.isArray(raw)) {
       console.error("products.json2 is not an array");
       allProducts = [];
+      window.allProducts = allProducts;
       return [];
     }
 
@@ -74,10 +79,12 @@ async function loadProducts() {
     });
 
     allProducts = shuffleArray(mapped);
+    window.allProducts = allProducts;
     return allProducts;
   } catch (e) {
     console.error("Failed to load products.json2", e);
     allProducts = [];
+    window.allProducts = allProducts;
     return [];
   }
 }
@@ -195,6 +202,8 @@ function addToCart(productId) {
   alert("Dropped in the cart.");
 }
 
+window.addToCart = addToCart; // ✅ expose for modal
+
 function clearCart() {
   saveCart([]);
   renderCart();
@@ -228,6 +237,7 @@ function renderShopPage() {
   pageProducts.forEach((prod) => {
     const card = document.createElement("div");
     card.className = "record-card";
+    card.dataset.pid = prod.id; // ✅ needed for Quick View modal
 
     // IMAGE FLIP
     const recordImage = document.createElement("div");
