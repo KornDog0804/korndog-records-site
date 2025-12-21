@@ -414,6 +414,25 @@
     "sold": false
   },
   {
+    "id": "Quaterflash",
+    "artist": "Quaterflash",
+    "title": "Quaterflash",
+    "price": 10,
+    "grade": "VG/VG+",
+    "quantity": 1,
+    "tier": "threefor25",
+    "available": true,
+    "description": "Ring wear on the jacket and vinyl is clean",
+    "sold": false,
+    "image": "images/1766353392327-17663532445657076597298771188420.jpg",
+    "imageFront": "images/1766353392327-17663532445657076597298771188420.jpg",
+    "imageBack": "images/1766353393414-17663532738834308271629870930325.jpg",
+    "images": {
+      "front": "images/1766353392327-17663532445657076597298771188420.jpg",
+      "back": "images/1766353393414-17663532738834308271629870930325.jpg"
+    }
+  },
+  {
     "id": "red-hot-chili-peppers-californication",
     "artist": "Red Hot Chili Peppers",
     "title": "Californication",
