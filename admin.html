@@ -71,24 +71,33 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .checkbox-row{display:flex;align-items:center;gap:8px;margin-top:6px}
 .checkbox-row input{width:16px;height:16px}
 @media(max-width:720px){.inv-card{flex-direction:column}.inv-thumb{width:100%;height:auto;aspect-ratio:1/1}}
-#gate{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);z-index:9999}
-.gate-card{width:min(560px,100%);background:rgba(10,1,30,.92);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:18px;box-shadow:0 18px 40px rgba(0,0,0,.55)}
+
+#gate{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(10px);z-index:9999
+}
+.gate-card{
+  width:min(560px,100%);background:rgba(10,1,30,.92);border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;padding:18px;box-shadow:0 18px 40px rgba(0,0,0,.55)
+}
 .gate-title{font-weight:950;font-size:1.2rem;margin:0 0 8px}
 .gate-sub{margin:0 0 14px;color:var(--muted);font-size:.92rem}
 </style>
 </head>
+
 <body>
+<!-- TOKEN GATE (NO PASSWORD STORED IN CODE) -->
 <div id="gate">
   <div class="gate-card">
     <p class="gate-title">KornDog Admin Lock</p>
-    <p class="gate-sub">Enter password to access admin controls.</p>
-    <label for="gate-pass">Password</label>
-    <input id="gate-pass" type="text" placeholder="Enter password"/>
+    <p class="gate-sub">Paste your GitHub token to unlock. (Token stays on this device only.)</p>
+    <label for="gate-token">GitHub Token</label>
+    <input id="gate-token" type="text" placeholder="Paste token here"/>
     <div class="btn-row">
       <button id="gate-go" class="btn btn-primary" type="button">Unlock</button>
-      <button id="gate-clear" class="btn btn-outline" type="button">Clear Session</button>
+      <button id="gate-clear" class="btn btn-outline" type="button">Clear Token</button>
     </div>
-    <div id="gate-msg" class="status error" style="display:none;margin-top:12px">Wrong password.</div>
+    <div id="gate-msg" class="status error" style="display:none;margin-top:12px">Token invalid or missing permissions.</div>
   </div>
 </div>
 
@@ -109,12 +118,13 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 <main id="app">
   <h1>KornDog Admin</h1>
   <p class="subtitle">4 sections · Whatnot-style · tiers · <b>products.json2 only</b>.</p>
+
   <section class="section" id="sec1">
     <div class="section-title">1. GitHub Token</div>
     <div class="field">
       <label for="token">Personal Access Token</label>
       <input id="token" type="text" placeholder="Paste GitHub token (repo access)"/>
-      <div class="hint">Token stays on this device only (localStorage). Needed to update your repo.</div>
+      <div class="hint">Token stays on this device only (localStorage). Must have <b>Contents: Read and write</b> on your repo.</div>
     </div>
     <div class="btn-row">
       <button id="btnSaveToken" class="btn btn-outline" type="button">Set / Change Token</button>
@@ -167,8 +177,16 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
       <div class="field"><label for="desc">Description</label><textarea id="desc" placeholder="Variant, notes, hype…"></textarea></div>
 
       <div class="row">
-        <div class="field"><label for="front">Front Photo</label><input id="front" type="file" accept="image/*"/><div class="hint">Required for NEW records. Optional on edits.</div></div>
-        <div class="field"><label for="back">Back/Vinyl Photo</label><input id="back" type="file" accept="image/*"/><div class="hint">Optional.</div></div>
+        <div class="field">
+          <label for="front">Front Photo (Camera + Library)</label>
+          <input id="front" type="file" accept="image/*" capture="environment"/>
+          <div class="hint">Required for NEW records. Optional on edits.</div>
+        </div>
+        <div class="field">
+          <label for="back">Back/Vinyl Photo (Camera + Library)</label>
+          <input id="back" type="file" accept="image/*" capture="environment"/>
+          <div class="hint">Optional. If missing, shop will use front.</div>
+        </div>
       </div>
 
       <div class="btn-row" style="margin-top:14px">
@@ -178,6 +196,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
       </div>
     </form>
   </section>
+
   <section class="section" id="sec3">
     <div class="section-title">3. Mark Sold / Back In Stock</div>
     <div class="field">
@@ -233,160 +252,415 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
     <div id="invList" class="inv-list"></div>
   </section>
 </main>
+
 <script>
-const ADMIN_PASSWORD="korndogonly2025!";
+/* ===========================
+   CONFIG (LOCKED)
+=========================== */
 const OWNER="KornDog0804",REPO="korndog-records-site",BRANCH="main";
 const PRODUCTS_PATH="products.json2";
 const IMAGES_FOLDER="images";
 
+/* ===========================
+   HELPERS
+=========================== */
 const $=id=>document.getElementById(id);
 const statusEl=$("status"),statusText=$("statusText");
 function setStatus(msg,kind="ok"){statusText.textContent=msg;statusEl.classList.toggle("error",kind==="error")}
-
-const TOKEN_KEY="korndog_github_token",SESSION_KEY="korndog_admin_unlocked";
-function getToken(){return localStorage.getItem(TOKEN_KEY)||""}
-function requireToken(){const t=getToken();if(!t){setStatus("No GitHub token set. Section 1 first.","error");throw new Error("Missing token")}return t}
 function norm(s){return (s||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]))}
 
+/* ===========================
+   TOKEN STORAGE
+=========================== */
+const TOKEN_KEY="korndog_github_token";
+const SESSION_KEY="korndog_admin_unlocked";
+
+function getToken(){return localStorage.getItem(TOKEN_KEY)||""}
+function setToken(v){ if(v) localStorage.setItem(TOKEN_KEY,v); else localStorage.removeItem(TOKEN_KEY); }
+function requireToken(){
+  const t=getToken();
+  if(!t){ setStatus("No GitHub token set. Section 1 first.","error"); throw new Error("Missing token"); }
+  return t;
+}
+
+/* ===========================
+   GITHUB API (Bearer FIX)
+=========================== */
 async function github(path,opts={}){
   const token=requireToken();
   const res=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`,{
     method:opts.method||"GET",
-    headers:{Authorization:"token "+token,Accept:"application/vnd.github+json","Content-Type":"application/json"},
+    headers:{
+      Authorization:"Bearer "+token,             // ✅ FIXED
+      Accept:"application/vnd.github+json",
+      "Content-Type":"application/json"
+    },
     body:opts.body?JSON.stringify(opts.body):undefined
   });
-  if(!res.ok){const txt=await res.text();console.error("GitHub error",res.status,txt);throw new Error("GitHub API "+res.status)}
+  if(!res.ok){
+    const txt=await res.text();
+    console.error("GitHub error",res.status,txt);
+    throw new Error("GitHub API "+res.status);
+  }
   return res.json();
 }
-async function getFile(path){const d=await github(path);return {text:atob(String(d.content||"").replace(/\n/g,"")),sha:d.sha}}
+
+async function getFile(path){
+  const d=await github(path);
+  return {text:atob(String(d.content||"").replace(/\n/g,"")),sha:d.sha};
+}
 async function putText(path,text,message,sha){
   const encoded=btoa(unescape(encodeURIComponent(text)));
-  const body={message,content:encoded,branch:BRANCH};if(sha) body.sha=sha;
+  const body={message,content:encoded,branch:BRANCH};
+  if(sha) body.sha=sha;
   return github(path,{method:"PUT",body});
 }
 async function putBase64(path,b64,message,sha){
-  const body={message,content:b64,branch:BRANCH};if(sha) body.sha=sha;
+  const body={message,content:b64,branch:BRANCH};
+  if(sha) body.sha=sha;
   return github(path,{method:"PUT",body});
 }
+
 async function uploadImage(file){
   const safe=Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9_.-]/g,"_");
   const path=IMAGES_FOLDER+"/"+safe;
-  const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const s=String(r.result||"");res(s.slice(s.indexOf(",")+1))};r.onerror=()=>rej(r.error);r.readAsDataURL(file)});
+
+  const b64=await new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      const s=String(r.result||"");
+      res(s.slice(s.indexOf(",")+1));
+    };
+    r.onerror=()=>rej(r.error);
+    r.readAsDataURL(file);
+  });
+
   await putBase64(path,b64,"Add image "+safe);
   return path;
 }
+
+/* ===========================
+   PRODUCTS
+=========================== */
 async function loadProducts(){
   try{
     const {text,sha}=await getFile(PRODUCTS_PATH);
-    const arr=JSON.parse(text); if(!Array.isArray(arr)) throw new Error("not array");
-    arr.forEach(p=>{ if(p.quantity==null) p.quantity=1; if(p.available==null) p.available=true; if(p.tier==null) p.tier="premium"; if(p.sold==null) p.sold=false; });
+    const arr=JSON.parse(text);
+    if(!Array.isArray(arr)) throw new Error("not array");
+    arr.forEach(p=>{
+      if(p.quantity==null) p.quantity=1;
+      if(p.available==null) p.available=true;
+      if(p.tier==null) p.tier="premium";
+      if(p.sold==null) p.sold=false;
+      // keep compatibility if older entries only had image
+      if(!p.imageFront && p.image) p.imageFront=p.image;
+      if(!p.imageBack && p.imageFront) p.imageBack=p.imageFront;
+      if(!p.images) p.images={front:p.imageFront||"",back:p.imageBack||""};
+    });
     return {products:arr,sha};
-  }catch(e){console.warn("loadProducts fallback",e.message);return {products:[],sha:undefined}}
+  }catch(e){
+    console.warn("loadProducts fallback",e.message);
+    return {products:[],sha:undefined};
+  }
 }
-async function saveProducts(products,sha,msg){await putText(PRODUCTS_PATH,JSON.stringify(products,null,2),msg,sha)}
+async function saveProducts(products,sha,msg){
+  await putText(PRODUCTS_PATH,JSON.stringify(products,null,2),msg,sha);
+}
 
-let cache=null, editMode={active:false,id:""};
-
-function lockAdmin(){sessionStorage.removeItem(SESSION_KEY);$("gate").style.display="flex";$("app").style.filter="blur(6px)"}
-function unlockAdmin(){sessionStorage.setItem(SESSION_KEY,"1");$("gate").style.display="none";$("app").style.filter="none";$("gate-msg").style.display="none"}
+/* ===========================
+   GATE (Token unlock)
+=========================== */
+function lockAdmin(){
+  sessionStorage.removeItem(SESSION_KEY);
+  $("gate").style.display="flex";
+  $("app").style.filter="blur(6px)";
+  $("gate-msg").style.display="none";
+}
+function unlockAdmin(){
+  sessionStorage.setItem(SESSION_KEY,"1");
+  $("gate").style.display="none";
+  $("app").style.filter="none";
+  $("gate-msg").style.display="none";
+}
+async function validateToken(){
+  // simple read call to confirm token works for this repo/path
+  await github(PRODUCTS_PATH);
+  return true;
+}
 (function gateBoot(){
-  if(sessionStorage.getItem(SESSION_KEY)==="1"){unlockAdmin()} else {lockAdmin()}
-  $("gate-go").onclick=()=>{ if($("gate-pass").value===ADMIN_PASSWORD){unlockAdmin();setStatus("Unlocked. Let’s work.")} else {$("gate-msg").style.display="block"} };
-  $("gate-clear").onclick=()=>{ $("gate-pass").value=""; lockAdmin(); };
+  const hasSession=sessionStorage.getItem(SESSION_KEY)==="1";
+  const hasToken=!!getToken();
+  if(hasSession && hasToken){ unlockAdmin(); }
+  else { lockAdmin(); }
+
+  $("gate-go").onclick=async()=>{
+    const t=$("gate-token").value.trim();
+    if(!t){ $("gate-msg").style.display="block"; return; }
+    setToken(t);
+    $("gate-token").value="";
+    $("gate-msg").style.display="none";
+    setStatus("Checking token…");
+    try{
+      await validateToken();
+      unlockAdmin();
+      setStatus("Unlocked ✅ Admin ready.");
+      await refresh();
+      await renderInventory();
+    }catch(e){
+      console.error(e);
+      setToken("");
+      $("gate-msg").style.display="block";
+      setStatus("Token failed. Needs Contents: Read & write on repo.","error");
+      lockAdmin();
+    }
+  };
+
+  $("gate-clear").onclick=()=>{
+    setToken("");
+    sessionStorage.removeItem(SESSION_KEY);
+    $("gate-token").value="";
+    $("gate-msg").style.display="none";
+    setStatus("Token cleared.","error");
+    lockAdmin();
+  };
 })();
 
-(function initTokenUI(){const t=getToken(); if(t) $("token").placeholder="Token already set (•••"+t.slice(-6)+")"})();
+/* ===========================
+   TOKEN UI (Section 1)
+=========================== */
+(function initTokenUI(){
+  const t=getToken();
+  if(t) $("token").placeholder="Token already set (•••"+t.slice(-6)+")";
+})();
 
 $("btnSaveToken").onclick=async()=>{
   const v=$("token").value.trim();
-  if(!v){localStorage.removeItem(TOKEN_KEY);$("token").value="";setStatus("Token cleared.","error");return;}
-  localStorage.setItem(TOKEN_KEY,v);$("token").value="";$("token").placeholder="Token set (•••"+v.slice(-6)+")";
-  setStatus("Token saved. Refreshing…");
-  try{await refresh();await renderInventory();setStatus("Inventory refreshed ✅")}catch{}
+  if(!v){
+    setToken("");
+    $("token").value="";
+    $("token").placeholder="Paste GitHub token (repo access)";
+    setStatus("Token cleared.","error");
+    lockAdmin();
+    return;
+  }
+  setToken(v);
+  $("token").value="";
+  $("token").placeholder="Token set (•••"+v.slice(-6)+")";
+  setStatus("Token saved. Validating…");
+  try{
+    await validateToken();
+    unlockAdmin();
+    await refresh();
+    await renderInventory();
+    setStatus("Inventory refreshed ✅");
+  }catch(e){
+    console.error(e);
+    setStatus("Token invalid / wrong perms. Needs Contents: Read & write.","error");
+    lockAdmin();
+  }
 };
-$("btnLogout").onclick=()=>{lockAdmin();setStatus("Locked. Enter password to continue.","error")};
 
-async function refresh(){const {products}=await loadProducts();cache=products;return products}
-async function getProducts(){if(!cache) await refresh();return cache}
+$("btnLogout").onclick=()=>{ lockAdmin(); setStatus("Locked. Paste token to continue.","error"); };
 
-$("btnRefresh").onclick=async()=>{try{requireToken()}catch{return} setStatus("Refreshing…"); await refresh(); await renderInventory(); setStatus("Inventory refreshed ✅")};
+/* ===========================
+   APP STATE
+=========================== */
+let cache=null;
+let editMode={active:false,id:""};
+
+async function refresh(){
+  const {products}=await loadProducts();
+  cache=products;
+  return products;
+}
+async function getProducts(){
+  if(!cache) await refresh();
+  return cache;
+}
+
+$("btnRefresh").onclick=async()=>{
+  try{requireToken()}catch{return}
+  setStatus("Refreshing…");
+  try{
+    await refresh();
+    await renderInventory();
+    setStatus("Inventory refreshed ✅");
+  }catch(e){
+    console.error(e);
+    setStatus("Refresh failed. Check token perms.","error");
+  }
+};
 $("btnRefresh2").onclick=$("btnRefresh").onclick;
 
+/* ===========================
+   EDIT MODE
+=========================== */
 function enterEditMode(p){
   editMode={active:true,id:p.id};
-  $("editHint").style.display="block";$("btnCancel").style.display="inline-flex";$("btnDel").style.display="inline-flex";$("btnSave").textContent="Save Update";
+  $("editHint").style.display="block";
+  $("btnCancel").style.display="inline-flex";
+  $("btnDel").style.display="inline-flex";
+  $("btnSave").textContent="Save Update";
+
   $("rid").value=p.id||""; $("rid").disabled=true;
-  $("artist").value=p.artist||""; $("title").value=p.title||""; $("price").value=(p.price!=null?p.price:""); $("grade").value=p.grade||"";
-  $("qty").value=(p.quantity!=null?p.quantity:1); $("tier").value=p.tier||"premium"; $("available").checked=(p.available!==false); $("desc").value=p.description||"";
+  $("artist").value=p.artist||"";
+  $("title").value=p.title||"";
+  $("price").value=(p.price!=null?p.price:"");
+  $("grade").value=p.grade||"";
+  $("qty").value=(p.quantity!=null?p.quantity:1);
+  $("tier").value=p.tier||"premium";
+  $("available").checked=(p.available!==false);
+  $("desc").value=p.description||"";
   $("front").value=""; $("back").value="";
+
   $("sec2").scrollIntoView({behavior:"smooth",block:"start"});
   setStatus("Editing: "+(p.artist?p.artist+" — ":"")+(p.title||p.id));
 }
 function exitEditMode(){
   editMode={active:false,id:""};
-  $("editHint").style.display="none";$("btnCancel").style.display="none";$("btnDel").style.display="none";$("btnSave").textContent="Save Record";
-  $("form").reset();$("qty").value=1;$("tier").value="premium";$("available").checked=true;$("rid").disabled=false;
+  $("editHint").style.display="none";
+  $("btnCancel").style.display="none";
+  $("btnDel").style.display="none";
+  $("btnSave").textContent="Save Record";
+
+  $("form").reset();
+  $("qty").value=1;
+  $("tier").value="premium";
+  $("available").checked=true;
+  $("rid").disabled=false;
+
   setStatus("Ready for a new record.");
 }
 $("btnCancel").onclick=exitEditMode;
 
+/* ===========================
+   SAVE / UPDATE
+=========================== */
 $("form").addEventListener("submit",async(e)=>{
-  e.preventDefault(); try{requireToken()}catch{return;}
-  const id=$("rid").value.trim(), artist=$("artist").value.trim(), title=$("title").value.trim(), price=parseFloat($("price").value),
-        grade=$("grade").value.trim(), quantity=parseInt($("qty").value||"0",10), tier=$("tier").value||"premium",
-        available=!!$("available").checked, description=$("desc").value.trim(),
-        frontFile=$("front").files[0], backFile=$("back").files[0];
-  if(!id||!artist||!title||!grade||Number.isNaN(price)){setStatus("Missing: ID, Artist, Title, Price, Grade.","error");return;}
-  if(!editMode.active && !frontFile){setStatus("Front photo required for NEW records.","error");return;}
+  e.preventDefault();
+  try{requireToken()}catch{return;}
+
+  const id=$("rid").value.trim();
+  const artist=$("artist").value.trim();
+  const title=$("title").value.trim();
+  const price=parseFloat($("price").value);
+  const grade=$("grade").value.trim();
+  const quantity=parseInt($("qty").value||"0",10);
+  const tier=$("tier").value||"premium";
+  const available=!!$("available").checked;
+  const description=$("desc").value.trim();
+  const frontFile=$("front").files[0];
+  const backFile=$("back").files[0];
+
+  if(!id||!artist||!title||!grade||Number.isNaN(price)){
+    setStatus("Missing: ID, Artist, Title, Price, Grade.","error");return;
+  }
+  if(!editMode.active && !frontFile){
+    setStatus("Front photo required for NEW records.","error");return;
+  }
+
   setStatus(editMode.active?"Saving update…":"Uploading + saving…");
+
   try{
     const {products,sha}=await loadProducts();
     const idx=products.findIndex(p=>String(p.id)===String(id));
     const existing=(idx>=0?products[idx]:{});
     const sold=!!existing.sold;
+
     let frontPath=existing.imageFront||existing.image||(existing.images&&existing.images.front)||"";
-    let backPath=existing.imageBack||(existing.images&&existing.images.back)||frontPath;
+    let backPath=existing.imageBack||(existing.images&&existing.images.back)||"";
+
     if(frontFile) frontPath=await uploadImage(frontFile);
     if(backFile)  backPath=await uploadImage(backFile);
+
+    if(!frontPath){
+      setStatus("Front image missing after upload. Try again.","error");
+      return;
+    }
     if(!backPath) backPath=frontPath;
 
-    const updated={id,artist,title,price,grade,quantity:Number.isFinite(quantity)?quantity:0,tier,available,description,sold,
-      image:frontPath,imageFront:frontPath,imageBack:backPath,images:{front:frontPath,back:backPath}};
-    if(idx>=0) products[idx]={...products[idx],...updated}; else products.push(updated);
+    const updated={
+      id,artist,title,price,grade,
+      quantity:Number.isFinite(quantity)?quantity:0,
+      tier,available,description,sold,
+      image:frontPath,
+      imageFront:frontPath,
+      imageBack:backPath,
+      images:{front:frontPath,back:backPath}
+    };
+
+    if(idx>=0) products[idx]={...products[idx],...updated};
+    else products.push(updated);
+
     products.sort((a,b)=>(a.artist||"").localeCompare(b.artist||"")||(a.title||"").localeCompare(b.title||""));
     await saveProducts(products,sha,(idx>=0?"Update record: ":"Add record: ")+id);
-    await refresh(); await renderInventory();
+
+    await refresh();
+    await renderInventory();
+
     setStatus("Saved ✅ "+artist+" — "+title);
+
     if(editMode.active){
-      const fresh=await getProducts(); const rec=fresh.find(r=>String(r.id)===String(id)); if(rec) enterEditMode(rec);
-    }else{ $("form").reset();$("qty").value=1;$("tier").value="premium";$("available").checked=true; }
-  }catch(err){console.error(err);setStatus("Save failed. Check token perms / repo name / console.","error");}
+      const fresh=await getProducts();
+      const rec=fresh.find(r=>String(r.id)===String(id));
+      if(rec) enterEditMode(rec);
+    }else{
+      $("form").reset();
+      $("qty").value=1;
+      $("tier").value="premium";
+      $("available").checked=true;
+    }
+  }catch(err){
+    console.error(err);
+    setStatus("Save failed. Check token perms (Contents: Read & write).","error");
+  }
 });
 
+/* ===========================
+   DELETE
+=========================== */
 $("btnDel").onclick=async()=>{
   try{requireToken()}catch{return;}
   if(!editMode.active) return;
   if(!confirm("Delete this record?")) return;
+
   const id=$("rid").value.trim();
   setStatus("Deleting…");
+
   try{
     const {products,sha}=await loadProducts();
     await saveProducts(products.filter(p=>String(p.id)!==String(id)),sha,"Delete record: "+id);
-    await refresh(); await renderInventory(); exitEditMode(); setStatus("Deleted ✅ "+id);
-  }catch(e){console.error(e);setStatus("Delete failed.","error");}
+    await refresh();
+    await renderInventory();
+    exitEditMode();
+    setStatus("Deleted ✅ "+id);
+  }catch(e){
+    console.error(e);
+    setStatus("Delete failed.","error");
+  }
 };
 
+/* ===========================
+   SOLD / AVAILABLE
+=========================== */
 $("soldSearch").addEventListener("input",async()=>{
   $("soldPills").innerHTML="";
   const term=norm($("soldSearch").value.trim()); if(!term) return;
+
   try{requireToken()}catch{return}
   const list=await getProducts();
+
   list.filter(p=>norm(p.id).includes(term)||norm(p.artist).includes(term)||norm(p.title).includes(term))
       .slice(0,10).forEach(p=>{
-        const b=document.createElement("button"); b.type="button"; b.className="search-pill";
+        const b=document.createElement("button");
+        b.type="button"; b.className="search-pill";
         b.textContent=(p.artist?p.artist+" — ":"")+(p.title||p.id);
-        b.onclick=()=>{$("soldSearch").value=p.id;$("soldPills").innerHTML="";setStatus("Selected: "+(p.artist?p.artist+" — ":"")+(p.title||p.id));};
+        b.onclick=()=>{
+          $("soldSearch").value=p.id;
+          $("soldPills").innerHTML="";
+          setStatus("Selected: "+(p.artist?p.artist+" — ":"")+(p.title||p.id));
+        };
         $("soldPills").appendChild(b);
       });
 });
@@ -395,26 +669,37 @@ async function applySoldAction(mode){
   const raw=$("soldSearch").value.trim(), q=norm(raw);
   if(!q){setStatus("Type something in Section 3.","error");return;}
   try{requireToken()}catch{return;}
+
   setStatus("Saving change to products.json2…");
   try{
     const {products,sha}=await loadProducts();
     const idx=products.findIndex(p=>norm(p.id).includes(q)||norm(p.artist).includes(q)||norm(p.title).includes(q));
     if(idx<0){setStatus("No match for: "+raw,"error");return;}
     const p=products[idx];
+
     if(mode==="sold"){p.sold=true;p.available=false;}
     if(mode==="available"){p.sold=false;p.available=true;}
     if(mode==="hide"){p.available=false;}
     if(mode==="show"){p.available=true;}
+
     await saveProducts(products,sha,"Update status: "+(p.id||p.title));
-    await refresh(); await renderInventory();
-    $("soldSearch").value=""; $("soldPills").innerHTML="";
+    await refresh();
+    await renderInventory();
+    $("soldSearch").value="";
+    $("soldPills").innerHTML="";
     setStatus("Done ✅ Updated: "+(p.artist?p.artist+" — ":"")+(p.title||p.id));
-  }catch(e){console.error(e);setStatus("Could not update. Check token permissions.","error");}
+  }catch(e){
+    console.error(e);
+    setStatus("Could not update. Check token permissions.","error");
+  }
 }
 $("btnSoldSave").onclick=()=>applySoldAction($("soldAction").value);
 $("btnQuickSold").onclick=()=>applySoldAction("sold");
 $("btnQuickAvail").onclick=()=>applySoldAction("available");
 
+/* ===========================
+   INVENTORY RENDER
+=========================== */
 function badge(text,cls){return `<span class="badge ${cls||""}">${escapeHtml(text)}</span>`}
 function getThumb(p){return p.imageFront||p.image||(p.images&&p.images.front)||""}
 
@@ -434,13 +719,32 @@ function passesSearch(p){
 async function renderInventory(){
   $("invList").innerHTML="";
   try{requireToken()}catch{return;}
+
   const list=await getProducts();
   const filtered=list.filter(p=>passesFilter(p)&&passesSearch(p));
-  if(!filtered.length){const d=document.createElement("div");d.className="hint";d.textContent="No matches. Try another search/filter."; $("invList").appendChild(d); return;}
+
+  if(!filtered.length){
+    const d=document.createElement("div");
+    d.className="hint";
+    d.textContent="No matches. Try another search/filter.";
+    $("invList").appendChild(d);
+    return;
+  }
+
   filtered.slice(0,300).forEach(p=>{
-    const thumb=getThumb(p), live=(p.available!==false), sold=!!p.sold;
-    const imgSrc=thumb||("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><rect width="100%" height="100%" fill="#1a1030"/><text x="50%" y="50%" fill="#a1a1c5" font-size="18" font-family="Arial" text-anchor="middle" dominant-baseline="middle">No Image</text></svg>`));
-    const card=document.createElement("div"); card.className="inv-card";
+    const thumb=getThumb(p);
+    const live=(p.available!==false);
+    const sold=!!p.sold;
+
+    const imgSrc=thumb||("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+        <rect width="100%" height="100%" fill="#1a1030"/>
+        <text x="50%" y="50%" fill="#a1a1c5" font-size="18" font-family="Arial"
+          text-anchor="middle" dominant-baseline="middle">No Image</text>
+      </svg>`));
+
+    const card=document.createElement("div");
+    card.className="inv-card";
     card.innerHTML=`
       <div class="inv-thumb"><img src="${imgSrc}" alt="${escapeHtml((p.artist?p.artist+" — ":"")+(p.title||p.id||"Record"))}"></div>
       <div class="inv-meta">
@@ -456,10 +760,12 @@ async function renderInventory(){
         <button class="btn btn-danger" type="button">Mark Sold</button>
         <button class="btn btn-soft" type="button">Mark Available</button>
       </div>`;
+
     const btns=card.querySelectorAll("button");
     btns[0].onclick=()=>enterEditMode(p);
     btns[1].onclick=()=>{ $("soldSearch").value=p.id; applySoldAction("sold"); };
     btns[2].onclick=()=>{ $("soldSearch").value=p.id; applySoldAction("available"); };
+
     $("invList").appendChild(card);
   });
 }
@@ -467,9 +773,23 @@ async function renderInventory(){
 $("invSearch").addEventListener("input",()=>renderInventory().catch(()=>{}));
 $("invFilter").addEventListener("change",()=>renderInventory().catch(()=>{}));
 
+/* ===========================
+   BOOT
+=========================== */
 (async function boot(){
-  if(!getToken()) return;
-  try{await refresh();await renderInventory();setStatus("Admin loaded. Live inventory ready.")}catch(e){console.warn(e)}
+  const t=getToken();
+  if(!t) return;
+
+  try{
+    await validateToken();
+    unlockAdmin();
+    await refresh();
+    await renderInventory();
+    setStatus("Admin loaded. Live inventory ready.");
+  }catch(e){
+    console.warn(e);
+    lockAdmin();
+  }
 })();
 </script>
 </body>
