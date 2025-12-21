@@ -509,14 +509,14 @@
     "price": 10,
     "grade": "VG/VG",
     "image": "images/REO_SpeedWagon-1764233215456.jpg",
-    "description": "Who doesn't love some Speedwagon?",
+    "description": "Who doesn't love some Speedwagon? Does come with Booklet",
     "available": true,
     "quantity": 1,
     "imageFront": "images/REO_SpeedWagon-1764233215456.jpg",
-    "imageBack": "images/REO_SpeedWagon-1764233215456.jpg",
+    "imageBack": "images/1766355562321-17663555424445154945341483577359.jpg",
     "images": {
       "front": "images/REO_SpeedWagon-1764233215456.jpg",
-      "back": "images/REO_SpeedWagon-1764233215456.jpg"
+      "back": "images/1766355562321-17663555424445154945341483577359.jpg"
     },
     "tier": "tenbin",
     "sold": false
