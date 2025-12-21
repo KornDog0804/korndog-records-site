@@ -31,7 +31,7 @@ h1{margin:.25rem 0 .25rem;font-size:2rem;letter-spacing:.02em}
   padding:1.1rem 1.1rem 1.25rem;box-shadow:0 18px 40px rgba(0,0,0,.35)}
 .section-title{margin:0 0 .75rem;font-size:1.02rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2)}
 label{display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 .35rem}
-input[type="text"],input[type="number"],textarea,select{
+input[type="text"],input[type="password"],input[type="number"],textarea,select{
   width:100%;padding:10px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
   background:rgba(5,0,15,.92);color:var(--text);outline:none;font-size:.95rem}
 textarea{border-radius:14px;min-height:90px;resize:vertical;line-height:1.35}
@@ -46,10 +46,12 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .btn-outline{background:transparent;color:var(--accent);border:1px solid rgba(123,255,90,.55)}
 .btn-danger{background:var(--danger);color:#fff}
 .btn-soft{background:rgba(123,255,90,.16);border:1px solid rgba(123,255,90,.5);color:var(--accent)}
+.btn-warn{background:rgba(255,159,67,.18);border:1px solid rgba(255,159,67,.55);color:#ffd4a8}
 .btn-row{display:inline-flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 .status{margin-top:10px;padding:10px 12px;border-radius:999px;font-size:.85rem;border:1px solid rgba(123,255,90,.35);
   background:rgba(123,255,90,.06);color:var(--accent)}
 .status.error{border-color:rgba(255,75,106,.45);background:rgba(255,75,106,.08);color:var(--danger)}
+.status.warn{border-color:rgba(255,159,67,.45);background:rgba(255,159,67,.08);color:#ffd4a8}
 .inv-toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
 .inv-list{display:flex;flex-direction:column;gap:12px;margin-top:12px}
 .inv-card{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:var(--card2)}
@@ -70,36 +72,12 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .search-pill:hover{background:rgba(123,255,90,.12);color:var(--accent)}
 .checkbox-row{display:flex;align-items:center;gap:8px;margin-top:6px}
 .checkbox-row input{width:16px;height:16px}
+.hr{height:1px;background:rgba(255,255,255,.08);margin:10px 0}
 @media(max-width:720px){.inv-card{flex-direction:column}.inv-thumb{width:100%;height:auto;aspect-ratio:1/1}}
-
-#gate{
-  position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;
-  background:rgba(0,0,0,.55);backdrop-filter:blur(10px);z-index:9999
-}
-.gate-card{
-  width:min(560px,100%);background:rgba(10,1,30,.92);border:1px solid rgba(255,255,255,.12);
-  border-radius:20px;padding:18px;box-shadow:0 18px 40px rgba(0,0,0,.55)
-}
-.gate-title{font-weight:950;font-size:1.2rem;margin:0 0 8px}
-.gate-sub{margin:0 0 14px;color:var(--muted);font-size:.92rem}
+small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;color:var(--muted)}
 </style>
 </head>
-
 <body>
-<!-- TOKEN GATE (NO PASSWORD STORED IN CODE) -->
-<div id="gate">
-  <div class="gate-card">
-    <p class="gate-title">KornDog Admin Lock</p>
-    <p class="gate-sub">Paste your GitHub token to unlock. (Token stays on this device only.)</p>
-    <label for="gate-token">GitHub Token</label>
-    <input id="gate-token" type="text" placeholder="Paste token here"/>
-    <div class="btn-row">
-      <button id="gate-go" class="btn btn-primary" type="button">Unlock</button>
-      <button id="gate-clear" class="btn btn-outline" type="button">Clear Token</button>
-    </div>
-    <div id="gate-msg" class="status error" style="display:none;margin-top:12px">Token invalid or missing permissions.</div>
-  </div>
-</div>
 
 <header>
   <div class="nav-inner">
@@ -117,21 +95,24 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 
 <main id="app">
   <h1>KornDog Admin</h1>
-  <p class="subtitle">4 sections · Whatnot-style · tiers · <b>products.json2 only</b>.</p>
+  <p class="subtitle">4 sections · Whatnot-style · tiers · <b>products.json2 only</b>. Token required to write.</p>
 
   <section class="section" id="sec1">
     <div class="section-title">1. GitHub Token</div>
     <div class="field">
       <label for="token">Personal Access Token</label>
-      <input id="token" type="text" placeholder="Paste GitHub token (repo access)"/>
-      <div class="hint">Token stays on this device only (localStorage). Must have <b>Contents: Read and write</b> on your repo.</div>
+      <input id="token" type="password" placeholder="Paste GitHub token (repo contents access)"/>
+      <div class="hint">
+        Token stays on <b>this device only</b> (localStorage). You can clear it anytime.
+        <div style="margin-top:6px"><small class="code">Needs repo contents write access for: KornDog0804/korndog-records-site</small></div>
+      </div>
     </div>
     <div class="btn-row">
       <button id="btnSaveToken" class="btn btn-outline" type="button">Set / Change Token</button>
       <button id="btnRefresh" class="btn btn-soft" type="button">Refresh Inventory</button>
-      <button id="btnLogout" class="btn btn-danger" type="button">Lock Admin</button>
+      <button id="btnClearToken" class="btn btn-danger" type="button">Clear Token</button>
     </div>
-    <div id="status" class="status"><span id="statusText">Waiting for input…</span></div>
+    <div id="status" class="status"><span id="statusText">Paste token to enable admin actions…</span></div>
   </section>
 
   <section class="section" id="sec2">
@@ -142,7 +123,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
       <div class="field">
         <label for="rid">Record ID (no spaces)</label>
         <input id="rid" type="text" placeholder="acdc-back-in-black"/>
-        <div class="hint">This is the unique key. In edit mode we lock it so nothing “gets lost.”</div>
+        <div class="hint">Unique key. In edit mode we lock it so nothing “gets lost.”</div>
       </div>
 
       <div class="row">
@@ -176,16 +157,35 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 
       <div class="field"><label for="desc">Description</label><textarea id="desc" placeholder="Variant, notes, hype…"></textarea></div>
 
-      <div class="row">
+      <div class="hr"></div>
+      <div class="hint">
+        <b>Mobile fix:</b> Use <b>Library Picker</b> to choose from Photos. Use <b>Camera</b> only if you want to snap a new one.
+        (Some phones force camera first if you only have a capture input.)
+      </div>
+
+      <div class="row" style="margin-top:10px">
         <div class="field">
-          <label for="front">Front Photo (Camera + Library)</label>
-          <input id="front" type="file" accept="image/*" capture="environment"/>
+          <label>Front Photo (Library Picker)</label>
+          <input id="front" type="file" accept="image/*"/>
           <div class="hint">Required for NEW records. Optional on edits.</div>
         </div>
         <div class="field">
-          <label for="back">Back/Vinyl Photo (Camera + Library)</label>
-          <input id="back" type="file" accept="image/*" capture="environment"/>
+          <label>Front Photo (Camera)</label>
+          <input id="frontCam" type="file" accept="image/*" capture="environment"/>
+          <div class="hint">Optional camera capture.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Back/Vinyl Photo (Library Picker)</label>
+          <input id="back" type="file" accept="image/*"/>
           <div class="hint">Optional. If missing, shop will use front.</div>
+        </div>
+        <div class="field">
+          <label>Back/Vinyl Photo (Camera)</label>
+          <input id="backCam" type="file" accept="image/*" capture="environment"/>
+          <div class="hint">Optional camera capture.</div>
         </div>
       </div>
 
@@ -193,6 +193,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
         <button id="btnSave" class="btn btn-primary" type="submit">Save Record</button>
         <button id="btnCancel" class="btn btn-outline" type="button" style="display:none">Cancel Edit</button>
         <button id="btnDel" class="btn btn-danger" type="button" style="display:none">Delete</button>
+      </div>
+
+      <div class="hint" style="margin-top:10px">
+        Images are auto-compressed to avoid GitHub rejecting large uploads.
       </div>
     </form>
   </section>
@@ -254,224 +258,197 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 </main>
 
 <script>
-/* ===========================
-   CONFIG (LOCKED)
-=========================== */
-const OWNER="KornDog0804",REPO="korndog-records-site",BRANCH="main";
+/** =========================
+ *  CONFIG
+ *  ========================= */
+const OWNER="KornDog0804", REPO="korndog-records-site", BRANCH="main";
 const PRODUCTS_PATH="products.json2";
 const IMAGES_FOLDER="images";
 
-/* ===========================
-   HELPERS
-=========================== */
+/** =========================
+ *  DOM + STATUS
+ *  ========================= */
 const $=id=>document.getElementById(id);
-const statusEl=$("status"),statusText=$("statusText");
-function setStatus(msg,kind="ok"){statusText.textContent=msg;statusEl.classList.toggle("error",kind==="error")}
-function norm(s){return (s||"").toLowerCase().replace(/[^a-z0-9]/g,"")}
-function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]))}
+const statusEl=$("status"), statusText=$("statusText");
+function setStatus(msg, kind="ok"){
+  statusText.textContent=msg;
+  statusEl.classList.remove("error","warn");
+  if(kind==="error") statusEl.classList.add("error");
+  if(kind==="warn")  statusEl.classList.add("warn");
+}
 
-/* ===========================
-   TOKEN STORAGE
-=========================== */
+/** =========================
+ *  TOKEN STORAGE
+ *  ========================= */
 const TOKEN_KEY="korndog_github_token";
-const SESSION_KEY="korndog_admin_unlocked";
-
-function getToken(){return localStorage.getItem(TOKEN_KEY)||""}
-function setToken(v){ if(v) localStorage.setItem(TOKEN_KEY,v); else localStorage.removeItem(TOKEN_KEY); }
+function getToken(){ return localStorage.getItem(TOKEN_KEY) || ""; }
+function setToken(v){ localStorage.setItem(TOKEN_KEY, v); }
+function clearToken(){ localStorage.removeItem(TOKEN_KEY); }
 function requireToken(){
   const t=getToken();
-  if(!t){ setStatus("No GitHub token set. Section 1 first.","error"); throw new Error("Missing token"); }
+  if(!t){
+    setStatus("No GitHub token set. Section 1 first.","error");
+    throw new Error("Missing token");
+  }
   return t;
 }
 
-/* ===========================
-   GITHUB API (Bearer FIX)
-=========================== */
-async function github(path,opts={}){
+/** =========================
+ *  UTIL
+ *  ========================= */
+function norm(s){ return (s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+function escapeHtml(s){ return String(s??"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])); }
+function safeFileName(name){
+  return String(name||"image").replace(/[^a-zA-Z0-9_.-]/g,"_");
+}
+function bytesToBase64(bytes){
+  let binary = "";
+  const chunkSize = 0x8000;
+  for(let i=0;i<bytes.length;i+=chunkSize){
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i+chunkSize));
+  }
+  return btoa(binary);
+}
+async function textToBase64(text){
+  const enc = new TextEncoder().encode(text);
+  return bytesToBase64(enc);
+}
+
+/** =========================
+ *  GITHUB API
+ *  - Uses Bearer token (best for fine-grained PATs)
+ *  ========================= */
+async function github(path, opts={}){
   const token=requireToken();
-  const res=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`,{
-    method:opts.method||"GET",
+  const url=`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`;
+  const res=await fetch(url,{
+    method: opts.method || "GET",
     headers:{
-      Authorization:"Bearer "+token,             // ✅ FIXED
-      Accept:"application/vnd.github+json",
-      "Content-Type":"application/json"
+      "Authorization": "Bearer " + token,
+      "Accept": "application/vnd.github+json",
+      "Content-Type": "application/json",
+      ...(opts.headers||{})
     },
-    body:opts.body?JSON.stringify(opts.body):undefined
+    body: opts.body ? JSON.stringify(opts.body) : undefined
   });
+
   if(!res.ok){
-    const txt=await res.text();
-    console.error("GitHub error",res.status,txt);
-    throw new Error("GitHub API "+res.status);
+    const txt=await res.text().catch(()=>"(no body)");
+    console.error("GitHub error", res.status, txt);
+    let msg = "GitHub API " + res.status;
+    if(res.status===401) msg = "Token rejected (401). Wrong token or expired.";
+    if(res.status===403) msg = "Blocked (403). Token lacks permissions or rate-limited.";
+    if(res.status===404) msg = "Not found (404). Repo/branch/path wrong.";
+    if(res.status===422) msg = "Unprocessable (422). File too large or invalid request.";
+    throw new Error(msg);
   }
   return res.json();
 }
 
 async function getFile(path){
   const d=await github(path);
-  return {text:atob(String(d.content||"").replace(/\n/g,"")),sha:d.sha};
+  const content = String(d.content||"").replace(/\n/g,"");
+  const bytes = Uint8Array.from(atob(content), c => c.charCodeAt(0));
+  const text = new TextDecoder().decode(bytes);
+  return { text, sha: d.sha };
 }
-async function putText(path,text,message,sha){
-  const encoded=btoa(unescape(encodeURIComponent(text)));
-  const body={message,content:encoded,branch:BRANCH};
-  if(sha) body.sha=sha;
-  return github(path,{method:"PUT",body});
+
+async function putText(path, text, message, sha){
+  const content = await textToBase64(text);
+  const body = { message, content, branch: BRANCH };
+  if(sha) body.sha = sha;
+  return github(path, { method:"PUT", body });
 }
-async function putBase64(path,b64,message,sha){
-  const body={message,content:b64,branch:BRANCH};
-  if(sha) body.sha=sha;
-  return github(path,{method:"PUT",body});
+
+async function putBase64(path, b64, message, sha){
+  const body = { message, content: b64, branch: BRANCH };
+  if(sha) body.sha = sha;
+  return github(path, { method:"PUT", body });
+}
+
+/** =========================
+ *  IMAGE COMPRESSION
+ *  - Prevents GitHub rejecting big phone photos
+ *  ========================= */
+async function compressImageToJpegBase64(file, maxW=1400, maxH=1400, quality=0.86){
+  const img = await new Promise((resolve, reject)=>{
+    const i = new Image();
+    i.onload=()=>resolve(i);
+    i.onerror=reject;
+    i.src = URL.createObjectURL(file);
+  });
+
+  let { width:w, height:h } = img;
+  const scale = Math.min(1, maxW / w, maxH / h);
+  w = Math.max(1, Math.round(w * scale));
+  h = Math.max(1, Math.round(h * scale));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, w, h);
+
+  // Always JPEG for smaller size; GitHub likes it
+  const dataUrl = canvas.toDataURL("image/jpeg", quality);
+  URL.revokeObjectURL(img.src);
+
+  // Return base64 portion only
+  return dataUrl.slice(dataUrl.indexOf(",")+1);
 }
 
 async function uploadImage(file){
-  const safe=Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9_.-]/g,"_");
-  const path=IMAGES_FOLDER+"/"+safe;
+  const safe = Date.now()+"-"+safeFileName(file.name);
+  const path = IMAGES_FOLDER + "/" + safe;
 
-  const b64=await new Promise((res,rej)=>{
-    const r=new FileReader();
-    r.onload=()=>{
-      const s=String(r.result||"");
-      res(s.slice(s.indexOf(",")+1));
-    };
-    r.onerror=()=>rej(r.error);
-    r.readAsDataURL(file);
-  });
+  // compress for GitHub size limits
+  const b64 = await compressImageToJpegBase64(file);
 
-  await putBase64(path,b64,"Add image "+safe);
+  // Try upload; if GitHub still complains, reduce quality once
+  try{
+    await putBase64(path, b64, "Add image " + safe);
+  }catch(e){
+    console.warn("Upload failed, retry lower quality:", e.message);
+    const b64smaller = await compressImageToJpegBase64(file, 1200, 1200, 0.78);
+    await putBase64(path, b64smaller, "Add image " + safe);
+  }
   return path;
 }
 
-/* ===========================
-   PRODUCTS
-=========================== */
+/** =========================
+ *  PRODUCTS LOAD/SAVE
+ *  ========================= */
 async function loadProducts(){
   try{
-    const {text,sha}=await getFile(PRODUCTS_PATH);
-    const arr=JSON.parse(text);
-    if(!Array.isArray(arr)) throw new Error("not array");
+    const { text, sha } = await getFile(PRODUCTS_PATH);
+    const arr = JSON.parse(text);
+    if(!Array.isArray(arr)) throw new Error("products.json2 not array");
     arr.forEach(p=>{
       if(p.quantity==null) p.quantity=1;
       if(p.available==null) p.available=true;
       if(p.tier==null) p.tier="premium";
       if(p.sold==null) p.sold=false;
-      // keep compatibility if older entries only had image
-      if(!p.imageFront && p.image) p.imageFront=p.image;
-      if(!p.imageBack && p.imageFront) p.imageBack=p.imageFront;
-      if(!p.images) p.images={front:p.imageFront||"",back:p.imageBack||""};
     });
-    return {products:arr,sha};
+    return { products: arr, sha };
   }catch(e){
-    console.warn("loadProducts fallback",e.message);
-    return {products:[],sha:undefined};
+    console.warn("loadProducts fallback", e.message);
+    return { products: [], sha: undefined };
   }
 }
-async function saveProducts(products,sha,msg){
-  await putText(PRODUCTS_PATH,JSON.stringify(products,null,2),msg,sha);
+
+async function saveProducts(products, sha, msg){
+  await putText(PRODUCTS_PATH, JSON.stringify(products,null,2), msg, sha);
 }
 
-/* ===========================
-   GATE (Token unlock)
-=========================== */
-function lockAdmin(){
-  sessionStorage.removeItem(SESSION_KEY);
-  $("gate").style.display="flex";
-  $("app").style.filter="blur(6px)";
-  $("gate-msg").style.display="none";
-}
-function unlockAdmin(){
-  sessionStorage.setItem(SESSION_KEY,"1");
-  $("gate").style.display="none";
-  $("app").style.filter="none";
-  $("gate-msg").style.display="none";
-}
-async function validateToken(){
-  // simple read call to confirm token works for this repo/path
-  await github(PRODUCTS_PATH);
-  return true;
-}
-(function gateBoot(){
-  const hasSession=sessionStorage.getItem(SESSION_KEY)==="1";
-  const hasToken=!!getToken();
-  if(hasSession && hasToken){ unlockAdmin(); }
-  else { lockAdmin(); }
-
-  $("gate-go").onclick=async()=>{
-    const t=$("gate-token").value.trim();
-    if(!t){ $("gate-msg").style.display="block"; return; }
-    setToken(t);
-    $("gate-token").value="";
-    $("gate-msg").style.display="none";
-    setStatus("Checking token…");
-    try{
-      await validateToken();
-      unlockAdmin();
-      setStatus("Unlocked ✅ Admin ready.");
-      await refresh();
-      await renderInventory();
-    }catch(e){
-      console.error(e);
-      setToken("");
-      $("gate-msg").style.display="block";
-      setStatus("Token failed. Needs Contents: Read & write on repo.","error");
-      lockAdmin();
-    }
-  };
-
-  $("gate-clear").onclick=()=>{
-    setToken("");
-    sessionStorage.removeItem(SESSION_KEY);
-    $("gate-token").value="";
-    $("gate-msg").style.display="none";
-    setStatus("Token cleared.","error");
-    lockAdmin();
-  };
-})();
-
-/* ===========================
-   TOKEN UI (Section 1)
-=========================== */
-(function initTokenUI(){
-  const t=getToken();
-  if(t) $("token").placeholder="Token already set (•••"+t.slice(-6)+")";
-})();
-
-$("btnSaveToken").onclick=async()=>{
-  const v=$("token").value.trim();
-  if(!v){
-    setToken("");
-    $("token").value="";
-    $("token").placeholder="Paste GitHub token (repo access)";
-    setStatus("Token cleared.","error");
-    lockAdmin();
-    return;
-  }
-  setToken(v);
-  $("token").value="";
-  $("token").placeholder="Token set (•••"+v.slice(-6)+")";
-  setStatus("Token saved. Validating…");
-  try{
-    await validateToken();
-    unlockAdmin();
-    await refresh();
-    await renderInventory();
-    setStatus("Inventory refreshed ✅");
-  }catch(e){
-    console.error(e);
-    setStatus("Token invalid / wrong perms. Needs Contents: Read & write.","error");
-    lockAdmin();
-  }
-};
-
-$("btnLogout").onclick=()=>{ lockAdmin(); setStatus("Locked. Paste token to continue.","error"); };
-
-/* ===========================
-   APP STATE
-=========================== */
-let cache=null;
-let editMode={active:false,id:""};
+/** =========================
+ *  STATE
+ *  ========================= */
+let cache = null;
+let editMode = { active:false, id:"" };
 
 async function refresh(){
-  const {products}=await loadProducts();
-  cache=products;
+  const { products } = await loadProducts();
+  cache = products;
   return products;
 }
 async function getProducts(){
@@ -479,8 +456,51 @@ async function getProducts(){
   return cache;
 }
 
+/** =========================
+ *  TOKEN UI
+ *  ========================= */
+(function initTokenUI(){
+  const t=getToken();
+  if(t){
+    $("token").value="";
+    $("token").placeholder="Token already saved (•••" + t.slice(-6) + ")";
+    setStatus("Token already saved on this device. Refresh inventory when ready.");
+  }else{
+    setStatus("Paste token to enable admin actions…","warn");
+  }
+})();
+
+$("btnSaveToken").onclick=async()=>{
+  const v=$("token").value.trim();
+  if(!v){
+    setStatus("Paste a token first.","warn");
+    return;
+  }
+  setToken(v);
+  $("token").value="";
+  $("token").placeholder="Token saved (•••" + v.slice(-6) + ")";
+  setStatus("Token saved. Refreshing inventory…");
+  try{
+    await refresh();
+    await renderInventory();
+    setStatus("Inventory refreshed ✅");
+  }catch(e){
+    console.error(e);
+    setStatus("Token saved but refresh failed: " + e.message,"error");
+  }
+};
+
+$("btnClearToken").onclick=()=>{
+  clearToken();
+  cache=null;
+  $("token").value="";
+  $("token").placeholder="Paste GitHub token (repo contents access)";
+  $("invList").innerHTML="";
+  setStatus("Token cleared on this device.","warn");
+};
+
 $("btnRefresh").onclick=async()=>{
-  try{requireToken()}catch{return}
+  try{ requireToken(); }catch{ return; }
   setStatus("Refreshing…");
   try{
     await refresh();
@@ -488,14 +508,14 @@ $("btnRefresh").onclick=async()=>{
     setStatus("Inventory refreshed ✅");
   }catch(e){
     console.error(e);
-    setStatus("Refresh failed. Check token perms.","error");
+    setStatus("Refresh failed: " + e.message, "error");
   }
 };
 $("btnRefresh2").onclick=$("btnRefresh").onclick;
 
-/* ===========================
-   EDIT MODE
-=========================== */
+/** =========================
+ *  EDIT MODE
+ *  ========================= */
 function enterEditMode(p){
   editMode={active:true,id:p.id};
   $("editHint").style.display="block";
@@ -503,7 +523,9 @@ function enterEditMode(p){
   $("btnDel").style.display="inline-flex";
   $("btnSave").textContent="Save Update";
 
-  $("rid").value=p.id||""; $("rid").disabled=true;
+  $("rid").value=p.id||"";
+  $("rid").disabled=true;
+
   $("artist").value=p.artist||"";
   $("title").value=p.title||"";
   $("price").value=(p.price!=null?p.price:"");
@@ -512,34 +534,46 @@ function enterEditMode(p){
   $("tier").value=p.tier||"premium";
   $("available").checked=(p.available!==false);
   $("desc").value=p.description||"";
-  $("front").value=""; $("back").value="";
+
+  // clear file inputs
+  $("front").value="";
+  $("frontCam").value="";
+  $("back").value="";
+  $("backCam").value="";
 
   $("sec2").scrollIntoView({behavior:"smooth",block:"start"});
-  setStatus("Editing: "+(p.artist?p.artist+" — ":"")+(p.title||p.id));
+  setStatus("Editing: " + (p.artist?p.artist+" — ":"") + (p.title||p.id));
 }
+
 function exitEditMode(){
   editMode={active:false,id:""};
   $("editHint").style.display="none";
   $("btnCancel").style.display="none";
   $("btnDel").style.display="none";
   $("btnSave").textContent="Save Record";
-
   $("form").reset();
   $("qty").value=1;
   $("tier").value="premium";
   $("available").checked=true;
   $("rid").disabled=false;
-
   setStatus("Ready for a new record.");
 }
 $("btnCancel").onclick=exitEditMode;
 
-/* ===========================
-   SAVE / UPDATE
-=========================== */
-$("form").addEventListener("submit",async(e)=>{
+/** choose file preference:
+ *  if library has file use it, else camera file */
+function pickFile(libInputId, camInputId){
+  const lib = $(libInputId).files && $(libInputId).files[0];
+  const cam = $(camInputId).files && $(camInputId).files[0];
+  return lib || cam || null;
+}
+
+/** =========================
+ *  SAVE RECORD
+ *  ========================= */
+$("form").addEventListener("submit", async (e)=>{
   e.preventDefault();
-  try{requireToken()}catch{return;}
+  try{ requireToken(); }catch{ return; }
 
   const id=$("rid").value.trim();
   const artist=$("artist").value.trim();
@@ -550,60 +584,59 @@ $("form").addEventListener("submit",async(e)=>{
   const tier=$("tier").value||"premium";
   const available=!!$("available").checked;
   const description=$("desc").value.trim();
-  const frontFile=$("front").files[0];
-  const backFile=$("back").files[0];
+
+  const frontFile = pickFile("front","frontCam");
+  const backFile  = pickFile("back","backCam");
 
   if(!id||!artist||!title||!grade||Number.isNaN(price)){
-    setStatus("Missing: ID, Artist, Title, Price, Grade.","error");return;
+    setStatus("Missing: ID, Artist, Title, Price, Grade.","error");
+    return;
   }
   if(!editMode.active && !frontFile){
-    setStatus("Front photo required for NEW records.","error");return;
+    setStatus("Front photo required for NEW records.","error");
+    return;
   }
 
-  setStatus(editMode.active?"Saving update…":"Uploading + saving…");
+  setStatus(editMode.active ? "Saving update…" : "Uploading + saving…");
 
   try{
-    const {products,sha}=await loadProducts();
-    const idx=products.findIndex(p=>String(p.id)===String(id));
-    const existing=(idx>=0?products[idx]:{});
-    const sold=!!existing.sold;
+    const { products, sha } = await loadProducts();
+    const idx = products.findIndex(p=>String(p.id)===String(id));
+    const existing = (idx>=0?products[idx]:{});
+    const sold = !!existing.sold;
 
-    let frontPath=existing.imageFront||existing.image||(existing.images&&existing.images.front)||"";
-    let backPath=existing.imageBack||(existing.images&&existing.images.back)||"";
+    let frontPath = existing.imageFront || existing.image || (existing.images&&existing.images.front) || "";
+    let backPath  = existing.imageBack  || (existing.images&&existing.images.back) || frontPath;
 
-    if(frontFile) frontPath=await uploadImage(frontFile);
-    if(backFile)  backPath=await uploadImage(backFile);
+    if(frontFile) frontPath = await uploadImage(frontFile);
+    if(backFile)  backPath  = await uploadImage(backFile);
+    if(!backPath) backPath = frontPath;
 
-    if(!frontPath){
-      setStatus("Front image missing after upload. Try again.","error");
-      return;
-    }
-    if(!backPath) backPath=frontPath;
-
-    const updated={
-      id,artist,title,price,grade,
-      quantity:Number.isFinite(quantity)?quantity:0,
-      tier,available,description,sold,
-      image:frontPath,
-      imageFront:frontPath,
-      imageBack:backPath,
-      images:{front:frontPath,back:backPath}
+    const updated = {
+      id, artist, title, price, grade,
+      quantity: Number.isFinite(quantity) ? quantity : 0,
+      tier, available, description, sold,
+      image: frontPath,
+      imageFront: frontPath,
+      imageBack: backPath,
+      images: { front: frontPath, back: backPath }
     };
 
-    if(idx>=0) products[idx]={...products[idx],...updated};
+    if(idx>=0) products[idx] = { ...products[idx], ...updated };
     else products.push(updated);
 
     products.sort((a,b)=>(a.artist||"").localeCompare(b.artist||"")||(a.title||"").localeCompare(b.title||""));
-    await saveProducts(products,sha,(idx>=0?"Update record: ":"Add record: ")+id);
+
+    await saveProducts(products, sha, (idx>=0 ? "Update record: " : "Add record: ") + id);
 
     await refresh();
     await renderInventory();
 
-    setStatus("Saved ✅ "+artist+" — "+title);
+    setStatus("Saved ✅ " + artist + " — " + title);
 
     if(editMode.active){
-      const fresh=await getProducts();
-      const rec=fresh.find(r=>String(r.id)===String(id));
+      const fresh = await getProducts();
+      const rec = fresh.find(r=>String(r.id)===String(id));
       if(rec) enterEditMode(rec);
     }else{
       $("form").reset();
@@ -611,17 +644,18 @@ $("form").addEventListener("submit",async(e)=>{
       $("tier").value="premium";
       $("available").checked=true;
     }
+
   }catch(err){
     console.error(err);
-    setStatus("Save failed. Check token perms (Contents: Read & write).","error");
+    setStatus("Save failed: " + err.message, "error");
   }
 });
 
-/* ===========================
-   DELETE
-=========================== */
+/** =========================
+ *  DELETE
+ *  ========================= */
 $("btnDel").onclick=async()=>{
-  try{requireToken()}catch{return;}
+  try{ requireToken(); }catch{ return; }
   if(!editMode.active) return;
   if(!confirm("Delete this record?")) return;
 
@@ -629,32 +663,34 @@ $("btnDel").onclick=async()=>{
   setStatus("Deleting…");
 
   try{
-    const {products,sha}=await loadProducts();
-    await saveProducts(products.filter(p=>String(p.id)!==String(id)),sha,"Delete record: "+id);
+    const { products, sha } = await loadProducts();
+    await saveProducts(products.filter(p=>String(p.id)!==String(id)), sha, "Delete record: " + id);
     await refresh();
     await renderInventory();
     exitEditMode();
-    setStatus("Deleted ✅ "+id);
+    setStatus("Deleted ✅ " + id);
   }catch(e){
     console.error(e);
-    setStatus("Delete failed.","error");
+    setStatus("Delete failed: " + e.message, "error");
   }
 };
 
-/* ===========================
-   SOLD / AVAILABLE
-=========================== */
-$("soldSearch").addEventListener("input",async()=>{
+/** =========================
+ *  SOLD SEARCH + ACTIONS
+ *  ========================= */
+$("soldSearch").addEventListener("input", async ()=>{
   $("soldPills").innerHTML="";
-  const term=norm($("soldSearch").value.trim()); if(!term) return;
+  const term=norm($("soldSearch").value.trim());
+  if(!term) return;
+  try{ requireToken(); }catch{ return; }
 
-  try{requireToken()}catch{return}
   const list=await getProducts();
-
   list.filter(p=>norm(p.id).includes(term)||norm(p.artist).includes(term)||norm(p.title).includes(term))
-      .slice(0,10).forEach(p=>{
+      .slice(0,10)
+      .forEach(p=>{
         const b=document.createElement("button");
-        b.type="button"; b.className="search-pill";
+        b.type="button";
+        b.className="search-pill";
         b.textContent=(p.artist?p.artist+" — ":"")+(p.title||p.id);
         b.onclick=()=>{
           $("soldSearch").value=p.id;
@@ -666,42 +702,47 @@ $("soldSearch").addEventListener("input",async()=>{
 });
 
 async function applySoldAction(mode){
-  const raw=$("soldSearch").value.trim(), q=norm(raw);
-  if(!q){setStatus("Type something in Section 3.","error");return;}
-  try{requireToken()}catch{return;}
+  const raw=$("soldSearch").value.trim();
+  const q=norm(raw);
+  if(!q){ setStatus("Type something in Section 3.","error"); return; }
+  try{ requireToken(); }catch{ return; }
 
   setStatus("Saving change to products.json2…");
+
   try{
-    const {products,sha}=await loadProducts();
-    const idx=products.findIndex(p=>norm(p.id).includes(q)||norm(p.artist).includes(q)||norm(p.title).includes(q));
-    if(idx<0){setStatus("No match for: "+raw,"error");return;}
+    const { products, sha } = await loadProducts();
+    const idx = products.findIndex(p=>norm(p.id).includes(q)||norm(p.artist).includes(q)||norm(p.title).includes(q));
+    if(idx<0){ setStatus("No match for: "+raw,"error"); return; }
+
     const p=products[idx];
+    if(mode==="sold"){ p.sold=true; p.available=false; }
+    if(mode==="available"){ p.sold=false; p.available=true; }
+    if(mode==="hide"){ p.available=false; }
+    if(mode==="show"){ p.available=true; }
 
-    if(mode==="sold"){p.sold=true;p.available=false;}
-    if(mode==="available"){p.sold=false;p.available=true;}
-    if(mode==="hide"){p.available=false;}
-    if(mode==="show"){p.available=true;}
-
-    await saveProducts(products,sha,"Update status: "+(p.id||p.title));
+    await saveProducts(products, sha, "Update status: " + (p.id||p.title));
     await refresh();
     await renderInventory();
+
     $("soldSearch").value="";
     $("soldPills").innerHTML="";
-    setStatus("Done ✅ Updated: "+(p.artist?p.artist+" — ":"")+(p.title||p.id));
+    setStatus("Done ✅ Updated: " + (p.artist?p.artist+" — ":"") + (p.title||p.id));
+
   }catch(e){
     console.error(e);
-    setStatus("Could not update. Check token permissions.","error");
+    setStatus("Could not update: " + e.message, "error");
   }
 }
+
 $("btnSoldSave").onclick=()=>applySoldAction($("soldAction").value);
 $("btnQuickSold").onclick=()=>applySoldAction("sold");
 $("btnQuickAvail").onclick=()=>applySoldAction("available");
 
-/* ===========================
-   INVENTORY RENDER
-=========================== */
-function badge(text,cls){return `<span class="badge ${cls||""}">${escapeHtml(text)}</span>`}
-function getThumb(p){return p.imageFront||p.image||(p.images&&p.images.front)||""}
+/** =========================
+ *  INVENTORY RENDER
+ *  ========================= */
+function badge(text,cls){ return `<span class="badge ${cls||""}">${escapeHtml(text)}</span>`; }
+function getThumb(p){ return p.imageFront||p.image||(p.images&&p.images.front)||""; }
 
 function passesFilter(p){
   const f=$("invFilter").value;
@@ -712,13 +753,14 @@ function passesFilter(p){
   return (p.tier||"premium")===f;
 }
 function passesSearch(p){
-  const q=norm($("invSearch").value.trim()); if(!q) return true;
+  const q=norm($("invSearch").value.trim());
+  if(!q) return true;
   return norm(p.id).includes(q)||norm(p.artist).includes(q)||norm(p.title).includes(q)||norm(p.tier).includes(q);
 }
 
 async function renderInventory(){
   $("invList").innerHTML="";
-  try{requireToken()}catch{return;}
+  try{ requireToken(); }catch{ return; }
 
   const list=await getProducts();
   const filtered=list.filter(p=>passesFilter(p)&&passesSearch(p));
@@ -736,12 +778,13 @@ async function renderInventory(){
     const live=(p.available!==false);
     const sold=!!p.sold;
 
-    const imgSrc=thumb||("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(
+    const imgSrc=thumb || ("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(
       `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
         <rect width="100%" height="100%" fill="#1a1030"/>
         <text x="50%" y="50%" fill="#a1a1c5" font-size="18" font-family="Arial"
           text-anchor="middle" dominant-baseline="middle">No Image</text>
-      </svg>`));
+      </svg>`
+    ));
 
     const card=document.createElement("div");
     card.className="inv-card";
@@ -773,22 +816,21 @@ async function renderInventory(){
 $("invSearch").addEventListener("input",()=>renderInventory().catch(()=>{}));
 $("invFilter").addEventListener("change",()=>renderInventory().catch(()=>{}));
 
-/* ===========================
-   BOOT
-=========================== */
+/** =========================
+ *  BOOT
+ *  ========================= */
 (async function boot(){
-  const t=getToken();
-  if(!t) return;
-
+  if(!getToken()){
+    setStatus("Paste token to enable admin actions…","warn");
+    return;
+  }
   try{
-    await validateToken();
-    unlockAdmin();
     await refresh();
     await renderInventory();
     setStatus("Admin loaded. Live inventory ready.");
   }catch(e){
     console.warn(e);
-    lockAdmin();
+    setStatus("Auto-load failed: " + e.message, "error");
   }
 })();
 </script>
