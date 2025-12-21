@@ -516,6 +516,25 @@
     "sold": false
   },
   {
+    "id": "Best of styx",
+    "artist": "Styx",
+    "title": "Best Of",
+    "price": 8,
+    "grade": "G/VG",
+    "quantity": 1,
+    "tier": "budget",
+    "available": true,
+    "description": "Ring wear and water damage on jacket. Generic sleeve Vinyl VG",
+    "sold": false,
+    "image": "images/1766354852681-17663547446891043670516969641522.jpg",
+    "imageFront": "images/1766354852681-17663547446891043670516969641522.jpg",
+    "imageBack": "images/1766354852681-17663547446891043670516969641522.jpg",
+    "images": {
+      "front": "images/1766354852681-17663547446891043670516969641522.jpg",
+      "back": "images/1766354852681-17663547446891043670516969641522.jpg"
+    }
+  },
+  {
     "id": "sum41-all-killer-no-filler",
     "artist": "Sum 41",
     "title": "All Killer No Filler",
