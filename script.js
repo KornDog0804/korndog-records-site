@@ -511,7 +511,321 @@ function submitPayPal(cart, shipping, discountTotal) {
   form.method = "post";
   form.submit();
 }
+// ================= QUICK VIEW (GO BIG) MODAL =====================
+// - No shop.html rewrite needed
+// - Click/tap a record card (not the button) -> opens big view
+// - Front/back supported; if back missing, it gracefully uses front
+// ================================================================
 
+(function setupQuickViewModal(){
+  // Inject CSS once
+  if (!document.getElementById("kd-qv-style")) {
+    const style = document.createElement("style");
+    style.id = "kd-qv-style";
+    style.textContent = `
+      .kd-qv-backdrop{
+        position:fixed; inset:0; z-index:99999;
+        background:rgba(0,0,0,.72);
+        display:none;
+        align-items:center; justify-content:center;
+        padding:16px;
+      }
+      .kd-qv-backdrop.open{ display:flex; }
+      .kd-qv{
+        width:min(980px, 100%);
+        border-radius:18px;
+        border:1px solid rgba(123,255,90,.35);
+        background: rgba(10,1,30,.95);
+        box-shadow: 0 24px 70px rgba(0,0,0,.65);
+        overflow:hidden;
+      }
+      .kd-qv-head{
+        display:flex; align-items:center; justify-content:space-between;
+        gap:12px;
+        padding:12px 14px;
+        border-bottom:1px solid rgba(255,255,255,.10);
+        background: linear-gradient(to right, rgba(10,1,30,.95), rgba(10,1,25,.90));
+      }
+      .kd-qv-title{
+        font-weight:900;
+        letter-spacing:.02em;
+        font-size:1rem;
+        color:#f5f5ff;
+        overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+      }
+      .kd-qv-close{
+        border:none;
+        background:rgba(123,255,90,.12);
+        color:#7bff5a;
+        border:1px solid rgba(123,255,90,.45);
+        border-radius:999px;
+        padding:8px 12px;
+        font-weight:900;
+        cursor:pointer;
+      }
+      .kd-qv-body{
+        display:grid;
+        grid-template-columns: 1.2fr .8fr;
+        gap:16px;
+        padding:16px;
+      }
+      @media (max-width: 860px){
+        .kd-qv-body{ grid-template-columns: 1fr; }
+      }
+
+      .kd-qv-media{
+        border-radius:16px;
+        border:1px solid rgba(255,255,255,.10);
+        overflow:hidden;
+        background: rgba(0,0,0,.18);
+      }
+      .kd-qv-stage{
+        width:100%;
+        aspect-ratio:1/1;
+        display:flex; align-items:center; justify-content:center;
+        position:relative;
+      }
+      .kd-qv-stage img{
+        width:100%; height:100%;
+        object-fit:cover;
+        display:block;
+      }
+      .kd-qv-thumbs{
+        display:flex;
+        gap:10px;
+        padding:10px;
+        border-top:1px solid rgba(255,255,255,.08);
+        background: rgba(255,255,255,.03);
+      }
+      .kd-qv-thumb{
+        width:64px; height:64px;
+        border-radius:12px;
+        overflow:hidden;
+        border:1px solid rgba(255,255,255,.14);
+        background: rgba(0,0,0,.2);
+        cursor:pointer;
+        opacity:.85;
+        flex:0 0 auto;
+      }
+      .kd-qv-thumb.active{
+        border-color: rgba(123,255,90,.65);
+        opacity:1;
+        box-shadow: 0 0 0 2px rgba(123,255,90,.15) inset;
+      }
+      .kd-qv-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+      .kd-qv-info{
+        padding:6px 2px;
+      }
+      .kd-qv-line{
+        color:#a1a1c5;
+        font-size:.92rem;
+        margin:6px 0;
+        line-height:1.35;
+      }
+      .kd-qv-price{
+        font-weight:900;
+        color:#f5f5ff;
+        font-size:1.25rem;
+        margin-top:10px;
+      }
+      .kd-qv-badges{
+        display:flex; flex-wrap:wrap; gap:8px;
+        margin:10px 0 6px;
+      }
+      .kd-qv-badge{
+        font-size:.75rem;
+        padding:4px 10px;
+        border-radius:999px;
+        border:1px solid rgba(255,255,255,.14);
+        background: rgba(0,0,0,.18);
+        color:#a1a1c5;
+      }
+      .kd-qv-badge.live{ border-color: rgba(123,255,90,.35); color:#7bff5a; }
+      .kd-qv-badge.hidden{ border-color: rgba(255,75,106,.35); color:#ff4b6a; }
+
+      .kd-qv-actions{
+        display:flex; gap:10px; flex-wrap:wrap;
+        margin-top:14px;
+      }
+      .kd-qv-actions .btn-primary{ margin-top:0; }
+      .kd-qv-actions .btn-outline{
+        border-radius:999px;
+        padding:0.6rem 1.3rem;
+        font-size:0.92rem;
+        cursor:pointer;
+        font-weight:700;
+        background: transparent;
+        color: #7bff5a;
+        border: 1px solid rgba(123,255,90,.55);
+      }
+      .kd-qv-actions .btn-outline:hover{ filter: brightness(1.05); }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Inject modal HTML once
+  if (!document.getElementById("kd-qv-backdrop")) {
+    const backdrop = document.createElement("div");
+    backdrop.id = "kd-qv-backdrop";
+    backdrop.className = "kd-qv-backdrop";
+    backdrop.innerHTML = `
+      <div class="kd-qv" role="dialog" aria-modal="true" aria-label="Record quick view">
+        <div class="kd-qv-head">
+          <div class="kd-qv-title" id="kd-qv-title">Quick View</div>
+          <button class="kd-qv-close" type="button" id="kd-qv-close">X</button>
+        </div>
+        <div class="kd-qv-body">
+          <div class="kd-qv-media">
+            <div class="kd-qv-stage">
+              <img id="kd-qv-img" alt="Record image" />
+            </div>
+            <div class="kd-qv-thumbs" id="kd-qv-thumbs"></div>
+          </div>
+          <div class="kd-qv-info">
+            <div class="kd-qv-price" id="kd-qv-price">$0.00</div>
+            <div class="kd-qv-badges" id="kd-qv-badges"></div>
+            <div class="kd-qv-line" id="kd-qv-grade"></div>
+            <div class="kd-qv-line" id="kd-qv-qty"></div>
+            <div class="kd-qv-line" id="kd-qv-desc"></div>
+
+            <div class="kd-qv-actions">
+              <button class="btn-primary" type="button" id="kd-qv-add">Add to Cart</button>
+              <button class="btn-outline" type="button" id="kd-qv-close2">Back to Grid</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(backdrop);
+
+    // Close helpers
+    const close = () => backdrop.classList.remove("open");
+    document.getElementById("kd-qv-close").addEventListener("click", close);
+    document.getElementById("kd-qv-close2").addEventListener("click", close);
+
+    // Click outside closes
+    backdrop.addEventListener("click", (e) => {
+      if (e.target === backdrop) close();
+    });
+
+    // ESC closes
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+  }
+
+  function pickImageSources(p){
+    const front = p.imageFront || (p.images && p.images.front) || p.image || "";
+    const back  = p.imageBack  || (p.images && p.images.back)  || "";
+    // If back missing, we just don't show a back thumb.
+    return { front, back };
+  }
+
+  function openQuickView(productId){
+    const backdrop = document.getElementById("kd-qv-backdrop");
+    const p = (window.allProducts || []).find(x => x.id === productId);
+    if (!p) return;
+
+    // Basic fields
+    const titleText = (p.artist ? `${p.artist} – ` : "") + (p.title || p.id || "Record");
+    document.getElementById("kd-qv-title").textContent = titleText;
+    document.getElementById("kd-qv-price").textContent = "$" + Number(p.price || 0).toFixed(2);
+    document.getElementById("kd-qv-grade").textContent = "Grade: " + (p.grade || "—");
+    document.getElementById("kd-qv-qty").textContent = "Qty available: " + (p.quantity ?? 1);
+    document.getElementById("kd-qv-desc").textContent = p.description || "";
+
+    // Badges
+    const badges = document.getElementById("kd-qv-badges");
+    badges.innerHTML = "";
+    const avail = (p.available === false) ? "HIDDEN" : "LIVE";
+    const b1 = document.createElement("span");
+    b1.className = "kd-qv-badge " + ((p.available === false) ? "hidden" : "live");
+    b1.textContent = avail;
+    badges.appendChild(b1);
+
+    const b2 = document.createElement("span");
+    b2.className = "kd-qv-badge";
+    b2.textContent = "Tier: " + (p.tier || "premium");
+    badges.appendChild(b2);
+
+    if (Number(p.price) === 10) {
+      const b3 = document.createElement("span");
+      b3.className = "kd-qv-badge live";
+      b3.textContent = "$10 PRICE";
+      badges.appendChild(b3);
+    }
+
+    // Images
+    const { front, back } = pickImageSources(p);
+    const stageImg = document.getElementById("kd-qv-img");
+    const thumbs = document.getElementById("kd-qv-thumbs");
+    thumbs.innerHTML = "";
+
+    function setStage(src){
+      stageImg.src = src || "";
+      stageImg.onerror = () => {
+        stageImg.removeAttribute("src");
+        stageImg.style.background = "repeating-linear-gradient(45deg,#1f102f,#1f102f 6px,#12061f 6px,#12061f 12px)";
+      };
+      stageImg.style.background = "";
+    }
+
+    // Thumb builder
+    function addThumb(src, label){
+      if (!src) return;
+      const t = document.createElement("div");
+      t.className = "kd-qv-thumb";
+      t.title = label;
+      t.innerHTML = `<img alt="${label}" />`;
+      const img = t.querySelector("img");
+      img.src = src;
+      img.onerror = () => t.style.opacity = ".35";
+      t.addEventListener("click", () => {
+        [...thumbs.querySelectorAll(".kd-qv-thumb")].forEach(x => x.classList.remove("active"));
+        t.classList.add("active");
+        setStage(src);
+      });
+      thumbs.appendChild(t);
+      return t;
+    }
+
+    const tFront = addThumb(front, "Front");
+    const tBack  = addThumb(back, "Back");
+
+    // Default stage
+    if (tFront) tFront.classList.add("active");
+    setStage(front || back || "");
+
+    // Add to cart button (uses your existing logic)
+    const addBtn = document.getElementById("kd-qv-add");
+    addBtn.disabled = (p.available === false);
+    addBtn.textContent = (p.available === false) ? "Unavailable" : "Add to Cart";
+    addBtn.onclick = () => {
+      if (p.available === false) return;
+      window.addToCart(productId);
+    };
+
+    backdrop.classList.add("open");
+  }
+
+  // Event delegation: click card to open modal (ignore buttons)
+  document.addEventListener("click", (e) => {
+    const grid = document.getElementById("products");
+    if (!grid) return;
+
+    const card = e.target.closest(".record-card");
+    if (!card) return;
+
+    // Don't open modal if they clicked the Add to Cart button
+    if (e.target.closest("button")) return;
+
+    const pid = card.dataset.pid;
+    if (!pid) return;
+
+    openQuickView(pid);
+  }, true);
+})();
 // ----------------------------- INIT -------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
   window.scrollTo(0, 0);
