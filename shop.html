@@ -157,11 +157,25 @@
       font-size: 0.95rem;
     }
 
+    /* ✅ UPDATED GRID: 2x2 on mobile, 3 on tablet, 4 on desktop */
     .products-grid {
       margin-top: 1.75rem;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    @media (min-width: 800px) {
+      .products-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+      }
+    }
+
+    @media (min-width: 1100px) {
+      .products-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
     }
 
     .record-card {
@@ -462,7 +476,7 @@
         if (running) return;
         running = true;
 
-        bubble.innerHTML = '<div class="zk-tail"></div>Hi! I\'m Zombie Kitty — your crate-digging assistant.<br><br>I\'ll get KornDog for you now…';
+        bubble.innerHTML = '<div class="zk-tail"></div>Hi! I\\'m Zombie Kitty — your crate-digging assistant.<br><br>I\\'ll get KornDog for you now…';
 
         overlay.classList.add('active');
 
