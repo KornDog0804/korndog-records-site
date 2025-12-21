@@ -611,6 +611,25 @@
     }
   },
   {
+    "id": "Truimph",
+    "artist": "Triumph",
+    "title": "Progessions Of Power",
+    "price": 8,
+    "grade": "G/VG+",
+    "quantity": 1,
+    "tier": "budget",
+    "available": true,
+    "description": "Jacket has some water damage bottom right. Original Inner seam splits. Vinyl very good shape",
+    "sold": false,
+    "image": "images/1766355058418-17663548954296529725004834174498.jpg",
+    "imageFront": "images/1766355058418-17663548954296529725004834174498.jpg",
+    "imageBack": "images/1766355059946-17663549344345333710795662866127.jpg",
+    "images": {
+      "front": "images/1766355058418-17663548954296529725004834174498.jpg",
+      "back": "images/1766355059946-17663549344345333710795662866127.jpg"
+    }
+  },
+  {
     "id": "compilation-album-hiphop-50yrs",
     "artist": "Various Artists",
     "title": "Compilation Album - 50 Years of Hip-Hop",
