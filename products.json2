@@ -134,6 +134,25 @@
     "sold": false
   },
   {
+    "id": "Commodore's",
+    "artist": "Commodores",
+    "title": "All The Great Hits",
+    "price": 10,
+    "grade": "VG/VG+",
+    "quantity": 1,
+    "tier": "tenbin",
+    "available": true,
+    "description": "Jacket corner ding top right. In shrink and Canadian press",
+    "sold": false,
+    "image": "images/1766355293595-17663551086122343256650476255430.jpg",
+    "imageFront": "images/1766355293595-17663551086122343256650476255430.jpg",
+    "imageBack": "images/1766355294919-17663551337392553280065364275003.jpg",
+    "images": {
+      "front": "images/1766355293595-17663551086122343256650476255430.jpg",
+      "back": "images/1766355294919-17663551337392553280065364275003.jpg"
+    }
+  },
+  {
     "id": "david-lee-roth-crazy-from-the-heat-ep",
     "artist": "David Lee Roth",
     "title": "Crazy From The Heat (EP)",
