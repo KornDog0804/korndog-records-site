@@ -373,10 +373,10 @@
     "available": true,
     "quantity": 1,
     "imageFront": "images/Kansas-1764232880896.jpg",
-    "imageBack": "images/Kansas-1764232880896.jpg",
+    "imageBack": "images/1766355814869-17663558072006216844151120348350.jpg",
     "images": {
       "front": "images/Kansas-1764232880896.jpg",
-      "back": "images/Kansas-1764232880896.jpg"
+      "back": "images/1766355814869-17663558072006216844151120348350.jpg"
     },
     "tier": "tenbin",
     "sold": false
