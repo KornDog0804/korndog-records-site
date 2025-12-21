@@ -268,6 +268,25 @@
     "sold": false
   },
   {
+    "id": "Johnny Cash Collection",
+    "artist": "Johnny Cash",
+    "title": "Greatest Hits Volume 2",
+    "price": 5,
+    "grade": "VG/VG+",
+    "quantity": 1,
+    "tier": "budget",
+    "available": true,
+    "description": "Very nice copy",
+    "sold": false,
+    "image": "images/1766352704917-17663525891566496099540587153571.jpg",
+    "imageFront": "images/1766352704917-17663525891566496099540587153571.jpg",
+    "imageBack": "images/1766352706216-17663526181703107268863836076423.jpg",
+    "images": {
+      "front": "images/1766352704917-17663525891566496099540587153571.jpg",
+      "back": "images/1766352706216-17663526181703107268863836076423.jpg"
+    }
+  },
+  {
     "id": "johnny-guitar-watson-giant",
     "artist": "Johnny Guitar Watson",
     "title": "Giant",
