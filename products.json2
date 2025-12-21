@@ -497,6 +497,25 @@
     "sold": false
   },
   {
+    "id": "Truimph allied forces",
+    "artist": "Triumph",
+    "title": "Allied Forces",
+    "price": 8,
+    "grade": "VG/VG",
+    "quantity": 1,
+    "tier": "budget",
+    "available": true,
+    "description": "OG with original inner",
+    "sold": false,
+    "image": "images/1766352311630-5893.jpg",
+    "imageFront": "images/1766352311630-5893.jpg",
+    "imageBack": "images/1766352313196-5894.jpg",
+    "images": {
+      "front": "images/1766352311630-5893.jpg",
+      "back": "images/1766352313196-5894.jpg"
+    }
+  },
+  {
     "id": "compilation-album-hiphop-50yrs",
     "artist": "Various Artists",
     "title": "Compilation Album - 50 Years of Hip-Hop",
