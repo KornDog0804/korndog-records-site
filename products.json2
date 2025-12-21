@@ -230,6 +230,25 @@
     "sold": false
   },
   {
+    "id": "Jefferson Starship",
+    "artist": "Jefferson Starship",
+    "title": "Red Octopus",
+    "price": 8,
+    "grade": "VG/VG",
+    "quantity": 1,
+    "tier": "budget",
+    "available": true,
+    "description": "Top of jacket has shelf wear, original inner has some seam splits. Vinyl is VG",
+    "sold": false,
+    "image": "images/1766353771830-17663536301594697180019756225476.jpg",
+    "imageFront": "images/1766353771830-17663536301594697180019756225476.jpg",
+    "imageBack": "images/1766353773951-17663536562795494676876831638089.jpg",
+    "images": {
+      "front": "images/1766353771830-17663536301594697180019756225476.jpg",
+      "back": "images/1766353773951-17663536562795494676876831638089.jpg"
+    }
+  },
+  {
     "id": "jimi-hendrix-smash-hits",
     "artist": "Jimi Hendrix Experience",
     "title": "Smash Hits",
