@@ -678,10 +678,10 @@
     "available": true,
     "quantity": 1,
     "imageFront": "images/PXL_20251211_210552651.jpg",
-    "imageBack": "images/PXL_20251211_210603941.jpg",
+    "imageBack": "images/1766355986369-5000.jpg",
     "images": {
       "front": "images/PXL_20251211_210552651.jpg",
-      "back": "images/PXL_20251211_210603941.jpg"
+      "back": "images/1766355986369-5000.jpg"
     },
     "tier": "premium",
     "sold": false
