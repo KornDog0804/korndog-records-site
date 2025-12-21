@@ -186,6 +186,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
+      cursor: pointer;
     }
 
     /* FLIP IMAGE SETUP */
@@ -413,6 +414,121 @@
       left: -12px;
       bottom: 20px;
     }
+
+    /* ===========================
+       ✅ QUICK VIEW (BIG MODAL)
+       - NO script.js changes needed
+       =========================== */
+    .kd-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+    }
+    .kd-modal.open { display: flex; }
+
+    .kd-modal-card {
+      width: min(980px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(18,5,43,.96);
+      box-shadow: 0 24px 70px rgba(0,0,0,.55);
+    }
+
+    .kd-modal-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
+      background: linear-gradient(to right, rgba(10,1,30,.96), rgba(10,1,25,.92));
+      border-bottom: 1px solid rgba(123,255,90,.18);
+    }
+
+    .kd-modal-title {
+      font-weight: 900;
+      letter-spacing: .02em;
+      font-size: 1rem;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .kd-close {
+      border: 1px solid rgba(123,255,90,.55);
+      background: rgba(123,255,90,.12);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .kd-modal-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      padding: 16px;
+    }
+
+    .kd-modal-media {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+
+    .kd-modal-media img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .kd-modal-details h3 {
+      margin: 0 0 6px;
+      font-size: 1.35rem;
+    }
+
+    .kd-modal-details .muted { color: var(--muted); font-size: .95rem; }
+    .kd-modal-details .price { margin-top: 10px; font-weight: 900; font-size: 1.15rem; }
+    .kd-modal-details .desc { margin-top: 10px; color: var(--muted); line-height: 1.4; }
+    .kd-modal-details .qty { margin-top: 10px; color: var(--muted); }
+
+    .kd-modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .kd-modal-actions .btn-primary {
+      margin-top: 0;
+      width: auto;
+    }
+
+    .kd-modal-actions .btn-outline {
+      border-radius: 999px;
+      padding: 0.6rem 1.3rem;
+      font-size: 0.92rem;
+      border: 1px solid rgba(123,255,90,.55);
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    @media (max-width: 860px){
+      .kd-modal-inner { grid-template-columns: 1fr; }
+    }
   </style>
 
   <script defer src="script.js"></script>
@@ -461,7 +577,37 @@
     </div>
   </div>
 
+  <!-- ✅ PRODUCT QUICK VIEW MODAL -->
+  <div id="kdModal" class="kd-modal" aria-hidden="true">
+    <div class="kd-modal-card" role="dialog" aria-modal="true" aria-label="Product details">
+      <div class="kd-modal-topbar">
+        <p class="kd-modal-title">KornDog Quick View</p>
+        <button id="kdClose" class="kd-close" type="button">✕ Close</button>
+      </div>
+
+      <div class="kd-modal-inner">
+        <div class="kd-modal-media">
+          <img id="kdModalImg" alt="Record image" />
+        </div>
+
+        <div class="kd-modal-details">
+          <h3 id="kdModalName">Artist — Title</h3>
+          <div class="muted" id="kdModalGrade">Grade: NM/NM</div>
+          <div class="price" id="kdModalPrice">$0.00</div>
+          <div class="desc" id="kdModalDesc"></div>
+          <div class="qty" id="kdModalQty"></div>
+
+          <div class="kd-modal-actions">
+            <button id="kdModalAdd" class="btn-primary" type="button">Add to Cart</button>
+            <button id="kdModalBack" class="btn-outline" type="button">Back to Grid</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Zombie Kitty contact flow (unchanged)
     (function () {
       const btn = document.getElementById('floatingJoey');
       const overlay = document.getElementById('zkOverlay');
@@ -492,6 +638,108 @@
             running = false;
           }, 600);
         }, 5500);
+      });
+    })();
+
+    // ✅ Quick View Modal (NO script.js changes required)
+    (function () {
+      const modal = document.getElementById("kdModal");
+      const closeBtn = document.getElementById("kdClose");
+      const backBtn  = document.getElementById("kdModalBack");
+      const imgEl    = document.getElementById("kdModalImg");
+      const nameEl   = document.getElementById("kdModalName");
+      const gradeEl  = document.getElementById("kdModalGrade");
+      const priceEl  = document.getElementById("kdModalPrice");
+      const descEl   = document.getElementById("kdModalDesc");
+      const qtyEl    = document.getElementById("kdModalQty");
+      const addBtn   = document.getElementById("kdModalAdd");
+      const grid     = document.getElementById("products");
+
+      if (!modal || !grid) return;
+
+      let lastCard = null;
+
+      function openModalFromCard(card) {
+        lastCard = card;
+
+        // Try to grab a good image (front if flip exists)
+        const img =
+          card.querySelector(".flip-front img") ||
+          card.querySelector(".record-image img") ||
+          card.querySelector("img");
+
+        const title =
+          (card.querySelector("h3") && card.querySelector("h3").textContent) ||
+          "Record";
+
+        const grade =
+          (card.querySelector(".record-grade") && card.querySelector(".record-grade").textContent) ||
+          "";
+
+        const price =
+          (card.querySelector(".record-price") && card.querySelector(".record-price").textContent) ||
+          "";
+
+        const desc =
+          (card.querySelector(".record-desc") && card.querySelector(".record-desc").textContent) ||
+          "";
+
+        const qty =
+          (card.querySelector(".qty-text") && card.querySelector(".qty-text").textContent) ||
+          "";
+
+        if (img && img.getAttribute("src")) imgEl.src = img.getAttribute("src");
+        nameEl.textContent = title.trim();
+        gradeEl.textContent = grade.trim() || "Grade:";
+        priceEl.textContent = price.trim() || "";
+        descEl.textContent = desc.trim() || "";
+        qtyEl.textContent = qty.trim() || "";
+
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        lastCard = null;
+      }
+
+      // Close buttons
+      closeBtn && closeBtn.addEventListener("click", closeModal);
+      backBtn && backBtn.addEventListener("click", closeModal);
+
+      // Click outside closes
+      modal.addEventListener("click", (e) => {
+        const card = modal.querySelector(".kd-modal-card");
+        if (card && !card.contains(e.target)) closeModal();
+      });
+
+      // Escape closes
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+      });
+
+      // Modal Add to Cart => clicks the real button in the card (keeps your existing cart math perfect)
+      addBtn && addBtn.addEventListener("click", () => {
+        if (!lastCard) return;
+        const realBtn = lastCard.querySelector("button.btn-primary") || lastCard.querySelector("button");
+        if (realBtn) realBtn.click();
+      });
+
+      // Tap a record to open modal (but NOT if tapping the Add button)
+      grid.addEventListener("click", (e) => {
+        const target = e.target;
+
+        // If they clicked a button, let normal behavior happen
+        if (target && target.closest("button")) return;
+
+        const card = target.closest(".record-card");
+        if (!card) return;
+
+        openModalFromCard(card);
       });
     })();
   </script>
