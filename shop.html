@@ -21,162 +21,227 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
     }
+
     a { color: inherit; text-decoration: none; }
 
-    header{
-      position: sticky; top: 0; z-index: 20;
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
       backdrop-filter: blur(12px);
       background: linear-gradient(to right, rgba(10, 1, 30, 0.95), rgba(10, 1, 25, 0.9));
       border-bottom: 1px solid rgba(123, 255, 90, 0.2);
     }
-    .nav-inner{
-      max-width:1100px; margin:0 auto; padding:.75rem 1.25rem;
-      display:flex; align-items:center; justify-content:space-between; gap:1rem;
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
     }
-    .logo-link{ display:inline-flex; align-items:center; justify-content:center; }
-    .logo-circle{
-      width:44px; height:44px; border-radius:999px; border:2px solid var(--accent);
+
+    .logo-link { display: inline-flex; align-items: center; justify-content: center; }
+
+    .logo-circle {
+      width: 44px; height: 44px;
+      border-radius: 999px;
+      border: 2px solid var(--accent);
       background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
-      overflow:hidden;
-    }
-    .logo-circle img{ width:100%; height:100%; object-fit:cover; }
-
-    nav{ display:flex; align-items:center; gap:.75rem; }
-    .nav-link{
-      padding:.6rem 1.6rem; border-radius:999px; font-size:.92rem;
-      color:var(--muted); border:1px solid transparent; font-weight:500;
-      transition: background .15s ease, color .15s ease, border-color .15s ease;
-    }
-    .nav-link.active{ background:var(--accent); color:#02010a; font-weight:700; }
-    .nav-link:hover{ border-color:rgba(123,255,90,.6); color:var(--text); }
-
-    .cart-pill{
-      display:inline-flex; align-items:center; gap:.35rem;
-      padding:.45rem .9rem; border-radius:999px;
-      background: rgba(123,255,90,.12);
-      border:1px solid rgba(123,255,90,.5);
-      font-size:.88rem;
-    }
-    .cart-pill span{
-      background:var(--accent); color:#02010a; border-radius:999px;
-      padding:.2rem .6rem; font-weight:800;
+      overflow: hidden;
     }
 
-    main{ max-width:1100px; margin:0 auto; padding:1.5rem 1.25rem 3rem; }
-    h2{ margin-bottom:.75rem; font-size:1.8rem; }
-    .subtitle{ color:var(--muted); font-size:.95rem; }
+    .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* Grid */
-    .products-grid{
-      margin-top:1.75rem;
-      display:grid;
+    nav { display: flex; align-items: center; gap: 0.75rem; }
+
+    .nav-link {
+      padding: 0.6rem 1.6rem;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      border: 1px solid transparent;
+      font-weight: 500;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .nav-link.active {
+      background: var(--accent);
+      color: #02010a;
+      font-weight: 600;
+    }
+
+    .nav-link:hover { border-color: rgba(123, 255, 90, 0.6); color: var(--text); }
+
+    .cart-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(123, 255, 90, 0.12);
+      border: 1px solid rgba(123, 255, 90, 0.5);
+      font-size: 0.88rem;
+    }
+
+    .cart-pill span {
+      background: var(--accent);
+      color: #02010a;
+      border-radius: 999px;
+      padding: 0.2rem 0.6rem;
+      font-weight: 600;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+
+    h2 { margin-bottom: 0.75rem; font-size: 1.8rem; }
+
+    .subtitle { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+    .products-grid {
+      margin-top: 1.75rem;
+      display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap:1rem;
-    }
-    @media(min-width:800px){
-      .products-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); gap:1.25rem; }
-    }
-    @media(min-width:1100px){
-      .products-grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      gap: 1rem;
     }
 
-    .record-card{
-      background:var(--card);
-      border-radius:1.4rem;
-      padding:1rem;
-      border:1px solid var(--border);
-      display:flex;
-      flex-direction:column;
-      gap:.4rem;
-      cursor:pointer;
+    @media (min-width: 800px) {
+      .products-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
     }
 
-    /* Flip image */
-    .record-image{ position:relative; width:100%; aspect-ratio:1/1; perspective:1000px; margin-bottom:.5rem; }
-    .flip-wrapper{ width:100%; height:100%; }
-    .flip-inner{
-      position:relative; width:100%; height:100%;
-      border-radius:1rem; overflow:hidden;
-      transform-style:preserve-3d;
-      transition: transform .5s ease;
+    @media (min-width: 1100px) {
+      .products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
-    .flip-front,.flip-back{ position:absolute; inset:0; backface-visibility:hidden; }
-    .flip-back{ transform: rotateY(180deg); }
-    .record-card:hover .flip-inner{ transform: rotateY(180deg); }
 
-    .record-card img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .image-missing{
+    .record-card {
+      background: var(--card);
+      border-radius: 1.4rem;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    /* image tap area (THIS opens modal now) */
+    .record-image {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      perspective: 1000px;
+      margin-bottom: 0.5rem;
+      cursor: pointer; /* ✅ photo feels tappable */
+    }
+
+    .flip-wrapper { width: 100%; height: 100%; }
+
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 1rem;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease;
+    }
+
+    .flip-front, .flip-back { position: absolute; inset: 0; backface-visibility: hidden; }
+
+    .flip-back { transform: rotateY(180deg); }
+
+    .record-card:hover .flip-inner { transform: rotateY(180deg); }
+
+    .record-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .image-missing {
       background: repeating-linear-gradient(45deg, #1f102f, #1f102f 6px, #12061f 6px, #12061f 12px);
     }
 
-    .record-card h3{ font-size:1rem; margin:.15rem 0; }
-    .record-grade{ font-size:.85rem; color:var(--muted); }
-    .record-price{ font-weight:900; margin-top:.2rem; }
-    .record-desc{ font-size:.85rem; color:var(--muted); flex:1; }
-    .qty-text{ font-size:.85rem; color:var(--muted); margin-top:.15rem; }
+    /* ✅ Share link look (title/desc click) */
+    .share-link { display: block; }
+    .share-link:hover { text-decoration: underline; text-decoration-color: rgba(123,255,90,.7); }
 
-    .btn-primary{
-      border-radius:999px;
-      padding:.6rem 1.3rem;
-      font-size:.92rem;
-      border:none;
-      cursor:pointer;
-      font-weight:900;
-      background:var(--accent);
-      color:#02010a;
-      margin-top:.5rem;
-    }
-    .btn-primary:hover{ filter: brightness(1.05); }
+    .record-card h3 { font-size: 1rem; margin: 0.15rem 0; }
 
-    /* Pagination */
-    .pagination{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:.5rem;
-      margin-top:2rem;
-    }
-    .pagination button{
-      min-width:40px;
-      padding:.35rem .9rem;
-      border-radius:999px;
-      border:1px solid rgba(123,255,90,.7);
-      background:rgba(123,255,90,.12);
-      color:var(--accent);
-      font-weight:900;
-      font-size:.9rem;
-      cursor:pointer;
-    }
-    .pagination button.active{
-      background:var(--accent);
-      color:#02010a;
-      box-shadow:0 0 12px rgba(123,255,90,.5);
+    .record-grade { font-size: 0.85rem; color: var(--muted); }
+
+    .record-price { font-weight: 600; margin-top: 0.2rem; }
+
+    .record-desc { font-size: 0.85rem; color: var(--muted); flex: 1; }
+
+    .qty-text { font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem; }
+
+    .btn-primary {
+      border-radius: 999px;
+      padding: 0.6rem 1.3rem;
+      font-size: 0.92rem;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      background: var(--accent);
+      color: #02010a;
+      margin-top: 0.5rem;
     }
 
-    footer{
-      max-width:1100px;
-      margin:0 auto;
-      padding:0 1.25rem 2rem;
-      font-size:.78rem;
-      color:var(--muted);
-      text-align:center;
-    }
-    footer strong{ color:var(--accent); }
+    .btn-primary:hover { filter: brightness(1.05); }
 
-    /* Floating message button (NOW a real button so it always clicks) */
-    .floating-message{
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    .pagination button {
+      min-width: 40px;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(123, 255, 90, 0.7);
+      background: rgba(123, 255, 90, 0.12);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .pagination button.active {
+      background: var(--accent);
+      color: #02010a;
+      box-shadow: 0 0 12px rgba(123, 255, 90, 0.5);
+    }
+
+    footer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.25rem 2rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    footer strong { color: var(--accent); }
+
+    .floating-message {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      z-index: 99999;
-      width: 52px;
-      height: 52px;
+      z-index: 9999;
+      width: 50px;
+      height: 50px;
       border-radius: 999px;
       background: var(--accent);
       color: #02010a;
@@ -184,132 +249,157 @@
       align-items: center;
       justify-content: center;
       font-size: 1.3rem;
-      font-weight: 900;
-      box-shadow: 0 0 16px rgba(123,255,90,.5);
+      font-weight: 700;
+      box-shadow: 0 0 16px rgba(123, 255, 90, 0.5);
       cursor: pointer;
-      border: none;
-      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Zombie Kitty overlay */
-    .zk-overlay{
+    .zk-overlay {
       position: fixed;
       bottom: 90px;
       left: -420px;
       display: flex;
       align-items: flex-end;
       gap: 10px;
-      z-index: 99998;
-      transition: left .6s ease;
+      z-index: 9998;
+      transition: left 0.6s ease;
       pointer-events: none;
     }
-    .zk-overlay.active{ left: 20px; }
 
-    .zk-kitty{
+    .zk-overlay.active { left: 20px; }
+
+    .zk-kitty {
       width: 140px;
-      opacity: .95;
+      opacity: 0.95;
       animation: zk-blink 5s infinite, zk-wave 1.2s infinite ease-in-out;
       transform-origin: top right;
     }
 
-    @keyframes zk-blink{ 0%,90%,100%{filter:brightness(1)} 92%{filter:brightness(.2)} 95%{filter:brightness(1)} }
-    @keyframes zk-wave{
-      0%{transform:rotate(0deg)} 20%{transform:rotate(6deg)} 40%{transform:rotate(-6deg)}
-      60%{transform:rotate(6deg)} 80%{transform:rotate(-4deg)} 100%{transform:rotate(0deg)}
-    }
+    @keyframes zk-blink { 0%, 90%, 100% { filter: brightness(1); } 92% { filter: brightness(0.2); } 95% { filter: brightness(1); } }
+    @keyframes zk-wave { 0% { transform: rotate(0deg); } 20% { transform: rotate(6deg); } 40% { transform: rotate(-6deg); } 60% { transform: rotate(6deg); } 80% { transform: rotate(-4deg); } 100% { transform: rotate(0deg); } }
 
-    .zk-bubble{
-      background:#ffeb3b;
-      color:#000;
-      padding:12px 16px;
-      font-weight:800;
-      border-radius:12px;
-      box-shadow:0 4px 12px rgba(0,0,0,.3);
-      max-width:240px;
+    .zk-bubble {
+      background: #ffeb3b;
+      color: #000;
+      padding: 12px 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      max-width: 240px;
       pointer-events: auto;
       position: relative;
-      font-size:.9rem;
-      line-height:1.4;
-    }
-    .zk-tail{
-      width:0;height:0;
-      border-left:12px solid #ffeb3b;
-      border-top:12px solid transparent;
-      border-bottom:12px solid transparent;
-      position:absolute;
-      left:-12px;
-      bottom:20px;
+      font-size: 0.9rem;
+      line-height: 1.4;
     }
 
-    /* Quick View Modal */
-    .kd-modal{
-      position:fixed; inset:0; z-index:99997;
-      display:none; align-items:center; justify-content:center;
-      padding:18px;
-      background:rgba(0,0,0,.72);
-      backdrop-filter:blur(6px);
+    .zk-tail {
+      width: 0;
+      height: 0;
+      border-left: 12px solid #ffeb3b;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      position: absolute;
+      left: -12px;
+      bottom: 20px;
     }
-    .kd-modal.open{ display:flex; }
-    .kd-modal-card{
-      width:min(980px,100%);
-      max-height:92vh;
-      overflow:auto;
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.14);
+
+    /* QUICK VIEW MODAL */
+    .kd-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+    }
+    .kd-modal.open { display: flex; }
+
+    .kd-modal-card {
+      width: min(980px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.14);
       background: rgba(18,5,43,.96);
-      box-shadow:0 24px 70px rgba(0,0,0,.55);
+      box-shadow: 0 24px 70px rgba(0,0,0,.55);
     }
-    .kd-modal-topbar{
-      position:sticky; top:0; z-index:2;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px; padding:14px 16px;
+
+    .kd-modal-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
       background: linear-gradient(to right, rgba(10,1,30,.96), rgba(10,1,25,.92));
-      border-bottom:1px solid rgba(123,255,90,.18);
+      border-bottom: 1px solid rgba(123,255,90,.18);
     }
-    .kd-modal-title{ font-weight:950; letter-spacing:.02em; font-size:1rem; margin:0; }
-    .kd-close{
-      border:1px solid rgba(123,255,90,.55);
+
+    .kd-modal-title { font-weight: 900; letter-spacing: .02em; font-size: 1rem; color: var(--text); margin: 0; }
+
+    .kd-close {
+      border: 1px solid rgba(123,255,90,.55);
       background: rgba(123,255,90,.12);
       color: var(--accent);
-      border-radius:999px;
-      padding:8px 12px;
-      cursor:pointer;
-      font-weight:900;
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 800;
     }
-    .kd-modal-inner{
-      display:grid;
+
+    .kd-modal-inner {
+      display: grid;
       grid-template-columns: 1fr 1fr;
-      gap:18px;
-      padding:16px;
+      gap: 18px;
+      padding: 16px;
     }
-    .kd-modal-media{
-      border-radius:18px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.18);
+
+    .kd-modal-media {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
     }
-    .kd-modal-media img{ width:100%; height:auto; display:block; }
-    .kd-modal-details h3{ margin:0 0 6px; font-size:1.35rem; }
-    .kd-modal-details .muted{ color:var(--muted); font-size:.95rem; }
-    .kd-modal-details .price{ margin-top:10px; font-weight:950; font-size:1.15rem; }
-    .kd-modal-details .desc{ margin-top:10px; color:var(--muted); line-height:1.4; }
-    .kd-modal-details .qty{ margin-top:10px; color:var(--muted); }
-    .kd-modal-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
-    .kd-modal-actions .btn-primary{ margin-top:0; width:auto; }
-    .kd-modal-actions .btn-outline{
-      border-radius:999px;
-      padding:.6rem 1.3rem;
-      font-size:.92rem;
-      border:1px solid rgba(123,255,90,.55);
-      background:transparent;
-      color:var(--accent);
-      cursor:pointer;
-      font-weight:900;
+
+    .kd-modal-media img { width: 100%; height: auto; display: block; }
+
+    .kd-modal-details h3 { margin: 0 0 6px; font-size: 1.35rem; }
+
+    .kd-modal-details .muted { color: var(--muted); font-size: .95rem; }
+    .kd-modal-details .price { margin-top: 10px; font-weight: 900; font-size: 1.15rem; }
+    .kd-modal-details .desc { margin-top: 10px; color: var(--muted); line-height: 1.4; }
+    .kd-modal-details .qty { margin-top: 10px; color: var(--muted); }
+
+    .kd-modal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
     }
-    @media(max-width:860px){ .kd-modal-inner{ grid-template-columns:1fr; } }
+
+    .kd-modal-actions .btn-primary { margin-top: 0; width: auto; }
+
+    .kd-modal-actions .btn-outline {
+      border-radius: 999px;
+      padding: 0.6rem 1.3rem;
+      font-size: 0.92rem;
+      border: 1px solid rgba(123,255,90,.55);
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    @media (max-width: 860px){
+      .kd-modal-inner { grid-template-columns: 1fr; }
+    }
   </style>
 
-  <!-- Your existing shop/cart logic -->
   <script defer src="script.js"></script>
 </head>
 
@@ -325,9 +415,7 @@
       <nav>
         <a href="index.html" class="nav-link">Home</a>
         <a href="shop.html" class="nav-link active">Shop</a>
-        <a href="cart.html" class="nav-link cart-pill">
-          Cart <span data-cart-count>0</span>
-        </a>
+        <a href="cart.html" class="nav-link cart-pill">Cart <span data-cart-count>0</span></a>
       </nav>
     </div>
   </header>
@@ -340,15 +428,13 @@
     <div id="pagination" class="pagination"></div>
   </main>
 
-  <footer>
-    © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
-  </footer>
+  <footer>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</footer>
 
-  <!-- FLOATING CONTACT BUTTON (REAL BUTTON NOW) -->
-  <button id="floatingJoey" class="floating-message" type="button" aria-label="Text Joey / KornDog">💬</button>
+  <!-- FLOATING CONTACT BUTTON -->
+  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
 
   <!-- ZOMBIE KITTY ASSISTANT -->
-  <div id="zkOverlay" class="zk-overlay" aria-hidden="true">
+  <div id="zkOverlay" class="zk-overlay">
     <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
     <div class="zk-bubble" id="zkBubble">
       <div class="zk-tail"></div>
@@ -387,75 +473,42 @@
   </div>
 
   <script>
-    /**
-     * ✅ ZOMBIE KITTY CONTACT FLOW (FIXED)
-     * - Works on iPhone + Android + Desktop
-     * - Uses ONLY KornDog number: 270-784-3283
-     * - iPhone prefers: sms:+1##########&body=
-     * - Android prefers: sms:##########?body=
-     */
+    // Zombie Kitty contact flow (fixed phone)
     (function () {
-      const PHONE_10 = "2707843283";
-      const PHONE_E164 = "+1" + PHONE_10;
-
-      const btn = document.getElementById("floatingJoey");
-      const overlay = document.getElementById("zkOverlay");
-      const bubble = document.getElementById("zkBubble");
-
+      const btn = document.getElementById('floatingJoey');
+      const overlay = document.getElementById('zkOverlay');
+      const bubble = document.getElementById('zkBubble');
       if (!btn || !overlay || !bubble) return;
 
-      const ua = navigator.userAgent || "";
-      const isIOS = /iPhone|iPad|iPod/i.test(ua);
-      const isAndroid = /Android/i.test(ua);
-      const isMobile = isIOS || isAndroid;
-
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       let running = false;
 
-      function openSms() {
-        const msg = encodeURIComponent("Hey KornDog!");
-        // iOS uses &body, Android uses ?body
-        if (isIOS) {
-          window.location.href = `sms:${PHONE_E164}&body=${msg}`;
-        } else {
-          window.location.href = `sms:${PHONE_10}?body=${msg}`;
-        }
-      }
-
-      function openEmail() {
-        window.location.href = "mailto:korndogrecords@gmail.com?subject=" + encodeURIComponent("Hey KornDog!");
-      }
-
-      btn.addEventListener("click", function () {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
         if (running) return;
         running = true;
 
         bubble.innerHTML =
-          '<div class="zk-tail"></div>' +
-          "Hi! I'm Zombie Kitty — your crate-digging assistant.<br><br>" +
-          "I’ll get KornDog for you now…";
+          '<div class="zk-tail"></div>Hi! I\\'m Zombie Kitty — your crate-digging assistant.<br><br>I\\'ll get KornDog for you now…';
 
-        overlay.classList.add("active");
-        overlay.setAttribute("aria-hidden", "false");
+        overlay.classList.add('active');
 
         setTimeout(() => {
-          overlay.classList.remove("active");
-          overlay.setAttribute("aria-hidden", "true");
+          overlay.classList.remove('active');
 
           setTimeout(() => {
-            try {
-              if (isMobile) openSms();
-              else openEmail();
-            } finally {
-              running = false;
+            if (isMobile) {
+              window.location.href = 'sms:2707843283?body=' + encodeURIComponent('Hey KornDog!');
+            } else {
+              window.location.href = 'mailto:korndogrecords@gmail.com?subject=' + encodeURIComponent('Hey KornDog!');
             }
-          }, 650);
-        }, 2200); // snappier + feels responsive
+            running = false;
+          }, 600);
+        }, 5500);
       });
     })();
 
-    /**
-     * ✅ QUICK VIEW MODAL (NO script.js changes needed)
-     */
+    // Quick View Modal + Shareable deep-link support
     (function () {
       const modal = document.getElementById("kdModal");
       const closeBtn = document.getElementById("kdClose");
@@ -470,6 +523,7 @@
       const grid     = document.getElementById("products");
 
       if (!modal || !grid) return;
+
       let lastCard = null;
 
       function openModalFromCard(card) {
@@ -480,13 +534,13 @@
           card.querySelector(".record-image img") ||
           card.querySelector("img");
 
-        const title = (card.querySelector("h3")?.textContent) || "Record";
-        const grade = (card.querySelector(".record-grade")?.textContent) || "";
-        const price = (card.querySelector(".record-price")?.textContent) || "";
-        const desc  = (card.querySelector(".record-desc")?.textContent) || "";
-        const qty   = (card.querySelector(".qty-text")?.textContent) || "";
+        const title = (card.querySelector("h3") && card.querySelector("h3").textContent) || "Record";
+        const grade = (card.querySelector(".record-grade") && card.querySelector(".record-grade").textContent) || "";
+        const price = (card.querySelector(".record-price") && card.querySelector(".record-price").textContent) || "";
+        const desc  = (card.querySelector(".record-desc") && card.querySelector(".record-desc").textContent) || "";
+        const qty   = (card.querySelector(".qty-text") && card.querySelector(".qty-text").textContent) || "";
 
-        if (img?.getAttribute("src")) imgEl.src = img.getAttribute("src");
+        if (img && img.getAttribute("src")) imgEl.src = img.getAttribute("src");
         nameEl.textContent = title.trim();
         gradeEl.textContent = grade.trim() || "Grade:";
         priceEl.textContent = price.trim() || "";
@@ -505,8 +559,11 @@
         lastCard = null;
       }
 
-      closeBtn?.addEventListener("click", closeModal);
-      backBtn?.addEventListener("click", closeModal);
+      // expose so we can open from ?pid= links after script.js renders
+      window.kdOpenModalFromCard = openModalFromCard;
+
+      closeBtn && closeBtn.addEventListener("click", closeModal);
+      backBtn && backBtn.addEventListener("click", closeModal);
 
       modal.addEventListener("click", (e) => {
         const card = modal.querySelector(".kd-modal-card");
@@ -517,19 +574,53 @@
         if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
       });
 
-      addBtn?.addEventListener("click", () => {
+      addBtn && addBtn.addEventListener("click", () => {
         if (!lastCard) return;
         const realBtn = lastCard.querySelector("button.btn-primary") || lastCard.querySelector("button");
-        realBtn?.click();
+        if (realBtn) realBtn.click();
       });
 
+      // ✅ NEW behavior:
+      // - clicking PHOTO opens modal
+      // - clicking title/description (share-link) navigates to shareable URL
       grid.addEventListener("click", (e) => {
         const target = e.target;
-        if (target?.closest("button")) return;     // let Add button work normally
-        const card = target?.closest(".record-card");
+
+        // Let share links do their job (go to URL)
+        if (target && target.closest("a.share-link")) return;
+
+        const card = target && target.closest(".record-card");
         if (!card) return;
+
+        // Only open modal if they clicked the image area
+        const clickedImageArea =
+          target.closest(".record-image") ||
+          target.tagName === "IMG";
+
+        if (!clickedImageArea) return;
+
         openModalFromCard(card);
       });
+
+      // ✅ Deep link support: shop.html?pid=some-id auto-opens modal
+      function tryOpenFromPid() {
+        const pid = new URLSearchParams(window.location.search).get("pid");
+        if (!pid) return;
+
+        const card = grid.querySelector(`.record-card[data-pid="${CSS.escape(pid)}"]`);
+        if (card) {
+          openModalFromCard(card);
+          return true;
+        }
+        return false;
+      }
+
+      // cards render async in script.js — wait a moment
+      let tries = 0;
+      const t = setInterval(() => {
+        tries++;
+        if (tryOpenFromPid() || tries > 40) clearInterval(t);
+      }, 150);
     })();
   </script>
 </body>
