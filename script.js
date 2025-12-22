@@ -1,42 +1,37 @@
 // ================== KORNDOG SCRIPT (SHOP + CART) ==================
-// - Uses ONLY products.json2 (never products.json / product.json)
-// - Pagination + scroll-to-top fix
-// - Shipping (LOCKED):
+// - Uses ONLY products.json2
+// - Shop renders:
+//    * PHOTO click => modal (handled in shop-ui.js)
+//    * TITLE/DESCRIPTION click => product.html?pid=ID (shareable)
+// - Shipping (CURRENT):
 //    $7.99 flat up to 3 records, then $0.50 per record after that
 // - Discounts:
 //    1) 3 for $25 => any record priced EXACTLY $10 (by quantity)
 //    2) 10% off $130+ => PREMIUM tier subtotal only (excludes $10 items)
 // - PayPal submits correct totals using discount_amount_cart + handling_cart
-// - PayPal returns to thank-you.html + cancel returns to cart
+// - PayPal returns to thank-you.html + cancel returns to cart.html
 // ================================================================
 
-// ================= LIVE MODE =================
-const TEST_MODE = false;      // ✅ MUST stay false for live
-const TEST_SHIPPING = 0.01;   // kept for future tests (ignored when TEST_MODE=false)
+const TEST_MODE = false;
+const TEST_SHIPPING = 0.01;
 
-// Your LIVE PayPal receiver email:
 const PAYPAL_BUSINESS_EMAIL = "korndogrecords@gmail.com";
-
-// Your live site base:
 const SITE_BASE = "https://korndogrecords.com";
-
-// Where PayPal should send them back:
-const PAYPAL_RETURN_URL = `${SITE_BASE}/thank-you.html`; // ✅ hyphen filename
+const PAYPAL_RETURN_URL = `${SITE_BASE}/thank-you.html`;
 const PAYPAL_CANCEL_URL = `${SITE_BASE}/cart.html`;
 
 const CART_KEY = "korndog_cart_v1";
 const PRODUCTS_PER_PAGE = 10;
-
-// 🔥 LOCKED: never products.json, never product.json
 const PRODUCTS_FILE = "./products.json2";
 
 let allProducts = [];
 let currentPage = 1;
 
-// expose for modal + debugging (safe)
-window.allProducts = allProducts;
+// Make products visible to other scripts (shop-ui.js / product.html)
+window.kdState = window.kdState || {};
+window.kdState.allProducts = allProducts;
 
-// ----------------------- UTIL: SHUFFLE ----------------------------
+// ----------------------- UTIL ----------------------------
 function shuffleArray(arr) {
   const copy = arr.slice();
   for (let i = copy.length - 1; i > 0; i--) {
@@ -46,29 +41,24 @@ function shuffleArray(arr) {
   return copy;
 }
 
-// -------------------- LOAD PRODUCTS + QUANTITY --------------------
+function safeEscapeSelector(value) {
+  // CSS.escape is not supported in some older browsers.
+  if (window.CSS && typeof window.CSS.escape === "function") return window.CSS.escape(value);
+  return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
+}
+
+// -------------------- LOAD PRODUCTS --------------------
 async function loadProducts() {
   try {
     const res = await fetch(PRODUCTS_FILE, { cache: "no-store" });
-    if (!res.ok) {
-      console.error("Failed to load products.json2");
-      allProducts = [];
-      window.allProducts = allProducts;
-      return [];
-    }
+    if (!res.ok) throw new Error("products.json2 not found");
 
     const raw = await res.json();
-    if (!Array.isArray(raw)) {
-      console.error("products.json2 is not an array");
-      allProducts = [];
-      window.allProducts = allProducts;
-      return [];
-    }
+    if (!Array.isArray(raw)) throw new Error("products.json2 must be an array");
 
     const mapped = raw.map((p) => {
       const qty = typeof p.quantity === "number" ? p.quantity : 1;
       const tier = (p.tier || "premium").toLowerCase();
-
       return {
         ...p,
         quantity: qty,
@@ -79,23 +69,28 @@ async function loadProducts() {
     });
 
     allProducts = shuffleArray(mapped);
-    window.allProducts = allProducts;
+    window.kdState.allProducts = allProducts;
+
     return allProducts;
   } catch (e) {
-    console.error("Failed to load products.json2", e);
+    console.error("Failed to load products.json2:", e);
     allProducts = [];
-    window.allProducts = allProducts;
+    window.kdState.allProducts = allProducts;
     return [];
   }
 }
+
+function getProductById(pid) {
+  return (window.kdState.allProducts || []).find(p => String(p.id) === String(pid));
+}
+window.kdGetProductById = getProductById;
 
 // ------------------------ CART HELPERS ----------------------------
 function getCart() {
   try {
     const raw = localStorage.getItem(CART_KEY);
     return raw ? JSON.parse(raw) : [];
-  } catch (e) {
-    console.error("Cart parse error", e);
+  } catch {
     return [];
   }
 }
@@ -114,9 +109,7 @@ function updateCartBadge() {
 
 // ---------------------- PRICING RULES -----------------------------
 function calcShipping(itemCount) {
-  // Optional test override (OFF in live)
   if (TEST_MODE) return TEST_SHIPPING;
-
   if (itemCount <= 0) return 0;
 
   const BASE = 7.99;
@@ -126,7 +119,6 @@ function calcShipping(itemCount) {
   return BASE + (itemCount - 3) * AFTER_3;
 }
 
-// 3 for $25 applies to ANY item priced exactly $10 (by quantity)
 function calcTenBundleDiscount(cart) {
   const tenCount = cart.reduce((sum, item) => {
     const price = Number(item.price) || 0;
@@ -135,19 +127,17 @@ function calcTenBundleDiscount(cart) {
   }, 0);
 
   const bundles = Math.floor(tenCount / 3);
-  return bundles * 5; // $30 -> $25 = $5 off per bundle
+  return bundles * 5;
 }
 
-// Premium 10% discount only on premium-tier subtotal >= 130,
-// and DOES NOT apply to $10 items (those are bundle-eligible)
 function calcPremiumDiscount(cart) {
   const premiumSubtotal = cart.reduce((sum, item) => {
     const tier = String(item.tier || "premium").toLowerCase();
     const price = Number(item.price) || 0;
     const qty = Number(item.qty) || 0;
 
-    if (price === 10) return sum;        // exclude $10 items
-    if (tier !== "premium") return sum;  // premium only
+    if (price === 10) return sum;
+    if (tier !== "premium") return sum;
 
     return sum + price * qty;
   }, 0);
@@ -158,9 +148,7 @@ function calcPremiumDiscount(cart) {
 
 // ----------------------- ADD TO CART ------------------------------
 function addToCart(productId) {
-  if (!allProducts || allProducts.length === 0) return;
-
-  const product = allProducts.find((p) => String(p.id) === String(productId));
+  const product = getProductById(productId);
   if (!product) return;
 
   if (product.available === false) {
@@ -175,17 +163,12 @@ function addToCart(productId) {
 
   if (existing) {
     if ((Number(existing.qty) || 0) >= maxQty) {
-      alert(
-        maxQty === 1
-          ? "You only have 1 copy of this record in stock."
-          : `You only have ${maxQty} copies of this record in stock.`
-      );
+      alert(maxQty === 1 ? "You only have 1 copy in stock." : `You only have ${maxQty} copies in stock.`);
       return;
     }
     existing.qty += 1;
   } else {
     const imageForCart = product.imageFront || product.image || product.imageBack || "";
-
     cart.push({
       id: product.id,
       title: product.title,
@@ -234,9 +217,10 @@ function renderShopPage() {
     card.className = "record-card";
     card.dataset.pid = prod.id;
 
-    // IMAGE FLIP
+    // Image flip area
     const recordImage = document.createElement("div");
     recordImage.className = "record-image";
+    recordImage.setAttribute("data-open-modal", "true");
 
     const flipWrapper = document.createElement("div");
     flipWrapper.className = "flip-wrapper";
@@ -257,7 +241,6 @@ function renderShopPage() {
       const frontImg = document.createElement("img");
       frontImg.src = frontSrc;
       frontImg.alt = prod.title || prod.id || "Record front";
-      frontImg.onerror = () => frontImg.classList.add("image-missing");
       frontDiv.appendChild(frontImg);
     } else {
       const placeholder = document.createElement("div");
@@ -269,7 +252,6 @@ function renderShopPage() {
       const backImg = document.createElement("img");
       backImg.src = backSrc;
       backImg.alt = prod.title || prod.id || "Record back";
-      backImg.onerror = () => backImg.classList.add("image-missing");
       backDiv.appendChild(backImg);
     } else {
       const placeholderBack = document.createElement("div");
@@ -282,10 +264,10 @@ function renderShopPage() {
     flipWrapper.appendChild(flipInner);
     recordImage.appendChild(flipWrapper);
 
-    // SHAREABLE URL (deep link opens modal)
-    const shareUrl = `shop.html?pid=${encodeURIComponent(prod.id)}`;
+    // Shareable link url
+    const shareUrl = `product.html?pid=${encodeURIComponent(prod.id)}`;
 
-    // TITLE (click => shareable link)
+    // Title as share-link
     const titleLink = document.createElement("a");
     titleLink.className = "share-link";
     titleLink.href = shareUrl;
@@ -302,7 +284,7 @@ function renderShopPage() {
     price.className = "record-price";
     price.textContent = "$" + Number(prod.price || 0).toFixed(2);
 
-    // DESC (click => shareable link)
+    // Description as share-link too (so FB share is clean)
     let descLink = null;
     if (prod.description) {
       descLink = document.createElement("a");
@@ -322,7 +304,11 @@ function renderShopPage() {
     const btn = document.createElement("button");
     btn.textContent = "Add to Cart";
     btn.className = "btn-primary";
-    btn.addEventListener("click", () => addToCart(prod.id));
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      addToCart(prod.id);
+    });
 
     card.appendChild(recordImage);
     card.appendChild(titleLink);
@@ -343,7 +329,6 @@ function renderPagination(visibleCount) {
   if (!pagination) return;
 
   pagination.innerHTML = "";
-
   const totalPages = Math.ceil(visibleCount / PRODUCTS_PER_PAGE);
   if (totalPages <= 1) return;
 
@@ -352,7 +337,8 @@ function renderPagination(visibleCount) {
     btn.textContent = i;
     if (i === currentPage) btn.classList.add("active");
 
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
       currentPage = i;
       renderShopPage();
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -362,11 +348,11 @@ function renderPagination(visibleCount) {
   }
 }
 
-// -------------------------- CART RENDERING ------------------------
+// -------------------------- CART RENDERING (unchanged support) ------------------------
 function renderCart() {
   const container = document.getElementById("cart-items");
   const summaryBox = document.getElementById("cart-summary");
-  if (!container || !summaryBox) return; // not on cart page
+  if (!container || !summaryBox) return;
 
   const cart = getCart();
   container.innerHTML = "";
@@ -414,11 +400,11 @@ function renderCart() {
     const plus = document.createElement("button");
     plus.textContent = "+";
     plus.addEventListener("click", () => {
-      const product = allProducts.find((p) => String(p.id) === String(item.id));
+      const product = getProductById(item.id);
       const maxQty = product && typeof product.quantity === "number" ? product.quantity : 99;
 
       if ((Number(item.qty) || 0) >= maxQty) {
-        alert(maxQty === 1 ? "You only have 1 copy of this record in stock." : `You only have ${maxQty} copies of this record in stock.`);
+        alert(maxQty === 1 ? "You only have 1 copy in stock." : `You only have ${maxQty} copies in stock.`);
         return;
       }
 
@@ -438,7 +424,6 @@ function renderCart() {
     row.appendChild(info);
     row.appendChild(qtyBox);
     row.appendChild(linePrice);
-
     container.appendChild(row);
   });
 
@@ -462,9 +447,7 @@ function renderCart() {
     (TEST_MODE ? `<br><span style="color:#7bff5a;font-weight:600;">TEST MODE: Shipping forced to $${TEST_SHIPPING.toFixed(2)}</span>` : "");
 
   const payBtn = document.getElementById("paypal-button");
-  if (payBtn) {
-    payBtn.onclick = () => submitPayPal(cart, shipping, safeDiscountTotal);
-  }
+  if (payBtn) payBtn.onclick = () => submitPayPal(cart, shipping, safeDiscountTotal);
 
   updateCartBadge();
 }
@@ -518,12 +501,11 @@ function submitPayPal(cart, shipping, discountTotal) {
 
 // ----------------------------- INIT -------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
-  window.scrollTo(0, 0);
   updateCartBadge();
-
-  // Load products once so cart qty limits work (also powers modal in shop.html)
   await loadProducts();
-
   renderShop();
   renderCart();
+
+  // Allow deep-link open from shop-ui.js after render
+  window.kdState.ready = true;
 });
