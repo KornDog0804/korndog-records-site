@@ -18,7 +18,7 @@ const SITE_BASE = "https://korndogrecords.com";
 const PAYPAL_RETURN_URL = `${SITE_BASE}/thank-you.html`;
 const PAYPAL_CANCEL_URL = `${SITE_BASE}/cart.html`;
 
-const CART_KEY = "korndog_cart_v1";            // keep this stable
+const CART_KEY = "korndog_cart_v1"; // keep stable forever
 const PRODUCTS_PER_PAGE = 10;
 const PRODUCTS_FILE = "./products.json2";
 
@@ -58,19 +58,24 @@ async function loadProducts() {
     const raw = await res.json();
     if (!Array.isArray(raw)) throw new Error("products.json2 must be an array");
 
-    const mapped = raw.map((p) => {
+    const mapped = raw.map((p, idx) => {
       const qty = typeof p.quantity === "number" ? p.quantity : 1;
       const tier = String(p.tier || "premium").toLowerCase();
 
-      // ✅ CRITICAL: ensure every product has a stable id
+      // ✅ Stable ID rules (NO Math.random, ever)
+      // Priority:
+      // 1) use p.id if provided
+      // 2) else slugify(artist-title)
+      // 3) else deterministic fallback "item-###" based on index
       const artist = p.artist || "";
       const title = p.title || "";
-      const fallbackId = slugify(`${artist}-${title}`) || slugify(p.id) || `item-${Math.random().toString(16).slice(2)}`;
-
-      const id = (p.id && String(p.id).trim()) ? String(p.id).trim() : fallbackId;
+      const fromNames = slugify(`${artist}-${title}`);
+      const id =
+        (p.id && String(p.id).trim()) ? String(p.id).trim()
+        : (fromNames ? fromNames : `item-${String(idx + 1).padStart(3, "0")}`);
 
       const imageFront = p.imageFront || (p.images && p.images.front) || p.image || "";
-      const imageBack  = p.imageBack  || (p.images && p.images.back)  || imageFront || p.image || "";
+      const imageBack = p.imageBack || (p.images && p.images.back) || imageFront || p.image || "";
 
       return {
         ...p,
@@ -94,7 +99,7 @@ async function loadProducts() {
 }
 
 function getProductById(pid) {
-  return (window.kdState.allProducts || []).find(p => String(p.id) === String(pid));
+  return (window.kdState.allProducts || []).find((p) => String(p.id) === String(pid));
 }
 window.kdGetProductById = getProductById;
 
@@ -113,16 +118,29 @@ function saveCart(cart) {
   updateCartBadge();
 }
 
-function clearCartHard() {
-  localStorage.removeItem(CART_KEY);
-  updateCartBadge();
-}
-
 function updateCartBadge() {
   const cart = getCart();
   const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
   document.querySelectorAll("[data-cart-count]").forEach((el) => (el.textContent = count));
 }
+
+// ✅ Clear Cart (WORKS with onclick="clearCart()")
+function clearCart() {
+  try {
+    localStorage.removeItem(CART_KEY);
+  } catch (e) {
+    console.warn("Could not clear cart:", e);
+  }
+  updateCartBadge();
+  if (typeof renderCart === "function") renderCart();
+}
+
+// keep your old internal name too (in case anything calls it)
+function clearCartHard() {
+  clearCart();
+}
+
+window.clearCart = clearCart;
 
 // ---------------------- PRICING RULES -----------------------------
 // ✅ SHIPPING LOCKED FOREVER
@@ -154,8 +172,8 @@ function calcPremiumDiscount(cart) {
     const price = Number(item.price) || 0;
     const qty = Number(item.qty) || 0;
 
-    if (price === 10) return sum;
-    if (tier !== "premium") return sum;
+    if (price === 10) return sum;         // exclude $10 items
+    if (tier !== "premium") return sum;   // only premium tier
 
     return sum + price * qty;
   }, 0);
@@ -237,7 +255,6 @@ function renderShopPage() {
     card.className = "record-card";
     card.dataset.pid = prod.id;
 
-    // Image area
     const recordImage = document.createElement("div");
     recordImage.className = "record-image";
 
@@ -254,7 +271,7 @@ function renderShopPage() {
     backDiv.className = "flip-back";
 
     const frontSrc = prod.imageFront || prod.image || prod.imageBack || "";
-    const backSrc  = prod.imageBack  || prod.imageFront || prod.image || "";
+    const backSrc = prod.imageBack || prod.imageFront || prod.image || "";
 
     if (frontSrc) {
       const frontImg = document.createElement("img");
@@ -522,16 +539,6 @@ function submitPayPal(cart, shipping, discountTotal) {
 document.addEventListener("DOMContentLoaded", async () => {
   updateCartBadge();
   await loadProducts();
-
-  // ✅ Clear Cart wiring (works everywhere)
-  const clearBtn = document.getElementById("clear-cart");
-  if (clearBtn) {
-    clearBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      clearCartHard();
-      renderCart();
-    });
-  }
 
   renderShop();
   renderCart();
