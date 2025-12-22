@@ -2,83 +2,216 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>KornDog Records — Product</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <title>Record • KornDog Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+
   <style>
-    .kd-product-wrap{ max-width:980px; margin:0 auto; padding:18px 14px 40px; }
-    .kd-product-grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:18px; }
-    @media (max-width:900px){ .kd-product-grid{ grid-template-columns:1fr; } }
-    .kd-media{
-      border-radius:18px; overflow:hidden;
-      border:1px solid rgba(255,255,255,.12);
+    :root {
+      --bg: #050013;
+      --accent: #7bff5a;
+      --text: #f5f5ff;
+      --muted: #a1a1c5;
+      --card: #12052b;
+      --border: #2b1550;
+    }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{
+      min-height:100vh;
+      font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+      color:var(--text);
+      background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
+    }
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(to right, rgba(10,1,30,.95), rgba(10,1,25,.9));
+      border-bottom: 1px solid rgba(123,255,90,.2);
+    }
+    .nav-inner{
+      max-width:1100px; margin:0 auto; padding:.75rem 1.25rem;
+      display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    }
+    .nav-link{ color:var(--muted); padding:.6rem 1.2rem; border-radius:999px; border:1px solid transparent; text-decoration:none; }
+    .nav-link:hover{ border-color: rgba(123,255,90,.6); color:var(--text); }
+    .cart-pill{
+      display:inline-flex; align-items:center; gap:.35rem;
+      padding:.45rem .9rem; border-radius:999px;
+      background: rgba(123,255,90,.12);
+      border:1px solid rgba(123,255,90,.5);
+      font-size:.88rem; color:var(--text);
+      text-decoration:none;
+    }
+    .cart-pill span{
+      background: var(--accent); color:#02010a; border-radius:999px;
+      padding:.2rem .6rem; font-weight:600;
+    }
+
+    main{ max-width:1100px; margin:0 auto; padding:1.5rem 1.25rem 3rem; }
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .layout{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+    }
+    @media(max-width:900px){ .layout{ grid-template-columns:1fr; } }
+
+    .stage{
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
     }
-    .kd-stage{ width:100%; aspect-ratio: 1/1; display:flex; align-items:center; justify-content:center; }
-    .kd-stage img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .kd-thumbs{ display:flex; gap:10px; padding:10px; border-top:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.03); }
-    .kd-thumb{
-      width:72px; height:72px; border-radius:14px; overflow:hidden;
+    .stage img{ width:100%; height:auto; display:block; }
+    .thumbs{
+      display:flex; gap:10px; padding:10px;
+      border-top:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+    }
+    .thumbs button{
+      width:64px; height:64px; border-radius:12px; overflow:hidden;
       border:1px solid rgba(255,255,255,.14);
-      cursor:pointer; opacity:.85; flex:0 0 auto;
-      background: rgba(0,0,0,.20);
+      background: rgba(0,0,0,.2);
+      cursor:pointer; opacity:.85; padding:0;
     }
-    .kd-thumb.active{ border-color: rgba(123,255,90,.70); opacity:1; box-shadow: 0 0 0 2px rgba(123,255,90,.15) inset; }
-    .kd-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .kd-info{
-      border-radius:18px; padding:16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,1,30,.60);
+    .thumbs button.active{ opacity:1; border-color: rgba(123,255,90,.65); }
+    .thumbs img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    h1{ font-size:1.45rem; margin-bottom:6px; }
+    .muted{ color:var(--muted); }
+    .price{ font-weight:900; font-size:1.2rem; margin-top:10px; }
+    .desc{ margin-top:10px; line-height:1.45; color:var(--muted); }
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+    .btn-primary{
+      border-radius:999px; padding:.6rem 1.3rem; font-size:.92rem;
+      border:none; cursor:pointer; font-weight:700;
+      background: var(--accent); color:#02010a;
     }
-    .kd-h1{ font-size:1.6rem; font-weight:900; margin:0 0 10px; }
-    .kd-line{ margin:8px 0; color:#a1a1c5; line-height:1.45; }
-    .kd-price{ font-size:1.4rem; font-weight:950; margin:10px 0; color:#f5f5ff; }
-    .kd-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
-    .kd-btn{ border-radius:999px; padding:12px 16px; font-weight:900; cursor:pointer; border:none; }
-    .kd-btn-primary{ background:#7bff5a; color:#02010a; }
-    .kd-btn-outline{
-      background:transparent; color:#7bff5a;
-      border:1px solid rgba(123,255,90,.55);
-    }
-    .kd-toast{
-      display:none; margin-top:10px; color:#7bff5a; font-weight:800;
+    .btn-outline{
+      border-radius:999px; padding:.6rem 1.3rem; font-size:.92rem;
+      border:1px solid rgba(123,255,90,.55); background:transparent;
+      color: var(--accent); cursor:pointer; font-weight:700;
+      text-decoration:none; display:inline-flex; align-items:center; justify-content:center;
     }
   </style>
+
+  <script defer src="script.js"></script>
 </head>
+
 <body>
-  <!-- keep your existing header/nav if you have one in shop.html.
-       This page works even without it. -->
-  <div class="kd-product-wrap">
-    <div class="kd-product-grid">
-      <div class="kd-media">
-        <div class="kd-stage">
-          <img id="kd-stage-img" alt="Record image" />
-        </div>
-        <div class="kd-thumbs" id="kd-thumbs"></div>
-      </div>
+  <header>
+    <div class="nav-inner">
+      <a class="nav-link" href="shop.html">← Back to Shop</a>
+      <a class="cart-pill" href="cart.html">Cart <span data-cart-count>0</span></a>
+    </div>
+  </header>
 
-      <div class="kd-info">
-        <h1 class="kd-h1" id="kd-title">Loading…</h1>
-        <div class="kd-price" id="kd-price">$0.00</div>
-        <div class="kd-line" id="kd-grade"></div>
-        <div class="kd-line" id="kd-qty"></div>
-        <div class="kd-line" id="kd-desc"></div>
-
-        <div class="kd-actions">
-          <button class="kd-btn kd-btn-primary" id="kd-add">Add to Cart</button>
-          <button class="kd-btn kd-btn-outline" id="kd-copy">Copy Share Link</button>
-          <a class="kd-btn kd-btn-outline" href="./shop.html" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
-            Back to Shop
-          </a>
+  <main>
+    <div class="card">
+      <div class="layout">
+        <div class="stage">
+          <img id="stageImg" alt="Record image" />
+          <div class="thumbs" id="thumbs"></div>
         </div>
 
-        <div class="kd-toast" id="kd-toast">Copied ✅</div>
+        <div>
+          <h1 id="title">Loading…</h1>
+          <div class="muted" id="grade"></div>
+          <div class="price" id="price"></div>
+          <div class="muted" id="qty"></div>
+          <div class="desc" id="desc"></div>
+
+          <div class="actions">
+            <button class="btn-primary" id="addBtn" type="button">Add to Cart</button>
+            <a class="btn-outline" id="copyBtn" href="#" role="button">Copy Share Link</a>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <!-- IMPORTANT: script.js MUST load first so addToCart + loadProducts exist -->
-  <script src="./script.js?v=20251221"></script>
-  <script src="./product.js?v=20251221"></script>
+  <script>
+    (function(){
+      const pid = new URLSearchParams(window.location.search).get("pid");
+      if (!pid) {
+        document.getElementById("title").textContent = "Record not found.";
+        return;
+      }
+
+      function setStage(src){ document.getElementById("stageImg").src = src || ""; }
+
+      function render(p){
+        const title = (p.artist ? p.artist + " – " : "") + (p.title || p.id || "Record");
+        document.title = title + " • KornDog Records";
+
+        document.getElementById("title").textContent = title;
+        document.getElementById("grade").textContent = "Grade: " + (p.grade || "—");
+        document.getElementById("price").textContent = "$" + Number(p.price || 0).toFixed(2);
+        document.getElementById("qty").textContent = "Qty available: " + (p.quantity ?? 1);
+        document.getElementById("desc").textContent = p.description || "";
+
+        const thumbs = document.getElementById("thumbs");
+        thumbs.innerHTML = "";
+
+        const front = p.imageFront || p.image || "";
+        const back = p.imageBack || "";
+
+        function addThumb(src, label){
+          if (!src) return null;
+          const b = document.createElement("button");
+          b.type = "button";
+          b.innerHTML = `<img alt="${label}">`;
+          b.querySelector("img").src = src;
+          b.addEventListener("click", (e) => {
+            e.preventDefault();
+            [...thumbs.querySelectorAll("button")].forEach(x => x.classList.remove("active"));
+            b.classList.add("active");
+            setStage(src);
+          });
+          thumbs.appendChild(b);
+          return b;
+        }
+
+        const t1 = addThumb(front, "Front");
+        const t2 = addThumb(back, "Back");
+
+        if (t1) t1.classList.add("active");
+        setStage(front || back || "");
+
+        document.getElementById("addBtn").onclick = () => window.addToCart && window.addToCart(p.id);
+
+        document.getElementById("copyBtn").onclick = async (e) => {
+          e.preventDefault();
+          const url = window.location.href;
+          try {
+            await navigator.clipboard.writeText(url);
+            alert("Share link copied ✅");
+          } catch {
+            alert("Copy failed — just copy the URL from your browser bar.");
+          }
+        };
+      }
+
+      // Wait for products load from script.js
+      let tries = 0;
+      const t = setInterval(() => {
+        tries++;
+        const p = window.kdGetProductById ? window.kdGetProductById(pid) : null;
+        if (p) {
+          render(p);
+          clearInterval(t);
+        }
+        if (tries > 80) {
+          clearInterval(t);
+          document.getElementById("title").textContent = "Record not found.";
+        }
+      }, 150);
+    })();
+  </script>
 </body>
 </html>
