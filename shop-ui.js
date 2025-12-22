@@ -124,3 +124,32 @@
     true
   );
 })();
+// ======== QUICK VIEW CLICK BIND (MOBILE SAFE) ========
+(function () {
+  function bind() {
+    const grid = document.getElementById("products");
+    if (!grid) return;
+    if (!window.kdOpenModalFromCard) return;
+
+    // Prevent double-binding
+    if (grid.dataset.kdBound === "1") return;
+    grid.dataset.kdBound = "1";
+
+    grid.addEventListener("click", function (e) {
+      const card = e.target.closest(".record-card");
+      if (!card) return;
+
+      // Only open quick view if image area was tapped
+      const imgClick = e.target.closest(".record-image") || e.target.tagName === "IMG";
+      if (!imgClick) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      window.kdOpenModalFromCard(card);
+    }, true);
+  }
+
+  document.addEventListener("kd:ready", bind);
+  document.addEventListener("kd:shopRendered", bind);
+  document.addEventListener("DOMContentLoaded", bind);
+})();
