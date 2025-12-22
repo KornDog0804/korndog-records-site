@@ -1,215 +1,231 @@
-// shop-ui.js
-// Handles ONLY UI clicks on shop grid:
-// - Click image -> modal with front/back + close works
-// - Click text -> navigates to shareable product.html?id=...
+(function () {
+  const grid = document.getElementById("products");
+  if (!grid) return; // only on shop page
 
-(function(){
-  // Inject modal CSS/HTML once
-  function ensureModal(){
-    if (document.getElementById("kd-img-modal")) return;
+  // Inject modal HTML once
+  function ensureModal() {
+    if (document.getElementById("kdModal")) return;
 
-    const style = document.createElement("style");
-    style.id = "kd-img-modal-style";
-    style.textContent = `
-      .kd-img-backdrop{
-        position:fixed; inset:0; z-index:99999;
-        display:none; align-items:center; justify-content:center;
-        padding:16px;
-        background:rgba(0,0,0,.72);
-        backdrop-filter: blur(10px);
-      }
-      .kd-img-backdrop.open{ display:flex; }
-      .kd-img-modal{
-        width:min(980px, 100%);
-        border-radius:18px;
-        border:1px solid rgba(123,255,90,.35);
-        background: rgba(10,1,30,.95);
-        box-shadow: 0 24px 70px rgba(0,0,0,.65);
-        overflow:hidden;
-      }
-      .kd-img-head{
-        display:flex; align-items:center; justify-content:space-between;
-        gap:12px;
-        padding:12px 14px;
-        border-bottom:1px solid rgba(255,255,255,.10);
-      }
-      .kd-img-title{
-        font-weight:950;
-        color:#f5f5ff;
-        overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-      }
-      .kd-img-close{
-        border:none;
-        background:rgba(123,255,90,.12);
-        color:#7bff5a;
-        border:1px solid rgba(123,255,90,.45);
-        border-radius:999px;
-        padding:8px 12px;
-        font-weight:950;
-        cursor:pointer;
-      }
-      .kd-img-body{
-        display:grid;
-        grid-template-columns: 1fr;
-        gap:12px;
-        padding:14px;
-      }
-      .kd-stage{
-        width:100%;
-        aspect-ratio:1/1;
-        border-radius:16px;
-        overflow:hidden;
-        border:1px solid rgba(255,255,255,.10);
-        background: rgba(0,0,0,.18);
-      }
-      .kd-stage img{
-        width:100%; height:100%;
-        object-fit:cover;
-        display:block;
-      }
-      .kd-thumbs{
-        display:flex; gap:10px;
-        padding:10px;
-        border-top:1px solid rgba(255,255,255,.08);
-      }
-      .kd-thumb{
-        width:72px; height:72px;
-        border-radius:14px;
-        overflow:hidden;
-        border:1px solid rgba(255,255,255,.14);
-        cursor:pointer;
-        opacity:.85;
-        background: rgba(0,0,0,.20);
-      }
-      .kd-thumb.active{
-        border-color: rgba(123,255,90,.70);
-        opacity:1;
-        box-shadow: 0 0 0 2px rgba(123,255,90,.15) inset;
-      }
-      .kd-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+    const modal = document.createElement("div");
+    modal.id = "kdModal";
+    modal.style.cssText = `
+      position:fixed; inset:0; z-index:99999; display:none;
+      align-items:center; justify-content:center; padding:18px;
+      background:rgba(0,0,0,.72); backdrop-filter:blur(6px);
     `;
-    document.head.appendChild(style);
 
-    const backdrop = document.createElement("div");
-    backdrop.id = "kd-img-modal";
-    backdrop.className = "kd-img-backdrop";
-    backdrop.innerHTML = `
-      <div class="kd-img-modal" role="dialog" aria-modal="true">
-        <div class="kd-img-head">
-          <div class="kd-img-title" id="kd-img-title">Record</div>
-          <button class="kd-img-close" type="button" id="kd-img-close">X</button>
+    modal.innerHTML = `
+      <div class="kd-modal-card" style="
+        width:min(980px,100%); max-height:92vh; overflow:auto;
+        border-radius:22px; border:1px solid rgba(255,255,255,.14);
+        background:rgba(18,5,43,.96); box-shadow:0 24px 70px rgba(0,0,0,.55);
+      " role="dialog" aria-modal="true" aria-label="Product details">
+        <div style="
+          position:sticky; top:0; z-index:2;
+          display:flex; align-items:center; justify-content:space-between; gap:10px;
+          padding:14px 16px;
+          background:linear-gradient(to right, rgba(10,1,30,.96), rgba(10,1,25,.92));
+          border-bottom:1px solid rgba(123,255,90,.18);
+        ">
+          <p style="font-weight:900; letter-spacing:.02em; font-size:1rem; margin:0; color:#f5f5ff;">KornDog Quick View</p>
+          <button id="kdClose" type="button" style="
+            border:1px solid rgba(123,255,90,.55);
+            background:rgba(123,255,90,.12);
+            color:#7bff5a; border-radius:999px; padding:8px 12px;
+            cursor:pointer; font-weight:800;
+          ">✕ Close</button>
         </div>
-        <div class="kd-img-body">
-          <div class="kd-stage">
-            <img id="kd-stage-img" alt="Record image" />
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:16px;" id="kdInner">
+          <div style="border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,.10); background:rgba(0,0,0,.18);">
+            <img id="kdModalImg" alt="Record image" style="width:100%; height:auto; display:block;" />
+            <div id="kdThumbs" style="display:flex; gap:10px; padding:10px; border-top:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03);"></div>
           </div>
-          <div class="kd-thumbs" id="kd-img-thumbs"></div>
+
+          <div>
+            <h3 id="kdModalName" style="margin:0 0 6px; font-size:1.35rem; color:#f5f5ff;">Artist — Title</h3>
+            <div id="kdModalGrade" style="color:#a1a1c5; font-size:.95rem;">Grade:</div>
+            <div id="kdModalPrice" style="margin-top:10px; font-weight:900; font-size:1.15rem; color:#f5f5ff;">$0.00</div>
+            <div id="kdModalDesc" style="margin-top:10px; color:#a1a1c5; line-height:1.4;"></div>
+            <div id="kdModalQty" style="margin-top:10px; color:#a1a1c5;"></div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+              <button id="kdModalAdd" type="button" style="
+                border-radius:999px; padding:0.6rem 1.3rem; font-size:0.92rem;
+                border:none; cursor:pointer; font-weight:600;
+                background:#7bff5a; color:#02010a;
+              ">Add to Cart</button>
+
+              <button id="kdModalBack" type="button" style="
+                border-radius:999px; padding:0.6rem 1.3rem; font-size:0.92rem;
+                border:1px solid rgba(123,255,90,.55); background:transparent;
+                color:#7bff5a; cursor:pointer; font-weight:700;
+              ">Back to Grid</button>
+            </div>
+          </div>
         </div>
       </div>
     `;
-    document.body.appendChild(backdrop);
 
-    const close = () => backdrop.classList.remove("open");
-    document.getElementById("kd-img-close").addEventListener("click", close);
-    backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    document.body.appendChild(modal);
+
+    // Mobile layout
+    const applyResponsive = () => {
+      const inner = document.getElementById("kdInner");
+      if (!inner) return;
+      if (window.innerWidth <= 860) inner.style.gridTemplateColumns = "1fr";
+      else inner.style.gridTemplateColumns = "1fr 1fr";
+    };
+    window.addEventListener("resize", applyResponsive);
+    applyResponsive();
+
+    // Close handlers
+    const close = () => {
+      modal.style.display = "none";
+      document.body.style.overflow = "";
+      modal.setAttribute("aria-hidden", "true");
+    };
+
+    document.getElementById("kdClose").addEventListener("click", close);
+    document.getElementById("kdModalBack").addEventListener("click", close);
+
+    // Click outside closes
+    modal.addEventListener("click", (e) => {
+      const card = modal.querySelector(".kd-modal-card");
+      if (card && !card.contains(e.target)) close();
+    });
+
+    // Escape closes
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.style.display === "flex") close();
+    });
+
+    // expose
+    window.kdCloseModal = close;
   }
 
-  function pickImages(p){
-    const front = p.imageFront || (p.images && p.images.front) || p.image || "";
-    const back  = p.imageBack  || (p.images && p.images.back)  || "";
-    return { front, back };
-  }
-
-  function openImageModal(p){
+  function openModalForPid(pid) {
     ensureModal();
-    const backdrop = document.getElementById("kd-img-modal");
-    const title = document.getElementById("kd-img-title");
-    const stage = document.getElementById("kd-stage-img");
-    const thumbs = document.getElementById("kd-img-thumbs");
 
-    const titleText = (p.artist ? `${p.artist} – ` : "") + (p.title || p.id || "Record");
-    title.textContent = titleText;
+    const p = window.kdGetProductById ? window.kdGetProductById(pid) : null;
+    if (!p) return;
 
-    const { front, back } = pickImages(p);
+    const modal = document.getElementById("kdModal");
+    const imgEl = document.getElementById("kdModalImg");
+    const thumbs = document.getElementById("kdThumbs");
+
+    const nameEl = document.getElementById("kdModalName");
+    const gradeEl = document.getElementById("kdModalGrade");
+    const priceEl = document.getElementById("kdModalPrice");
+    const descEl = document.getElementById("kdModalDesc");
+    const qtyEl = document.getElementById("kdModalQty");
+    const addBtn = document.getElementById("kdModalAdd");
+
+    const title = (p.artist ? `${p.artist} – ` : "") + (p.title || p.id || "Record");
+    nameEl.textContent = title;
+    gradeEl.textContent = "Grade: " + (p.grade || "—");
+    priceEl.textContent = "$" + Number(p.price || 0).toFixed(2);
+    descEl.textContent = p.description || "";
+    qtyEl.textContent = "Qty available: " + (p.quantity ?? 1);
+
+    // Build front/back thumbs
     thumbs.innerHTML = "";
 
-    function setStage(src){
-      stage.onerror = () => {
-        stage.removeAttribute("src");
-        stage.style.background =
-          "repeating-linear-gradient(45deg,#1f102f,#1f102f 6px,#12061f 6px,#12061f 12px)";
-      };
-      stage.style.background = "";
-      stage.src = src || "";
+    const front = p.imageFront || p.image || "";
+    const back = p.imageBack || "";
+
+    function setStage(src) {
+      imgEl.src = src || "";
     }
 
-    function addThumb(src, label){
+    function addThumb(src, label) {
       if (!src) return null;
-      const t = document.createElement("div");
-      t.className = "kd-thumb";
-      t.title = label;
-      t.innerHTML = `<img alt="${label}">`;
-      const img = t.querySelector("img");
-      img.src = src;
-      img.onerror = () => (t.style.opacity = ".35");
-      t.addEventListener("click", () => {
-        [...thumbs.querySelectorAll(".kd-thumb")].forEach(x => x.classList.remove("active"));
-        t.classList.add("active");
+      const t = document.createElement("button");
+      t.type = "button";
+      t.setAttribute("aria-label", label);
+      t.style.cssText = `
+        width:64px; height:64px; border-radius:12px; overflow:hidden;
+        border:1px solid rgba(255,255,255,.14);
+        background:rgba(0,0,0,.2);
+        cursor:pointer; opacity:.85; padding:0;
+      `;
+      t.innerHTML = `<img alt="${label}" style="width:100%; height:100%; object-fit:cover; display:block;" />`;
+      const im = t.querySelector("img");
+      im.src = src;
+
+      t.addEventListener("click", (e) => {
+        e.preventDefault();
+        [...thumbs.querySelectorAll("button")].forEach(b => b.style.opacity = ".85");
+        t.style.opacity = "1";
         setStage(src);
       });
+
       thumbs.appendChild(t);
       return t;
     }
 
-    const tFront = addThumb(front, "Front");
-    const tBack  = addThumb(back,  "Back");
+    const tFront = addThumb(front, "Front cover");
+    const tBack  = addThumb(back, "Back cover");
 
-    if (tFront) tFront.classList.add("active");
+    // Default
+    if (tFront) tFront.style.opacity = "1";
     setStage(front || back || "");
 
-    backdrop.classList.add("open");
+    // Add to cart
+    addBtn.disabled = (p.available === false);
+    addBtn.textContent = (p.available === false) ? "Unavailable" : "Add to Cart";
+    addBtn.onclick = (e) => {
+      e.preventDefault();
+      if (p.available === false) return;
+      window.addToCart && window.addToCart(p.id);
+    };
+
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
   }
 
-  function goToSharePage(p){
-    const url = `./product.html?id=${encodeURIComponent(p.id)}`;
-    window.location.href = url;
-  }
+  // Click rules:
+  // - Title/Desc are links -> browser navigates to product.html (shareable)
+  // - Add button -> cart only
+  // - Image area -> opens modal
+  grid.addEventListener("click", (e) => {
+    const target = e.target;
 
-  // MAIN CLICK LOGIC (event delegation)
-  document.addEventListener("click", (e) => {
-    const grid = document.getElementById("products");
-    if (!grid) return;
+    // Let real links navigate
+    if (target.closest("a.share-link")) return;
 
-    const card = e.target.closest(".record-card");
+    // If button clicked, do nothing here
+    if (target.closest("button")) return;
+
+    const card = target.closest(".record-card");
     if (!card) return;
 
-    // Don't hijack Add to Cart button
-    if (e.target.closest("button")) return;
+    const clickedImageArea = target.closest(".record-image") || target.tagName === "IMG";
+    if (!clickedImageArea) return;
 
-    const pid = card.dataset.pid;
+    e.preventDefault();
+    openModalForPid(card.dataset.pid);
+  });
+
+  // Deep link support:
+  // shop.html?pid=ID opens modal after products load
+  function tryOpenFromPid() {
+    const pid = new URLSearchParams(window.location.search).get("pid");
     if (!pid) return;
 
-    const p = (window.allProducts || []).find(x => String(x.id) === String(pid));
-    if (!p) return;
+    // Wait until script.js is ready + products loaded
+    let tries = 0;
+    const t = setInterval(() => {
+      tries++;
+      const p = window.kdGetProductById ? window.kdGetProductById(pid) : null;
+      if (p) {
+        openModalForPid(pid);
+        clearInterval(t);
+      }
+      if (tries > 60) clearInterval(t);
+    }, 150);
+  }
 
-    // If click happened in/near image area -> modal
-    if (e.target.closest(".record-image") || e.target.closest("img") || e.target.classList.contains("flip-wrapper")) {
-      e.preventDefault();
-      e.stopPropagation();
-      openImageModal(p);
-      return;
-    }
-
-    // If click happened on text -> share page
-    if (e.target.closest("h3") || e.target.closest(".record-desc") || e.target.closest(".record-grade") || e.target.closest(".record-price")) {
-      e.preventDefault();
-      e.stopPropagation();
-      goToSharePage(p);
-      return;
-    }
-
-    // Otherwise do nothing
-  }, true);
-
+  tryOpenFromPid();
 })();
