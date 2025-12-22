@@ -1,19 +1,482 @@
-<a id="kdBackToShop" href="shop.html?restore=1" class="nav-link">← Back to Shop</a>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Product • KornDog Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<script>
-  (function(){
-    const btn = document.getElementById("kdBackToShop");
-    if (!btn) return;
+  <!-- Optional shared stylesheet (fine if this 404s) -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
 
-    btn.addEventListener("click", function(e){
-      // Prefer true browser back if possible (keeps exact state)
-      if (window.history.length > 1) {
-        e.preventDefault();
-        window.history.back();
-      } else {
-        // fallback uses restore=1
-        // (do nothing, link will go)
+  <style>
+    :root {
+      --bg: #050013;
+      --accent: #7bff5a;
+      --text: #f5f5ff;
+      --muted: #a1a1c5;
+      --card: rgba(18,5,43,.92);
+      --border: rgba(123,255,90,.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body{
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(to right, rgba(10,1,30,.96), rgba(10,1,25,.92));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .back-link{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--muted);
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: border-color .15s ease, color .15s ease, background .15s ease;
+    }
+    .back-link:hover{
+      border-color: rgba(123,255,90,.55);
+      color: var(--text);
+      background: rgba(123,255,90,.08);
+    }
+
+    .cart-pill{
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: 0.5rem 0.95rem;
+      border-radius: 999px;
+      background: rgba(123,255,90,.12);
+      border: 1px solid rgba(123,255,90,.5);
+      font-weight: 800;
+      font-size: .92rem;
+    }
+    .cart-pill span{
+      background: var(--accent);
+      color: #02010a;
+      border-radius: 999px;
+      padding: .18rem .6rem;
+      font-weight: 900;
+      min-width: 34px;
+      text-align: center;
+    }
+
+    main{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.25rem 1.25rem 3rem;
+    }
+
+    .wrap{
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px){
+      .wrap{ grid-template-columns: 1fr; }
+    }
+
+    .media-card{
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: var(--card);
+      box-shadow: 0 24px 70px rgba(0,0,0,.55);
+      overflow: hidden;
+    }
+
+    .hero{
+      padding: 14px;
+    }
+
+    .hero img{
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+
+    .thumbs{
+      display: flex;
+      gap: 12px;
+      padding: 0 14px 14px;
+      overflow-x: auto;
+    }
+
+    .thumb{
+      width: 84px;
+      height: 84px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid rgba(123,255,90,.0);
+      background: rgba(0,0,0,.2);
+      flex: 0 0 auto;
+      cursor: pointer;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .thumb img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .thumb.active{
+      border-color: rgba(123,255,90,.75);
+      transform: translateY(-1px);
+    }
+
+    .details-card{
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: var(--card);
+      box-shadow: 0 24px 70px rgba(0,0,0,.55);
+      padding: 18px;
+    }
+
+    h1{
+      font-size: 1.9rem;
+      line-height: 1.1;
+      margin: 0 0 10px;
+      font-weight: 950;
+      letter-spacing: .01em;
+    }
+
+    .muted{
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 1.02rem;
+    }
+
+    .price{
+      margin-top: 12px;
+      font-size: 1.6rem;
+      font-weight: 950;
+    }
+
+    .desc{
+      margin-top: 14px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 1.02rem;
+    }
+
+    .actions{
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .btn{
+      border-radius: 999px;
+      padding: 0.75rem 1.4rem;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: filter .12s ease, transform .12s ease, border-color .12s ease;
+    }
+
+    .btn-primary{
+      background: var(--accent);
+      color: #02010a;
+    }
+    .btn-primary:hover{ filter: brightness(1.05); transform: translateY(-1px); }
+
+    .btn-outline{
+      background: transparent;
+      color: var(--accent);
+      border-color: rgba(123,255,90,.55);
+    }
+    .btn-outline:hover{ filter: brightness(1.05); transform: translateY(-1px); }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 18px;
+      background: rgba(18,5,43,.95);
+      border: 1px solid rgba(123,255,90,.35);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      z-index: 9999;
+      display: none;
+      box-shadow: 0 16px 40px rgba(0,0,0,.5);
+    }
+    .toast.show{ display: block; }
+  </style>
+
+  <!-- Keep script.js if it holds your cart functions / shipping / PayPal -->
+  <script defer src="script.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="topbar">
+      <a id="kdBackToShop" class="back-link" href="shop.html?restore=1">← Back to Shop</a>
+      <a class="cart-pill" href="cart.html">Cart <span id="kdCartCount">0</span></a>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section class="media-card">
+        <div class="hero">
+          <img id="heroImg" alt="Record image" />
+        </div>
+
+        <div class="thumbs" id="thumbs"></div>
+      </section>
+
+      <section class="details-card">
+        <h1 id="pTitle">Loading…</h1>
+        <div class="muted" id="pGrade">Grade: —</div>
+        <div class="price" id="pPrice">$0.00</div>
+        <div class="muted" id="pQty">Qty available: —</div>
+        <div class="desc" id="pDesc"></div>
+
+        <div class="actions">
+          <button id="addBtn" class="btn btn-primary" type="button">Add to Cart</button>
+          <button id="shareBtn" class="btn btn-outline" type="button">Copy Share Link</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // ✅ Back behavior: prefer true browser back (keeps the exact shop state + avoids reshuffle)
+    (function(){
+      const btn = document.getElementById("kdBackToShop");
+      if (!btn) return;
+      btn.addEventListener("click", function(e){
+        if (window.history.length > 1) {
+          e.preventDefault();
+          window.history.back();
+        }
+      });
+    })();
+
+    // ---------- Helpers ----------
+    function $(id){ return document.getElementById(id); }
+    function text(x){ return (x ?? "").toString().trim(); }
+
+    function money(n){
+      const num = Number(n);
+      if (Number.isNaN(num)) return text(n);
+      return "$" + num.toFixed(2);
+    }
+
+    function showToast(msg){
+      const t = $("toast");
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 1400);
+    }
+
+    function getPid(){
+      return new URLSearchParams(window.location.search).get("pid") || "";
+    }
+
+    function normalizeProducts(data){
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.products)) return data.products;
+      return [];
+    }
+
+    function findProductByPid(products, pid){
+      // match explicit pid/id fields first
+      const direct = products.find(p => String(p.pid || p.id || "") === String(pid));
+      if (direct) return direct;
+
+      // fallback: try slug match
+      const pidLower = String(pid).toLowerCase();
+      return products.find(p => {
+        const key = String(p.pid || p.id || "").toLowerCase();
+        return key === pidLower;
+      });
+    }
+
+    function getImages(p){
+      const front = text(p.image || p.img || p.frontImage || p.front);
+      const back  = text(p.backImage || p.back);
+      // Always show 2 thumbs if possible; if no back, duplicate front so UI doesn't look broken
+      const images = [];
+      if (front) images.push(front);
+      if (back) images.push(back);
+      if (images.length === 1) images.push(images[0]);
+      return images;
+    }
+
+    // ---------- Cart count (best-effort) ----------
+    function updateCartCount(){
+      const el = $("kdCartCount");
+      if (!el) return;
+
+      // If your script.js exposes cart count, use it
+      if (typeof window.getCartCount === "function") {
+        el.textContent = String(window.getCartCount());
+        return;
       }
-    });
-  })();
-</script>
+
+      // Fallback: try common localStorage keys
+      const keysToTry = ["korndog_cart", "KORNDOG_CART", "cart", "CART", "kd_cart"];
+      for (const k of keysToTry) {
+        try {
+          const raw = localStorage.getItem(k);
+          if (!raw) continue;
+          const data = JSON.parse(raw);
+          if (Array.isArray(data)) {
+            el.textContent = String(data.reduce((sum, it) => sum + Number(it.qty || 1), 0));
+            return;
+          }
+        } catch {}
+      }
+
+      el.textContent = "0";
+    }
+
+    // ---------- Add to cart (best-effort) ----------
+    function addToCart(pid){
+      // Prefer your existing cart logic
+      if (typeof window.addToCart === "function") {
+        window.addToCart(pid);
+        return true;
+      }
+      if (window.KD && typeof window.KD.addToCart === "function") {
+        window.KD.addToCart(pid);
+        return true;
+      }
+
+      // Fallback localStorage
+      try{
+        const key = "korndog_cart";
+        const raw = localStorage.getItem(key);
+        const cart = raw ? JSON.parse(raw) : [];
+        cart.push({ pid: String(pid), qty: 1 });
+        localStorage.setItem(key, JSON.stringify(cart));
+        return true;
+      }catch{
+        return false;
+      }
+    }
+
+    // ---------- Boot ----------
+    (async function init(){
+      const pid = getPid();
+      if (!pid) {
+        $("pTitle").textContent = "Product not found";
+        $("pDesc").textContent = "Missing pid in the URL.";
+        return;
+      }
+
+      updateCartCount();
+
+      let products = [];
+      try{
+        const r = await fetch("products.json", { cache: "no-store" });
+        const data = await r.json();
+        products = normalizeProducts(data);
+      }catch(e){
+        $("pTitle").textContent = "Couldn’t load products.json";
+        $("pDesc").textContent = "Check that products.json is in the repo root and valid JSON.";
+        return;
+      }
+
+      const p = findProductByPid(products, pid);
+      if (!p) {
+        $("pTitle").textContent = "Product not found";
+        $("pDesc").textContent = "That pid doesn’t match any item in products.json.";
+        return;
+      }
+
+      const title = text(p.name) || `${text(p.artist)} — ${text(p.title)}`.trim() || "Record";
+      const grade = text(p.grade) || "—";
+      const price = p.price != null ? money(p.price) : text(p.priceText) || "";
+      const qty = (p.qty != null ? Number(p.qty) : 1);
+      const desc = text(p.desc || p.description);
+
+      $("pTitle").textContent = title;
+      $("pGrade").textContent = "Grade: " + grade;
+      $("pPrice").textContent = price || "";
+      $("pQty").textContent = "Qty available: " + (Number.isFinite(qty) ? qty : 1);
+      $("pDesc").textContent = desc;
+
+      const imgs = getImages(p);
+      const hero = $("heroImg");
+      const thumbs = $("thumbs");
+
+      function setHero(src){
+        hero.src = src;
+      }
+
+      thumbs.innerHTML = "";
+      imgs.forEach((src, i) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "thumb" + (i === 0 ? " active" : "");
+        b.innerHTML = `<img src="${src}" alt="Thumbnail ${i+1}">`;
+        b.addEventListener("click", () => {
+          setHero(src);
+          [...thumbs.querySelectorAll(".thumb")].forEach(x => x.classList.remove("active"));
+          b.classList.add("active");
+        });
+        thumbs.appendChild(b);
+      });
+
+      setHero(imgs[0] || "");
+
+      // Buttons
+      $("addBtn").addEventListener("click", () => {
+        const ok = addToCart(pid);
+        updateCartCount();
+        showToast(ok ? "Added to cart" : "Couldn’t add to cart");
+      });
+
+      $("shareBtn").addEventListener("click", async () => {
+        const url = window.location.href;
+        try{
+          await navigator.clipboard.writeText(url);
+          showToast("Share link copied");
+        }catch{
+          // fallback prompt for iOS/Safari weirdness
+          window.prompt("Copy this link:", url);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
