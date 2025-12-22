@@ -5,7 +5,6 @@
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Optional shared stylesheet (fine if this 404s, it’s optional) -->
   <link rel="stylesheet" href="style.css">
 
   <style>
@@ -19,410 +18,218 @@
       --card: #12052b;
       --border: #2b1550;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
     }
-
     a { color: inherit; text-decoration: none; }
 
     header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
+      position: sticky; top: 0; z-index: 20;
       backdrop-filter: blur(12px);
       background: linear-gradient(to right, rgba(10, 1, 30, 0.95), rgba(10, 1, 25, 0.9));
       border-bottom: 1px solid rgba(123, 255, 90, 0.2);
     }
-
-    .nav-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0.75rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
+    .nav-inner{
+      max-width: 1100px; margin: 0 auto; padding: 0.75rem 1.25rem;
+      display:flex; align-items:center; justify-content:space-between; gap:1rem;
     }
-
-    .logo-link { display: inline-flex; align-items: center; justify-content: center; }
-
-    .logo-circle {
-      width: 44px; height: 44px;
-      border-radius: 999px;
-      border: 2px solid var(--accent);
+    .logo-link { display:inline-flex; align-items:center; justify-content:center; }
+    .logo-circle{
+      width:44px; height:44px; border-radius:999px;
+      border:2px solid var(--accent);
       background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
-      overflow: hidden;
+      overflow:hidden;
+    }
+    .logo-circle img{ width:100%; height:100%; object-fit:cover; }
+    nav{ display:flex; align-items:center; gap:0.75rem; }
+    .nav-link{
+      padding:0.6rem 1.6rem; border-radius:999px; font-size:0.92rem;
+      color: var(--muted); border: 1px solid transparent; font-weight:500;
+      transition: background .15s ease, color .15s ease, border-color .15s ease;
+    }
+    .nav-link.active{ background: var(--accent); color:#02010a; font-weight:600; }
+    .nav-link:hover{ border-color: rgba(123,255,90,.6); color: var(--text); }
+
+    .cart-pill{
+      display:inline-flex; align-items:center; gap:0.35rem;
+      padding:0.45rem 0.9rem; border-radius:999px;
+      background: rgba(123,255,90,.12);
+      border:1px solid rgba(123,255,90,.5);
+      font-size:0.88rem;
+    }
+    .cart-pill span{
+      background: var(--accent); color:#02010a; border-radius:999px;
+      padding:0.2rem 0.6rem; font-weight:600;
     }
 
-    .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+    main{ max-width:1100px; margin:0 auto; padding:1.5rem 1.25rem 3rem; }
+    h2{ margin-bottom:0.75rem; font-size:1.8rem; }
+    .subtitle{ margin:0; color: var(--muted); font-size:0.95rem; }
 
-    nav { display: flex; align-items: center; gap: 0.75rem; }
-
-    .nav-link {
-      padding: 0.6rem 1.6rem;
-      border-radius: 999px;
-      font-size: 0.92rem;
-      color: var(--muted);
-      border: 1px solid transparent;
-      font-weight: 500;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-    }
-
-    .nav-link.active {
-      background: var(--accent);
-      color: #02010a;
-      font-weight: 600;
-    }
-
-    .nav-link:hover { border-color: rgba(123, 255, 90, 0.6); color: var(--text); }
-
-    .cart-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      background: rgba(123, 255, 90, 0.12);
-      border: 1px solid rgba(123, 255, 90, 0.5);
-      font-size: 0.88rem;
-    }
-
-    .cart-pill span {
-      background: var(--accent);
-      color: #02010a;
-      border-radius: 999px;
-      padding: 0.2rem 0.6rem;
-      font-weight: 600;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1.5rem 1.25rem 3rem;
-    }
-
-    h2 { margin-bottom: 0.75rem; font-size: 1.8rem; }
-
-    .subtitle { margin: 0; color: var(--muted); font-size: 0.95rem; }
-
-    .products-grid {
-      margin-top: 1.75rem;
-      display: grid;
+    .products-grid{
+      margin-top:1.75rem; display:grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
+      gap:1rem;
     }
+    @media(min-width:800px){ .products-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.25rem; } }
+    @media(min-width:1100px){ .products-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); } }
 
-    @media (min-width: 800px) {
-      .products-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
-    }
-
-    @media (min-width: 1100px) {
-      .products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    }
-
-    .record-card {
+    .record-card{
       background: var(--card);
-      border-radius: 1.4rem;
-      padding: 1rem;
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
+      border-radius:1.4rem;
+      padding:1rem;
+      border:1px solid var(--border);
+      display:flex;
+      flex-direction:column;
+      gap:0.4rem;
     }
 
-    /* image tap area */
-    .record-image {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      perspective: 1000px;
-      margin-bottom: 0.5rem;
-      cursor: pointer;
+    /* image tap area opens modal */
+    .record-image{
+      position:relative;
+      width:100%;
+      aspect-ratio:1/1;
+      perspective:1000px;
+      margin-bottom:.5rem;
+      cursor:pointer;
     }
 
-    .flip-wrapper { width: 100%; height: 100%; }
+    .flip-wrapper{ width:100%; height:100%; }
+    .flip-inner{
+      position:relative; width:100%; height:100%;
+      border-radius:1rem; overflow:hidden;
+      transform-style:preserve-3d;
+      transition: transform .5s ease;
+    }
+    .flip-front, .flip-back{ position:absolute; inset:0; backface-visibility:hidden; }
+    .flip-back{ transform: rotateY(180deg); }
+    .record-card:hover .flip-inner{ transform: rotateY(180deg); }
 
-    .flip-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 1rem;
-      overflow: hidden;
-      transform-style: preserve-3d;
-      transition: transform 0.5s ease;
+    .record-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .image-missing{
+      background: repeating-linear-gradient(45deg,#1f102f,#1f102f 6px,#12061f 6px,#12061f 12px);
     }
 
-    .flip-front, .flip-back { position: absolute; inset: 0; backface-visibility: hidden; }
-    .flip-back { transform: rotateY(180deg); }
-
-    .record-card:hover .flip-inner { transform: rotateY(180deg); }
-
-    .record-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .image-missing {
-      background: repeating-linear-gradient(45deg, #1f102f, #1f102f 6px, #12061f 6px, #12061f 12px);
+    .share-link{ display:block; }
+    .share-link:hover{
+      text-decoration:underline;
+      text-decoration-color: rgba(123,255,90,.7);
     }
 
-    /* Share link look */
-    a.share-link { display:block; }
-    a.share-link:hover { text-decoration: underline; text-decoration-color: rgba(123,255,90,.7); }
+    .record-card h3{ font-size:1rem; margin:0.15rem 0; }
+    .record-grade{ font-size:0.85rem; color: var(--muted); }
+    .record-price{ font-weight:600; margin-top:0.2rem; }
+    .record-desc{ font-size:0.85rem; color: var(--muted); flex:1; }
 
-    .record-card h3 { font-size: 1rem; margin: 0.15rem 0; }
+    .qty-text{ font-size:0.85rem; color: var(--muted); margin-top:0.15rem; }
 
-    .record-grade { font-size: 0.85rem; color: var(--muted); }
-    .record-price { font-weight: 600; margin-top: 0.2rem; }
-    .record-desc { font-size: 0.85rem; color: var(--muted); flex: 1; }
-    .qty-text { font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem; }
-
-    .btn-primary {
-      border-radius: 999px;
-      padding: 0.6rem 1.3rem;
-      font-size: 0.92rem;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
+    .btn-primary{
+      border-radius:999px;
+      padding:0.6rem 1.3rem;
+      font-size:0.92rem;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
       background: var(--accent);
-      color: #02010a;
-      margin-top: 0.5rem;
+      color:#02010a;
+      margin-top:0.5rem;
     }
+    .btn-primary:hover{ filter:brightness(1.05); }
 
-    .btn-primary:hover { filter: brightness(1.05); }
-
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 2rem;
+    .pagination{
+      display:flex; justify-content:center; align-items:center;
+      gap:.5rem; margin-top:2rem;
     }
-
-    .pagination button {
-      min-width: 40px;
-      padding: 0.35rem 0.9rem;
-      border-radius: 999px;
-      border: 1px solid rgba(123, 255, 90, 0.7);
-      background: rgba(123, 255, 90, 0.12);
+    .pagination button{
+      min-width:40px;
+      padding:.35rem .9rem;
+      border-radius:999px;
+      border:1px solid rgba(123,255,90,.7);
+      background: rgba(123,255,90,.12);
       color: var(--accent);
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
+      font-weight:600;
+      font-size:.9rem;
+      cursor:pointer;
     }
-
-    .pagination button.active {
+    .pagination button.active{
       background: var(--accent);
-      color: #02010a;
-      box-shadow: 0 0 12px rgba(123, 255, 90, 0.5);
+      color:#02010a;
+      box-shadow:0 0 12px rgba(123,255,90,.5);
     }
 
-    footer {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 1.25rem 2rem;
-      font-size: 0.78rem;
-      color: var(--muted);
-      text-align: center;
+    footer{
+      max-width:1100px; margin:0 auto;
+      padding:0 1.25rem 2rem;
+      font-size:0.78rem; color: var(--muted);
+      text-align:center;
     }
+    footer strong{ color: var(--accent); }
 
-    footer strong { color: var(--accent); }
-
-    .floating-message {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9999;
-      width: 50px;
-      height: 50px;
-      border-radius: 999px;
+    .floating-message{
+      position:fixed; bottom:20px; right:20px; z-index:9999;
+      width:50px; height:50px; border-radius:999px;
       background: var(--accent);
-      color: #02010a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      font-weight: 700;
-      box-shadow: 0 0 16px rgba(123, 255, 90, 0.5);
-      cursor: pointer;
+      color:#02010a;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; font-weight:700;
+      box-shadow:0 0 16px rgba(123,255,90,.5);
+      cursor:pointer;
     }
 
-    .zk-overlay {
-      position: fixed;
-      bottom: 90px;
-      left: -420px;
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      z-index: 9998;
-      transition: left 0.6s ease;
-      pointer-events: none;
+    /* Zombie Kitty overlay */
+    .zk-overlay{
+      position:fixed;
+      bottom:90px;
+      left:-420px;
+      display:flex;
+      align-items:flex-end;
+      gap:10px;
+      z-index:9998;
+      transition:left .6s ease;
+      pointer-events:none;
     }
-
-    .zk-overlay.active { left: 20px; }
-
-    .zk-kitty {
-      width: 140px;
-      opacity: 0.95;
+    .zk-overlay.active{ left:20px; }
+    .zk-kitty{
+      width:140px;
+      opacity:.95;
       animation: zk-blink 5s infinite, zk-wave 1.2s infinite ease-in-out;
       transform-origin: top right;
     }
+    @keyframes zk-blink{ 0%,90%,100%{filter:brightness(1)} 92%{filter:brightness(.2)} 95%{filter:brightness(1)} }
+    @keyframes zk-wave{ 0%{transform:rotate(0)} 20%{transform:rotate(6deg)} 40%{transform:rotate(-6deg)} 60%{transform:rotate(6deg)} 80%{transform:rotate(-4deg)} 100%{transform:rotate(0)} }
 
-    @keyframes zk-blink { 0%, 90%, 100% { filter: brightness(1); } 92% { filter: brightness(0.2); } 95% { filter: brightness(1); } }
-    @keyframes zk-wave { 0% { transform: rotate(0deg); } 20% { transform: rotate(6deg); } 40% { transform: rotate(-6deg); } 60% { transform: rotate(6deg); } 80% { transform: rotate(-4deg); } 100% { transform: rotate(0deg); } }
-
-    .zk-bubble {
-      background: #ffeb3b;
-      color: #000;
-      padding: 12px 16px;
-      font-weight: 600;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      max-width: 240px;
-      pointer-events: auto;
-      position: relative;
-      font-size: 0.9rem;
-      line-height: 1.4;
+    .zk-bubble{
+      background:#ffeb3b; color:#000;
+      padding:12px 16px;
+      font-weight:600;
+      border-radius:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,.3);
+      max-width:240px;
+      pointer-events:auto; /* clickable */
+      position:relative;
+      font-size:.9rem;
+      line-height:1.4;
+      cursor:pointer;
     }
-
-    .zk-tail {
-      width: 0;
-      height: 0;
-      border-left: 12px solid #ffeb3b;
-      border-top: 12px solid transparent;
-      border-bottom: 12px solid transparent;
-      position: absolute;
-      left: -12px;
-      bottom: 20px;
-    }
-
-    /* QUICK VIEW MODAL */
-    .kd-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      background: rgba(0,0,0,.72);
-      backdrop-filter: blur(6px);
-    }
-    .kd-modal.open { display: flex; }
-
-    .kd-modal-card {
-      width: min(980px, 100%);
-      max-height: 92vh;
-      overflow: auto;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(18,5,43,.96);
-      box-shadow: 0 24px 70px rgba(0,0,0,.55);
-    }
-
-    .kd-modal-topbar {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 14px 16px;
-      background: linear-gradient(to right, rgba(10,1,30,.96), rgba(10,1,25,.92));
-      border-bottom: 1px solid rgba(123,255,90,.18);
-    }
-
-    .kd-modal-title { font-weight: 900; letter-spacing: .02em; font-size: 1rem; color: var(--text); margin: 0; }
-
-    .kd-close {
-      border: 1px solid rgba(123,255,90,.55);
-      background: rgba(123,255,90,.12);
-      color: var(--accent);
-      border-radius: 999px;
-      padding: 8px 12px;
-      cursor: pointer;
-      font-weight: 800;
-    }
-
-    .kd-modal-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      padding: 16px;
-    }
-
-    .kd-modal-media {
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-    }
-
-    .kd-modal-media img { width: 100%; height: auto; display: block; }
-
-    /* thumbs */
-    .kd-modal-thumbs {
-      display:flex;
-      gap:10px;
-      padding:10px;
-      border-top:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-    }
-    .kd-thumb {
-      width: 72px;
-      height: 72px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.20);
-      cursor: pointer;
-      opacity: .85;
-      flex: 0 0 auto;
-    }
-    .kd-thumb.active {
-      border-color: rgba(123,255,90,.65);
-      opacity: 1;
-      box-shadow: 0 0 0 2px rgba(123,255,90,.15) inset;
-    }
-    .kd-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-
-    .kd-modal-details h3 { margin: 0 0 6px; font-size: 1.35rem; }
-
-    .kd-modal-details .muted { color: var(--muted); font-size: .95rem; }
-    .kd-modal-details .price { margin-top: 10px; font-weight: 900; font-size: 1.15rem; }
-    .kd-modal-details .desc { margin-top: 10px; color: var(--muted); line-height: 1.4; }
-    .kd-modal-details .qty { margin-top: 10px; color: var(--muted); }
-
-    .kd-modal-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .kd-modal-actions .btn-primary { margin-top: 0; width: auto; }
-
-    .kd-modal-actions .btn-outline {
-      border-radius: 999px;
-      padding: 0.6rem 1.3rem;
-      font-size: 0.92rem;
-      border: 1px solid rgba(123,255,90,.55);
-      background: transparent;
-      color: var(--accent);
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    @media (max-width: 860px){
-      .kd-modal-inner { grid-template-columns: 1fr; }
+    .zk-tail{
+      width:0; height:0;
+      border-left:12px solid #ffeb3b;
+      border-top:12px solid transparent;
+      border-bottom:12px solid transparent;
+      position:absolute;
+      left:-12px;
+      bottom:20px;
     }
   </style>
 
+  <!-- Load order matters -->
   <script defer src="script.js"></script>
+  <script defer src="shop-ui.js"></script>
+  <script defer src="zk.js"></script>
 </head>
 
 <body>
@@ -452,231 +259,19 @@
 
   <footer>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</footer>
 
-  <!-- FLOATING CONTACT BUTTON -->
+  <!-- Floating Contact -->
   <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
 
-  <!-- ZOMBIE KITTY ASSISTANT -->
+  <!-- Zombie Kitty Assistant -->
   <div id="zkOverlay" class="zk-overlay">
     <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
     <div class="zk-bubble" id="zkBubble">
       <div class="zk-tail"></div>
       Hi! I'm Zombie Kitty — your crate-digging assistant.<br><br>
-      I'll get KornDog for you now…
+      Tap here to text KornDog.
     </div>
   </div>
 
-  <!-- PRODUCT QUICK VIEW MODAL -->
-  <div id="kdModal" class="kd-modal" aria-hidden="true">
-    <div class="kd-modal-card" role="dialog" aria-modal="true" aria-label="Product details">
-      <div class="kd-modal-topbar">
-        <p class="kd-modal-title" id="kdModalBarTitle">KornDog Quick View</p>
-        <button id="kdClose" class="kd-close" type="button">✕ Close</button>
-      </div>
-
-      <div class="kd-modal-inner">
-        <div>
-          <div class="kd-modal-media">
-            <img id="kdModalImg" alt="Record image" />
-          </div>
-          <div id="kdModalThumbs" class="kd-modal-thumbs"></div>
-        </div>
-
-        <div class="kd-modal-details">
-          <h3 id="kdModalName">Artist — Title</h3>
-          <div class="muted" id="kdModalGrade">Grade: NM/NM</div>
-          <div class="price" id="kdModalPrice">$0.00</div>
-          <div class="desc" id="kdModalDesc"></div>
-          <div class="qty" id="kdModalQty"></div>
-
-          <div class="kd-modal-actions">
-            <button id="kdModalAdd" class="btn-primary" type="button">Add to Cart</button>
-            <button id="kdModalBack" class="btn-outline" type="button">Back to Grid</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Zombie Kitty contact flow (fixed phone)
-    (function () {
-      const btn = document.getElementById('floatingJoey');
-      const overlay = document.getElementById('zkOverlay');
-      const bubble = document.getElementById('zkBubble');
-      if (!btn || !overlay || !bubble) return;
-
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      let running = false;
-
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (running) return;
-        running = true;
-
-        bubble.innerHTML =
-          '<div class="zk-tail"></div>Hi! I\\'m Zombie Kitty — your crate-digging assistant.<br><br>I\\'ll get KornDog for you now…';
-
-        overlay.classList.add('active');
-
-        setTimeout(() => {
-          overlay.classList.remove('active');
-
-          setTimeout(() => {
-            if (isMobile) {
-              window.location.href = 'sms:2707843283?body=' + encodeURIComponent('Hey KornDog!');
-            } else {
-              window.location.href = 'mailto:korndogrecords@gmail.com?subject=' + encodeURIComponent('Hey KornDog!');
-            }
-            running = false;
-          }, 600);
-        }, 5500);
-      });
-    })();
-
-    // Quick View Modal (front/back) + deep link: shop.html?pid=ID opens modal
-    (function () {
-      const modal   = document.getElementById("kdModal");
-      const closeBtn= document.getElementById("kdClose");
-      const backBtn = document.getElementById("kdModalBack");
-      const imgEl   = document.getElementById("kdModalImg");
-      const thumbs  = document.getElementById("kdModalThumbs");
-
-      const barTitle= document.getElementById("kdModalBarTitle");
-      const nameEl  = document.getElementById("kdModalName");
-      const gradeEl = document.getElementById("kdModalGrade");
-      const priceEl = document.getElementById("kdModalPrice");
-      const descEl  = document.getElementById("kdModalDesc");
-      const qtyEl   = document.getElementById("kdModalQty");
-      const addBtn  = document.getElementById("kdModalAdd");
-      const grid    = document.getElementById("products");
-
-      if (!modal || !grid) return;
-
-      let currentId = null;
-
-      function closeModal(){
-        modal.classList.remove("open");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
-        currentId = null;
-      }
-
-      function setStage(src){
-        imgEl.onerror = () => {
-          imgEl.removeAttribute("src");
-          imgEl.style.background =
-            "repeating-linear-gradient(45deg,#1f102f,#1f102f 6px,#12061f 6px,#12061f 12px)";
-        };
-        imgEl.style.background = "";
-        imgEl.src = src || "";
-      }
-
-      function buildThumb(src, label){
-        if (!src) return null;
-        const t = document.createElement("div");
-        t.className = "kd-thumb";
-        t.title = label;
-        t.innerHTML = `<img alt="${label}">`;
-        t.querySelector("img").src = src;
-        t.addEventListener("click", () => {
-          [...thumbs.querySelectorAll(".kd-thumb")].forEach(x => x.classList.remove("active"));
-          t.classList.add("active");
-          setStage(src);
-        });
-        thumbs.appendChild(t);
-        return t;
-      }
-
-      function openModal(productId){
-        const p = (window.allProducts || []).find(x => String(x.id) === String(productId));
-        if (!p) return;
-
-        currentId = p.id;
-
-        const titleText = (p.artist ? `${p.artist} – ` : "") + (p.title || p.id || "Record");
-        barTitle.textContent = titleText;
-        nameEl.textContent   = titleText;
-        gradeEl.textContent  = "Grade: " + (p.grade || "—");
-        priceEl.textContent  = "$" + Number(p.price || 0).toFixed(2);
-        descEl.textContent   = p.description || "";
-        qtyEl.textContent    = "Qty available: " + (p.quantity ?? 1);
-
-        const front = p.imageFront || (p.images && p.images.front) || p.image || "";
-        const back  = p.imageBack  || (p.images && p.images.back)  || "";
-
-        thumbs.innerHTML = "";
-        const tFront = buildThumb(front, "Front");
-        const tBack  = buildThumb(back, "Back");
-
-        if (tFront) tFront.classList.add("active");
-        else if (tBack) tBack.classList.add("active");
-
-        setStage(front || back || "");
-
-        addBtn.disabled = (p.available === false);
-        addBtn.textContent = (p.available === false) ? "Unavailable" : "Add to Cart";
-        addBtn.onclick = () => {
-          if (p.available === false) return;
-          if (typeof window.addToCart === "function") window.addToCart(p.id);
-        };
-
-        modal.classList.add("open");
-        modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-      }
-
-      // close controls
-      closeBtn && closeBtn.addEventListener("click", closeModal);
-      backBtn && backBtn.addEventListener("click", closeModal);
-
-      // click backdrop closes
-      modal.addEventListener("click", (e) => {
-        const card = modal.querySelector(".kd-modal-card");
-        if (card && !card.contains(e.target)) closeModal();
-      });
-
-      // ESC closes
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-      });
-
-      // grid rules:
-      // - click image => modal
-      // - click title/desc => shareable link (script.js renders those anchors)
-      grid.addEventListener("click", (e) => {
-        const card = e.target.closest(".record-card");
-        if (!card) return;
-
-        // Add to cart button should behave normally
-        if (e.target.closest("button")) return;
-
-        // Let share links navigate naturally
-        if (e.target.closest("a.share-link")) return;
-
-        // Only image clicks open modal
-        if (e.target.closest(".record-image") || e.target.tagName === "IMG") {
-          e.preventDefault();
-          const pid = card.dataset.pid;
-          if (pid) openModal(pid);
-        }
-      });
-
-      // Deep link support: ?pid=ID opens modal once products are loaded/rendered
-      function tryOpenFromPid(){
-        const pid = new URLSearchParams(window.location.search).get("pid");
-        if (!pid) return false;
-        const exists = (window.allProducts || []).some(x => String(x.id) === String(pid));
-        if (!exists) return false;
-        openModal(pid);
-        return true;
-      }
-
-      let tries = 0;
-      const t = setInterval(() => {
-        tries++;
-        if (tryOpenFromPid() || tries > 60) clearInterval(t);
-      }, 150);
-    })();
-  </script>
+  <!-- Quick View Modal (injected by shop-ui.js) -->
 </body>
 </html>
