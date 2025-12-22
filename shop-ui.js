@@ -1,231 +1,330 @@
+/* ============================
+   KornDog Records — shop-ui.js
+   - Stable shuffle + restore scroll/page when coming back from product page
+   - Saves shop state before navigating away
+   ============================ */
+
 (function () {
+  const PRODUCTS_URL = "products.json";
+  const SOLD_URL = "sold.json";
+  const SHOP_STATE_KEY = "kd_shop_state_v1";
+  const SHOP_SEED_KEY = "kd_shop_seed_v1"; // persistent across reloads until changed
+
   const grid = document.getElementById("products");
-  if (!grid) return; // only on shop page
+  const pager = document.getElementById("pagination");
 
-  // Inject modal HTML once
-  function ensureModal() {
-    if (document.getElementById("kdModal")) return;
+  if (!grid) return;
 
-    const modal = document.createElement("div");
-    modal.id = "kdModal";
-    modal.style.cssText = `
-      position:fixed; inset:0; z-index:99999; display:none;
-      align-items:center; justify-content:center; padding:18px;
-      background:rgba(0,0,0,.72); backdrop-filter:blur(6px);
-    `;
+  // ---------- Seeded RNG (mulberry32) ----------
+  function mulberry32(seed) {
+    let a = seed >>> 0;
+    return function () {
+      a |= 0;
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
 
-    modal.innerHTML = `
-      <div class="kd-modal-card" style="
-        width:min(980px,100%); max-height:92vh; overflow:auto;
-        border-radius:22px; border:1px solid rgba(255,255,255,.14);
-        background:rgba(18,5,43,.96); box-shadow:0 24px 70px rgba(0,0,0,.55);
-      " role="dialog" aria-modal="true" aria-label="Product details">
-        <div style="
-          position:sticky; top:0; z-index:2;
-          display:flex; align-items:center; justify-content:space-between; gap:10px;
-          padding:14px 16px;
-          background:linear-gradient(to right, rgba(10,1,30,.96), rgba(10,1,25,.92));
-          border-bottom:1px solid rgba(123,255,90,.18);
-        ">
-          <p style="font-weight:900; letter-spacing:.02em; font-size:1rem; margin:0; color:#f5f5ff;">KornDog Quick View</p>
-          <button id="kdClose" type="button" style="
-            border:1px solid rgba(123,255,90,.55);
-            background:rgba(123,255,90,.12);
-            color:#7bff5a; border-radius:999px; padding:8px 12px;
-            cursor:pointer; font-weight:800;
-          ">✕ Close</button>
-        </div>
+  function seededShuffle(arr, seed) {
+    const a = arr.slice();
+    const rand = mulberry32(seed);
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; padding:16px;" id="kdInner">
-          <div style="border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,.10); background:rgba(0,0,0,.18);">
-            <img id="kdModalImg" alt="Record image" style="width:100%; height:auto; display:block;" />
-            <div id="kdThumbs" style="display:flex; gap:10px; padding:10px; border-top:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03);"></div>
-          </div>
+  // ---------- Shop state ----------
+  function getSeed() {
+    const existing = localStorage.getItem(SHOP_SEED_KEY);
+    if (existing) return Number(existing);
 
-          <div>
-            <h3 id="kdModalName" style="margin:0 0 6px; font-size:1.35rem; color:#f5f5ff;">Artist — Title</h3>
-            <div id="kdModalGrade" style="color:#a1a1c5; font-size:.95rem;">Grade:</div>
-            <div id="kdModalPrice" style="margin-top:10px; font-weight:900; font-size:1.15rem; color:#f5f5ff;">$0.00</div>
-            <div id="kdModalDesc" style="margin-top:10px; color:#a1a1c5; line-height:1.4;"></div>
-            <div id="kdModalQty" style="margin-top:10px; color:#a1a1c5;"></div>
+    // New seed persists until you manually change it
+    const seed = Math.floor(Math.random() * 1e9);
+    localStorage.setItem(SHOP_SEED_KEY, String(seed));
+    return seed;
+  }
 
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-              <button id="kdModalAdd" type="button" style="
-                border-radius:999px; padding:0.6rem 1.3rem; font-size:0.92rem;
-                border:none; cursor:pointer; font-weight:600;
-                background:#7bff5a; color:#02010a;
-              ">Add to Cart</button>
+  function saveShopState(extra = {}) {
+    const state = {
+      ts: Date.now(),
+      seed: getSeed(),
+      page: window.__KD_CURRENT_PAGE__ || 1,
+      scrollY: window.scrollY || 0,
+      ...extra,
+    };
+    sessionStorage.setItem(SHOP_STATE_KEY, JSON.stringify(state));
+  }
 
-              <button id="kdModalBack" type="button" style="
-                border-radius:999px; padding:0.6rem 1.3rem; font-size:0.92rem;
-                border:1px solid rgba(123,255,90,.55); background:transparent;
-                color:#7bff5a; cursor:pointer; font-weight:700;
-              ">Back to Grid</button>
+  function readShopState() {
+    try {
+      const raw = sessionStorage.getItem(SHOP_STATE_KEY);
+      if (!raw) return null;
+      const state = JSON.parse(raw);
+
+      // keep it fresh (2 hours)
+      if (!state.ts || Date.now() - state.ts > 2 * 60 * 60 * 1000) return null;
+      return state;
+    } catch {
+      return null;
+    }
+  }
+
+  function restoreSeedIfNeeded() {
+    const state = readShopState();
+    if (state && state.seed) {
+      localStorage.setItem(SHOP_SEED_KEY, String(state.seed));
+    }
+  }
+
+  // ---------- Data loading ----------
+  async function safeFetchJSON(url) {
+    try {
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r.ok) return null;
+      return await r.json();
+    } catch {
+      return null;
+    }
+  }
+
+  function normalizeProducts(data) {
+    // Accepts either array or {products:[...]}
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.products)) return data.products;
+    return [];
+  }
+
+  function soldSetFrom(data) {
+    // Accept array of ids, or object keyed by id
+    if (!data) return new Set();
+    if (Array.isArray(data)) return new Set(data.map(String));
+    if (typeof data === "object") return new Set(Object.keys(data).map(String));
+    return new Set();
+  }
+
+  // ---------- Rendering ----------
+  const PER_PAGE = 8;
+
+  function money(n) {
+    const num = Number(n);
+    if (Number.isNaN(num)) return String(n || "");
+    return "$" + num.toFixed(2);
+  }
+
+  function text(x) {
+    return (x ?? "").toString().trim();
+  }
+
+  function slugify(s) {
+    return text(s)
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  }
+
+  function productId(p, idx) {
+    // Prefer explicit id if you have it
+    if (p && (p.id || p.pid)) return String(p.id || p.pid);
+    // fallback derived id
+    const base = slugify(`${p.artist || ""}-${p.title || ""}-${p.name || ""}`) || `item-${idx}`;
+    return base;
+  }
+
+  function buildProductLink(pid) {
+    // Deep link goes to product page
+    return `product.html?pid=${encodeURIComponent(pid)}`;
+  }
+
+  function buildCard(p, pid) {
+    const name = text(p.name) || `${text(p.artist)} — ${text(p.title)}`.trim() || "Record";
+    const grade = text(p.grade) || "—";
+    const price = p.price != null ? money(p.price) : text(p.priceText) || "";
+    const desc = text(p.desc || p.description);
+    const qty = p.qty != null ? Number(p.qty) : 1;
+
+    const front = text(p.image || p.img || p.frontImage || p.front) || "";
+    const back = text(p.backImage || p.back) || "";
+
+    const shareUrl = buildProductLink(pid);
+
+    // NOTE:
+    // - Image tap area should open Quick View modal (handled in shop.html script/modal handler)
+    // - Title/desc should be a share link to product.html?pid=...
+    const el = document.createElement("div");
+    el.className = "record-card";
+    el.setAttribute("data-pid", pid);
+
+    el.innerHTML = `
+      <div class="record-image" role="button" aria-label="View photos">
+        <div class="flip-wrapper">
+          <div class="flip-inner">
+            <div class="flip-front ${front ? "" : "image-missing"}">
+              ${front ? `<img src="${front}" alt="${name} front">` : ``}
+            </div>
+            <div class="flip-back ${back ? "" : "image-missing"}">
+              ${back ? `<img src="${back}" alt="${name} back">` : (front ? `<img src="${front}" alt="${name}">` : ``)}
             </div>
           </div>
         </div>
       </div>
+
+      <a class="share-link" href="${shareUrl}">
+        <h3>${name}</h3>
+      </a>
+
+      <div class="record-grade">Grade: ${grade}</div>
+      <div class="record-price">${price}</div>
+
+      ${desc ? `<a class="share-link" href="${shareUrl}"><div class="record-desc">${desc}</div></a>` : `<div class="record-desc"></div>`}
+
+      <div class="qty-text">Qty available: ${qty}</div>
+
+      <button class="btn-primary" type="button" data-add="${pid}">Add to Cart</button>
     `;
 
-    document.body.appendChild(modal);
-
-    // Mobile layout
-    const applyResponsive = () => {
-      const inner = document.getElementById("kdInner");
-      if (!inner) return;
-      if (window.innerWidth <= 860) inner.style.gridTemplateColumns = "1fr";
-      else inner.style.gridTemplateColumns = "1fr 1fr";
-    };
-    window.addEventListener("resize", applyResponsive);
-    applyResponsive();
-
-    // Close handlers
-    const close = () => {
-      modal.style.display = "none";
-      document.body.style.overflow = "";
-      modal.setAttribute("aria-hidden", "true");
-    };
-
-    document.getElementById("kdClose").addEventListener("click", close);
-    document.getElementById("kdModalBack").addEventListener("click", close);
-
-    // Click outside closes
-    modal.addEventListener("click", (e) => {
-      const card = modal.querySelector(".kd-modal-card");
-      if (card && !card.contains(e.target)) close();
-    });
-
-    // Escape closes
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modal.style.display === "flex") close();
-    });
-
-    // expose
-    window.kdCloseModal = close;
-  }
-
-  function openModalForPid(pid) {
-    ensureModal();
-
-    const p = window.kdGetProductById ? window.kdGetProductById(pid) : null;
-    if (!p) return;
-
-    const modal = document.getElementById("kdModal");
-    const imgEl = document.getElementById("kdModalImg");
-    const thumbs = document.getElementById("kdThumbs");
-
-    const nameEl = document.getElementById("kdModalName");
-    const gradeEl = document.getElementById("kdModalGrade");
-    const priceEl = document.getElementById("kdModalPrice");
-    const descEl = document.getElementById("kdModalDesc");
-    const qtyEl = document.getElementById("kdModalQty");
-    const addBtn = document.getElementById("kdModalAdd");
-
-    const title = (p.artist ? `${p.artist} – ` : "") + (p.title || p.id || "Record");
-    nameEl.textContent = title;
-    gradeEl.textContent = "Grade: " + (p.grade || "—");
-    priceEl.textContent = "$" + Number(p.price || 0).toFixed(2);
-    descEl.textContent = p.description || "";
-    qtyEl.textContent = "Qty available: " + (p.quantity ?? 1);
-
-    // Build front/back thumbs
-    thumbs.innerHTML = "";
-
-    const front = p.imageFront || p.image || "";
-    const back = p.imageBack || "";
-
-    function setStage(src) {
-      imgEl.src = src || "";
-    }
-
-    function addThumb(src, label) {
-      if (!src) return null;
-      const t = document.createElement("button");
-      t.type = "button";
-      t.setAttribute("aria-label", label);
-      t.style.cssText = `
-        width:64px; height:64px; border-radius:12px; overflow:hidden;
-        border:1px solid rgba(255,255,255,.14);
-        background:rgba(0,0,0,.2);
-        cursor:pointer; opacity:.85; padding:0;
-      `;
-      t.innerHTML = `<img alt="${label}" style="width:100%; height:100%; object-fit:cover; display:block;" />`;
-      const im = t.querySelector("img");
-      im.src = src;
-
-      t.addEventListener("click", (e) => {
-        e.preventDefault();
-        [...thumbs.querySelectorAll("button")].forEach(b => b.style.opacity = ".85");
-        t.style.opacity = "1";
-        setStage(src);
+    // Save shop state before leaving via share links
+    const shareLinks = el.querySelectorAll("a.share-link");
+    shareLinks.forEach((a) => {
+      a.addEventListener("click", () => {
+        saveShopState({ lastPid: pid });
       });
+    });
 
-      thumbs.appendChild(t);
-      return t;
+    // Add to cart button
+    const addBtn = el.querySelector(`button[data-add="${pid}"]`);
+    if (addBtn) {
+      addBtn.addEventListener("click", () => {
+        // Try to call existing cart logic if it exists:
+        if (typeof window.addToCart === "function") {
+          window.addToCart(pid);
+        } else if (window.KD && typeof window.KD.addToCart === "function") {
+          window.KD.addToCart(pid);
+        } else {
+          // fallback minimal cart in localStorage
+          const key = "korndog_cart";
+          const raw = localStorage.getItem(key);
+          const cart = raw ? JSON.parse(raw) : [];
+          cart.push({ pid, qty: 1 });
+          localStorage.setItem(key, JSON.stringify(cart));
+        }
+
+        // update cart badge if present
+        if (typeof window.updateCartCount === "function") window.updateCartCount();
+        const badge = document.querySelector("[data-cart-count]");
+        if (badge && typeof window.getCartCount === "function") {
+          badge.textContent = String(window.getCartCount());
+        }
+      });
     }
 
-    const tFront = addThumb(front, "Front cover");
-    const tBack  = addThumb(back, "Back cover");
-
-    // Default
-    if (tFront) tFront.style.opacity = "1";
-    setStage(front || back || "");
-
-    // Add to cart
-    addBtn.disabled = (p.available === false);
-    addBtn.textContent = (p.available === false) ? "Unavailable" : "Add to Cart";
-    addBtn.onclick = (e) => {
-      e.preventDefault();
-      if (p.available === false) return;
-      window.addToCart && window.addToCart(p.id);
-    };
-
-    modal.style.display = "flex";
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+    return el;
   }
 
-  // Click rules:
-  // - Title/Desc are links -> browser navigates to product.html (shareable)
-  // - Add button -> cart only
-  // - Image area -> opens modal
-  grid.addEventListener("click", (e) => {
-    const target = e.target;
+  function renderPagination(totalPages, currentPage) {
+    if (!pager) return;
+    pager.innerHTML = "";
+    if (totalPages <= 1) return;
 
-    // Let real links navigate
-    if (target.closest("a.share-link")) return;
+    for (let p = 1; p <= totalPages; p++) {
+      const btn = document.createElement("button");
+      btn.textContent = String(p);
+      if (p === currentPage) btn.classList.add("active");
+      btn.addEventListener("click", () => {
+        window.__KD_CURRENT_PAGE__ = p;
+        saveShopState({ page: p, scrollY: 0 });
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      pager.appendChild(btn);
+    }
+  }
 
-    // If button clicked, do nothing here
-    if (target.closest("button")) return;
+  let ALL = [];
+  let SOLD = new Set();
 
-    const card = target.closest(".record-card");
-    if (!card) return;
+  function currentPageFromState() {
+    const state = readShopState();
+    if (state && state.page) return Number(state.page) || 1;
+    return window.__KD_CURRENT_PAGE__ || 1;
+  }
 
-    const clickedImageArea = target.closest(".record-image") || target.tagName === "IMG";
-    if (!clickedImageArea) return;
+  function render() {
+    const seed = getSeed();
+    const page = currentPageFromState();
+    window.__KD_CURRENT_PAGE__ = page;
 
-    e.preventDefault();
-    openModalForPid(card.dataset.pid);
+    // Shuffle deterministically
+    const shuffled = seededShuffle(ALL, seed);
+
+    // Remove sold items if sold.json exists
+    const filtered = shuffled.filter((p) => {
+      const pid = productId(p, 0);
+      return !SOLD.has(String(pid));
+    });
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+    const safePage = Math.min(Math.max(1, page), totalPages);
+    window.__KD_CURRENT_PAGE__ = safePage;
+
+    const start = (safePage - 1) * PER_PAGE;
+    const pageItems = filtered.slice(start, start + PER_PAGE);
+
+    grid.innerHTML = "";
+    pageItems.forEach((p, idx) => {
+      const pid = productId(p, start + idx);
+      const card = buildCard(p, pid);
+      grid.appendChild(card);
+    });
+
+    renderPagination(totalPages, safePage);
+  }
+
+  function restoreScrollIfNeeded() {
+    const state = readShopState();
+    if (!state) return;
+
+    // Only restore if we're returning from product page OR if user used our back flow
+    const params = new URLSearchParams(window.location.search);
+    const restore = params.get("restore");
+    const from = params.get("from");
+
+    if (restore === "1" || from === "product") {
+      const y = Number(state.scrollY || 0);
+      // delay to let DOM render
+      setTimeout(() => window.scrollTo(0, y), 120);
+    }
+  }
+
+  // Before unloading shop, save state (best-effort)
+  window.addEventListener("beforeunload", () => {
+    saveShopState();
   });
 
-  // Deep link support:
-  // shop.html?pid=ID opens modal after products load
-  function tryOpenFromPid() {
-    const pid = new URLSearchParams(window.location.search).get("pid");
-    if (!pid) return;
+  // Initial boot
+  (async function init() {
+    restoreSeedIfNeeded();
 
-    // Wait until script.js is ready + products loaded
-    let tries = 0;
-    const t = setInterval(() => {
-      tries++;
-      const p = window.kdGetProductById ? window.kdGetProductById(pid) : null;
-      if (p) {
-        openModalForPid(pid);
-        clearInterval(t);
-      }
-      if (tries > 60) clearInterval(t);
-    }, 150);
-  }
+    const data = await safeFetchJSON(PRODUCTS_URL);
+    const sold = await safeFetchJSON(SOLD_URL);
 
-  tryOpenFromPid();
+    ALL = normalizeProducts(data).map((p, i) => {
+      // stamp pid if missing so it stays consistent
+      const pid = productId(p, i);
+      return { ...p, pid };
+    });
+
+    SOLD = soldSetFrom(sold);
+
+    // If state exists, force the same seed
+    const st = readShopState();
+    if (st && st.seed) localStorage.setItem(SHOP_SEED_KEY, String(st.seed));
+
+    render();
+    restoreScrollIfNeeded();
+  })();
 })();
