@@ -136,14 +136,14 @@
       gap: 0.4rem;
     }
 
-    /* image tap area (THIS opens modal now) */
+    /* image tap area */
     .record-image {
       position: relative;
       width: 100%;
       aspect-ratio: 1 / 1;
       perspective: 1000px;
       margin-bottom: 0.5rem;
-      cursor: pointer; /* ✅ photo feels tappable */
+      cursor: pointer;
     }
 
     .flip-wrapper { width: 100%; height: 100%; }
@@ -159,7 +159,6 @@
     }
 
     .flip-front, .flip-back { position: absolute; inset: 0; backface-visibility: hidden; }
-
     .flip-back { transform: rotateY(180deg); }
 
     .record-card:hover .flip-inner { transform: rotateY(180deg); }
@@ -170,18 +169,15 @@
       background: repeating-linear-gradient(45deg, #1f102f, #1f102f 6px, #12061f 6px, #12061f 12px);
     }
 
-    /* ✅ Share link look (title/desc click) */
-    .share-link { display: block; }
-    .share-link:hover { text-decoration: underline; text-decoration-color: rgba(123,255,90,.7); }
+    /* Share link look */
+    a.share-link { display:block; }
+    a.share-link:hover { text-decoration: underline; text-decoration-color: rgba(123,255,90,.7); }
 
     .record-card h3 { font-size: 1rem; margin: 0.15rem 0; }
 
     .record-grade { font-size: 0.85rem; color: var(--muted); }
-
     .record-price { font-weight: 600; margin-top: 0.2rem; }
-
     .record-desc { font-size: 0.85rem; color: var(--muted); flex: 1; }
-
     .qty-text { font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem; }
 
     .btn-primary {
@@ -368,6 +364,32 @@
 
     .kd-modal-media img { width: 100%; height: auto; display: block; }
 
+    /* thumbs */
+    .kd-modal-thumbs {
+      display:flex;
+      gap:10px;
+      padding:10px;
+      border-top:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .kd-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      cursor: pointer;
+      opacity: .85;
+      flex: 0 0 auto;
+    }
+    .kd-thumb.active {
+      border-color: rgba(123,255,90,.65);
+      opacity: 1;
+      box-shadow: 0 0 0 2px rgba(123,255,90,.15) inset;
+    }
+    .kd-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+
     .kd-modal-details h3 { margin: 0 0 6px; font-size: 1.35rem; }
 
     .kd-modal-details .muted { color: var(--muted); font-size: .95rem; }
@@ -447,13 +469,16 @@
   <div id="kdModal" class="kd-modal" aria-hidden="true">
     <div class="kd-modal-card" role="dialog" aria-modal="true" aria-label="Product details">
       <div class="kd-modal-topbar">
-        <p class="kd-modal-title">KornDog Quick View</p>
+        <p class="kd-modal-title" id="kdModalBarTitle">KornDog Quick View</p>
         <button id="kdClose" class="kd-close" type="button">✕ Close</button>
       </div>
 
       <div class="kd-modal-inner">
-        <div class="kd-modal-media">
-          <img id="kdModalImg" alt="Record image" />
+        <div>
+          <div class="kd-modal-media">
+            <img id="kdModalImg" alt="Record image" />
+          </div>
+          <div id="kdModalThumbs" class="kd-modal-thumbs"></div>
         </div>
 
         <div class="kd-modal-details">
@@ -508,118 +533,148 @@
       });
     })();
 
-    // Quick View Modal + Shareable deep-link support
+    // Quick View Modal (front/back) + deep link: shop.html?pid=ID opens modal
     (function () {
-      const modal = document.getElementById("kdModal");
-      const closeBtn = document.getElementById("kdClose");
-      const backBtn  = document.getElementById("kdModalBack");
-      const imgEl    = document.getElementById("kdModalImg");
-      const nameEl   = document.getElementById("kdModalName");
-      const gradeEl  = document.getElementById("kdModalGrade");
-      const priceEl  = document.getElementById("kdModalPrice");
-      const descEl   = document.getElementById("kdModalDesc");
-      const qtyEl    = document.getElementById("kdModalQty");
-      const addBtn   = document.getElementById("kdModalAdd");
-      const grid     = document.getElementById("products");
+      const modal   = document.getElementById("kdModal");
+      const closeBtn= document.getElementById("kdClose");
+      const backBtn = document.getElementById("kdModalBack");
+      const imgEl   = document.getElementById("kdModalImg");
+      const thumbs  = document.getElementById("kdModalThumbs");
+
+      const barTitle= document.getElementById("kdModalBarTitle");
+      const nameEl  = document.getElementById("kdModalName");
+      const gradeEl = document.getElementById("kdModalGrade");
+      const priceEl = document.getElementById("kdModalPrice");
+      const descEl  = document.getElementById("kdModalDesc");
+      const qtyEl   = document.getElementById("kdModalQty");
+      const addBtn  = document.getElementById("kdModalAdd");
+      const grid    = document.getElementById("products");
 
       if (!modal || !grid) return;
 
-      let lastCard = null;
+      let currentId = null;
 
-      function openModalFromCard(card) {
-        lastCard = card;
+      function closeModal(){
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        currentId = null;
+      }
 
-        const img =
-          card.querySelector(".flip-front img") ||
-          card.querySelector(".record-image img") ||
-          card.querySelector("img");
+      function setStage(src){
+        imgEl.onerror = () => {
+          imgEl.removeAttribute("src");
+          imgEl.style.background =
+            "repeating-linear-gradient(45deg,#1f102f,#1f102f 6px,#12061f 6px,#12061f 12px)";
+        };
+        imgEl.style.background = "";
+        imgEl.src = src || "";
+      }
 
-        const title = (card.querySelector("h3") && card.querySelector("h3").textContent) || "Record";
-        const grade = (card.querySelector(".record-grade") && card.querySelector(".record-grade").textContent) || "";
-        const price = (card.querySelector(".record-price") && card.querySelector(".record-price").textContent) || "";
-        const desc  = (card.querySelector(".record-desc") && card.querySelector(".record-desc").textContent) || "";
-        const qty   = (card.querySelector(".qty-text") && card.querySelector(".qty-text").textContent) || "";
+      function buildThumb(src, label){
+        if (!src) return null;
+        const t = document.createElement("div");
+        t.className = "kd-thumb";
+        t.title = label;
+        t.innerHTML = `<img alt="${label}">`;
+        t.querySelector("img").src = src;
+        t.addEventListener("click", () => {
+          [...thumbs.querySelectorAll(".kd-thumb")].forEach(x => x.classList.remove("active"));
+          t.classList.add("active");
+          setStage(src);
+        });
+        thumbs.appendChild(t);
+        return t;
+      }
 
-        if (img && img.getAttribute("src")) imgEl.src = img.getAttribute("src");
-        nameEl.textContent = title.trim();
-        gradeEl.textContent = grade.trim() || "Grade:";
-        priceEl.textContent = price.trim() || "";
-        descEl.textContent = desc.trim() || "";
-        qtyEl.textContent = qty.trim() || "";
+      function openModal(productId){
+        const p = (window.allProducts || []).find(x => String(x.id) === String(productId));
+        if (!p) return;
+
+        currentId = p.id;
+
+        const titleText = (p.artist ? `${p.artist} – ` : "") + (p.title || p.id || "Record");
+        barTitle.textContent = titleText;
+        nameEl.textContent   = titleText;
+        gradeEl.textContent  = "Grade: " + (p.grade || "—");
+        priceEl.textContent  = "$" + Number(p.price || 0).toFixed(2);
+        descEl.textContent   = p.description || "";
+        qtyEl.textContent    = "Qty available: " + (p.quantity ?? 1);
+
+        const front = p.imageFront || (p.images && p.images.front) || p.image || "";
+        const back  = p.imageBack  || (p.images && p.images.back)  || "";
+
+        thumbs.innerHTML = "";
+        const tFront = buildThumb(front, "Front");
+        const tBack  = buildThumb(back, "Back");
+
+        if (tFront) tFront.classList.add("active");
+        else if (tBack) tBack.classList.add("active");
+
+        setStage(front || back || "");
+
+        addBtn.disabled = (p.available === false);
+        addBtn.textContent = (p.available === false) ? "Unavailable" : "Add to Cart";
+        addBtn.onclick = () => {
+          if (p.available === false) return;
+          if (typeof window.addToCart === "function") window.addToCart(p.id);
+        };
 
         modal.classList.add("open");
         modal.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
       }
 
-      function closeModal() {
-        modal.classList.remove("open");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
-        lastCard = null;
-      }
-
-      // expose so we can open from ?pid= links after script.js renders
-      window.kdOpenModalFromCard = openModalFromCard;
-
+      // close controls
       closeBtn && closeBtn.addEventListener("click", closeModal);
       backBtn && backBtn.addEventListener("click", closeModal);
 
+      // click backdrop closes
       modal.addEventListener("click", (e) => {
         const card = modal.querySelector(".kd-modal-card");
         if (card && !card.contains(e.target)) closeModal();
       });
 
+      // ESC closes
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
       });
 
-      addBtn && addBtn.addEventListener("click", () => {
-        if (!lastCard) return;
-        const realBtn = lastCard.querySelector("button.btn-primary") || lastCard.querySelector("button");
-        if (realBtn) realBtn.click();
-      });
-
-      // ✅ NEW behavior:
-      // - clicking PHOTO opens modal
-      // - clicking title/description (share-link) navigates to shareable URL
+      // grid rules:
+      // - click image => modal
+      // - click title/desc => shareable link (script.js renders those anchors)
       grid.addEventListener("click", (e) => {
-        const target = e.target;
-
-        // Let share links do their job (go to URL)
-        if (target && target.closest("a.share-link")) return;
-
-        const card = target && target.closest(".record-card");
+        const card = e.target.closest(".record-card");
         if (!card) return;
 
-        // Only open modal if they clicked the image area
-        const clickedImageArea =
-          target.closest(".record-image") ||
-          target.tagName === "IMG";
+        // Add to cart button should behave normally
+        if (e.target.closest("button")) return;
 
-        if (!clickedImageArea) return;
+        // Let share links navigate naturally
+        if (e.target.closest("a.share-link")) return;
 
-        openModalFromCard(card);
+        // Only image clicks open modal
+        if (e.target.closest(".record-image") || e.target.tagName === "IMG") {
+          e.preventDefault();
+          const pid = card.dataset.pid;
+          if (pid) openModal(pid);
+        }
       });
 
-      // ✅ Deep link support: shop.html?pid=some-id auto-opens modal
-      function tryOpenFromPid() {
+      // Deep link support: ?pid=ID opens modal once products are loaded/rendered
+      function tryOpenFromPid(){
         const pid = new URLSearchParams(window.location.search).get("pid");
-        if (!pid) return;
-
-        const card = grid.querySelector(`.record-card[data-pid="${CSS.escape(pid)}"]`);
-        if (card) {
-          openModalFromCard(card);
-          return true;
-        }
-        return false;
+        if (!pid) return false;
+        const exists = (window.allProducts || []).some(x => String(x.id) === String(pid));
+        if (!exists) return false;
+        openModal(pid);
+        return true;
       }
 
-      // cards render async in script.js — wait a moment
       let tries = 0;
       const t = setInterval(() => {
         tries++;
-        if (tryOpenFromPid() || tries > 40) clearInterval(t);
+        if (tryOpenFromPid() || tries > 60) clearInterval(t);
       }, 150);
     })();
   </script>
