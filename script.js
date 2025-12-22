@@ -3,13 +3,11 @@
 // - Shop renders:
 //    * PHOTO click => modal (handled in shop-ui.js)
 //    * TITLE/DESCRIPTION click => product.html?pid=ID (shareable)
-// - Shipping (CURRENT):
+// - Shipping (LOCKED FOREVER):
 //    $7.99 flat up to 3 records, then $0.50 per record after that
 // - Discounts:
 //    1) 3 for $25 => any record priced EXACTLY $10 (by quantity)
 //    2) 10% off $130+ => PREMIUM tier subtotal only (excludes $10 items)
-// - PayPal submits correct totals using discount_amount_cart + handling_cart
-// - PayPal returns to thank-you.html + cancel returns to cart.html
 // ================================================================
 
 const TEST_MODE = false;
@@ -20,16 +18,17 @@ const SITE_BASE = "https://korndogrecords.com";
 const PAYPAL_RETURN_URL = `${SITE_BASE}/thank-you.html`;
 const PAYPAL_CANCEL_URL = `${SITE_BASE}/cart.html`;
 
-const CART_KEY = "korndog_cart_v1";
+const CART_KEY = "korndog_cart_v1";            // keep this stable
 const PRODUCTS_PER_PAGE = 10;
 const PRODUCTS_FILE = "./products.json2";
 
 let allProducts = [];
 let currentPage = 1;
 
-// Make products visible to other scripts (shop-ui.js / product.html)
+// Global state for other scripts
 window.kdState = window.kdState || {};
 window.kdState.allProducts = allProducts;
+window.kdState.ready = false;
 
 // ----------------------- UTIL ----------------------------
 function shuffleArray(arr) {
@@ -41,10 +40,13 @@ function shuffleArray(arr) {
   return copy;
 }
 
-function safeEscapeSelector(value) {
-  // CSS.escape is not supported in some older browsers.
-  if (window.CSS && typeof window.CSS.escape === "function") return window.CSS.escape(value);
-  return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
+function slugify(str) {
+  return String(str || "")
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 // -------------------- LOAD PRODUCTS --------------------
@@ -58,19 +60,30 @@ async function loadProducts() {
 
     const mapped = raw.map((p) => {
       const qty = typeof p.quantity === "number" ? p.quantity : 1;
-      const tier = (p.tier || "premium").toLowerCase();
+      const tier = String(p.tier || "premium").toLowerCase();
+
+      // ✅ CRITICAL: ensure every product has a stable id
+      const artist = p.artist || "";
+      const title = p.title || "";
+      const fallbackId = slugify(`${artist}-${title}`) || slugify(p.id) || `item-${Math.random().toString(16).slice(2)}`;
+
+      const id = (p.id && String(p.id).trim()) ? String(p.id).trim() : fallbackId;
+
+      const imageFront = p.imageFront || (p.images && p.images.front) || p.image || "";
+      const imageBack  = p.imageBack  || (p.images && p.images.back)  || imageFront || p.image || "";
+
       return {
         ...p,
+        id,
         quantity: qty,
         tier,
-        imageFront: p.imageFront || (p.images && p.images.front) || p.image || "",
-        imageBack: p.imageBack || (p.images && p.images.back) || p.imageFront || p.image || "",
+        imageFront,
+        imageBack,
       };
     });
 
     allProducts = shuffleArray(mapped);
     window.kdState.allProducts = allProducts;
-
     return allProducts;
   } catch (e) {
     console.error("Failed to load products.json2:", e);
@@ -100,14 +113,19 @@ function saveCart(cart) {
   updateCartBadge();
 }
 
+function clearCartHard() {
+  localStorage.removeItem(CART_KEY);
+  updateCartBadge();
+}
+
 function updateCartBadge() {
   const cart = getCart();
   const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
-  const badge = document.querySelector("[data-cart-count]");
-  if (badge) badge.textContent = count;
+  document.querySelectorAll("[data-cart-count]").forEach((el) => (el.textContent = count));
 }
 
 // ---------------------- PRICING RULES -----------------------------
+// ✅ SHIPPING LOCKED FOREVER
 function calcShipping(itemCount) {
   if (TEST_MODE) return TEST_SHIPPING;
   if (itemCount <= 0) return 0;
@@ -149,7 +167,10 @@ function calcPremiumDiscount(cart) {
 // ----------------------- ADD TO CART ------------------------------
 function addToCart(productId) {
   const product = getProductById(productId);
-  if (!product) return;
+  if (!product) {
+    alert("Product not found. (Missing id in products.json2)");
+    return;
+  }
 
   if (product.available === false) {
     alert("That record is not available right now.");
@@ -184,7 +205,6 @@ function addToCart(productId) {
   saveCart(cart);
   alert("Dropped in the cart.");
 }
-
 window.addToCart = addToCart;
 
 // -------------------- SHOP RENDERING + PAGES ----------------------
@@ -217,10 +237,9 @@ function renderShopPage() {
     card.className = "record-card";
     card.dataset.pid = prod.id;
 
-    // Image flip area
+    // Image area
     const recordImage = document.createElement("div");
     recordImage.className = "record-image";
-    recordImage.setAttribute("data-open-modal", "true");
 
     const flipWrapper = document.createElement("div");
     flipWrapper.className = "flip-wrapper";
@@ -235,7 +254,7 @@ function renderShopPage() {
     backDiv.className = "flip-back";
 
     const frontSrc = prod.imageFront || prod.image || prod.imageBack || "";
-    const backSrc = prod.imageBack || prod.imageFront || prod.image || "";
+    const backSrc  = prod.imageBack  || prod.imageFront || prod.image || "";
 
     if (frontSrc) {
       const frontImg = document.createElement("img");
@@ -264,10 +283,8 @@ function renderShopPage() {
     flipWrapper.appendChild(flipInner);
     recordImage.appendChild(flipWrapper);
 
-    // Shareable link url
     const shareUrl = `product.html?pid=${encodeURIComponent(prod.id)}`;
 
-    // Title as share-link
     const titleLink = document.createElement("a");
     titleLink.className = "share-link";
     titleLink.href = shareUrl;
@@ -284,7 +301,6 @@ function renderShopPage() {
     price.className = "record-price";
     price.textContent = "$" + Number(prod.price || 0).toFixed(2);
 
-    // Description as share-link too (so FB share is clean)
     let descLink = null;
     if (prod.description) {
       descLink = document.createElement("a");
@@ -322,6 +338,9 @@ function renderShopPage() {
   });
 
   renderPagination(visible.length);
+
+  // Tell shop-ui it's safe to bind (important for mobile)
+  document.dispatchEvent(new CustomEvent("kd:shopRendered"));
 }
 
 function renderPagination(visibleCount) {
@@ -348,7 +367,7 @@ function renderPagination(visibleCount) {
   }
 }
 
-// -------------------------- CART RENDERING (unchanged support) ------------------------
+// -------------------------- CART RENDERING ------------------------
 function renderCart() {
   const container = document.getElementById("cart-items");
   const summaryBox = document.getElementById("cart-summary");
@@ -503,9 +522,20 @@ function submitPayPal(cart, shipping, discountTotal) {
 document.addEventListener("DOMContentLoaded", async () => {
   updateCartBadge();
   await loadProducts();
+
+  // ✅ Clear Cart wiring (works everywhere)
+  const clearBtn = document.getElementById("clear-cart");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      clearCartHard();
+      renderCart();
+    });
+  }
+
   renderShop();
   renderCart();
 
-  // Allow deep-link open from shop-ui.js after render
   window.kdState.ready = true;
+  document.dispatchEvent(new CustomEvent("kd:ready"));
 });
