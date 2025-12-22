@@ -4,12 +4,4 @@
     Content-Type = "application/json; charset=utf-8"
     Content-Disposition = "inline"
     Cache-Control = "no-store"
-[build]
-  publish = "."
-
-[[headers]]
-  for = "/products.json2"
-  [headers.values]
-    Content-Type = "application/json; charset=utf-8"
-    Content-Disposition = "inline"
-    Cache-Control = "no-store"
+    Access-Control-Allow-Origin = "*"
