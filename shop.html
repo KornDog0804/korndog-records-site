@@ -273,5 +273,30 @@
   </div>
 
   <!-- Quick View Modal (injected by shop-ui.js) -->
+
+<!-- FINAL QUICK VIEW CLICK WIRING -->
+<script>
+  (function () {
+    const grid = document.getElementById("products");
+    if (!grid || !window.kdOpenModalFromCard) return;
+
+    grid.addEventListener("click", function (e) {
+      const card = e.target.closest(".record-card");
+      if (!card) return;
+
+      const imgClick =
+        e.target.closest(".record-image") ||
+        e.target.tagName === "IMG";
+
+      // Image click → open Quick View
+      if (imgClick) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.kdOpenModalFromCard(card);
+      }
+    }, true);
+  })();
+</script>
+
 </body>
 </html>
