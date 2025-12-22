@@ -4,476 +4,313 @@
   <meta charset="utf-8" />
   <title>Product • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Optional shared stylesheet (fine if this 404s) -->
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="styles.css">
 
   <style>
-    :root {
-      --bg: #050013;
-      --accent: #7bff5a;
-      --text: #f5f5ff;
-      --muted: #a1a1c5;
-      --card: rgba(18,5,43,.92);
-      --border: rgba(123,255,90,.18);
+    :root{
+      --bg:#050013; --accent:#7bff5a; --text:#f5f5ff; --muted:#a1a1c5; --card:#12052b; --border:#2b1550;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
+    *{box-sizing:border-box;margin:0;padding:0}
     body{
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
+      min-height:100vh;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
       background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
     }
-
-    a { color: inherit; text-decoration: none; }
-
+    a{color:inherit;text-decoration:none}
     header{
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      position:sticky; top:0; z-index:20;
       backdrop-filter: blur(12px);
-      background: linear-gradient(to right, rgba(10,1,30,.96), rgba(10,1,25,.92));
-      border-bottom: 1px solid var(--border);
+      background: linear-gradient(to right, rgba(10, 1, 30, 0.95), rgba(10, 1, 25, 0.9));
+      border-bottom:1px solid rgba(123,255,90,.2);
     }
-
-    .topbar{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0.85rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+    .nav-inner{
+      max-width:1100px; margin:0 auto; padding:.75rem 1.25rem;
+      display:flex; align-items:center; justify-content:space-between; gap:1rem;
     }
-
-    .back-link{
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      color: var(--muted);
-      padding: 0.55rem 0.9rem;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      transition: border-color .15s ease, color .15s ease, background .15s ease;
+    .logo-link{display:inline-flex;align-items:center;justify-content:center}
+    .logo-circle{
+      width:44px;height:44px;border-radius:999px;border:2px solid var(--accent);
+      background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
+      overflow:hidden;
     }
-    .back-link:hover{
-      border-color: rgba(123,255,90,.55);
-      color: var(--text);
-      background: rgba(123,255,90,.08);
+    .logo-circle img{width:100%;height:100%;object-fit:cover}
+    nav{display:flex;align-items:center;gap:.75rem}
+    .nav-link{
+      padding:.6rem 1.6rem;border-radius:999px;font-size:.92rem;
+      color:var(--muted);border:1px solid transparent;font-weight:600;
     }
-
+    .nav-link:hover{border-color:rgba(123,255,90,.6);color:var(--text)}
     .cart-pill{
-      display: inline-flex;
-      align-items: center;
-      gap: .45rem;
-      padding: 0.5rem 0.95rem;
-      border-radius: 999px;
+      display:inline-flex;align-items:center;gap:.35rem;
+      padding:.45rem .9rem;border-radius:999px;
       background: rgba(123,255,90,.12);
-      border: 1px solid rgba(123,255,90,.5);
-      font-weight: 800;
-      font-size: .92rem;
+      border:1px solid rgba(123,255,90,.5);
+      font-size:.88rem;
     }
     .cart-pill span{
-      background: var(--accent);
-      color: #02010a;
-      border-radius: 999px;
-      padding: .18rem .6rem;
-      font-weight: 900;
-      min-width: 34px;
-      text-align: center;
+      background:var(--accent); color:#02010a;
+      border-radius:999px; padding:.2rem .6rem; font-weight:800;
     }
 
-    main{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1.25rem 1.25rem 3rem;
+    main{max-width:980px;margin:0 auto;padding:1.25rem 1.25rem 3rem;}
+    .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 16px;}
+    .back{
+      display:inline-flex;align-items:center;gap:8px;
+      color:var(--muted);font-weight:700;
     }
-
     .wrap{
-      display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 18px;
-      align-items: start;
+      background: rgba(18,5,43,.85);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:24px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.45);
+      overflow:hidden;
     }
-
-    @media (max-width: 920px){
-      .wrap{ grid-template-columns: 1fr; }
-    }
-
-    .media-card{
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: var(--card);
-      box-shadow: 0 24px 70px rgba(0,0,0,.55);
-      overflow: hidden;
-    }
-
-    .hero{
-      padding: 14px;
-    }
-
-    .hero img{
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.10);
+    .media{
+      padding:16px;
       background: rgba(0,0,0,.18);
+      border-bottom:1px solid rgba(255,255,255,.08);
     }
-
+    .media img{
+      width:100%; height:auto; display:block;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+    }
     .thumbs{
-      display: flex;
-      gap: 12px;
-      padding: 0 14px 14px;
-      overflow-x: auto;
+      display:flex; gap:10px; padding:14px 16px 0;
+      overflow:auto;
     }
-
-    .thumb{
-      width: 84px;
-      height: 84px;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 2px solid rgba(123,255,90,.0);
-      background: rgba(0,0,0,.2);
-      flex: 0 0 auto;
-      cursor: pointer;
-      transition: transform .12s ease, border-color .12s ease;
+    .thumbs button{
+      width:72px;height:72px;border-radius:14px; flex:0 0 auto;
+      border:1px solid rgba(123,255,90,.35);
+      background: rgba(123,255,90,.08);
+      overflow:hidden; cursor:pointer;
     }
-    .thumb img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .thumb.active{
-      border-color: rgba(123,255,90,.75);
-      transform: translateY(-1px);
-    }
-
-    .details-card{
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: var(--card);
-      box-shadow: 0 24px 70px rgba(0,0,0,.55);
-      padding: 18px;
-    }
-
-    h1{
-      font-size: 1.9rem;
-      line-height: 1.1;
-      margin: 0 0 10px;
-      font-weight: 950;
-      letter-spacing: .01em;
-    }
-
-    .muted{
-      color: var(--muted);
-      margin-top: 6px;
-      font-size: 1.02rem;
-    }
-
-    .price{
-      margin-top: 12px;
-      font-size: 1.6rem;
-      font-weight: 950;
-    }
-
-    .desc{
-      margin-top: 14px;
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 1.02rem;
-    }
-
-    .actions{
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    .btn{
-      border-radius: 999px;
-      padding: 0.75rem 1.4rem;
-      font-size: 1rem;
-      font-weight: 900;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: filter .12s ease, transform .12s ease, border-color .12s ease;
-    }
-
+    .thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+    .details{padding:16px;}
+    h1{font-size:2.1rem;line-height:1.1;margin:4px 0 10px;font-weight:900;}
+    .muted{color:var(--muted)}
+    .price{margin-top:12px;font-size:1.3rem;font-weight:900;}
+    .desc{margin-top:10px;color:var(--muted);line-height:1.45;}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
     .btn-primary{
-      background: var(--accent);
-      color: #02010a;
+      border-radius:999px;padding:.75rem 1.4rem;font-size:.95rem;
+      border:none;cursor:pointer;font-weight:900;background:var(--accent);color:#02010a;
     }
-    .btn-primary:hover{ filter: brightness(1.05); transform: translateY(-1px); }
-
     .btn-outline{
-      background: transparent;
-      color: var(--accent);
-      border-color: rgba(123,255,90,.55);
+      border-radius:999px;padding:.75rem 1.4rem;font-size:.95rem;
+      border:1px solid rgba(123,255,90,.55);
+      background: transparent; color:var(--accent);
+      cursor:pointer; font-weight:900;
     }
-    .btn-outline:hover{ filter: brightness(1.05); transform: translateY(-1px); }
-
-    .toast{
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 18px;
-      background: rgba(18,5,43,.95);
-      border: 1px solid rgba(123,255,90,.35);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 800;
-      z-index: 9999;
-      display: none;
-      box-shadow: 0 16px 40px rgba(0,0,0,.5);
+    .error{
+      padding:18px; border:1px solid rgba(255,0,0,.25);
+      background: rgba(255,0,0,.08); border-radius:16px;
+      color:#ffd1d1;
     }
-    .toast.show{ display: block; }
   </style>
-
-  <!-- Keep script.js if it holds your cart functions / shipping / PayPal -->
-  <script defer src="script.js"></script>
 </head>
 
 <body>
   <header>
-    <div class="topbar">
-      <a id="kdBackToShop" class="back-link" href="shop.html?restore=1">← Back to Shop</a>
-      <a class="cart-pill" href="cart.html">Cart <span id="kdCartCount">0</span></a>
+    <div class="nav-inner">
+      <a href="index.html" class="logo-link" aria-label="Home">
+        <div class="logo-circle">
+          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
+        </div>
+      </a>
+
+      <nav>
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="cart.html" class="nav-link cart-pill">Cart <span data-cart-count>0</span></a>
+      </nav>
     </div>
   </header>
 
   <main>
-    <div class="wrap">
-      <section class="media-card">
-        <div class="hero">
-          <img id="heroImg" alt="Record image" />
-        </div>
+    <div class="toprow">
+      <a id="kdBackToShop" class="back" href="shop.html">← Back to Shop</a>
+    </div>
 
-        <div class="thumbs" id="thumbs"></div>
-      </section>
+    <div class="wrap" id="kdWrap">
+      <div class="media">
+        <img id="kdHero" alt="Record image" />
+      </div>
 
-      <section class="details-card">
-        <h1 id="pTitle">Loading…</h1>
-        <div class="muted" id="pGrade">Grade: —</div>
-        <div class="price" id="pPrice">$0.00</div>
-        <div class="muted" id="pQty">Qty available: —</div>
-        <div class="desc" id="pDesc"></div>
+      <div class="thumbs" id="kdThumbs" style="display:none;"></div>
+
+      <div class="details">
+        <h1 id="kdTitle">Loading…</h1>
+        <div class="muted" id="kdGrade">Grade: —</div>
+        <div class="price" id="kdPrice">$0.00</div>
+        <div class="muted" id="kdQty">Qty available: —</div>
+        <div class="desc" id="kdDesc"></div>
 
         <div class="actions">
-          <button id="addBtn" class="btn btn-primary" type="button">Add to Cart</button>
-          <button id="shareBtn" class="btn btn-outline" type="button">Copy Share Link</button>
+          <button class="btn-primary" id="kdAdd">Add to Cart</button>
+          <button class="btn-outline" id="kdCopy">Copy Share Link</button>
         </div>
-      </section>
+
+        <div id="kdErr" style="display:none;margin-top:14px;" class="error"></div>
+      </div>
     </div>
   </main>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
   <script>
-    // ✅ Back behavior: prefer true browser back (keeps the exact shop state + avoids reshuffle)
+    // Keep shop order when returning (no reshuffle)
     (function(){
       const btn = document.getElementById("kdBackToShop");
-      if (!btn) return;
+      if(!btn) return;
       btn.addEventListener("click", function(e){
-        if (window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
+        // Prefer true back if they came from shop
+        if (window.history.length > 1) { e.preventDefault(); window.history.back(); }
       });
     })();
 
-    // ---------- Helpers ----------
-    function $(id){ return document.getElementById(id); }
-    function text(x){ return (x ?? "").toString().trim(); }
+    // Shared cart key (must match your cart.html/script.js expectation)
+    const CART_KEY = "kd_cart_v1";
 
-    function money(n){
-      const num = Number(n);
-      if (Number.isNaN(num)) return text(n);
-      return "$" + num.toFixed(2);
+    function readCart(){
+      try { return JSON.parse(localStorage.getItem(CART_KEY) || "[]"); }
+      catch(e){ return []; }
     }
-
-    function showToast(msg){
-      const t = $("toast");
-      if (!t) return;
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(() => t.classList.remove("show"), 1400);
+    function writeCart(items){
+      localStorage.setItem(CART_KEY, JSON.stringify(items));
+      updateCartCount();
     }
-
-    function getPid(){
-      return new URLSearchParams(window.location.search).get("pid") || "";
-    }
-
-    function normalizeProducts(data){
-      if (Array.isArray(data)) return data;
-      if (data && Array.isArray(data.products)) return data.products;
-      return [];
-    }
-
-    function findProductByPid(products, pid){
-      // match explicit pid/id fields first
-      const direct = products.find(p => String(p.pid || p.id || "") === String(pid));
-      if (direct) return direct;
-
-      // fallback: try slug match
-      const pidLower = String(pid).toLowerCase();
-      return products.find(p => {
-        const key = String(p.pid || p.id || "").toLowerCase();
-        return key === pidLower;
-      });
-    }
-
-    function getImages(p){
-      const front = text(p.image || p.img || p.frontImage || p.front);
-      const back  = text(p.backImage || p.back);
-      // Always show 2 thumbs if possible; if no back, duplicate front so UI doesn't look broken
-      const images = [];
-      if (front) images.push(front);
-      if (back) images.push(back);
-      if (images.length === 1) images.push(images[0]);
-      return images;
-    }
-
-    // ---------- Cart count (best-effort) ----------
     function updateCartCount(){
-      const el = $("kdCartCount");
-      if (!el) return;
-
-      // If your script.js exposes cart count, use it
-      if (typeof window.getCartCount === "function") {
-        el.textContent = String(window.getCartCount());
-        return;
+      const items = readCart();
+      const count = items.reduce((sum, it) => sum + (Number(it.qty)||0), 0);
+      document.querySelectorAll("[data-cart-count]").forEach(el => el.textContent = String(count));
+    }
+    function addToCart(product){
+      const items = readCart();
+      const pid = product.pid || product.id || product.slug;
+      if(!pid) return;
+      const found = items.find(x => x.pid === pid);
+      if(found){
+        found.qty = Math.min((Number(found.qty)||0) + 1, Number(product.qty)||99);
+      }else{
+        items.push({
+          pid,
+          name: product.name || product.title || "Record",
+          price: Number(product.price)||0,
+          image: product.images?.[0] || product.image || "",
+          qty: 1,
+          maxQty: Number(product.qty)||1
+        });
       }
-
-      // Fallback: try common localStorage keys
-      const keysToTry = ["korndog_cart", "KORNDOG_CART", "cart", "CART", "kd_cart"];
-      for (const k of keysToTry) {
-        try {
-          const raw = localStorage.getItem(k);
-          if (!raw) continue;
-          const data = JSON.parse(raw);
-          if (Array.isArray(data)) {
-            el.textContent = String(data.reduce((sum, it) => sum + Number(it.qty || 1), 0));
-            return;
-          }
-        } catch {}
-      }
-
-      el.textContent = "0";
+      writeCart(items);
     }
 
-    // ---------- Add to cart (best-effort) ----------
-    function addToCart(pid){
-      // Prefer your existing cart logic
-      if (typeof window.addToCart === "function") {
-        window.addToCart(pid);
-        return true;
-      }
-      if (window.KD && typeof window.KD.addToCart === "function") {
-        window.KD.addToCart(pid);
-        return true;
-      }
-
-      // Fallback localStorage
-      try{
-        const key = "korndog_cart";
-        const raw = localStorage.getItem(key);
-        const cart = raw ? JSON.parse(raw) : [];
-        cart.push({ pid: String(pid), qty: 1 });
-        localStorage.setItem(key, JSON.stringify(cart));
-        return true;
-      }catch{
-        return false;
-      }
+    function setError(msg){
+      const box = document.getElementById("kdErr");
+      box.style.display = "block";
+      box.textContent = msg;
     }
 
-    // ---------- Boot ----------
+    async function fetchProducts(){
+      // Be tolerant: you might have products.json or product.json
+      const tries = ["products.json", "product.json", "products.json?v=1", "product.json?v=1"];
+      for (const url of tries){
+        try{
+          const res = await fetch(url, { cache: "no-store" });
+          if(!res.ok) continue;
+          const data = await res.json();
+          if(Array.isArray(data)) return data;
+          if(Array.isArray(data.products)) return data.products;
+        }catch(e){}
+      }
+      return null;
+    }
+
+    function findProduct(list, pid){
+      if(!list) return null;
+      return list.find(p =>
+        String(p.pid||p.id||p.slug) === String(pid)
+      ) || null;
+    }
+
+    function normalizeProduct(p){
+      const images = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []);
+      return {
+        pid: p.pid || p.id || p.slug,
+        name: p.name || p.title || "Record",
+        grade: p.grade || p.condition || "",
+        price: Number(p.price)||0,
+        desc: p.desc || p.description || "",
+        qty: Number(p.qty || p.quantity || 1),
+        images
+      };
+    }
+
     (async function init(){
-      const pid = getPid();
-      if (!pid) {
-        $("pTitle").textContent = "Product not found";
-        $("pDesc").textContent = "Missing pid in the URL.";
-        return;
-      }
-
       updateCartCount();
 
-      let products = [];
-      try{
-        const r = await fetch("products.json", { cache: "no-store" });
-        const data = await r.json();
-        products = normalizeProducts(data);
-      }catch(e){
-        $("pTitle").textContent = "Couldn’t load products.json";
-        $("pDesc").textContent = "Check that products.json is in the repo root and valid JSON.";
+      const params = new URLSearchParams(location.search);
+      const pid = params.get("pid");
+      if(!pid){
+        setError("Missing pid in URL. Example: product.html?pid=your-id");
         return;
       }
 
-      const p = findProductByPid(products, pid);
-      if (!p) {
-        $("pTitle").textContent = "Product not found";
-        $("pDesc").textContent = "That pid doesn’t match any item in products.json.";
+      const list = await fetchProducts();
+      if(!list){
+        setError("Couldn’t load product data. Check products.json / product.json exists in the site root.");
         return;
       }
 
-      const title = text(p.name) || `${text(p.artist)} — ${text(p.title)}`.trim() || "Record";
-      const grade = text(p.grade) || "—";
-      const price = p.price != null ? money(p.price) : text(p.priceText) || "";
-      const qty = (p.qty != null ? Number(p.qty) : 1);
-      const desc = text(p.desc || p.description);
-
-      $("pTitle").textContent = title;
-      $("pGrade").textContent = "Grade: " + grade;
-      $("pPrice").textContent = price || "";
-      $("pQty").textContent = "Qty available: " + (Number.isFinite(qty) ? qty : 1);
-      $("pDesc").textContent = desc;
-
-      const imgs = getImages(p);
-      const hero = $("heroImg");
-      const thumbs = $("thumbs");
-
-      function setHero(src){
-        hero.src = src;
+      const raw = findProduct(list, pid);
+      if(!raw){
+        setError("Product not found for pid: " + pid);
+        return;
       }
 
-      thumbs.innerHTML = "";
-      imgs.forEach((src, i) => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "thumb" + (i === 0 ? " active" : "");
-        b.innerHTML = `<img src="${src}" alt="Thumbnail ${i+1}">`;
-        b.addEventListener("click", () => {
-          setHero(src);
-          [...thumbs.querySelectorAll(".thumb")].forEach(x => x.classList.remove("active"));
-          b.classList.add("active");
+      const p = normalizeProduct(raw);
+
+      const hero = document.getElementById("kdHero");
+      const title = document.getElementById("kdTitle");
+      const grade = document.getElementById("kdGrade");
+      const price = document.getElementById("kdPrice");
+      const qty = document.getElementById("kdQty");
+      const desc = document.getElementById("kdDesc");
+      const thumbs = document.getElementById("kdThumbs");
+
+      title.textContent = p.name;
+      grade.textContent = p.grade ? ("Grade: " + p.grade) : "Grade: —";
+      price.textContent = "$" + p.price.toFixed(2);
+      qty.textContent = "Qty available: " + (p.qty ?? 1);
+      desc.textContent = p.desc || "";
+
+      hero.src = p.images[0] || "";
+      hero.onerror = () => { hero.removeAttribute("src"); hero.alt = "Image not available"; };
+
+      if(p.images.length > 1){
+        thumbs.style.display = "flex";
+        thumbs.innerHTML = "";
+        p.images.forEach((src, idx) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.setAttribute("aria-label", "View image " + (idx+1));
+          b.innerHTML = `<img src="${src}" alt="">`;
+          b.addEventListener("click", () => { hero.src = src; });
+          thumbs.appendChild(b);
         });
-        thumbs.appendChild(b);
-      });
+      }
 
-      setHero(imgs[0] || "");
+      document.getElementById("kdAdd").addEventListener("click", () => addToCart(p));
 
-      // Buttons
-      $("addBtn").addEventListener("click", () => {
-        const ok = addToCart(pid);
-        updateCartCount();
-        showToast(ok ? "Added to cart" : "Couldn’t add to cart");
-      });
-
-      $("shareBtn").addEventListener("click", async () => {
-        const url = window.location.href;
+      document.getElementById("kdCopy").addEventListener("click", async () => {
+        const url = location.origin + location.pathname.replace(/\/[^/]*$/, "/") + "product.html?pid=" + encodeURIComponent(p.pid);
         try{
           await navigator.clipboard.writeText(url);
-          showToast("Share link copied");
-        }catch{
-          // fallback prompt for iOS/Safari weirdness
-          window.prompt("Copy this link:", url);
+          const btn = document.getElementById("kdCopy");
+          const old = btn.textContent;
+          btn.textContent = "Copied ✅";
+          setTimeout(()=>btn.textContent=old, 1200);
+        }catch(e){
+          alert(url);
         }
       });
     })();
