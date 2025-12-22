@@ -1,64 +1,60 @@
-// ================== KORNDOG SCRIPT (SHOP + CART) ==================
-// LOCKED – DO NOT PARTIALLY EDIT
+// ================== KORNDOG RECORDS — MASTER SCRIPT ==================
+// SHOP + CART + PAYPAL + QUICK VIEW + SHARE LINKS + ZOMBIE KITTY
+// USES products.json2 ONLY
 // ================================================================
 
-// ================= LIVE MODE =================
-const TEST_MODE = false;
-const TEST_SHIPPING = 0.01;
+const SITE_BASE = "https://korndogrecords.com";
+const PRODUCTS_FILE = "./products.json2";
+const CART_KEY = "korndog_cart_v1";
+const PRODUCTS_PER_PAGE = 10;
 
 // PayPal
 const PAYPAL_BUSINESS_EMAIL = "korndogrecords@gmail.com";
-const SITE_BASE = "https://korndogrecords.com";
 const PAYPAL_RETURN_URL = `${SITE_BASE}/thank-you.html`;
 const PAYPAL_CANCEL_URL = `${SITE_BASE}/cart.html`;
 
-const CART_KEY = "korndog_cart_v1";
-const PRODUCTS_PER_PAGE = 10;
-const PRODUCTS_FILE = "./products.json2";
+// Zombie Kitty phone (personal)
+const ZK_PHONE = "12707843283";
 
+// ------------------------------------------------------------
+// GLOBALS
+// ------------------------------------------------------------
 let allProducts = [];
 let currentPage = 1;
 window.allProducts = allProducts;
 
-// ----------------------- UTIL ----------------------------
-function shuffleArray(arr) {
-  const copy = arr.slice();
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
+// ------------------------------------------------------------
+// UTIL
+// ------------------------------------------------------------
+function shuffle(arr) {
+  return arr.sort(() => Math.random() - 0.5);
 }
 
-// -------------------- LOAD PRODUCTS ----------------------
+// ------------------------------------------------------------
+// LOAD PRODUCTS
+// ------------------------------------------------------------
 async function loadProducts() {
-  try {
-    const res = await fetch(PRODUCTS_FILE, { cache: "no-store" });
-    const raw = await res.json();
+  const res = await fetch(PRODUCTS_FILE, { cache: "no-store" });
+  const raw = await res.json();
 
-    allProducts = shuffleArray(
-      raw.map(p => ({
-        ...p,
-        quantity: typeof p.quantity === "number" ? p.quantity : 1,
-        tier: (p.tier || "premium").toLowerCase(),
-        imageFront: p.imageFront || p.image || "",
-        imageBack: p.imageBack || p.imageFront || ""
-      }))
-    );
+  allProducts = shuffle(
+    raw.map(p => ({
+      ...p,
+      tier: (p.tier || "premium").toLowerCase(),
+      quantity: typeof p.quantity === "number" ? p.quantity : 1,
+      imageFront: p.imageFront || p.image || "",
+      imageBack: p.imageBack || ""
+    }))
+  );
 
-    window.allProducts = allProducts;
-    return allProducts;
-  } catch (e) {
-    console.error("Product load failed", e);
-    allProducts = [];
-    return [];
-  }
+  window.allProducts = allProducts;
 }
 
-// ------------------------ CART ---------------------------
+// ------------------------------------------------------------
+// CART
+// ------------------------------------------------------------
 function getCart() {
-  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
-  catch { return []; }
+  return JSON.parse(localStorage.getItem(CART_KEY) || "[]");
 }
 
 function saveCart(cart) {
@@ -72,102 +68,108 @@ function updateCartBadge() {
   if (badge) badge.textContent = count;
 }
 
-function addToCart(pid) {
-  const p = allProducts.find(x => x.id === pid);
-  if (!p || p.available === false) return;
+window.addToCart = function (id) {
+  const product = allProducts.find(p => p.id === id);
+  if (!product || product.available === false) return;
 
   const cart = getCart();
-  const found = cart.find(i => i.id === pid);
+  const existing = cart.find(i => i.id === id);
 
-  if (found) {
-    if (found.qty >= p.quantity) return alert("Only one copy available.");
-    found.qty++;
+  if (existing) {
+    if (existing.qty >= product.quantity) return alert("Only one copy available.");
+    existing.qty++;
   } else {
     cart.push({
-      id: p.id,
-      title: p.title,
-      artist: p.artist || "",
-      price: Number(p.price),
-      grade: p.grade || "",
-      tier: p.tier,
-      image: p.imageFront,
-      qty: 1
+      id,
+      title: product.title,
+      artist: product.artist || "",
+      price: Number(product.price),
+      grade: product.grade || "",
+      tier: product.tier,
+      qty: 1,
+      image: product.imageFront
     });
   }
 
   saveCart(cart);
-  alert("Dropped in the cart.");
-}
-window.addToCart = addToCart;
+  alert("Added to cart 🤘");
+};
 
-// -------------------- SHOP RENDER ------------------------
-async function renderShop() {
-  if (!document.getElementById("products")) return;
-  if (!allProducts.length) await loadProducts();
-  currentPage = 1;
-  renderShopPage();
+// ------------------------------------------------------------
+// SHIPPING + DISCOUNTS
+// ------------------------------------------------------------
+function calcShipping(count) {
+  if (count <= 0) return 0;
+  if (count <= 3) return 7.99;
+  return 7.99 + (count - 3) * 0.5;
 }
 
-function renderShopPage() {
+function calcTenBundle(cart) {
+  const ten = cart.reduce((s, i) => s + (i.price === 10 ? i.qty : 0), 0);
+  return Math.floor(ten / 3) * 5;
+}
+
+function calcPremiumDiscount(cart) {
+  const subtotal = cart.reduce((s, i) => {
+    if (i.price === 10) return s;
+    if (i.tier !== "premium") return s;
+    return s + i.price * i.qty;
+  }, 0);
+
+  return subtotal >= 130 ? subtotal * 0.1 : 0;
+}
+
+// ------------------------------------------------------------
+// SHOP RENDER
+// ------------------------------------------------------------
+function renderShop() {
   const grid = document.getElementById("products");
+  if (!grid) return;
+
   grid.innerHTML = "";
-
   const visible = allProducts.filter(p => p.available !== false);
-  const slice = visible.slice(
-    (currentPage - 1) * PRODUCTS_PER_PAGE,
-    currentPage * PRODUCTS_PER_PAGE
-  );
+  const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const page = visible.slice(start, start + PRODUCTS_PER_PAGE);
 
-  slice.forEach(p => {
+  page.forEach(p => {
     const card = document.createElement("div");
     card.className = "record-card";
     card.dataset.pid = p.id;
 
-    const shareUrl = `shop.html?pid=${encodeURIComponent(p.id)}`;
-
-    // IMAGE (modal trigger)
+    // IMAGE (opens modal)
     const imgWrap = document.createElement("div");
     imgWrap.className = "record-image";
-    const img = document.createElement("img");
-    img.src = p.imageFront;
-    imgWrap.appendChild(img);
+    imgWrap.innerHTML = `<img src="${p.imageFront}" alt="${p.title}">`;
+    imgWrap.addEventListener("click", () => openQuickView(p.id));
 
-    // TITLE (share link)
-    const titleLink = document.createElement("a");
-    titleLink.href = shareUrl;
-    titleLink.className = "share-link";
-    titleLink.innerHTML = `<h3>${p.artist ? p.artist + " – " : ""}${p.title}</h3>`;
-
-    // DESC (share link)
-    const descLink = document.createElement("a");
-    descLink.href = shareUrl;
-    descLink.className = "share-link";
-    descLink.innerHTML = `<p class="record-desc">${p.description || ""}</p>`;
+    // TEXT (shareable link)
+    const title = document.createElement("h3");
+    title.innerHTML = `<a href="${SITE_BASE}/shop.html?record=${p.id}">${p.artist ? p.artist + " – " : ""}${p.title}</a>`;
 
     const price = document.createElement("p");
     price.className = "record-price";
     price.textContent = `$${Number(p.price).toFixed(2)}`;
 
+    const desc = document.createElement("p");
+    desc.className = "record-desc";
+    desc.innerHTML = `<a href="${SITE_BASE}/shop.html?record=${p.id}">${p.description || ""}</a>`;
+
     const btn = document.createElement("button");
-    btn.className = "btn-primary";
     btn.textContent = "Add to Cart";
+    btn.className = "btn-primary";
     btn.onclick = () => addToCart(p.id);
 
-    card.append(imgWrap, titleLink, price, descLink, btn);
+    card.append(imgWrap, title, price, desc, btn);
     grid.appendChild(card);
   });
 
   renderPagination(visible.length);
-
-  // auto-open modal from share link
-  const pid = new URLSearchParams(location.search).get("pid");
-  if (pid && window.kdOpenQuickView) window.kdOpenQuickView(pid);
 }
 
 function renderPagination(count) {
-  const box = document.getElementById("pagination");
-  if (!box) return;
-  box.innerHTML = "";
+  const el = document.getElementById("pagination");
+  if (!el) return;
+  el.innerHTML = "";
 
   const pages = Math.ceil(count / PRODUCTS_PER_PAGE);
   for (let i = 1; i <= pages; i++) {
@@ -176,70 +178,79 @@ function renderPagination(count) {
     if (i === currentPage) b.classList.add("active");
     b.onclick = () => {
       currentPage = i;
-      renderShopPage();
+      renderShop();
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
-    box.appendChild(b);
+    el.appendChild(b);
   }
 }
 
-// ---------------- QUICK VIEW MODAL -----------------------
-(function () {
-  const modal = document.createElement("div");
-  modal.id = "kd-qv";
-  modal.style.cssText = `
-    position:fixed; inset:0; display:none;
-    background:rgba(0,0,0,.75); z-index:99999;
-    align-items:center; justify-content:center;
-  `;
-  modal.innerHTML = `
-    <div style="background:#12052b; border-radius:18px; padding:16px; max-width:90%;">
-      <button id="qvClose">✕</button>
-      <img id="qvImg" style="width:100%;border-radius:12px">
-      <h2 id="qvTitle"></h2>
-      <p id="qvDesc"></p>
-      <button id="qvAdd" class="btn-primary">Add to Cart</button>
-    </div>`;
-  document.body.appendChild(modal);
+// ------------------------------------------------------------
+// QUICK VIEW MODAL (FRONT + BACK)
+// ------------------------------------------------------------
+function openQuickView(id) {
+  const p = allProducts.find(x => x.id === id);
+  if (!p) return;
 
-  const close = () => modal.style.display = "none";
-  document.getElementById("qvClose").onclick = close;
+  let modal = document.getElementById("qv");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "qv";
+    modal.style.cssText = `
+      position:fixed; inset:0; background:rgba(0,0,0,.7);
+      display:flex; align-items:center; justify-content:center; z-index:99999;
+    `;
+    modal.innerHTML = `
+      <div style="background:#12061f;border-radius:18px;padding:16px;max-width:520px;width:100%">
+        <button id="qv-close" style="float:right">X</button>
+        <img id="qv-img" style="width:100%;border-radius:12px">
+        <div id="qv-thumbs" style="display:flex;gap:10px;margin-top:10px"></div>
+        <h2 id="qv-title"></h2>
+        <p id="qv-desc"></p>
+        <button id="qv-add" class="btn-primary">Add to Cart</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener("click", e => e.target === modal && modal.remove());
+  }
 
-  window.kdOpenQuickView = pid => {
-    const p = allProducts.find(x => x.id === pid);
-    if (!p) return;
-    document.getElementById("qvImg").src = p.imageFront;
-    document.getElementById("qvTitle").textContent =
-      `${p.artist ? p.artist + " – " : ""}${p.title}`;
-    document.getElementById("qvDesc").textContent = p.description || "";
-    document.getElementById("qvAdd").onclick = () => addToCart(pid);
-    modal.style.display = "flex";
-  };
+  modal.querySelector("#qv-title").textContent = `${p.artist ? p.artist + " – " : ""}${p.title}`;
+  modal.querySelector("#qv-desc").textContent = p.description || "";
+  modal.querySelector("#qv-img").src = p.imageFront;
 
-  document.addEventListener("click", e => {
-    if (e.target.closest("button")) return;
-    if (e.target.closest("a.share-link")) return;
-    const img = e.target.closest(".record-image");
-    if (!img) return;
-    const card = img.closest(".record-card");
-    if (card) window.kdOpenQuickView(card.dataset.pid);
-  }, true);
-})();
+  const thumbs = modal.querySelector("#qv-thumbs");
+  thumbs.innerHTML = "";
 
-// ---------------- ZOMBIE KITTY ---------------------------
-(function () {
-  const PHONE = "2707843283";
-  const btn = document.getElementById("floatingJoey");
-  if (!btn) return;
+  [p.imageFront, p.imageBack].forEach(src => {
+    if (!src) return;
+    const t = document.createElement("img");
+    t.src = src;
+    t.style.width = "64px";
+    t.style.cursor = "pointer";
+    t.onclick = () => modal.querySelector("#qv-img").src = src;
+    thumbs.appendChild(t);
+  });
 
-  btn.onclick = () => {
-    window.location.href = `sms:${PHONE}?body=${encodeURIComponent("Yo Joey — I’m looking at a record on KornDog Records.")}`;
-  };
-})();
+  modal.querySelector("#qv-add").onclick = () => addToCart(p.id);
+  modal.querySelector("#qv-close").onclick = () => modal.remove();
+}
 
-// ---------------- INIT ----------------
+// ------------------------------------------------------------
+// ZOMBIE KITTY (NEW)
+// ------------------------------------------------------------
+document.addEventListener("click", e => {
+  if (!e.target.closest('[data-zk="true"]')) return;
+
+  const msg = prompt("Text Joey:");
+  if (!msg) return;
+  window.location.href = `sms:${ZK_PHONE}?body=${encodeURIComponent(msg)}`;
+});
+
+// ------------------------------------------------------------
+// INIT
+// ------------------------------------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
-  updateCartBadge();
   await loadProducts();
+  updateCartBadge();
   renderShop();
 });
