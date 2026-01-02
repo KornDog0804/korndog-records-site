@@ -158,17 +158,16 @@
   </main>
 
   <script>
-    // Keep shop order when returning (no reshuffle)
+    // Prefer true back if they came from shop
     (function(){
       const btn = document.getElementById("kdBackToShop");
       if(!btn) return;
       btn.addEventListener("click", function(e){
-        // Prefer true back if they came from shop
         if (window.history.length > 1) { e.preventDefault(); window.history.back(); }
       });
     })();
 
-    // Shared cart key (must match your cart.html/script.js expectation)
+    // Shared cart key (must match cart.html/script.js)
     const CART_KEY = "kd_cart_v1";
 
     function readCart(){
@@ -184,25 +183,6 @@
       const count = items.reduce((sum, it) => sum + (Number(it.qty)||0), 0);
       document.querySelectorAll("[data-cart-count]").forEach(el => el.textContent = String(count));
     }
-    function addToCart(product){
-      const items = readCart();
-      const pid = product.pid || product.id || product.slug;
-      if(!pid) return;
-      const found = items.find(x => x.pid === pid);
-      if(found){
-        found.qty = Math.min((Number(found.qty)||0) + 1, Number(product.qty)||99);
-      }else{
-        items.push({
-          pid,
-          name: product.name || product.title || "Record",
-          price: Number(product.price)||0,
-          image: product.images?.[0] || product.image || "",
-          qty: 1,
-          maxQty: Number(product.qty)||1
-        });
-      }
-      writeCart(items);
-    }
 
     function setError(msg){
       const box = document.getElementById("kdErr");
@@ -210,9 +190,37 @@
       box.textContent = msg;
     }
 
+    // Stable, dummy-proof ID maker (same rules you should use in Admin)
+    function slugify(str) {
+      return String(str || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[\u2018\u2019]/g, "'")      // curly apostrophes -> '
+        .replace(/&/g, " and ")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+    }
+
+    function getKeysFromUrl() {
+      const params = new URLSearchParams(location.search);
+      return {
+        pid: params.get("pid") || "",
+        id:  params.get("id")  || ""
+      };
+    }
+
     async function fetchProducts(){
-      // Be tolerant: you might have products.json or product.json
-      const tries = ["products.json", "product.json", "products.json?v=1", "product.json?v=1"];
+      // IMPORTANT: products.json2 is your real source
+      const tries = [
+        "products.json2",
+        "products.json",
+        "product.json",
+        "products.json2?v=1",
+        "products.json?v=1",
+        "product.json?v=1"
+      ];
+
       for (const url of tries){
         try{
           const res = await fetch(url, { cache: "no-store" });
@@ -220,23 +228,78 @@
           const data = await res.json();
           if(Array.isArray(data)) return data;
           if(Array.isArray(data.products)) return data.products;
+          if(Array.isArray(data.items)) return data.items;
         }catch(e){}
       }
       return null;
     }
 
-    function findProduct(list, pid){
+    function findProduct(list, keys){
       if(!list) return null;
-      return list.find(p =>
-        String(p.pid||p.id||p.slug) === String(pid)
-      ) || null;
+
+      const pid = String(keys.pid || "");
+      const id  = String(keys.id  || "");
+
+      // 1) exact pid match
+      if (pid) {
+        const hit = list.find(p => String(p.pid || "") === pid);
+        if (hit) return hit;
+      }
+
+      // 2) exact id match
+      if (id) {
+        const hit = list.find(p => String(p.id || "") === id);
+        if (hit) return hit;
+      }
+
+      // 3) pid in URL but record only has id (your common case)
+      if (pid) {
+        const hit = list.find(p => String(p.id || "") === pid);
+        if (hit) return hit;
+      }
+
+      // 4) derived pid match (artist-title)
+      if (pid) {
+        const hit = list.find(p => {
+          const derived =
+            p.pid ||
+            slugify(`${p.artist || ""}-${p.title || p.name || p.id || ""}`);
+          return String(derived) === pid;
+        });
+        if (hit) return hit;
+      }
+
+      return null;
     }
 
     function normalizeProduct(p){
-      const images = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : []);
+      // Your json2 supports images.front/images.back + imageFront/imageBack + image
+      const front =
+        p?.images?.front ||
+        p.imageFront ||
+        (typeof p.image === "string" ? p.image : "") ||
+        (Array.isArray(p.images) ? p.images[0] : "");
+
+      const back =
+        p?.images?.back ||
+        p.imageBack ||
+        (Array.isArray(p.images) ? p.images[1] : "");
+
+      const images = [];
+      if (front) images.push(front);
+      if (back && back !== front) images.push(back);
+
+      const pid =
+        p.pid ||
+        slugify(`${p.artist || ""}-${p.title || p.name || p.id || ""}`) ||
+        "";
+
       return {
-        pid: p.pid || p.id || p.slug,
-        name: p.name || p.title || "Record",
+        pid,
+        id: p.id || "",
+        name: (p.artist && (p.title || p.name))
+          ? `${p.artist} — ${p.title || p.name}`
+          : (p.name || p.title || "Record"),
         grade: p.grade || p.condition || "",
         price: Number(p.price)||0,
         desc: p.desc || p.description || "",
@@ -245,25 +308,51 @@
       };
     }
 
+    function addToCart(product){
+      const items = readCart();
+
+      const pid =
+        product.pid ||
+        product.id ||
+        slugify(product.name) ||
+        "";
+
+      if(!pid) return;
+
+      const found = items.find(x => x.pid === pid);
+      if(found){
+        found.qty = Math.min((Number(found.qty)||0) + 1, Number(product.qty)||99);
+      }else{
+        items.push({
+          pid,
+          name: product.name || "Record",
+          price: Number(product.price)||0,
+          image: product.images?.[0] || "",
+          qty: 1,
+          maxQty: Number(product.qty)||1
+        });
+      }
+      writeCart(items);
+    }
+
     (async function init(){
       updateCartCount();
 
-      const params = new URLSearchParams(location.search);
-      const pid = params.get("pid");
-      if(!pid){
-        setError("Missing pid in URL. Example: product.html?pid=your-id");
+      const keys = getKeysFromUrl();
+      if(!keys.pid && !keys.id){
+        setError("Missing product key. Use: product.html?pid=your-id OR product.html?id=your-id");
         return;
       }
 
       const list = await fetchProducts();
       if(!list){
-        setError("Couldn’t load product data. Check products.json / product.json exists in the site root.");
+        setError("Couldn’t load product data. Make sure products.json2 exists in the site root.");
         return;
       }
 
-      const raw = findProduct(list, pid);
+      const raw = findProduct(list, keys);
       if(!raw){
-        setError("Product not found for pid: " + pid);
+        setError("Product not found for: " + (keys.pid || keys.id));
         return;
       }
 
@@ -292,7 +381,7 @@
         p.images.forEach((src, idx) => {
           const b = document.createElement("button");
           b.type = "button";
-          b.setAttribute("aria-label", "View image " + (idx+1));
+          b.setAttribute("aria-label", idx === 0 ? "View front" : "View back");
           b.innerHTML = `<img src="${src}" alt="">`;
           b.addEventListener("click", () => { hero.src = src; });
           thumbs.appendChild(b);
@@ -302,7 +391,13 @@
       document.getElementById("kdAdd").addEventListener("click", () => addToCart(p));
 
       document.getElementById("kdCopy").addEventListener("click", async () => {
-        const url = location.origin + location.pathname.replace(/\/[^/]*$/, "/") + "product.html?pid=" + encodeURIComponent(p.pid);
+        // Share pid if we have one, else share id
+        const keyParam = p.pid
+          ? ("pid=" + encodeURIComponent(p.pid))
+          : ("id=" + encodeURIComponent(p.id || ""));
+
+        const url = location.origin + location.pathname.replace(/\/[^/]*$/, "/") + "product.html?" + keyParam;
+
         try{
           await navigator.clipboard.writeText(url);
           const btn = document.getElementById("kdCopy");
