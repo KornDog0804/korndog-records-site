@@ -5,13 +5,13 @@
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- One stylesheet. Stop duplicating CSS per page. -->
-  <link rel="stylesheet" href="style.css?v=1207">
+  <!-- ✅ MUST MATCH GITHUB -->
+  <link rel="stylesheet" href="styles.css?v=1208">
 
-  <!-- Load order matters -->
-  <script defer src="script.js?v=1207"></script>
-  <script defer src="shop-ui.js?v=1207"></script>
-  <script defer src="zk.js?v=1207"></script>
+  <!-- JS -->
+  <script defer src="script.js?v=1208"></script>
+  <script defer src="shop-ui.js?v=1208"></script>
+  <script defer src="zk.js?v=1208"></script>
 </head>
 
 <body>
@@ -19,7 +19,7 @@
     <div class="nav-inner">
       <a href="index.html" class="logo-link" aria-label="KornDog Records Home">
         <div class="logo-circle">
-          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
+          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo">
         </div>
       </a>
 
@@ -38,24 +38,25 @@
     <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
 
     <div id="products" class="products-grid" aria-live="polite"></div>
-    <div id="pagination" class="pagination" aria-label="Shop pagination"></div>
+    <div id="pagination" class="pagination"></div>
   </main>
 
-  <footer>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</footer>
+  <footer>
+    © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
+  </footer>
 
-  <!-- Floating Contact -->
-  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
+  <!-- Floating SMS Button -->
+  <a id="floatingJoey" class="floating-message" aria-label="Contact KornDog">💬</a>
 
-  <!-- Zombie Kitty Assistant -->
+  <!-- Zombie Kitty -->
   <div id="zkOverlay" class="zk-overlay">
-    <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
+    <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty">
     <div class="zk-bubble" id="zkBubble">
       <div class="zk-tail"></div>
-      Hi! I'm Zombie Kitty — your crate-digging assistant.<br><br>
-      Tap here to text KornDog.
+      Hi! I’m Zombie Kitty 🧟‍♀️🐱<br><br>
+      Tap to text KornDog Records
     </div>
   </div>
 
-  <!-- Quick View Modal is injected by shop-ui.js -->
 </body>
 </html>
