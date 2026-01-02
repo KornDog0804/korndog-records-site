@@ -121,9 +121,11 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
 
     <form id="form">
       <div class="field">
-        <label for="rid">Record ID (no spaces)</label>
-        <input id="rid" type="text" placeholder="acdc-back-in-black"/>
-        <div class="hint">Unique key. In edit mode we lock it so nothing “gets lost.”</div>
+        <label for="rid">Record ID / PID (type anything)</label>
+        <input id="rid" type="text" placeholder="commodores-all-the-great-hits (or type Commodore's — we will fix it)"/>
+        <div class="hint">
+          New records are <b>auto-normalized</b> into a safe <b>pid</b> (lowercase + hyphens). This prevents “Product not found” on share links and makes back photos work.
+        </div>
       </div>
 
       <div class="row">
@@ -315,6 +317,35 @@ async function textToBase64(text){
 }
 
 /** =========================
+ *  DUMMY-PROOF PID/ID
+ *  - You can type ANYTHING in the ID box.
+ *  - For NEW records, we auto-generate a safe pid:
+ *    lowercase + hyphens + no apostrophes/spaces.
+ *  - We also guarantee uniqueness by adding -2, -3, etc.
+ *  - Result: share links + flip backs + product page lookup won't break.
+ *  ========================= */
+function slugify(raw){
+  let s = String(raw || "").trim().toLowerCase();
+  // normalize unicode (smart quotes, accents)
+  try{ s = s.normalize("NFKD"); }catch(e){}
+  s = s
+    .replace(/['’`"]/g, "")         // drop quotes/apostrophes
+    .replace(/&/g, " and ")         // nicer than empty
+    .replace(/[^a-z0-9]+/g, "-")    // non-alnum -> hyphen
+    .replace(/^-+|-+$/g, "")        // trim hyphens
+    .replace(/-+/g, "-");           // collapse
+  if(!s) s = "record";
+  return s;
+}
+function ensureUniquePid(base, products){
+  const taken = new Set((products||[]).map(p => String(p.pid || p.id || "").toLowerCase()).filter(Boolean));
+  if(!taken.has(base)) return base;
+  let n = 2;
+  while(taken.has(`${base}-${n}`)) n++;
+  return `${base}-${n}`;
+}
+
+/** =========================
  *  GITHUB API
  *  - Uses Bearer token (best for fine-grained PATs)
  *  ========================= */
@@ -428,6 +459,9 @@ async function loadProducts(){
       if(p.available==null) p.available=true;
       if(p.tier==null) p.tier="premium";
       if(p.sold==null) p.sold=false;
+
+      // keep pid present for older records where possible
+      if(!p.pid && p.id) p.pid = String(p.id);
     });
     return { products: arr, sha };
   }catch(e){
@@ -517,13 +551,14 @@ $("btnRefresh2").onclick=$("btnRefresh").onclick;
  *  EDIT MODE
  *  ========================= */
 function enterEditMode(p){
-  editMode={active:true,id:p.id};
+  editMode={active:true,id:(p.pid||p.id)};
   $("editHint").style.display="block";
   $("btnCancel").style.display="inline-flex";
   $("btnDel").style.display="inline-flex";
   $("btnSave").textContent="Save Update";
 
-  $("rid").value=p.id||"";
+  // Show the locked pid/id
+  $("rid").value=(p.pid||p.id||"");
   $("rid").disabled=true;
 
   $("artist").value=p.artist||"";
@@ -542,7 +577,7 @@ function enterEditMode(p){
   $("backCam").value="";
 
   $("sec2").scrollIntoView({behavior:"smooth",block:"start"});
-  setStatus("Editing: " + (p.artist?p.artist+" — ":"") + (p.title||p.id));
+  setStatus("Editing: " + (p.artist?p.artist+" — ":"") + (p.title||(p.pid||p.id)));
 }
 
 function exitEditMode(){
@@ -575,7 +610,7 @@ $("form").addEventListener("submit", async (e)=>{
   e.preventDefault();
   try{ requireToken(); }catch{ return; }
 
-  const id=$("rid").value.trim();
+  const rawIdInput=$("rid").value.trim();
   const artist=$("artist").value.trim();
   const title=$("title").value.trim();
   const price=parseFloat($("price").value);
@@ -588,8 +623,8 @@ $("form").addEventListener("submit", async (e)=>{
   const frontFile = pickFile("front","frontCam");
   const backFile  = pickFile("back","backCam");
 
-  if(!id||!artist||!title||!grade||Number.isNaN(price)){
-    setStatus("Missing: ID, Artist, Title, Price, Grade.","error");
+  if(!artist||!title||!grade||Number.isNaN(price)){
+    setStatus("Missing: Artist, Title, Price, Grade.","error");
     return;
   }
   if(!editMode.active && !frontFile){
@@ -601,25 +636,61 @@ $("form").addEventListener("submit", async (e)=>{
 
   try{
     const { products, sha } = await loadProducts();
-    const idx = products.findIndex(p=>String(p.id)===String(id));
+
+    // ===== DUMMY-PROOF PID LOGIC (NEW RECORDS ONLY) =====
+    // If you type “Commodore's” or “Johnny Cash Collection”, we convert it to a safe pid.
+    // If you leave it blank, we build it from artist + title.
+    let pid = rawIdInput;
+    if(!editMode.active){
+      const baseRaw = pid || (artist + " " + title);
+      const base = slugify(baseRaw);
+      pid = ensureUniquePid(base, products);
+      // write it back to the input so you SEE what got saved
+      $("rid").value = pid;
+    }else{
+      pid = String(rawIdInput || editMode.id || "").trim();
+    }
+
+    if(!pid){
+      setStatus("ID/PID could not be generated. Type something in the ID box.","error");
+      return;
+    }
+
+    // Find record by pid OR id (older records)
+    const idx = products.findIndex(p => String(p.pid||p.id) === String(pid));
     const existing = (idx>=0?products[idx]:{});
     const sold = !!existing.sold;
 
-    let frontPath = existing.imageFront || existing.image || (existing.images&&existing.images.front) || "";
-    let backPath  = existing.imageBack  || (existing.images&&existing.images.back) || frontPath;
+    let frontPath = existing.imageFront || existing.image || "";
+    let backPath  = existing.imageBack  || frontPath;
 
     if(frontFile) frontPath = await uploadImage(frontFile);
     if(backFile)  backPath  = await uploadImage(backFile);
     if(!backPath) backPath = frontPath;
 
     const updated = {
-      id, artist, title, price, grade,
+      // IMPORTANT: pid is the bulletproof key for the whole site.
+      pid,
+      // Keep id = pid too, so ANY code that uses id keeps working.
+      id: pid,
+
+      artist, title, price, grade,
       quantity: Number.isFinite(quantity) ? quantity : 0,
       tier, available, description, sold,
+
+      // image fields (compat + clarity)
       image: frontPath,
       imageFront: frontPath,
       imageBack: backPath,
-      images: { front: frontPath, back: backPath }
+
+      // Make "images" an ARRAY so flip/product page can reliably use [0] front, [1] back.
+      images: [frontPath, backPath],
+
+      // Keep legacy object too (harmless + helps older scripts if any)
+      imagesObj: { front: frontPath, back: backPath },
+
+      // Keep what you typed originally for reference (optional; doesn’t break anything)
+      originalId: rawIdInput || ""
     };
 
     if(idx>=0) products[idx] = { ...products[idx], ...updated };
@@ -627,22 +698,24 @@ $("form").addEventListener("submit", async (e)=>{
 
     products.sort((a,b)=>(a.artist||"").localeCompare(b.artist||"")||(a.title||"").localeCompare(b.title||""));
 
-    await saveProducts(products, sha, (idx>=0 ? "Update record: " : "Add record: ") + id);
+    await saveProducts(products, sha, (idx>=0 ? "Update record: " : "Add record: ") + pid);
 
     await refresh();
     await renderInventory();
 
-    setStatus("Saved ✅ " + artist + " — " + title);
+    setStatus("Saved ✅ " + artist + " — " + title + " (pid: " + pid + ")");
 
     if(editMode.active){
       const fresh = await getProducts();
-      const rec = fresh.find(r=>String(r.id)===String(id));
+      const rec = fresh.find(r=>String(r.pid||r.id)===String(pid));
       if(rec) enterEditMode(rec);
     }else{
       $("form").reset();
       $("qty").value=1;
       $("tier").value="premium";
       $("available").checked=true;
+      // keep pid shown after save? (nah — clear form)
+      $("rid").value="";
     }
 
   }catch(err){
@@ -659,16 +732,20 @@ $("btnDel").onclick=async()=>{
   if(!editMode.active) return;
   if(!confirm("Delete this record?")) return;
 
-  const id=$("rid").value.trim();
+  const pid=$("rid").value.trim();
   setStatus("Deleting…");
 
   try{
     const { products, sha } = await loadProducts();
-    await saveProducts(products.filter(p=>String(p.id)!==String(id)), sha, "Delete record: " + id);
+    await saveProducts(
+      products.filter(p=>String(p.pid||p.id)!==String(pid)),
+      sha,
+      "Delete record: " + pid
+    );
     await refresh();
     await renderInventory();
     exitEditMode();
-    setStatus("Deleted ✅ " + id);
+    setStatus("Deleted ✅ " + pid);
   }catch(e){
     console.error(e);
     setStatus("Delete failed: " + e.message, "error");
@@ -685,17 +762,17 @@ $("soldSearch").addEventListener("input", async ()=>{
   try{ requireToken(); }catch{ return; }
 
   const list=await getProducts();
-  list.filter(p=>norm(p.id).includes(term)||norm(p.artist).includes(term)||norm(p.title).includes(term))
+  list.filter(p=>norm(p.pid||p.id).includes(term)||norm(p.artist).includes(term)||norm(p.title).includes(term))
       .slice(0,10)
       .forEach(p=>{
         const b=document.createElement("button");
         b.type="button";
         b.className="search-pill";
-        b.textContent=(p.artist?p.artist+" — ":"")+(p.title||p.id);
+        b.textContent=(p.artist?p.artist+" — ":"")+(p.title||(p.pid||p.id));
         b.onclick=()=>{
-          $("soldSearch").value=p.id;
+          $("soldSearch").value=(p.pid||p.id);
           $("soldPills").innerHTML="";
-          setStatus("Selected: "+(p.artist?p.artist+" — ":"")+(p.title||p.id));
+          setStatus("Selected: "+(p.artist?p.artist+" — ":"")+(p.title||(p.pid||p.id)));
         };
         $("soldPills").appendChild(b);
       });
@@ -711,7 +788,7 @@ async function applySoldAction(mode){
 
   try{
     const { products, sha } = await loadProducts();
-    const idx = products.findIndex(p=>norm(p.id).includes(q)||norm(p.artist).includes(q)||norm(p.title).includes(q));
+    const idx = products.findIndex(p=>norm(p.pid||p.id).includes(q)||norm(p.artist).includes(q)||norm(p.title).includes(q));
     if(idx<0){ setStatus("No match for: "+raw,"error"); return; }
 
     const p=products[idx];
@@ -720,13 +797,13 @@ async function applySoldAction(mode){
     if(mode==="hide"){ p.available=false; }
     if(mode==="show"){ p.available=true; }
 
-    await saveProducts(products, sha, "Update status: " + (p.id||p.title));
+    await saveProducts(products, sha, "Update status: " + (p.pid||p.id||p.title));
     await refresh();
     await renderInventory();
 
     $("soldSearch").value="";
     $("soldPills").innerHTML="";
-    setStatus("Done ✅ Updated: " + (p.artist?p.artist+" — ":"") + (p.title||p.id));
+    setStatus("Done ✅ Updated: " + (p.artist?p.artist+" — ":"") + (p.title||(p.pid||p.id)));
 
   }catch(e){
     console.error(e);
@@ -742,7 +819,7 @@ $("btnQuickAvail").onclick=()=>applySoldAction("available");
  *  INVENTORY RENDER
  *  ========================= */
 function badge(text,cls){ return `<span class="badge ${cls||""}">${escapeHtml(text)}</span>`; }
-function getThumb(p){ return p.imageFront||p.image||(p.images&&p.images.front)||""; }
+function getThumb(p){ return p.imageFront||p.image||""; }
 
 function passesFilter(p){
   const f=$("invFilter").value;
@@ -755,7 +832,7 @@ function passesFilter(p){
 function passesSearch(p){
   const q=norm($("invSearch").value.trim());
   if(!q) return true;
-  return norm(p.id).includes(q)||norm(p.artist).includes(q)||norm(p.title).includes(q)||norm(p.tier).includes(q);
+  return norm(p.pid||p.id).includes(q)||norm(p.artist).includes(q)||norm(p.title).includes(q)||norm(p.tier).includes(q);
 }
 
 async function renderInventory(){
@@ -786,13 +863,15 @@ async function renderInventory(){
       </svg>`
     ));
 
+    const pid = (p.pid||p.id||"");
+
     const card=document.createElement("div");
     card.className="inv-card";
     card.innerHTML=`
-      <div class="inv-thumb"><img src="${imgSrc}" alt="${escapeHtml((p.artist?p.artist+" — ":"")+(p.title||p.id||"Record"))}"></div>
+      <div class="inv-thumb"><img src="${imgSrc}" alt="${escapeHtml((p.artist?p.artist+" — ":"")+(p.title||pid||"Record"))}"></div>
       <div class="inv-meta">
-        <p class="inv-title">${escapeHtml((p.artist?p.artist+" — ":"")+(p.title||p.id||"Unknown"))}</p>
-        <p class="inv-sub">ID: ${escapeHtml(p.id||"")} · $${escapeHtml(p.price??"")} · ${escapeHtml(p.grade||"")} · Qty: ${escapeHtml(p.quantity??0)}</p>
+        <p class="inv-title">${escapeHtml((p.artist?p.artist+" — ":"")+(p.title||pid||"Unknown"))}</p>
+        <p class="inv-sub">PID: ${escapeHtml(pid)} · $${escapeHtml(p.price??"")} · ${escapeHtml(p.grade||"")} · Qty: ${escapeHtml(p.quantity??0)}</p>
         <div class="badges">
           ${sold ? badge("SOLD","sold") : (live ? badge("LIVE","live") : badge("HIDDEN","hidden"))}
           ${badge("Tier: "+(p.tier||"premium"))}
@@ -806,8 +885,8 @@ async function renderInventory(){
 
     const btns=card.querySelectorAll("button");
     btns[0].onclick=()=>enterEditMode(p);
-    btns[1].onclick=()=>{ $("soldSearch").value=p.id; applySoldAction("sold"); };
-    btns[2].onclick=()=>{ $("soldSearch").value=p.id; applySoldAction("available"); };
+    btns[1].onclick=()=>{ $("soldSearch").value=pid; applySoldAction("sold"); };
+    btns[2].onclick=()=>{ $("soldSearch").value=pid; applySoldAction("available"); };
 
     $("invList").appendChild(card);
   });
