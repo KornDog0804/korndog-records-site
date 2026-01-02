@@ -794,3 +794,107 @@ footer{
   -webkit-line-clamp: 3;
   overflow: hidden;
 }
+/* =========================================================
+   KORNDOG SHOP HARD PATCH
+   - Removes gray “bleed” overlays
+   - Forces uniform card height + consistent spacing
+   - Locks image boxes to 1:1 crop
+   Paste at VERY BOTTOM of styles.css
+   ========================================================= */
+
+/* --- 0) Make sure shop page containers are not painting gray layers --- */
+body,
+.page,
+main.page,
+#products,
+.products-grid {
+  background: transparent !important;
+}
+
+/* --- 1) Grid: consistent spacing + stretch rows --- */
+.products-grid {
+  align-items: stretch !important;
+  gap: 18px !important;              /* keep spacing consistent */
+  grid-auto-rows: 1fr !important;    /* makes each grid row equal height */
+}
+
+/* --- 2) Card: force real, clean background + kill any weird overlays --- */
+.record-card {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: rgba(25, 16, 55, 0.65) !important;  /* purple glass base */
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  overflow: hidden !important; /* prevents “bleed” artifacts */
+}
+
+/* KILL the gray shine overlays (this is usually the culprit) */
+.record-card::before,
+.record-card::after,
+.products-grid::before,
+.products-grid::after,
+.page::before,
+.page::after {
+  content: none !important;
+  display: none !important;
+  background: transparent !important;
+}
+
+/* --- 3) Any inner “panels” must be transparent (no gray blocks) --- */
+.record-card .record-details,
+.record-card .record-meta,
+.record-card .record-content,
+.record-card .info,
+.record-card .desc,
+.record-card .record-desc,
+.record-card .qty,
+.record-card .qty-text,
+.record-card .muted {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* --- 4) Lock image area to a single uniform box --- */
+.record-image,
+.record-image .flip-wrapper,
+.record-image .flip-inner,
+.record-image .flip-front,
+.record-image .flip-back {
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+}
+
+/* Every image fills the same way */
+.record-image img,
+.flip-front img,
+.flip-back img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* --- 5) Keep buttons aligned at the bottom of every card --- */
+.record-card .record-actions,
+.record-card .btn-row,
+.record-card button,
+.record-card .btn-primary {
+  margin-top: auto !important;
+}
+
+/* --- 6) Clamp text so one long title/desc doesn't stretch cards --- */
+.record-card h3 {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  overflow: hidden !important;
+}
+
+.record-card .record-desc {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 3 !important;
+  overflow: hidden !important;
+}
