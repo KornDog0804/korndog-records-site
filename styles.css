@@ -663,3 +663,62 @@ footer{
   background: rgba(167,255,90,.18);
   border-color: rgba(167,255,90,.35);
 }
+/* ===== Uniform product card heights (Shop page) ===== */
+
+/* Make every card a flex column so we can push the button down */
+.products-grid .record-card{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+/* Lock image area */
+.products-grid .record-card .record-image,
+.products-grid .record-card .inv-thumb,
+.products-grid .record-card img{
+  width:100%;
+}
+
+/* If your image is inside .record-image, enforce a consistent box */
+.products-grid .record-card .record-image{
+  aspect-ratio: 1 / 1;       /* square image zone */
+  overflow:hidden;
+  border-radius:18px;        /* match your vibe */
+}
+
+/* Make the image fill the box */
+.products-grid .record-card .record-image img,
+.products-grid .record-card .record-image .flip-wrapper,
+.products-grid .record-card .record-image .flip-inner,
+.products-grid .record-card .record-image .flip-front,
+.products-grid .record-card .record-image .flip-back{
+  width:100%;
+  height:100%;
+}
+
+.products-grid .record-card .record-image img{
+  object-fit:cover;
+  display:block;
+}
+
+/* Clamp title + description so text can’t make cards taller */
+.products-grid .record-card h3{
+  display:-webkit-box;
+  -webkit-line-clamp: 2;     /* 2-line titles */
+  -webkit-box-orient: vertical;
+  overflow:hidden;
+}
+
+.products-grid .record-card .record-desc{
+  display:-webkit-box;
+  -webkit-line-clamp: 3;     /* 3-line descriptions */
+  -webkit-box-orient: vertical;
+  overflow:hidden;
+}
+
+/* Keep “Add to Cart” aligned at bottom */
+.products-grid .record-card .btn-row,
+.products-grid .record-card .actions,
+.products-grid .record-card button.btn-primary{
+  margin-top:auto;
+}
