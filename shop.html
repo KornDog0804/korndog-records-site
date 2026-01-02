@@ -10,6 +10,33 @@
   <!-- Shop-only fixes (modal + flip) -->
   <link rel="stylesheet" href="shop.css?v=1210">
 
+  <!-- 🔒 SHOP-ONLY HEADER LOGO FIX (DO NOT MOVE) -->
+  <style>
+    header .logo-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height:100%;
+    }
+
+    header .logo-circle{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    header .logo-circle img{
+      display:block;
+    }
+
+    /* Mobile Chrome micro-offset fix */
+    @media (max-width:768px){
+      header .logo-circle{
+        transform: translateY(-1px);
+      }
+    }
+  </style>
+
   <!-- Load order matters -->
   <script defer src="script.js?v=1210"></script>
   <script defer src="shop-ui.js?v=1210"></script>
@@ -44,7 +71,9 @@
     <div id="pagination" class="pagination" aria-label="Shop pagination"></div>
   </main>
 
-  <footer>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</footer>
+  <footer>
+    © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
+  </footer>
 
   <!-- Floating Contact -->
   <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
