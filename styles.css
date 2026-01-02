@@ -165,3 +165,78 @@
   border-bottom: 12px solid transparent;
   border-right: 12px solid #fff3b0;
 }
+/* =========================
+   FLOATING CHAT BUTTON
+   ========================= */
+
+.floating-message {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: #7bff5a;
+  color: #020102;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+
+/* =========================
+   ZOMBIE KITTY OVERLAY
+   ========================= */
+
+.zk-overlay {
+  position: fixed;
+  bottom: 90px;
+  right: -260px;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  transition: right 0.4s ease;
+  z-index: 9998;
+}
+
+.zk-overlay.active {
+  right: 20px;
+}
+
+.zk-kitty {
+  width: 96px;
+  animation: zk-wiggle 1.3s infinite ease-in-out;
+}
+
+@keyframes zk-wiggle {
+  0% { transform: rotate(0deg); }
+  30% { transform: rotate(6deg); }
+  60% { transform: rotate(-6deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.zk-bubble {
+  background: #ffffff;
+  color: #111;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  cursor: pointer;
+  max-width: 200px;
+  position: relative;
+}
+
+.zk-tail {
+  position: absolute;
+  left: -8px;
+  bottom: 14px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid #fff;
+}
