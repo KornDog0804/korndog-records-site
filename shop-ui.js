@@ -12,20 +12,23 @@
   }
 
   function getPidFromCard(card) {
-    // 1) data-pid if present
-    const dp = card?.dataset?.pid;
+    // 1) data-pid OR data-id if present
+    const dp = card?.dataset?.pid || card?.dataset?.id;
     if (dp) return dp;
 
-    // 2) share/product link href with ?pid=
+    // 2) any link that has ?pid= OR ?id=
     const a =
       card.querySelector('a[href*="product.html?pid="]') ||
+      card.querySelector('a[href*="product.html?id="]') ||
       card.querySelector('a.share-link[href*="pid="]') ||
-      card.querySelector('a[href*="pid="]');
+      card.querySelector('a.share-link[href*="id="]') ||
+      card.querySelector('a[href*="pid="]') ||
+      card.querySelector('a[href*="id="]');
     if (!a) return "";
 
     try {
       const url = new URL(a.getAttribute("href"), window.location.origin);
-      return url.searchParams.get("pid") || "";
+      return url.searchParams.get("pid") || url.searchParams.get("id") || "";
     } catch {
       return "";
     }
@@ -46,21 +49,22 @@
           const map = new Map();
 
           for (const p of arr) {
-            const pid = p.pid || p.id || p.slug || "";
+            // IMPORTANT: your dataset uses id, not pid
+            const pid = p.id || p.pid || p.slug || "";
             if (!pid) continue;
 
+            // Back image: support your real fields
             const back =
+              p.imageBack ||
+              (p.images && (p.images.back || p.images.Back)) ||
               p.backImage ||
               p.back ||
               p.backImg ||
-              p.imageBack ||
               p.photoBack ||
               (Array.isArray(p.images) ? p.images[1] : "") ||
               "";
 
-            map.set(pid, {
-              back: back || "",
-            });
+            map.set(pid, { back: back || "" });
           }
 
           return map;
@@ -115,19 +119,24 @@
     const cards = grid.querySelectorAll(".record-card");
 
     cards.forEach((card) => {
-      // Find the existing image area
-      const recordImage = card.querySelector(".record-image") || card;
       const existingWrapper = card.querySelector(".flip-wrapper");
       if (existingWrapper) {
         // If wrapper exists, try to set back image if it’s still missing
         const pid = getPidFromCard(card);
         const backFromMap = map.get(pid)?.back || "";
+
         const frontImg = card.querySelector(".flip-front img") || card.querySelector("img");
         const backImg = card.querySelector(".flip-back img");
+
         if (frontImg && backImg) {
           const frontSrc = frontImg.getAttribute("src") || "";
-          const desiredBack = backFromMap || backImg.getAttribute("src") || "";
-          backImg.setAttribute("src", desiredBack || frontSrc);
+          const currentBack = backImg.getAttribute("src") || "";
+          const desiredBack = backFromMap || currentBack || frontSrc;
+
+          // Only update if it’s empty or same as front
+          if (!currentBack || currentBack === frontSrc) {
+            backImg.setAttribute("src", desiredBack || frontSrc);
+          }
         }
         return;
       }
@@ -160,7 +169,6 @@
       `;
 
       // Replace the old image node with the flip structure
-      // If the original img was already inside .record-image, replace that container; else replace the img itself
       const oldContainer = card.querySelector(".record-image");
       if (oldContainer) {
         oldContainer.replaceWith(flipHTML);
@@ -247,6 +255,7 @@
 
     // Flip + Quick View behavior on image taps (mobile friendly)
     const lastTap = new WeakMap(); // card -> timestamp
+    let flipsReady = false;
 
     grid.addEventListener(
       "click",
@@ -265,8 +274,11 @@
 
         if (!tappedImage) return;
 
-        // Make sure flip structure exists before we do anything
-        await enhanceFlipCards(grid);
+        // Build flips once (and still safe if called again)
+        if (!flipsReady) {
+          await enhanceFlipCards(grid);
+          flipsReady = true;
+        }
 
         const now = Date.now();
         const prev = lastTap.get(card) || 0;
@@ -289,8 +301,10 @@
       true
     );
 
-    // Run once after bind to rebuild flips (covers cases where script.js stopped outputting flip HTML)
-    enhanceFlipCards(grid);
+    // Run once after bind to rebuild flips
+    enhanceFlipCards(grid).then(() => {
+      flipsReady = true;
+    });
   }
 
   document.addEventListener("DOMContentLoaded", bindOnce);
