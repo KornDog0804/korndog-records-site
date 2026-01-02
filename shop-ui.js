@@ -1,8 +1,8 @@
 // shop-ui.js
-// ✅ Fixes flip being blocked by modal tap-capture
-// - 1st tap on image = flip (mobile-friendly)
-// - 2nd tap (within 600ms) = open Quick View modal
-// - DOES NOT touch products.json
+// ✅ 1st tap on image = flip
+// ✅ 2nd tap (within 600ms) = Quick View modal
+// ✅ Modal overlay works (with shop.css)
+// ✅ Does NOT touch products.json
 
 (function () {
   const DOUBLE_TAP_MS = 600;
@@ -43,7 +43,6 @@
     const grid = document.getElementById("products");
     if (!grid) return;
 
-    // Rebind is fine after re-render, but prevent stacking listeners on the SAME grid element
     if (grid.dataset.kdBound === "1") return;
     grid.dataset.kdBound = "1";
 
@@ -65,7 +64,6 @@
     function openModalFromCard(card) {
       lastCard = card;
 
-      // Prefer front image (flip front). If not found, grab any img.
       const img =
         card.querySelector(".flip-front img") ||
         card.querySelector(".record-image img") ||
@@ -76,7 +74,6 @@
         card.querySelector("h3")?.textContent ||
         "Record";
 
-      // Support both new and old class names
       const grade =
         card.querySelector(".record-meta")?.textContent ||
         card.querySelector(".record-grade")?.textContent ||
@@ -137,14 +134,13 @@
       realBtn?.click();
     });
 
-    // ---- TAP LOGIC: Flip first, modal on double-tap ----
-    // Store last-tap timestamps per card id
+    // ---- TAP LOGIC: flip first, modal on double-tap ----
     const lastTapMap = new Map();
 
     grid.addEventListener(
       "click",
       (e) => {
-        // Never hijack normal links
+        // Let normal links work (titles will be links)
         if (e.target.closest("a")) return;
 
         const card = e.target.closest(".record-card");
@@ -160,22 +156,25 @@
 
         if (!isImageTap) return;
 
-        const key = card.getAttribute("data-id") || card.querySelector(".record-title")?.textContent || "card";
+        const key =
+          card.getAttribute("data-id") ||
+          card.getAttribute("data-product-id") ||
+          card.querySelector(".record-title")?.textContent ||
+          "card";
+
         const now = Date.now();
         const last = lastTapMap.get(key) || 0;
 
         // Double tap -> open modal
         if (now - last <= DOUBLE_TAP_MS) {
           lastTapMap.set(key, 0);
-
-          // Only now do we block the event
           e.preventDefault();
           e.stopPropagation();
           openModalFromCard(card);
           return;
         }
 
-        // Single tap -> flip (do NOT prevent default; let other scripts run)
+        // Single tap -> flip
         lastTapMap.set(key, now);
         card.classList.toggle("is-flipped");
       },
