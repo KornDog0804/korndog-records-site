@@ -722,3 +722,75 @@ footer{
 .products-grid .record-card button.btn-primary{
   margin-top:auto;
 }
+/* ================================
+   KORNDOG SHOP: KILL GRAY + LOCK GRID
+   Paste at VERY BOTTOM of styles.css
+   ================================ */
+
+/* 1) Make the grid rows equal height (prevents “stair-step” cards) */
+.products-grid {
+  align-items: stretch;
+}
+
+.products-grid .record-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 2) Force ALL image areas into the same box size */
+.record-image,
+.record-image .flip-wrapper,
+.record-image .flip-inner,
+.record-image .flip-front,
+.record-image .flip-back {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Make sure every image fills the box the same way */
+.record-image img,
+.flip-front img,
+.flip-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 3) The gray you’re seeing is almost always a background on the content blocks.
+      Nuke it and let the card background do the work. */
+.record-card .record-details,
+.record-card .record-meta,
+.record-card .record-content,
+.record-card .info,
+.record-card .desc,
+.record-card .record-desc,
+.record-card .qty,
+.record-card .qty-text {
+  background: transparent !important;
+}
+
+/* 4) Keep the bottom button zone aligned on every card */
+.record-card .btn-primary,
+.record-card button.btn-primary,
+.record-card .record-actions {
+  margin-top: auto;
+}
+
+/* 5) Clamp text so long titles/descriptions don’t push cards taller */
+.record-card h3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.record-card .record-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
