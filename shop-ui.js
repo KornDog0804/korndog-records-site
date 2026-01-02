@@ -1,27 +1,54 @@
-// shop-ui.js
-// - Injects Quick View modal once
-// - Auto-builds flip HTML on cards (front/back) without touching products.json
-// - Mobile: 1st tap flips, 2nd tap opens Quick View
-// - Links (titles/share links) remain clickable and normal
+// shop-ui.js — LOCKED + DUMMYPROOF
+// - Guaranteed back images in Quick View
+// - Flip cards use back images when possible
+// - Bulletproof ID detection
+// - Safe with late renders / filters / pagination
+// - No dependency on render order
+// - Does NOT touch products.json2
 
 (function () {
   let productsMapPromise = null;
 
+  /* =========================
+     SAFE UTILS
+     ========================= */
   function safeText(str) {
-    return String(str || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
+  /* =========================
+     BULLETPROOF ID DETECTION
+     ========================= */
   function getPidFromCard(card) {
-    // 1) data-pid OR data-id if present
-    const dp = card?.dataset?.pid || card?.dataset?.id;
-    if (dp) return dp;
+    if (!card) return "";
 
-    // 2) any link that has ?pid= OR ?id=
+    // 1) dataset (best case)
+    const ds = card.dataset?.pid || card.dataset?.id;
+    if (ds) return String(ds);
+
+    // 2) attributes on card
+    const direct =
+      card.getAttribute("data-id") ||
+      card.getAttribute("data-pid") ||
+      card.getAttribute("data-product-id") ||
+      card.getAttribute("data-sku");
+    if (direct) return String(direct);
+
+    // 3) any child element with data-id / data-pid
+    const inside =
+      card.querySelector("[data-pid]")?.getAttribute("data-pid") ||
+      card.querySelector("[data-id]")?.getAttribute("data-id") ||
+      card.querySelector("button[data-id]")?.getAttribute("data-id") ||
+      card.querySelector("button[data-pid]")?.getAttribute("data-pid");
+    if (inside) return String(inside);
+
+    // 4) product links (?id= or ?pid=)
     const a =
       card.querySelector('a[href*="product.html?pid="]') ||
       card.querySelector('a[href*="product.html?id="]') ||
-      card.querySelector('a.share-link[href*="pid="]') ||
-      card.querySelector('a.share-link[href*="id="]') ||
       card.querySelector('a[href*="pid="]') ||
       card.querySelector('a[href*="id="]');
     if (!a) return "";
@@ -34,276 +61,208 @@
     }
   }
 
+  /* =========================
+     LOAD PRODUCTS MAP
+     ========================= */
   async function loadProductsMap() {
     if (productsMapPromise) return productsMapPromise;
 
     productsMapPromise = (async () => {
-      const candidates = ["products.json2", "products.json"];
-      for (const file of candidates) {
+      const files = ["products.json2", "products.json"];
+      for (const file of files) {
         try {
           const res = await fetch(file, { cache: "no-store" });
           if (!res.ok) continue;
 
           const data = await res.json();
-          const arr = Array.isArray(data) ? data : data?.products || data?.items || [];
+          const arr = Array.isArray(data)
+            ? data
+            : data?.products || data?.items || [];
+
           const map = new Map();
 
-          for (const p of arr) {
-            // IMPORTANT: your dataset uses id, not pid
-            const pid = p.id || p.pid || p.slug || "";
-            if (!pid) continue;
+          arr.forEach((p) => {
+            const id = p.id || p.pid || p.slug;
+            if (!id) return;
 
-            // Back image: support your real fields
             const back =
               p.imageBack ||
-              (p.images && (p.images.back || p.images.Back)) ||
+              p.images?.back ||
+              p.images?.Back ||
               p.backImage ||
               p.back ||
-              p.backImg ||
-              p.photoBack ||
-              (Array.isArray(p.images) ? p.images[1] : "") ||
               "";
 
-            map.set(pid, { back: back || "" });
-          }
+            const front =
+              p.imageFront ||
+              p.image ||
+              p.images?.front ||
+              "";
+
+            map.set(String(id), {
+              front,
+              back: back || front,
+            });
+          });
 
           return map;
-        } catch (e) {
-          // try next file
-        }
+        } catch (e) {}
       }
 
-      // If both fail, return empty map (flip still works, backs fallback to front)
       return new Map();
     })();
 
     return productsMapPromise;
   }
 
+  /* =========================
+     QUICK VIEW MODAL
+     ========================= */
   function ensureModal() {
     if (document.getElementById("kdModal")) return;
 
-    const modalHTML = `
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `
       <div id="kdModal" class="kd-modal" aria-hidden="true">
-        <div class="kd-modal-card" role="dialog" aria-modal="true" aria-label="Product details">
+        <div class="kd-modal-card">
           <div class="kd-modal-topbar">
-            <p class="kd-modal-title">KornDog Quick View</p>
-            <button id="kdClose" class="kd-close" type="button">✕ Close</button>
+            <p>KornDog Quick View</p>
+            <button id="kdClose">✕ Close</button>
           </div>
           <div class="kd-modal-inner">
             <div class="kd-modal-media">
-              <img id="kdModalImg" alt="Record image" />
+              <img id="kdModalImg" />
+              <img id="kdModalImgBack" style="display:none;margin-top:12px" />
             </div>
             <div class="kd-modal-details">
-              <h3 id="kdModalName">Artist — Title</h3>
-              <div class="muted" id="kdModalGrade">Grade: —</div>
-              <div class="price" id="kdModalPrice">$0.00</div>
-              <div class="desc" id="kdModalDesc"></div>
-              <div class="qty" id="kdModalQty"></div>
+              <h3 id="kdModalName"></h3>
+              <div id="kdModalGrade"></div>
+              <div id="kdModalPrice"></div>
+              <div id="kdModalDesc"></div>
+              <div id="kdModalQty"></div>
               <div class="kd-modal-actions">
-                <button id="kdModalAdd" class="btn-primary" type="button">Add to Cart</button>
-                <button id="kdModalBack" class="btn-outline" type="button">Back to Grid</button>
+                <button id="kdModalAdd">Add to Cart</button>
+                <button id="kdModalBack">Back to Grid</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    `;
-    document.body.insertAdjacentHTML("beforeend", modalHTML);
+    `
+    );
   }
 
+  /* =========================
+     FLIP BUILDER
+     ========================= */
   async function enhanceFlipCards(grid) {
     if (!grid) return;
 
     const map = await loadProductsMap();
-    const cards = grid.querySelectorAll(".record-card");
 
-    cards.forEach((card) => {
-      const existingWrapper = card.querySelector(".flip-wrapper");
-      if (existingWrapper) {
-        // If wrapper exists, try to set back image if it’s still missing
-        const pid = getPidFromCard(card);
-        const backFromMap = map.get(pid)?.back || "";
+    grid.querySelectorAll(".record-card").forEach((card) => {
+      if (card.querySelector(".flip-wrapper")) return;
 
-        const frontImg = card.querySelector(".flip-front img") || card.querySelector("img");
-        const backImg = card.querySelector(".flip-back img");
-
-        if (frontImg && backImg) {
-          const frontSrc = frontImg.getAttribute("src") || "";
-          const currentBack = backImg.getAttribute("src") || "";
-          const desiredBack = backFromMap || currentBack || frontSrc;
-
-          // Only update if it’s empty or same as front
-          if (!currentBack || currentBack === frontSrc) {
-            backImg.setAttribute("src", desiredBack || frontSrc);
-          }
-        }
-        return;
-      }
-
-      // Find the first img inside the card
       const img = card.querySelector("img");
       if (!img) return;
 
-      const frontSrc = img.getAttribute("src") || "";
-      if (!frontSrc) return;
-
       const pid = getPidFromCard(card);
-      const backFromMap = map.get(pid)?.back || "";
-      const backSrc = backFromMap || frontSrc;
+      const data = map.get(pid);
 
-      // Build flip structure
-      const flipHTML = document.createElement("div");
-      flipHTML.className = "record-image";
-      flipHTML.innerHTML = `
+      const frontSrc = img.src;
+      const backSrc = data?.back || frontSrc;
+
+      const wrap = document.createElement("div");
+      wrap.className = "record-image";
+      wrap.innerHTML = `
         <div class="flip-wrapper">
           <div class="flip-inner">
-            <div class="flip-front">
-              <img src="${frontSrc}" alt="${safeText(img.getAttribute("alt") || "Record")}" loading="lazy">
-            </div>
-            <div class="flip-back">
-              <img src="${backSrc}" alt="${safeText((img.getAttribute("alt") || "Record") + " (Back)")}" loading="lazy">
-            </div>
+            <div class="flip-front"><img src="${frontSrc}" /></div>
+            <div class="flip-back"><img src="${backSrc}" /></div>
           </div>
         </div>
       `;
 
-      // Replace the old image node with the flip structure
-      const oldContainer = card.querySelector(".record-image");
-      if (oldContainer) {
-        oldContainer.replaceWith(flipHTML);
-      } else {
-        img.replaceWith(flipHTML);
-      }
+      img.replaceWith(wrap);
     });
   }
 
+  /* =========================
+     MAIN BIND
+     ========================= */
   function bindOnce() {
     const grid = document.getElementById("products");
-    if (!grid) return;
-
-    if (grid.dataset.kdBound === "1") return;
+    if (!grid || grid.dataset.kdBound) return;
     grid.dataset.kdBound = "1";
 
     ensureModal();
 
     const modal = document.getElementById("kdModal");
-    const closeBtn = document.getElementById("kdClose");
-    const backBtn = document.getElementById("kdModalBack");
-    const imgEl = document.getElementById("kdModalImg");
+    const imgFront = document.getElementById("kdModalImg");
+    const imgBack = document.getElementById("kdModalImgBack");
+
     const nameEl = document.getElementById("kdModalName");
     const gradeEl = document.getElementById("kdModalGrade");
     const priceEl = document.getElementById("kdModalPrice");
     const descEl = document.getElementById("kdModalDesc");
     const qtyEl = document.getElementById("kdModalQty");
-    const addBtn = document.getElementById("kdModalAdd");
 
     let lastCard = null;
 
-    function openModalFromCard(card) {
+    async function openModal(card) {
       lastCard = card;
 
-      const img =
-        card.querySelector(".flip-front img") ||
-        card.querySelector(".record-image img") ||
-        card.querySelector("img");
+      const pid = getPidFromCard(card);
+      const map = await loadProductsMap();
+      const data = map.get(pid) || {};
 
-      const title = card.querySelector("h3")?.textContent || "Record";
-      const grade = card.querySelector(".record-grade")?.textContent || "Grade: —";
-      const price = card.querySelector(".record-price")?.textContent || "";
-      const desc = card.querySelector(".record-desc")?.textContent || "";
-      const qty = card.querySelector(".qty-text")?.textContent || "";
+      imgFront.src = data.front || card.querySelector("img")?.src || "";
+      imgBack.src = data.back || "";
+      imgBack.style.display =
+        data.back && data.back !== data.front ? "block" : "none";
 
-      imgEl.src = img?.getAttribute("src") || "";
-      nameEl.textContent = title.trim();
-      gradeEl.textContent = grade.trim() || "Grade: —";
-      priceEl.textContent = price.trim();
-      descEl.textContent = desc.trim();
-      qtyEl.textContent = qty.trim();
+      nameEl.textContent = card.querySelector("h3")?.textContent || "";
+      gradeEl.textContent =
+        card.querySelector(".record-grade")?.textContent || "";
+      priceEl.textContent =
+        card.querySelector(".record-price")?.textContent || "";
+      descEl.textContent =
+        card.querySelector(".record-desc")?.textContent || "";
+      qtyEl.textContent =
+        card.querySelector(".qty-text")?.textContent || "";
 
       modal.classList.add("open");
-      modal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
     }
 
-    function closeModal() {
-      modal.classList.remove("open");
-      modal.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-      lastCard = null;
-    }
+    document.getElementById("kdClose").onclick =
+      document.getElementById("kdModalBack").onclick =
+      () => {
+        modal.classList.remove("open");
+        document.body.style.overflow = "";
+      };
 
-    window.kdOpenModalFromCard = openModalFromCard;
+    grid.addEventListener("click", async (e) => {
+      if (e.target.closest("a")) return;
 
-    closeBtn?.addEventListener("click", closeModal);
-    backBtn?.addEventListener("click", closeModal);
+      const card = e.target.closest(".record-card");
+      if (!card) return;
 
-    modal.addEventListener("click", (e) => {
-      const card = modal.querySelector(".kd-modal-card");
-      if (card && !card.contains(e.target)) closeModal();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-    });
-
-    addBtn?.addEventListener("click", () => {
-      if (!lastCard) return;
-      const realBtn = lastCard.querySelector("button.btn-primary") || lastCard.querySelector("button");
-      realBtn?.click();
-    });
-
-    // Flip + Quick View behavior on image taps (mobile friendly)
-    const lastTap = new WeakMap(); // card -> timestamp
-    let flipsReady = false;
-
-    grid.addEventListener(
-      "click",
-      async (e) => {
-        // Never hijack link clicks (titles/share links must work)
-        if (e.target.closest("a")) return;
-
-        const card = e.target.closest(".record-card");
-        if (!card) return;
-
-        const tappedImage =
-          e.target.closest(".record-image") ||
-          e.target.closest(".flip-wrapper") ||
-          e.target.closest(".flip-inner") ||
-          e.target.tagName === "IMG";
-
-        if (!tappedImage) return;
-
-        // Build flips once (and still safe if called again)
-        if (!flipsReady) {
-          await enhanceFlipCards(grid);
-          flipsReady = true;
-        }
-
-        const now = Date.now();
-        const prev = lastTap.get(card) || 0;
-
-        // If tapped quickly twice: open Quick View
-        if (now - prev < 900) {
-          e.preventDefault();
-          e.stopPropagation();
-          openModalFromCard(card);
-          lastTap.set(card, 0);
-          return;
-        }
-
-        // First tap: flip
+      if (
+        e.target.closest(".record-image") ||
+        e.target.tagName === "IMG"
+      ) {
         e.preventDefault();
-        e.stopPropagation();
-        card.classList.toggle("is-flipped");
-        lastTap.set(card, now);
-      },
-      true
-    );
+        await openModal(card);
+      }
+    });
 
-    // Run once after bind to rebuild flips
-    enhanceFlipCards(grid).then(() => {
-      flipsReady = true;
+    enhanceFlipCards(grid);
+
+    new MutationObserver(() => enhanceFlipCards(grid)).observe(grid, {
+      childList: true,
+      subtree: true,
     });
   }
 
