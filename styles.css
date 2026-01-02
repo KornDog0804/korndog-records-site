@@ -898,3 +898,105 @@ main.page,
   -webkit-line-clamp: 3 !important;
   overflow: hidden !important;
 }
+/* =========================================================
+   KORNDOG — EMERGENCY RESTORE (SHOP WASHOUT FIX)
+   Paste at VERY BOTTOM of styles.css
+   This restores the purple/green vibe + keeps cards uniform
+   ========================================================= */
+
+/* Bring back the site background (your gradient / dark base) */
+html, body {
+  background: radial-gradient(circle at 18% 12%, rgba(110, 255, 130, 0.18), transparent 42%),
+              radial-gradient(circle at 82% 28%, rgba(165, 80, 255, 0.22), transparent 55%),
+              linear-gradient(180deg, #070216 0%, #12063a 55%, #070216 100%) !important;
+  color: #f2f2f7 !important;
+}
+
+/* Header bar should be dark “glass”, not gray */
+header {
+  background: rgba(10, 6, 24, 0.72) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+/* Make sure the shop page itself doesn’t paint white/gray */
+main.page,
+.page,
+.products-grid,
+#products {
+  background: transparent !important;
+}
+
+/* Restore readable text on the shop page */
+h2, .subtitle {
+  color: #f2f2f7 !important;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.35);
+}
+
+/* Cards: keep the “purple glass” look and uniform height */
+.record-card {
+  background: rgba(26, 14, 60, 0.62) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.22) !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* Kill the gray “bleed” overlays WITHOUT killing the whole page */
+.record-card::before,
+.record-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Grid spacing + equal-height rows */
+.products-grid {
+  gap: 18px !important;
+  align-items: stretch !important;
+  grid-auto-rows: 1fr !important;
+}
+
+/* Uniform image box */
+.record-image,
+.record-image .flip-wrapper,
+.record-image .flip-inner,
+.record-image .flip-front,
+.record-image .flip-back {
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+}
+
+.record-image img,
+.flip-front img,
+.flip-back img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* Keep buttons aligned consistently */
+.record-card button,
+.record-card .btn-primary {
+  margin-top: auto !important;
+}
+
+/* Clamp title/desc so one card doesn’t stretch taller */
+.record-card h3 {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  overflow: hidden !important;
+}
+
+.record-card .record-desc {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 3 !important;
+  overflow: hidden !important;
+}
