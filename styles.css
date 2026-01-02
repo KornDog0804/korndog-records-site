@@ -202,3 +202,54 @@
   border-radius: 18px;
   object-fit: cover;
 }
+/* ===== Zombie Kitty Overlay (FIX) ===== */
+.zk-overlay{
+  position: fixed;
+  inset: 0;
+  display: none;              /* hidden by default */
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 18px;
+  background: rgba(0,0,0,.0); /* no full-screen darken unless you want it */
+  z-index: 99999;             /* ABOVE everything */
+  pointer-events: none;       /* only the bubble should be clickable */
+}
+
+.zk-overlay.active{
+  display: flex;
+}
+
+.zk-kitty{
+  width: 90px;
+  height: auto;
+  margin-right: 10px;
+  margin-bottom: 2px;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.45));
+  pointer-events: none;
+}
+
+.zk-bubble{
+  position: relative;
+  max-width: 260px;
+  background: rgba(20,20,30,.95);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.25rem;
+  box-shadow: 0 16px 36px rgba(0,0,0,.45);
+  pointer-events: auto;       /* clickable */
+}
+
+.zk-tail{
+  position: absolute;
+  right: 18px;
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: rgba(20,20,30,.95);
+  transform: rotate(45deg);
+  border-right: 1px solid rgba(255,255,255,.12);
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
