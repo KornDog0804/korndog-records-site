@@ -350,3 +350,316 @@ footer strong{color:var(--accent)}
     #1d1830 20px
   );
 }
+:root{
+  --bg1:#0b0620;
+  --bg2:#2a0b5c;
+  --card:#140a2f;
+  --card2:#0f0825;
+  --text:#eae7ff;
+  --muted:rgba(234,231,255,.65);
+  --accent:#a7ff5a;
+  --shadow:0 14px 40px rgba(0,0,0,.35);
+  --radius:22px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:var(--text);
+  background: radial-gradient(1200px 700px at 30% 10%, rgba(167,255,90,.18), transparent 55%),
+              radial-gradient(900px 600px at 80% 0%, rgba(160,90,255,.25), transparent 55%),
+              linear-gradient(160deg, var(--bg1), var(--bg2) 60%, #0a0920);
+}
+
+/* Header / Nav */
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  backdrop-filter: blur(10px);
+  background: rgba(8,5,25,.55);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.nav-inner{
+  max-width:1100px;
+  margin:0 auto;
+  padding:14px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+.logo-circle{
+  width:54px;
+  height:54px;
+  border-radius:999px;
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow: 0 10px 22px rgba(0,0,0,.25);
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+.logo-circle img{width:100%; height:100%; object-fit:cover; display:block;}
+
+nav{display:flex; gap:10px; align-items:center;}
+.nav-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 16px;
+  border-radius:999px;
+  text-decoration:none;
+  color:var(--text);
+  background: rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09);
+}
+.nav-link.active{
+  background: rgba(167,255,90,.18);
+  border-color: rgba(167,255,90,.35);
+}
+.cart-pill span{
+  margin-left:8px;
+  display:inline-grid;
+  place-items:center;
+  min-width:22px;
+  height:22px;
+  border-radius:999px;
+  background: rgba(167,255,90,.25);
+  border:1px solid rgba(167,255,90,.35);
+}
+
+/* Page */
+.page{
+  max-width:1100px;
+  margin:0 auto;
+  padding:24px 14px 50px;
+}
+h2{font-size:38px; margin:10px 0 8px}
+.subtitle{margin:0 0 18px; color:var(--muted)}
+
+/* Grid */
+.products-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap:16px;
+}
+@media (min-width: 900px){
+  .products-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+.record-card{
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* Title/Meta */
+.record-title{
+  font-size:22px;
+  line-height:1.15;
+  margin:2px 0 0;
+}
+.record-meta{
+  color:var(--muted);
+  font-size:16px;
+}
+.record-price{
+  font-size:26px;
+  font-weight:900;
+  margin-top:2px;
+}
+.record-notes{
+  color:rgba(234,231,255,.70);
+  font-size:15px;
+  line-height:1.35;
+  min-height:40px;
+}
+.record-qty{color:rgba(234,231,255,.55); font-size:14px}
+
+/* Buttons */
+.btn{
+  border:0;
+  border-radius:999px;
+  padding:14px 16px;
+  font-weight:900;
+  cursor:pointer;
+}
+.btn-primary{
+  background: var(--accent);
+  color:#151024;
+  box-shadow: 0 14px 30px rgba(167,255,90,.25);
+}
+.btn-primary:active{transform: translateY(1px)}
+
+/* Footer */
+footer{
+  text-align:center;
+  padding:18px 10px 26px;
+  color:rgba(234,231,255,.6);
+}
+
+/* ======================
+   IMAGE FLIP EFFECT
+   ====================== */
+
+.record-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  perspective: 1000px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flip-wrapper { position: relative; width: 100%; height: 100%; }
+
+.flip-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.6s ease;
+  transform-style: preserve-3d;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Desktop hover flip */
+@media (hover: hover) and (pointer: fine) {
+  .record-card:hover .flip-inner { transform: rotateY(180deg); }
+}
+
+/* ✅ Mobile tap flip (JS toggles .is-flipped) */
+.record-card.is-flipped .flip-inner { transform: rotateY(180deg); }
+
+.flip-front,
+.flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 18px;
+}
+
+.flip-back { transform: rotateY(180deg); }
+
+.record-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 18px;
+}
+
+/* ======================
+   MISSING IMAGE PLACEHOLDER
+   ====================== */
+
+.image-missing {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  background: repeating-linear-gradient(
+    45deg,
+    #2a2140,
+    #2a2140 10px,
+    #1d1830 10px,
+    #1d1830 20px
+  );
+}
+
+/* ======================
+   FLOATING CHAT BUTTON
+   ====================== */
+
+.floating-message{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  width:52px;
+  height:52px;
+  border-radius:999px;
+  background: rgba(167,255,90,.95);
+  color:#151024;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.4rem;
+  font-weight:900;
+  box-shadow: 0 12px 24px rgba(0,0,0,.35);
+  cursor:pointer;
+  z-index:9999;
+  user-select:none;
+}
+
+/* ======================
+   ZOMBIE KITTY OVERLAY
+   ====================== */
+
+.zk-overlay{
+  position:fixed;
+  bottom:90px;
+  right:-260px; /* hidden off screen */
+  display:flex;
+  align-items:flex-end;
+  gap:12px;
+  transition:right .45s ease;
+  z-index:9998;
+  pointer-events:none;
+}
+.zk-overlay.active{
+  right:20px;
+  pointer-events:auto;
+}
+.zk-kitty{
+  width:140px;
+  opacity:0.95;
+}
+.zk-bubble{
+  background:#fff3b0;
+  color:#111;
+  padding:12px 14px;
+  border-radius:14px;
+  font-size:0.95rem;
+  box-shadow: 0 10px 24px rgba(0,0,0,.30);
+  max-width:220px;
+  cursor:pointer;
+  position:relative;
+}
+.zk-tail{
+  position:absolute;
+  left:-10px;
+  bottom:18px;
+  width:0;
+  height:0;
+  border-top:10px solid transparent;
+  border-bottom:10px solid transparent;
+  border-right:10px solid #fff3b0;
+}
+
+/* Pagination (simple) */
+.pagination{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:18px;
+}
+.page-btn{
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color:var(--text);
+  padding:10px 14px;
+  border-radius:999px;
+  cursor:pointer;
+}
+.page-btn.active{
+  background: rgba(167,255,90,.18);
+  border-color: rgba(167,255,90,.35);
+}
