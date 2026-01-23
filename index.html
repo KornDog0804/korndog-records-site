@@ -2,344 +2,154 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>KornDog Records • Vinyl Therapy Never Dies</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Korndog Cosmic Drift</title>
+
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
   <style>
-    :root {
-      --bg: #050013;
-      --bg-alt: #0b0420;
-      --accent: #7bff5a;
-      --accent-soft: rgba(123, 255, 90, 0.35);
-      --text: #f5f5ff;
-      --muted: #a1a1c5;
-      --card: #12052b;
-      --border: #2b1550;
-      --danger: #ff4b6a;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-        sans-serif;
-      color: var(--text);
-    }
-
-    body {
-      background: radial-gradient(circle at top, #18003b, #050013 70%);
-      min-height: 100vh;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* Header */
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      backdrop-filter: blur(12px);
-      background: linear-gradient(
-        to right,
-        rgba(5, 0, 20, 0.9),
-        rgba(10, 0, 40, 0.85)
-      );
-      border-bottom: 1px solid rgba(123, 255, 90, 0.2);
-    }
-
-    .nav-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0.75rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      border: 2px solid var(--accent);
-      background: radial-gradient(circle at 30% 30%, #7bff5a22, #000000aa);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .brand-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .brand-text strong {
-      font-size: 0.9rem;
-      letter-spacing: 0.06em;
-    }
-
-    .brand-text span {
-      color: var(--muted);
-      font-size: 0.75rem;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .nav-link {
-      padding: 0.6rem 1.3rem;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      border: 1px solid transparent;
-      color: var(--muted);
-      transition: 0.15s ease;
-    }
-
-    .nav-link.active {
-      background: var(--accent);
-      color: #02010a;
-    }
-
-    .nav-link:hover {
-      border-color: rgba(123, 255, 90, 0.6);
-      color: var(--text);
-    }
-
-    .cart-pill {
-      padding: 0.35rem 0.9rem;
-      border-radius: 999px;
-      background: rgba(123, 255, 90, 0.12);
-      border: 1px solid rgba(123, 255, 90, 0.5);
-      font-size: 0.85rem;
-    }
-
-    .cart-pill span {
-      background: var(--accent);
-      color: #02010a;
-      border-radius: 999px;
-      padding: 0.15rem 0.55rem;
-      margin-left: 0.35rem;
-      font-weight: 600;
-    }
-
-    /* Banner */
-
-    .banner {
-      max-width: 1100px;
-      margin: 1.25rem auto 0;
-      padding: 0 1.25rem;
-    }
-
-    .banner img {
-      width: 100%;
-      display: block;
-      border-radius: 1.5rem;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
-    }
-
-    /* Hero */
-
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 2rem 1.25rem 3rem;
-    }
-
-    .hero-card {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 2rem;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-    }
-
-    .hero-card h1 {
-      font-size: clamp(2.1rem, 4vw, 2.7rem);
-      margin-bottom: 0.75rem;
-    }
-
-    .hero-card span {
-      color: var(--accent);
-    }
-
-    .hero-card p {
-      color: var(--muted);
-      font-size: 0.98rem;
-      line-height: 1.5;
-      max-width: 40rem;
-    }
-
-    /* External marketplace buttons */
-
-    .external-links {
-      margin-top: 2rem;
-      padding: 1.25rem;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(123, 255, 90, 0.25);
-      border-radius: 1rem;
-    }
-
-    .external-buttons {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary,
-    .btn-secondary {
-      padding: 0.6rem 1.3rem;
-      border-radius: 999px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #02010a;
-    }
-
-    .btn-secondary {
-      background: rgba(123, 255, 90, 0.15);
-      border: 1px solid rgba(123, 255, 90, 0.6);
-      color: var(--accent);
-    }
-
-    .trust-text {
-      margin-top: 1rem;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    /* Trusted Seller badge */
-
-    .trusted-badge {
-      margin-top: 1.3rem;
-      padding: 0.6rem 1.3rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(123, 255, 90, 0.45);
-      text-align: center;
-      font-weight: 700;
-      color: var(--accent);
-      box-shadow: 0 0 15px rgba(123, 255, 90, 0.28);
-      font-size: 0.9rem;
-    }
-
-    footer {
-      margin-top: 3rem;
-      padding: 2rem 1.25rem 2.5rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    footer strong {
-      color: var(--accent);
-    }
-
-    @media (max-width: 800px) {
-      .nav-inner {
-        flex-wrap: wrap;
-        justify-content: center;
-        text-align: center;
-      }
-
-      .brand-text {
-        display: none;
-      }
+    html, body { margin:0; height:100%; background:#000; overflow:hidden; }
+    .hud {
+      position: fixed; left: 12px; bottom: 10px; z-index: 9;
+      font: 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: rgba(255,255,255,.85);
+      text-shadow: 0 2px 8px rgba(0,0,0,.65);
+      user-select: none;
+      pointer-events: none;
     }
   </style>
-
-  <script defer src="script.js"></script>
 </head>
 
 <body>
+  <div class="hud">Auto background swap • 45s sky drift • Planets 20s spin • unclumped</div>
 
-<header>
-  <div class="nav-inner">
-    <div class="brand">
-      <div class="brand-logo">
-        <img src="images/Screenshot_20250831-144625.png" alt="KornDog Logo">
-      </div>
-      <div class="brand-text">
-        <strong>KORNDOG RECORDS</strong>
-        <span>Nashville Born • Bowling Green Driven</span>
-      </div>
-    </div>
+  <a-scene
+    vr-mode-ui="enabled: true"
+    renderer="colorManagement: true; physicallyCorrectLights: true; antialias: true"
+    background="color: #000"
+  >
+    <!-- Camera -->
+    <a-entity id="rig" position="0 1.6 0">
+      <a-camera wasd-controls-enabled="false" look-controls="pointerLockEnabled: false"></a-camera>
+    </a-entity>
 
-    <nav>
-      <a href="index.html" class="nav-link active">Home</a>
-      <a href="shop.html" class="nav-link">Shop</a>
-      <a href="cart.html" class="nav-link cart-pill">
-        Cart <span data-cart-count>0</span>
-      </a>
-    </nav>
-  </div>
-</header>
+    <!-- Lighting (keeps planets from looking flat) -->
+    <a-entity light="type: ambient; intensity: 0.55; color: #ffffff"></a-entity>
+    <a-entity light="type: directional; intensity: 0.95; color: #ffffff" position="2 4 3"></a-entity>
 
-<div class="banner">
-  <img src="images/Screenshot_20250907-135850.png" alt="KornDog Graffiti Banner">
-</div>
+    <!-- Assets -->
+    <a-assets>
+      <!-- your two sky JPGs -->
+      <img id="skyA" src="space-background-realistic-starry-night-cosmos-shining-stars-milky-way-stardust-color-galaxy.jpg" crossorigin="anonymous">
+      <img id="skyB" src="space-background-realistic-starry-night-cosmos-shining-stars-milky-way-stardust-color-galaxy (1).jpg" crossorigin="anonymous">
 
-<main>
-  <div class="hero-card">
-    <h1>Turn the noise <span>into therapy.</span></h1>
-    <p>
-      KornDog Records is where grief, grit, and groove collide.
-      No fake hype. No algorithms. Just real records, real stories,
-      and that needle-drop that makes the world slow down.
-    </p>
+      <!-- planet textures (the _tex ones you said you’re using) -->
+      <img id="texEarth"  src="earth_tex.jpg"  crossorigin="anonymous">
+      <img id="texJupiter" src="jupiter_tex.jpg" crossorigin="anonymous">
+      <img id="texUranus" src="uranus_tex.jpg" crossorigin="anonymous">
+      <img id="texMoon"   src="moon_tex.jpg"   crossorigin="anonymous">
+      <img id="texSaturn" src="saturn_tex.jpg" crossorigin="anonymous">
+    </a-assets>
 
-    <!-- EXTERNAL LINKS -->
-    <div class="external-links">
+    <!-- SKY: two layers, crossfaded -->
+    <a-sky id="skyLayerA"
+      src="#skyA"
+      rotation="0 0 0"
+      material="shader: flat; transparent: true; opacity: 1.0"
+    ></a-sky>
 
-      <div class="external-buttons">
-        <a href="https://whatnot.com/s/f99iX7Ux" class="btn-primary" target="_blank">
-          Shop live on Whatnot
-        </a>
+    <a-sky id="skyLayerB"
+      src="#skyB"
+      rotation="0 0 0"
+      material="shader: flat; transparent: true; opacity: 0.0"
+    ></a-sky>
 
-        <a href="https://www.discogs.com/user/korndog0804" class="btn-secondary" target="_blank">
-          Browse my Discogs store
-        </a>
-      </div>
+    <!-- PLANETS (spread out, not clumped) -->
+    <!-- Left side cluster (but spaced) -->
+    <a-sphere id="moon" radius="0.42" position="-4.6 2.2 -5.8"
+      material="src: #texMoon; roughness: 1.0; metalness: 0.0"
+      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
+    ></a-sphere>
 
-      <!-- TRUST TEXT -->
-      <p class="trust-text">
-        90+ 5★ Whatnot sales · 10+ 5★ Discogs ratings — no BS, no corners cut, just vinyl therapy done right.
-      </p>
+    <a-sphere id="earth" radius="0.55" position="-2.2 1.3 -4.4"
+      material="src: #texEarth; roughness: 0.95; metalness: 0.0"
+      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
+    ></a-sphere>
 
-      <!-- TRUSTED SELLER BADGE -->
-      <div class="trusted-badge">
-        ⭐ Trusted Seller — 5★ Across Whatnot & Discogs ⭐
-      </div>
+    <!-- Center / forward -->
+    <a-sphere id="jupiter" radius="0.85" position="0.0 2.0 -6.8"
+      material="src: #texJupiter; roughness: 0.9; metalness: 0.0"
+      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
+    ></a-sphere>
 
-    </div>
-  </div>
-</main>
+    <!-- Right side -->
+    <a-sphere id="uranus" radius="0.65" position="3.9 1.7 -5.2"
+      material="src: #texUranus; roughness: 0.9; metalness: 0.0"
+      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
+    ></a-sphere>
 
-<footer>
-  © 2025 <strong>KornDog Records</strong> • Vinyl Therapy Never Dies
-</footer>
+    <a-sphere id="saturn" radius="0.75" position="5.4 2.4 -7.4"
+      material="src: #texSaturn; roughness: 0.9; metalness: 0.0"
+      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
+    ></a-sphere>
 
+    <!-- Saturn rings (simple + safe) -->
+    <a-ring position="5.4 2.4 -7.4" rotation="75 0 0" radius-inner="0.95" radius-outer="1.35"
+      material="color: #c9b8a6; opacity: 0.35; transparent: true; side: double"
+    ></a-ring>
+
+    <!-- Script: sky drift + background swap (45s) -->
+    <script>
+      (function () {
+        const skyA = document.getElementById('skyLayerA');
+        const skyB = document.getElementById('skyLayerB');
+
+        let showingA = true;
+
+        // Sky drift: noticeable movement in 45s (8 degrees sweep)
+        // We do it via A-Frame animation component so it works in VR and on phone.
+        function setDrift(el) {
+          el.setAttribute('animation__drift', {
+            property: 'rotation',
+            dir: 'alternate',
+            dur: 45000,
+            easing: 'linear',
+            loop: true,
+            to: '0 8 0'
+          });
+        }
+        setDrift(skyA);
+        setDrift(skyB);
+
+        // Smooth crossfade between the two sky layers every 45s
+        function crossfade() {
+          const inSky  = showingA ? skyB : skyA;
+          const outSky = showingA ? skyA : skyB;
+
+          // fade in
+          inSky.setAttribute('animation__fadein', {
+            property: 'material.opacity',
+            to: 1.0,
+            dur: 1800,
+            easing: 'easeInOutQuad'
+          });
+
+          // fade out
+          outSky.setAttribute('animation__fadeout', {
+            property: 'material.opacity',
+            to: 0.0,
+            dur: 1800,
+            easing: 'easeInOutQuad'
+          });
+
+          showingA = !showingA;
+        }
+
+        // swap every 45s (matches drift timing)
+        setInterval(crossfade, 45000);
+      })();
+    </script>
+
+  </a-scene>
 </body>
 </html>
