@@ -16,26 +16,33 @@
     "images": {
       "front": "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg",
       "back": "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg"
-    }
+    },
+    "pid": "acdc-back-in-black"
   },
   {
     "id": "billy-joel-52nd-street",
     "artist": "Billy Joel",
     "title": "52nd Street",
-    "price": 10,
+    "price": 8,
     "grade": "VG/VG+",
     "image": "images/Billy_Joel-1764298491999.jpg",
     "description": "Smooth pop-rock with jazz touches. One of Billy’s most polished albums. Original inner sleeve. Very nice copy.",
     "available": true,
-    "tier": "tenbin",
+    "tier": "budget",
     "quantity": 1,
     "imageFront": "images/Billy_Joel-1764298491999.jpg",
     "imageBack": "images/Billy_Joel-1764298491999.jpg",
-    "images": {
+    "images": [
+      "images/Billy_Joel-1764298491999.jpg",
+      "images/Billy_Joel-1764298491999.jpg"
+    ],
+    "sold": false,
+    "pid": "billy-joel-52nd-street",
+    "imagesObj": {
       "front": "images/Billy_Joel-1764298491999.jpg",
       "back": "images/Billy_Joel-1764298491999.jpg"
     },
-    "sold": false
+    "originalId": "billy-joel-52nd-street"
   },
   {
     "id": "blessthefall-hollow-bodies",
@@ -54,7 +61,8 @@
     "images": {
       "front": "images/PXL_20250907_203733675.jpg",
       "back": "images/PXL_20250907_203733675.jpg"
-    }
+    },
+    "pid": "blessthefall-hollow-bodies"
   },
   {
     "id": "bob-seger-night-moves",
@@ -73,7 +81,8 @@
       "back": "images/Bob_Seger___Silver_Bullet_Band-1764229444873.jpg"
     },
     "tier": "tenbin",
-    "sold": false
+    "sold": false,
+    "pid": "bob-seger-night-moves"
   },
   {
     "id": "bob-seger-stranger-in-town",
@@ -92,7 +101,8 @@
       "back": "images/Bob_Seger___Silver_Bullet_Band-1764229321160.jpg"
     },
     "tier": "tenbin",
-    "sold": false
+    "sold": false,
+    "pid": "bob-seger-stranger-in-town"
   },
   {
     "id": "boston-1",
@@ -111,7 +121,8 @@
       "back": "images/Boston-1764230862646.jpg"
     },
     "tier": "tenbin",
-    "sold": false
+    "sold": false,
+    "pid": "boston-1"
   },
   {
     "id": "bullet-for-my-valentine-the-poison-20th",
@@ -124,7 +135,8 @@
     "available": true,
     "quantity": 1,
     "tier": "premium",
-    "sold": false
+    "sold": false,
+    "pid": "bullet-for-my-valentine-the-poison-20th"
   },
   {
     "id": "cheap-trick-dream-police",
@@ -143,7 +155,8 @@
       "front": "images/Cheap_Trick-1764233303621.jpg",
       "back": "images/Cheap_Trick-1764233303621.jpg"
     },
-    "sold": false
+    "sold": false,
+    "pid": "cheap-trick-dream-police"
   },
   {
     "id": "Commodore's",
@@ -162,7 +175,8 @@
     "images": {
       "front": "images/1766355293595-17663551086122343256650476255430.jpg",
       "back": "images/1766355294919-17663551337392553280065364275003.jpg"
-    }
+    },
+    "pid": "Commodore's"
   },
   {
     "id": "david-lee-roth-crazy-from-the-heat-ep",
@@ -181,7 +195,8 @@
       "front": "images/David_Lee_Roth_EP-1764230391826.jpg",
       "back": "images/David_Lee_Roth_EP-1764230391826.jpg"
     },
-    "sold": false
+    "sold": false,
+    "pid": "david-lee-roth-crazy-from-the-heat-ep"
   },
   {
     "id": "dazz-band-keep-it-live",
@@ -200,7 +215,8 @@
       "front": "images/Dazz_Band-1764298272765.jpg",
       "back": "images/Dazz_Band-1764298272765.jpg"
     },
-    "sold": false
+    "sold": false,
+    "pid": "dazz-band-keep-it-live"
   },
   {
     "id": "dokken-back-for-the-attack",
@@ -213,7 +229,8 @@
     "available": true,
     "quantity": 1,
     "tier": "premium",
-    "sold": false
+    "sold": false,
+    "pid": "dokken-back-for-the-attack"
   },
   {
     "id": "foreigner-4",
@@ -232,7 +249,8 @@
       "front": "images/Foreigner-1764230780118.jpg",
       "back": "images/Foreigner-1764230780118.jpg"
     },
-    "sold": false
+    "sold": false,
+    "pid": "foreigner-4"
   },
   {
     "id": "Gary Wright",
@@ -251,7 +269,8 @@
     "images": {
       "front": "images/1766355456946-17663553328173525859387670428710.jpg",
       "back": "images/1766355458452-17663553897891207198766079807379.jpg"
-    }
+    },
+    "pid": "Gary Wright"
   },
   {
     "id": "grateful-dead-50th-anniversary-picture-disc",
@@ -270,7 +289,8 @@
     "images": {
       "front": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg",
       "back": "images/rn-image_picker_lib_temp_604eda6e-e1d6-486b-8ab5-03cabffc18e0.jpg"
-    }
+    },
+    "pid": "grateful-dead-50th-anniversary-picture-disc"
   },
   {
     "id": "i-prevail-heart-vs-mind",
@@ -283,7 +303,8 @@
     "available": true,
     "quantity": 1,
     "tier": "premium",
-    "sold": false
+    "sold": false,
+    "pid": "i-prevail-heart-vs-mind"
   },
   {
     "id": "Jefferson Starship",
@@ -302,7 +323,8 @@
     "images": {
       "front": "images/1766353771830-17663536301594697180019756225476.jpg",
       "back": "images/1766353773951-17663536562795494676876831638089.jpg"
-    }
+    },
+    "pid": "Jefferson Starship"
   },
   {
     "id": "jimi-hendrix-smash-hits",
@@ -321,7 +343,8 @@
     "images": {
       "front": "images/PXL_20251125_201153364.jpg",
       "back": "images/PXL_20251125_201153364.jpg"
-    }
+    },
+    "pid": "jimi-hendrix-smash-hits"
   },
   {
     "id": "johnny-cash-greatest-hits-vol-1",
@@ -340,7 +363,8 @@
       "back": "images/Johnny_Cash-1764230221013.jpg"
     },
     "tier": "budget",
-    "sold": false
+    "sold": false,
+    "pid": "johnny-cash-greatest-hits-vol-1"
   },
   {
     "id": "Johnny Cash Collection",
@@ -359,7 +383,8 @@
     "images": {
       "front": "images/1766352704917-17663525891566496099540587153571.jpg",
       "back": "images/1766352706216-17663526181703107268863836076423.jpg"
-    }
+    },
+    "pid": "Johnny Cash Collection"
   },
   {
     "id": "johnny-guitar-watson-giant",
@@ -378,7 +403,8 @@
       "front": "images/PXL_20250915_125512318.jpg",
       "back": "images/PXL_20250915_125512318.jpg"
     },
-    "sold": false
+    "sold": false,
+    "pid": "johnny-guitar-watson-giant"
   },
   {
     "id": "kansas-leftoverture",
@@ -397,7 +423,8 @@
       "back": "images/1766355814869-17663558072006216844151120348350.jpg"
     },
     "tier": "tenbin",
-    "sold": false
+    "sold": false,
+    "pid": "kansas-leftoverture"
   },
   {
     "id": "kansas-point-of-know-return",
@@ -416,7 +443,8 @@
       "back": "images/Kansas-1764299103385.jpg"
     },
     "tier": "tenbin",
-    "sold": false
+    "sold": false,
+    "pid": "kansas-point-of-know-return"
   },
   {
     "id": "ten-dolla-holla",
@@ -435,7 +463,8 @@
       "front": "images/Screenshot_20250822-074904.png",
       "back": "images/Screenshot_20250822-074904.png"
     },
-    "sold": false
+    "sold": false,
+    "pid": "ten-dolla-holla"
   },
   {
     "id": "neil-young-zuma",
@@ -454,7 +483,8 @@
       "front": "images/Neil_Young-1764230307095.jpg",
       "back": "images/Neil_Young-1764230307095.jpg"
     },
-    "sold": false
+    "sold": false,
+    "pid": "neil-young-zuma"
   },
   {
     "id": "night-ranger-7-wishes",
@@ -473,7 +503,8 @@
       "back": "images/1766355648240-17663556404784899065600496867440.jpg"
     },
     "tier": "budget",
-    "sold": false
+    "sold": false,
+    "pid": "night-ranger-7-wishes"
   },
   {
     "id": "pantera-history-of-hostility",
@@ -492,7 +523,8 @@
     "images": {
       "front": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg",
       "back": "images/rn-image_picker_lib_temp_2786e049-3d9e-4388-ae7e-c57b4c1d8a9f.jpg"
-    }
+    },
+    "pid": "pantera-history-of-hostility"
   },
   {
     "id": "Quaterflash",
@@ -511,7 +543,8 @@
     "images": {
       "front": "images/1766353392327-17663532445657076597298771188420.jpg",
       "back": "images/1766353393414-17663532738834308271629870930325.jpg"
-    }
+    },
+    "pid": "Quaterflash"
   },
   {
     "id": "red-hot-chili-peppers-californication",
@@ -524,7 +557,8 @@
     "available": true,
     "quantity": 1,
     "tier": "premium",
-    "sold": false
+    "sold": false,
+    "pid": "red-hot-chili-peppers-californication"
   },
   {
     "id": "reo-speedwagon-decade-of-rock-and-roll",
@@ -543,7 +577,8 @@
       "back": "images/1766355562321-17663555424445154945341483577359.jpg"
     },
     "tier": "tenbin",
-    "sold": false
+    "sold": false,
+    "pid": "reo-speedwagon-decade-of-rock-and-roll"
   },
   {
     "id": "robert-plant-now-and-zen",
@@ -562,7 +597,8 @@
       "back": "images/1766355749910-17663557424368211523112187033774.jpg"
     },
     "tier": "tenbin",
-    "sold": false
+    "sold": false,
+    "pid": "robert-plant-now-and-zen"
   },
   {
     "id": "sleep-token-even-in-arcadia",
@@ -575,7 +611,8 @@
     "available": true,
     "quantity": 1,
     "tier": "premium",
-    "sold": false
+    "sold": false,
+    "pid": "sleep-token-even-in-arcadia"
   },
   {
     "id": "Best of styx",
@@ -594,7 +631,8 @@
     "images": {
       "front": "images/1766354852681-17663547446891043670516969641522.jpg",
       "back": "images/1766354852681-17663547446891043670516969641522.jpg"
-    }
+    },
+    "pid": "Best of styx"
   },
   {
     "id": "sum41-all-killer-no-filler",
@@ -613,7 +651,8 @@
       "back": "images/PXL_20251124_210448795.TS-000.jpg"
     },
     "tier": "premium",
-    "sold": false
+    "sold": false,
+    "pid": "sum41-all-killer-no-filler"
   },
   {
     "id": "Supertramp",
@@ -632,7 +671,8 @@
     "images": {
       "front": "images/1766354714937-17663545265772743968535485619526.jpg",
       "back": "images/1766354716444-17663545516335335003154464222853.jpg"
-    }
+    },
+    "pid": "Supertramp"
   },
   {
     "id": "the-police-zenyatta-mondatta",
@@ -651,7 +691,8 @@
       "front": "images/The_Police-1764229577731.jpg",
       "back": "images/The_Police-1764229577731.jpg"
     },
-    "sold": false
+    "sold": false,
+    "pid": "the-police-zenyatta-mondatta"
   },
   {
     "id": "Truimph allied forces",
@@ -670,7 +711,8 @@
     "images": {
       "front": "images/1766352311630-5893.jpg",
       "back": "images/1766352313196-5894.jpg"
-    }
+    },
+    "pid": "Truimph allied forces"
   },
   {
     "id": "Truimph",
@@ -689,7 +731,8 @@
     "images": {
       "front": "images/1766355058418-17663548954296529725004834174498.jpg",
       "back": "images/1766355059946-17663549344345333710795662866127.jpg"
-    }
+    },
+    "pid": "Truimph"
   },
   {
     "id": "compilation-album-hiphop-50yrs",
@@ -708,6 +751,7 @@
       "back": "images/1766355986369-5000.jpg"
     },
     "tier": "premium",
-    "sold": false
+    "sold": false,
+    "pid": "compilation-album-hiphop-50yrs"
   }
 ]
