@@ -65,6 +65,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .badge.live{border-color:rgba(123,255,90,.35);color:var(--accent)}
 .badge.hidden{border-color:rgba(255,75,106,.35);color:var(--danger)}
 .badge.sold{border-color:rgba(255,159,67,.55);color:#ffd4a8}
+.badge.featured{border-color:rgba(126,247,255,.50);color:var(--accent2)}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .pill-row{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
 .search-pill{border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.03);color:var(--muted);
@@ -154,6 +155,14 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
         <div class="field">
           <label>Visible on Site</label>
           <div class="checkbox-row"><input id="available" type="checkbox" checked/><span class="hint" style="margin:0">Checked = live. Unchecked = hidden.</span></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Featured Record</label>
+        <div class="checkbox-row">
+          <input id="featured" type="checkbox"/>
+          <span class="hint" style="margin:0">Show on homepage Featured Records section</span>
         </div>
       </div>
 
@@ -318,22 +327,16 @@ async function textToBase64(text){
 
 /** =========================
  *  DUMMY-PROOF PID/ID
- *  - You can type ANYTHING in the ID box.
- *  - For NEW records, we auto-generate a safe pid:
- *    lowercase + hyphens + no apostrophes/spaces.
- *  - We also guarantee uniqueness by adding -2, -3, etc.
- *  - Result: share links + flip backs + product page lookup won't break.
  *  ========================= */
 function slugify(raw){
   let s = String(raw || "").trim().toLowerCase();
-  // normalize unicode (smart quotes, accents)
   try{ s = s.normalize("NFKD"); }catch(e){}
   s = s
-    .replace(/['’`"]/g, "")         // drop quotes/apostrophes
-    .replace(/&/g, " and ")         // nicer than empty
-    .replace(/[^a-z0-9]+/g, "-")    // non-alnum -> hyphen
-    .replace(/^-+|-+$/g, "")        // trim hyphens
-    .replace(/-+/g, "-");           // collapse
+    .replace(/['’`"]/g, "")
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-+/g, "-");
   if(!s) s = "record";
   return s;
 }
@@ -347,7 +350,6 @@ function ensureUniquePid(base, products){
 
 /** =========================
  *  GITHUB API
- *  - Uses Bearer token (best for fine-grained PATs)
  *  ========================= */
 async function github(path, opts={}){
   const token=requireToken();
@@ -399,7 +401,6 @@ async function putBase64(path, b64, message, sha){
 
 /** =========================
  *  IMAGE COMPRESSION
- *  - Prevents GitHub rejecting big phone photos
  *  ========================= */
 async function compressImageToJpegBase64(file, maxW=1400, maxH=1400, quality=0.86){
   const img = await new Promise((resolve, reject)=>{
@@ -420,11 +421,8 @@ async function compressImageToJpegBase64(file, maxW=1400, maxH=1400, quality=0.8
   const ctx = canvas.getContext("2d");
   ctx.drawImage(img, 0, 0, w, h);
 
-  // Always JPEG for smaller size; GitHub likes it
   const dataUrl = canvas.toDataURL("image/jpeg", quality);
   URL.revokeObjectURL(img.src);
-
-  // Return base64 portion only
   return dataUrl.slice(dataUrl.indexOf(",")+1);
 }
 
@@ -432,10 +430,8 @@ async function uploadImage(file){
   const safe = Date.now()+"-"+safeFileName(file.name);
   const path = IMAGES_FOLDER + "/" + safe;
 
-  // compress for GitHub size limits
   const b64 = await compressImageToJpegBase64(file);
 
-  // Try upload; if GitHub still complains, reduce quality once
   try{
     await putBase64(path, b64, "Add image " + safe);
   }catch(e){
@@ -459,8 +455,7 @@ async function loadProducts(){
       if(p.available==null) p.available=true;
       if(p.tier==null) p.tier="premium";
       if(p.sold==null) p.sold=false;
-
-      // keep pid present for older records where possible
+      if(p.featured==null) p.featured=false;
       if(!p.pid && p.id) p.pid = String(p.id);
     });
     return { products: arr, sha };
@@ -557,7 +552,6 @@ function enterEditMode(p){
   $("btnDel").style.display="inline-flex";
   $("btnSave").textContent="Save Update";
 
-  // Show the locked pid/id
   $("rid").value=(p.pid||p.id||"");
   $("rid").disabled=true;
 
@@ -568,9 +562,9 @@ function enterEditMode(p){
   $("qty").value=(p.quantity!=null?p.quantity:1);
   $("tier").value=p.tier||"premium";
   $("available").checked=(p.available!==false);
+  $("featured").checked=!!p.featured;
   $("desc").value=p.description||"";
 
-  // clear file inputs
   $("front").value="";
   $("frontCam").value="";
   $("back").value="";
@@ -590,6 +584,7 @@ function exitEditMode(){
   $("qty").value=1;
   $("tier").value="premium";
   $("available").checked=true;
+  $("featured").checked=false;
   $("rid").disabled=false;
   setStatus("Ready for a new record.");
 }
@@ -618,6 +613,7 @@ $("form").addEventListener("submit", async (e)=>{
   const quantity=parseInt($("qty").value||"0",10);
   const tier=$("tier").value||"premium";
   const available=!!$("available").checked;
+  const featured=!!$("featured").checked;
   const description=$("desc").value.trim();
 
   const frontFile = pickFile("front","frontCam");
@@ -637,15 +633,11 @@ $("form").addEventListener("submit", async (e)=>{
   try{
     const { products, sha } = await loadProducts();
 
-    // ===== DUMMY-PROOF PID LOGIC (NEW RECORDS ONLY) =====
-    // If you type “Commodore's” or “Johnny Cash Collection”, we convert it to a safe pid.
-    // If you leave it blank, we build it from artist + title.
     let pid = rawIdInput;
     if(!editMode.active){
       const baseRaw = pid || (artist + " " + title);
       const base = slugify(baseRaw);
       pid = ensureUniquePid(base, products);
-      // write it back to the input so you SEE what got saved
       $("rid").value = pid;
     }else{
       pid = String(rawIdInput || editMode.id || "").trim();
@@ -656,7 +648,6 @@ $("form").addEventListener("submit", async (e)=>{
       return;
     }
 
-    // Find record by pid OR id (older records)
     const idx = products.findIndex(p => String(p.pid||p.id) === String(pid));
     const existing = (idx>=0?products[idx]:{});
     const sold = !!existing.sold;
@@ -669,27 +660,23 @@ $("form").addEventListener("submit", async (e)=>{
     if(!backPath) backPath = frontPath;
 
     const updated = {
-      // IMPORTANT: pid is the bulletproof key for the whole site.
       pid,
-      // Keep id = pid too, so ANY code that uses id keeps working.
       id: pid,
-
-      artist, title, price, grade,
+      artist,
+      title,
+      price,
+      grade,
       quantity: Number.isFinite(quantity) ? quantity : 0,
-      tier, available, description, sold,
-
-      // image fields (compat + clarity)
+      tier,
+      available,
+      featured,
+      description,
+      sold,
       image: frontPath,
       imageFront: frontPath,
       imageBack: backPath,
-
-      // Make "images" an ARRAY so flip/product page can reliably use [0] front, [1] back.
       images: [frontPath, backPath],
-
-      // Keep legacy object too (harmless + helps older scripts if any)
       imagesObj: { front: frontPath, back: backPath },
-
-      // Keep what you typed originally for reference (optional; doesn’t break anything)
       originalId: rawIdInput || ""
     };
 
@@ -714,7 +701,7 @@ $("form").addEventListener("submit", async (e)=>{
       $("qty").value=1;
       $("tier").value="premium";
       $("available").checked=true;
-      // keep pid shown after save? (nah — clear form)
+      $("featured").checked=false;
       $("rid").value="";
     }
 
@@ -875,6 +862,7 @@ async function renderInventory(){
         <div class="badges">
           ${sold ? badge("SOLD","sold") : (live ? badge("LIVE","live") : badge("HIDDEN","hidden"))}
           ${badge("Tier: "+(p.tier||"premium"))}
+          ${p.featured ? badge("FEATURED","featured") : ""}
         </div>
       </div>
       <div class="actions">
