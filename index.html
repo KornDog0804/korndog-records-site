@@ -3,153 +3,473 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Korndog Cosmic Drift</title>
+  <title>KornDog Records</title>
+  <meta name="description" content="KornDog Records — real records, real stories, vinyl therapy never dies." />
 
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <link rel="stylesheet" href="styles.css?v=featured1" />
+  <script defer src="zk.js?v=featured1"></script>
 
   <style>
-    html, body { margin:0; height:100%; background:#000; overflow:hidden; }
-    .hud {
-      position: fixed; left: 12px; bottom: 10px; z-index: 9;
-      font: 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color: rgba(255,255,255,.85);
-      text-shadow: 0 2px 8px rgba(0,0,0,.65);
-      user-select: none;
-      pointer-events: none;
+    .hero-banner{
+      width:100%;
+      border-radius:28px;
+      display:block;
+      margin-bottom:22px;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 18px 44px rgba(0,0,0,.28);
+    }
+
+    .hero-card{
+      background:linear-gradient(180deg, rgba(24,6,58,.92), rgba(14,2,38,.96));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:28px;
+      padding:28px 22px;
+      box-shadow:0 18px 44px rgba(0,0,0,.28);
+      margin-bottom:26px;
+    }
+
+    .hero-card h1{
+      font-size:clamp(2.2rem, 7vw, 3.7rem);
+      line-height:1.02;
+      margin:0 0 18px;
+      letter-spacing:-.03em;
+    }
+
+    .hero-card h1 .accent{
+      color:var(--accent);
+    }
+
+    .hero-card p{
+      font-size:1.05rem;
+      line-height:1.65;
+      color:var(--muted);
+      margin:0 0 22px;
+      max-width:760px;
+    }
+
+    .hero-panel{
+      margin-top:12px;
+      border:1px solid rgba(123,255,90,.26);
+      border-radius:24px;
+      padding:18px;
+      background:rgba(255,255,255,.03);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+
+    .hero-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .btn-home{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:54px;
+      padding:0 22px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:1rem;
+      text-decoration:none;
+      transition:transform .15s ease, filter .15s ease, background .15s ease;
+    }
+
+    .btn-home:active{
+      transform:translateY(1px);
+    }
+
+    .btn-home-primary{
+      background:var(--accent);
+      color:#0a0714;
+      box-shadow:0 8px 28px rgba(123,255,90,.22);
+    }
+
+    .btn-home-outline{
+      background:rgba(123,255,90,.10);
+      color:var(--accent);
+      border:1px solid rgba(123,255,90,.40);
+    }
+
+    .hero-proof{
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.55;
+      margin:0 0 14px;
+    }
+
+    .hero-trust{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      border:1px solid rgba(123,255,90,.36);
+      border-radius:999px;
+      padding:16px 18px;
+      color:var(--accent);
+      font-weight:900;
+      font-size:1.05rem;
+      background:rgba(123,255,90,.08);
+      box-shadow:0 0 24px rgba(123,255,90,.18);
+    }
+
+    .home-section{
+      margin:30px 0 18px;
+    }
+
+    .home-section h2{
+      margin:0 0 8px;
+      font-size:1.8rem;
+      letter-spacing:-.02em;
+    }
+
+    .home-section .subtitle{
+      margin:0 0 18px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .featured-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+    }
+
+    @media (min-width: 900px){
+      .featured-grid{
+        grid-template-columns:repeat(4, minmax(0,1fr));
+      }
+    }
+
+    .featured-card{
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+      background:linear-gradient(180deg, rgba(51,21,104,.82), rgba(26,7,65,.96));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:24px;
+      padding:14px;
+      box-shadow:0 16px 38px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+
+    .featured-card a{
+      text-decoration:none;
+      color:inherit;
+    }
+
+    .featured-image-wrap{
+      display:block;
+      width:100%;
+      aspect-ratio:1 / 1;
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      margin-bottom:14px;
+    }
+
+    .featured-image-wrap img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .featured-title{
+      font-size:1.1rem;
+      line-height:1.14;
+      font-weight:900;
+      margin:0 0 10px;
+      min-height:2.5em;
+    }
+
+    .featured-grade{
+      color:var(--muted);
+      font-size:.98rem;
+      margin:0 0 12px;
+    }
+
+    .featured-price{
+      font-size:1.2rem;
+      font-weight:900;
+      margin:0 0 16px;
+    }
+
+    .featured-actions{
+      margin-top:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .featured-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48px;
+      padding:0 16px;
+      border-radius:999px;
+      font-weight:900;
+      text-decoration:none;
+      cursor:pointer;
+      border:none;
+    }
+
+    .featured-btn-primary{
+      background:var(--accent);
+      color:#0a0714;
+    }
+
+    .featured-btn-outline{
+      background:rgba(123,255,90,.09);
+      color:var(--accent);
+      border:1px solid rgba(123,255,90,.35);
+    }
+
+    .home-bottom-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .empty-featured{
+      padding:18px;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
     }
   </style>
 </head>
 
 <body>
-  <div class="hud">Auto background swap • 45s sky drift • Planets 20s spin • unclumped</div>
+  <header>
+    <div class="nav-inner">
+      <a href="index.html" class="logo-link" aria-label="KornDog Records Home">
+        <div class="logo-circle">
+          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
+        </div>
+      </a>
 
-  <a-scene
-    vr-mode-ui="enabled: true"
-    renderer="colorManagement: true; physicallyCorrectLights: true; antialias: true"
-    background="color: #000"
-  >
-    <!-- Camera -->
-    <a-entity id="rig" position="0 1.6 0">
-      <a-camera wasd-controls-enabled="false" look-controls="pointerLockEnabled: false"></a-camera>
-    </a-entity>
+      <nav>
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="cart.html" class="nav-link cart-pill">Cart <span data-cart-count>0</span></a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- Lighting (keeps planets from looking flat) -->
-    <a-entity light="type: ambient; intensity: 0.55; color: #ffffff"></a-entity>
-    <a-entity light="type: directional; intensity: 0.95; color: #ffffff" position="2 4 3"></a-entity>
+  <main class="page">
+    <img class="hero-banner" src="images/Screenshot_20250827-211941.png" alt="KornDog Records banner" />
 
-    <!-- Assets -->
-    <a-assets>
-      <!-- your two sky JPGs -->
-      <img id="skyA" src="space-background-realistic-starry-night-cosmos-shining-stars-milky-way-stardust-color-galaxy.jpg" crossorigin="anonymous">
-      <img id="skyB" src="space-background-realistic-starry-night-cosmos-shining-stars-milky-way-stardust-color-galaxy (1).jpg" crossorigin="anonymous">
+    <section class="hero-card">
+      <h1>Turn the noise <span class="accent">into therapy.</span></h1>
 
-      <!-- planet textures (the _tex ones you said you’re using) -->
-      <img id="texEarth"  src="earth_tex.jpg"  crossorigin="anonymous">
-      <img id="texJupiter" src="jupiter_tex.jpg" crossorigin="anonymous">
-      <img id="texUranus" src="uranus_tex.jpg" crossorigin="anonymous">
-      <img id="texMoon"   src="moon_tex.jpg"   crossorigin="anonymous">
-      <img id="texSaturn" src="saturn_tex.jpg" crossorigin="anonymous">
-    </a-assets>
+      <p>
+        KornDog Records is where grief, grit, and groove collide. No fake hype. No algorithms.
+        Just real records, real stories, and that needle-drop that makes the world slow down.
+      </p>
 
-    <!-- SKY: two layers, crossfaded -->
-    <a-sky id="skyLayerA"
-      src="#skyA"
-      rotation="0 0 0"
-      material="shader: flat; transparent: true; opacity: 1.0"
-    ></a-sky>
+      <div class="hero-panel">
+        <div class="hero-buttons">
+          <a class="btn-home btn-home-primary" href="https://www.whatnot.com/" target="_blank" rel="noopener noreferrer">
+            Shop live on Whatnot
+          </a>
+          <a class="btn-home btn-home-outline" href="https://www.discogs.com/seller/" target="_blank" rel="noopener noreferrer">
+            Browse my Discogs store
+          </a>
+        </div>
 
-    <a-sky id="skyLayerB"
-      src="#skyB"
-      rotation="0 0 0"
-      material="shader: flat; transparent: true; opacity: 0.0"
-    ></a-sky>
+        <p class="hero-proof">
+          90+ 5★ Whatnot sales · 10+ 5★ Discogs ratings — no BS, no corners cut, just vinyl therapy done right.
+        </p>
 
-    <!-- PLANETS (spread out, not clumped) -->
-    <!-- Left side cluster (but spaced) -->
-    <a-sphere id="moon" radius="0.42" position="-4.6 2.2 -5.8"
-      material="src: #texMoon; roughness: 1.0; metalness: 0.0"
-      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
-    ></a-sphere>
+        <div class="hero-trust">
+          ⭐ Trusted Seller — 5★ Across Whatnot & Discogs ⭐
+        </div>
+      </div>
+    </section>
 
-    <a-sphere id="earth" radius="0.55" position="-2.2 1.3 -4.4"
-      material="src: #texEarth; roughness: 0.95; metalness: 0.0"
-      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
-    ></a-sphere>
+    <section class="home-section" id="featuredSection">
+      <h2>Featured Records of the Week</h2>
+      <p class="subtitle">Hand-picked heat from the stack. When they’re gone, they’re gone.</p>
 
-    <!-- Center / forward -->
-    <a-sphere id="jupiter" radius="0.85" position="0.0 2.0 -6.8"
-      material="src: #texJupiter; roughness: 0.9; metalness: 0.0"
-      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
-    ></a-sphere>
+      <div id="featuredGrid" class="featured-grid"></div>
 
-    <!-- Right side -->
-    <a-sphere id="uranus" radius="0.65" position="3.9 1.7 -5.2"
-      material="src: #texUranus; roughness: 0.9; metalness: 0.0"
-      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
-    ></a-sphere>
+      <div class="home-bottom-actions">
+        <a class="btn-home btn-home-primary" href="shop.html">Shop all vinyl</a>
+      </div>
+    </section>
+  </main>
 
-    <a-sphere id="saturn" radius="0.75" position="5.4 2.4 -7.4"
-      material="src: #texSaturn; roughness: 0.9; metalness: 0.0"
-      animation="property: rotation; to: 0 360 0; dur: 20000; easing: linear; loop: true"
-    ></a-sphere>
+  <footer>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</footer>
 
-    <!-- Saturn rings (simple + safe) -->
-    <a-ring position="5.4 2.4 -7.4" rotation="75 0 0" radius-inner="0.95" radius-outer="1.35"
-      material="color: #c9b8a6; opacity: 0.35; transparent: true; side: double"
-    ></a-ring>
+  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
 
-    <!-- Script: sky drift + background swap (45s) -->
-    <script>
-      (function () {
-        const skyA = document.getElementById('skyLayerA');
-        const skyB = document.getElementById('skyLayerB');
+  <div id="zkOverlay" class="zk-overlay">
+    <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
+    <div class="zk-bubble" id="zkBubble">
+      <div class="zk-tail"></div>
+      Hi! I'm Zombie Kitty — your crate-digging assistant.<br><br>
+      Tap here to text KornDog.
+    </div>
+  </div>
 
-        let showingA = true;
+  <script>
+    const CART_KEY = "kd_cart_v1";
 
-        // Sky drift: noticeable movement in 45s (8 degrees sweep)
-        // We do it via A-Frame animation component so it works in VR and on phone.
-        function setDrift(el) {
-          el.setAttribute('animation__drift', {
-            property: 'rotation',
-            dir: 'alternate',
-            dur: 45000,
-            easing: 'linear',
-            loop: true,
-            to: '0 8 0'
-          });
+    function updateCartCount() {
+      try {
+        const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+        const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+        document.querySelectorAll("[data-cart-count]").forEach(el => {
+          el.textContent = String(count);
+        });
+      } catch (err) {
+        document.querySelectorAll("[data-cart-count]").forEach(el => {
+          el.textContent = "0";
+        });
+      }
+    }
+
+    function formatPrice(price) {
+      const n = Number(price) || 0;
+      return "$" + n.toFixed(2);
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getProductPid(product) {
+      return product.id || product.pid || product.slug || "";
+    }
+
+    function getProductImage(product) {
+      return (
+        product.imageFront ||
+        (product.images && product.images.front) ||
+        product.image ||
+        ""
+      );
+    }
+
+    function getQty(product) {
+      return Number(product.quantity ?? product.qty ?? 1);
+    }
+
+    function isAvailable(product) {
+      if (product.sold === true) return false;
+      if (product.available === false) return false;
+      if (getQty(product) <= 0) return false;
+      return true;
+    }
+
+    function addToCart(product) {
+      const pid = getProductPid(product);
+      if (!pid) return;
+
+      const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+      const maxQty = getQty(product);
+      const existing = cart.find(item => item.pid === pid);
+
+      if (existing) {
+        existing.qty = Math.min((Number(existing.qty) || 0) + 1, maxQty);
+      } else {
+        cart.push({
+          pid,
+          name: product.title || product.name || "Record",
+          artist: product.artist || "",
+          price: Number(product.price) || 0,
+          image: getProductImage(product),
+          qty: 1,
+          maxQty
+        });
+      }
+
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      updateCartCount();
+      alert("Dropped in the cart.");
+    }
+
+    function buildFeaturedCard(product) {
+      const pid = getProductPid(product);
+      const image = getProductImage(product);
+      const titleText = [product.artist, product.title].filter(Boolean).join(" – ");
+      const title = escapeHtml(titleText || "Record");
+      const grade = escapeHtml(product.grade || "—");
+      const price = formatPrice(product.price);
+      const productUrl = "product.html?pid=" + encodeURIComponent(pid);
+
+      const card = document.createElement("article");
+      card.className = "featured-card";
+
+      card.innerHTML = `
+        <a href="${productUrl}" class="featured-image-wrap" aria-label="Open ${title}">
+          <img src="${escapeHtml(image)}" alt="${title}" loading="lazy" />
+        </a>
+
+        <a href="${productUrl}">
+          <h3 class="featured-title">${title}</h3>
+        </a>
+
+        <div class="featured-grade">Grade: ${grade}</div>
+        <div class="featured-price">${price}</div>
+
+        <div class="featured-actions">
+          <a class="featured-btn featured-btn-outline" href="${productUrl}">View Record</a>
+          <button class="featured-btn featured-btn-primary" type="button">Add to Cart</button>
+        </div>
+      `;
+
+      const addBtn = card.querySelector("button");
+      addBtn.addEventListener("click", () => addToCart(product));
+
+      return card;
+    }
+
+    async function loadFeaturedRecords() {
+      const grid = document.getElementById("featuredGrid");
+      if (!grid) return;
+
+      grid.innerHTML = `<div class="empty-featured">Loading featured records…</div>`;
+
+      try {
+        const res = await fetch("products.json2?v=featured1", { cache: "no-store" });
+        if (!res.ok) throw new Error("Could not load products.json2");
+
+        const data = await res.json();
+        const products = Array.isArray(data) ? data : [];
+
+        const featured = products.filter(product => product.featured === true && isAvailable(product)).slice(0, 4);
+
+        grid.innerHTML = "";
+
+        if (!featured.length) {
+          grid.innerHTML = `<div class="empty-featured">No featured records are set yet. Flip a few to <strong>featured: true</strong> in products.json2 and they’ll appear here.</div>`;
+          return;
         }
-        setDrift(skyA);
-        setDrift(skyB);
 
-        // Smooth crossfade between the two sky layers every 45s
-        function crossfade() {
-          const inSky  = showingA ? skyB : skyA;
-          const outSky = showingA ? skyA : skyB;
+        featured.forEach(product => {
+          grid.appendChild(buildFeaturedCard(product));
+        });
+      } catch (err) {
+        grid.innerHTML = `<div class="empty-featured">Couldn’t load featured records right now.</div>`;
+      }
+    }
 
-          // fade in
-          inSky.setAttribute('animation__fadein', {
-            property: 'material.opacity',
-            to: 1.0,
-            dur: 1800,
-            easing: 'easeInOutQuad'
-          });
-
-          // fade out
-          outSky.setAttribute('animation__fadeout', {
-            property: 'material.opacity',
-            to: 0.0,
-            dur: 1800,
-            easing: 'easeInOutQuad'
-          });
-
-          showingA = !showingA;
-        }
-
-        // swap every 45s (matches drift timing)
-        setInterval(crossfade, 45000);
-      })();
-    </script>
-
-  </a-scene>
+    document.addEventListener("DOMContentLoaded", () => {
+      updateCartCount();
+      loadFeaturedRecords();
+    });
+  </script>
 </body>
 </html>
