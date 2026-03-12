@@ -655,7 +655,18 @@
     "tier": "premium",
     "sold": false,
     "pid": "sleep-token-even-in-arcadia",
-    "featured": false
+    "featured": true,
+    "imageFront": "images/Screenshot_20250826-210248.png",
+    "imageBack": "images/Screenshot_20250826-210248.png",
+    "images": [
+      "images/Screenshot_20250826-210248.png",
+      "images/Screenshot_20250826-210248.png"
+    ],
+    "imagesObj": {
+      "front": "images/Screenshot_20250826-210248.png",
+      "back": "images/Screenshot_20250826-210248.png"
+    },
+    "originalId": "sleep-token-even-in-arcadia"
   },
   {
     "id": "Best of styx",
