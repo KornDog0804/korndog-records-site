@@ -8,6 +8,9 @@
 // - Discounts:
 //    1) 3 for $25 => any record priced EXACTLY $10 (by quantity)
 //    2) 10% off $130+ => PREMIUM tier subtotal only (excludes $10 items)
+// - CART FIX:
+//    Reads both korndog_cart_v1 and old kd_cart_v1, normalizes them,
+//    and keeps both in sync so homepage + cart page stop fighting.
 // ================================================================
 
 const TEST_MODE = false;
@@ -18,7 +21,8 @@ const SITE_BASE = "https://korndogrecords.com";
 const PAYPAL_RETURN_URL = `${SITE_BASE}/thank-you.html`;
 const PAYPAL_CANCEL_URL = `${SITE_BASE}/cart.html`;
 
-const CART_KEY = "korndog_cart_v1"; // keep stable forever
+const CART_KEY = "korndog_cart_v1";   // main / real cart
+const LEGACY_CART_KEY = "kd_cart_v1"; // old homepage featured cart
 const PRODUCTS_PER_PAGE = 10;
 const PRODUCTS_FILE = "./products.json2";
 
@@ -62,11 +66,7 @@ async function loadProducts() {
       const qty = typeof p.quantity === "number" ? p.quantity : 1;
       const tier = String(p.tier || "premium").toLowerCase();
 
-      // ✅ Stable ID rules (NO Math.random, ever)
-      // Priority:
-      // 1) use p.id if provided
-      // 2) else slugify(artist-title)
-      // 3) else deterministic fallback "item-###" based on index
+      // Stable ID rules
       const artist = p.artist || "";
       const title = p.title || "";
       const fromNames = slugify(`${artist}-${title}`);
@@ -74,8 +74,21 @@ async function loadProducts() {
         (p.id && String(p.id).trim()) ? String(p.id).trim()
         : (fromNames ? fromNames : `item-${String(idx + 1).padStart(3, "0")}`);
 
-      const imageFront = p.imageFront || (p.images && p.images.front) || p.image || "";
-      const imageBack = p.imageBack || (p.images && p.images.back) || imageFront || p.image || "";
+      // Support both array and object image structures
+      const imageFront =
+        p.imageFront ||
+        (Array.isArray(p.images) ? p.images[0] : "") ||
+        (p.images && p.images.front) ||
+        p.image ||
+        "";
+
+      const imageBack =
+        p.imageBack ||
+        (Array.isArray(p.images) ? (p.images[1] || imageFront) : "") ||
+        (p.images && p.images.back) ||
+        imageFront ||
+        p.image ||
+        "";
 
       return {
         ...p,
@@ -104,17 +117,73 @@ function getProductById(pid) {
 window.kdGetProductById = getProductById;
 
 // ------------------------ CART HELPERS ----------------------------
-function getCart() {
+function safeParseCart(key) {
   try {
-    const raw = localStorage.getItem(CART_KEY);
+    const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
   }
 }
 
+function normalizeCartItem(item) {
+  if (!item || typeof item !== "object") return null;
+
+  const id = item.id || item.pid || "";
+  if (!id) return null;
+
+  return {
+    id: String(id),
+    title: item.title || item.name || "Record",
+    artist: item.artist || "",
+    price: Number(item.price || 0),
+    grade: item.grade || "",
+    tier: String(item.tier || "premium").toLowerCase(),
+    image: item.image || item.imageFront || "",
+    qty: Math.max(1, Number(item.qty || 1))
+  };
+}
+
+function normalizeCart(cart) {
+  if (!Array.isArray(cart)) return [];
+  const out = [];
+
+  cart.forEach((rawItem) => {
+    const item = normalizeCartItem(rawItem);
+    if (!item) return;
+
+    const existing = out.find((x) => String(x.id) === String(item.id));
+    if (existing) {
+      existing.qty += item.qty;
+    } else {
+      out.push(item);
+    }
+  });
+
+  return out;
+}
+
+function getCart() {
+  const mainCart = normalizeCart(safeParseCart(CART_KEY));
+  if (mainCart.length > 0) return mainCart;
+
+  const legacyCart = normalizeCart(safeParseCart(LEGACY_CART_KEY));
+  if (legacyCart.length > 0) {
+    // Migrate legacy into main cart automatically
+    localStorage.setItem(CART_KEY, JSON.stringify(legacyCart));
+    return legacyCart;
+  }
+
+  return [];
+}
+
 function saveCart(cart) {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  const normalized = normalizeCart(cart);
+  localStorage.setItem(CART_KEY, JSON.stringify(normalized));
+
+  // Mirror to old homepage cart so existing homepage code still sees it
+  localStorage.setItem(LEGACY_CART_KEY, JSON.stringify(normalized));
+
   updateCartBadge();
 }
 
@@ -124,10 +193,11 @@ function updateCartBadge() {
   document.querySelectorAll("[data-cart-count]").forEach((el) => (el.textContent = count));
 }
 
-// ✅ Clear Cart (WORKS with onclick="clearCart()")
+// Clear Cart
 function clearCart() {
   try {
     localStorage.removeItem(CART_KEY);
+    localStorage.removeItem(LEGACY_CART_KEY);
   } catch (e) {
     console.warn("Could not clear cart:", e);
   }
@@ -135,7 +205,6 @@ function clearCart() {
   if (typeof renderCart === "function") renderCart();
 }
 
-// keep your old internal name too (in case anything calls it)
 function clearCartHard() {
   clearCart();
 }
@@ -143,7 +212,6 @@ function clearCartHard() {
 window.clearCart = clearCart;
 
 // ---------------------- PRICING RULES -----------------------------
-// ✅ SHIPPING LOCKED FOREVER
 function calcShipping(itemCount) {
   if (TEST_MODE) return TEST_SHIPPING;
   if (itemCount <= 0) return 0;
@@ -172,8 +240,8 @@ function calcPremiumDiscount(cart) {
     const price = Number(item.price) || 0;
     const qty = Number(item.qty) || 0;
 
-    if (price === 10) return sum;         // exclude $10 items
-    if (tier !== "premium") return sum;   // only premium tier
+    if (price === 10) return sum;
+    if (tier !== "premium") return sum;
 
     return sum + price * qty;
   }, 0);
@@ -228,7 +296,7 @@ window.addToCart = addToCart;
 // -------------------- SHOP RENDERING + PAGES ----------------------
 async function renderShop() {
   const container = document.getElementById("products");
-  if (!container) return; // not on shop page
+  if (!container) return;
 
   if (!allProducts || allProducts.length === 0) {
     await loadProducts();
@@ -355,8 +423,6 @@ function renderShopPage() {
   });
 
   renderPagination(visible.length);
-
-  // Tell shop-ui it's safe to bind (important for mobile)
   document.dispatchEvent(new CustomEvent("kd:shopRendered"));
 }
 
@@ -539,6 +605,9 @@ function submitPayPal(cart, shipping, discountTotal) {
 document.addEventListener("DOMContentLoaded", async () => {
   updateCartBadge();
   await loadProducts();
+
+  // If old homepage cart existed, migrate and sync it immediately
+  saveCart(getCart());
 
   renderShop();
   renderCart();
