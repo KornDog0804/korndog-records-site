@@ -1,280 +1,500 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>KornDog Records</title>
-<meta name="description" content="KornDog Records — real records, real stories, vinyl therapy never dies." />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>KornDog Records</title>
+  <meta name="description" content="KornDog Records — real records, real stories, vinyl therapy never dies." />
 
-<link rel="stylesheet" href="styles.css" />
-<script defer src="script.js"></script>
-<script defer src="zk.js"></script>
+  <link rel="stylesheet" href="styles.css?v=homefix2" />
+  <script defer src="zk.js?v=homefix2"></script>
 
-<style>
+  <style>
+    .hero-banner{
+      width:100%;
+      border-radius:28px;
+      display:block;
+      margin-bottom:22px;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:
+        0 18px 44px rgba(0,0,0,.35),
+        0 0 30px rgba(155,255,90,.25),
+        0 0 60px rgba(155,255,90,.15);
+      transition:transform .25s ease, box-shadow .25s ease;
+    }
 
-/* ===== Banner Glow ===== */
+    .hero-banner:hover{
+      transform:scale(1.01);
+      box-shadow:
+        0 22px 50px rgba(0,0,0,.45),
+        0 0 40px rgba(155,255,90,.35),
+        0 0 80px rgba(155,255,90,.20);
+    }
 
-.hero-banner{
-width:100%;
-border-radius:28px;
-display:block;
-margin-bottom:22px;
-border:1px solid rgba(255,255,255,.08);
+    .hero-card{
+      background:linear-gradient(180deg, rgba(24,6,58,.92), rgba(14,2,38,.96));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:28px;
+      padding:28px 22px;
+      box-shadow:0 18px 44px rgba(0,0,0,.28);
+      margin-bottom:26px;
+    }
 
-box-shadow:
-0 18px 44px rgba(0,0,0,.35),
-0 0 30px rgba(155,255,90,.25),
-0 0 60px rgba(155,255,90,.15);
+    .hero-card h1{
+      font-size:clamp(2.2rem, 7vw, 3.7rem);
+      line-height:1.02;
+      margin:0 0 18px;
+      letter-spacing:-.03em;
+    }
 
-transition: transform .25s ease, box-shadow .25s ease;
-}
+    .hero-card h1 .accent{
+      color:var(--accent);
+    }
 
-.hero-banner:hover{
-transform: scale(1.01);
+    .hero-card p{
+      font-size:1.05rem;
+      line-height:1.65;
+      color:var(--muted);
+      margin:0 0 22px;
+      max-width:760px;
+    }
 
-box-shadow:
-0 22px 50px rgba(0,0,0,.45),
-0 0 40px rgba(155,255,90,.35),
-0 0 80px rgba(155,255,90,.20);
-}
+    .hero-panel{
+      margin-top:12px;
+      border:1px solid rgba(123,255,90,.26);
+      border-radius:24px;
+      padding:18px;
+      background:rgba(255,255,255,.03);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+    }
 
-/* ===== Hero Card ===== */
+    .hero-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:16px;
+    }
 
-.hero-card{
-background:linear-gradient(180deg, rgba(24,6,58,.92), rgba(14,2,38,.96));
-border:1px solid rgba(255,255,255,.08);
-border-radius:28px;
-padding:28px 22px;
-box-shadow:0 18px 44px rgba(0,0,0,.28);
-margin-bottom:26px;
-}
+    .btn-home{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:54px;
+      padding:0 22px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:1rem;
+      text-decoration:none;
+      transition:transform .15s ease, filter .15s ease, background .15s ease;
+    }
 
-.hero-card h1{
-font-size:clamp(2.2rem, 7vw, 3.7rem);
-line-height:1.02;
-margin:0 0 18px;
-letter-spacing:-.03em;
-}
+    .btn-home:active{
+      transform:translateY(1px);
+    }
 
-.hero-card h1 .accent{
-color:var(--accent);
-}
+    .btn-home-primary{
+      background:var(--accent);
+      color:#0a0714;
+      box-shadow:0 8px 28px rgba(123,255,90,.22);
+    }
 
-.hero-card p{
-font-size:1.05rem;
-line-height:1.65;
-color:var(--muted);
-margin:0 0 22px;
-max-width:760px;
-}
+    .btn-home-outline{
+      background:rgba(123,255,90,.10);
+      color:var(--accent);
+      border:1px solid rgba(123,255,90,.40);
+    }
 
-.hero-panel{
-margin-top:12px;
-border:1px solid rgba(123,255,90,.26);
-border-radius:24px;
-padding:18px;
-background:rgba(255,255,255,.03);
-}
+    .hero-proof{
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.55;
+      margin:0 0 14px;
+    }
 
-.hero-buttons{
-display:flex;
-flex-wrap:wrap;
-gap:12px;
-margin-bottom:16px;
-}
+    .hero-trust{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      border:1px solid rgba(123,255,90,.36);
+      border-radius:999px;
+      padding:16px 18px;
+      color:var(--accent);
+      font-weight:900;
+      font-size:1.05rem;
+      background:rgba(123,255,90,.08);
+      box-shadow:0 0 24px rgba(123,255,90,.18);
+    }
 
-.btn-home{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-min-height:54px;
-padding:0 22px;
-border-radius:999px;
-font-weight:900;
-font-size:1rem;
-text-decoration:none;
-}
+    .home-section{
+      margin:30px 0 18px;
+    }
 
-.btn-home-primary{
-background:var(--accent);
-color:#0a0714;
-}
+    .home-section h2{
+      margin:0 0 8px;
+      font-size:1.8rem;
+      letter-spacing:-.02em;
+    }
 
-.btn-home-outline{
-background:rgba(123,255,90,.10);
-color:var(--accent);
-border:1px solid rgba(123,255,90,.40);
-}
+    .home-section .subtitle{
+      margin:0 0 18px;
+      color:var(--muted);
+      line-height:1.5;
+    }
 
-.hero-proof{
-color:var(--muted);
-font-size:1rem;
-line-height:1.55;
-margin:0 0 14px;
-}
+    .featured-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+    }
 
-.hero-trust{
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
-border:1px solid rgba(123,255,90,.36);
-border-radius:999px;
-padding:16px 18px;
-color:var(--accent);
-font-weight:900;
-font-size:1.05rem;
-background:rgba(123,255,90,.08);
-}
+    @media (min-width:900px){
+      .featured-grid{
+        grid-template-columns:repeat(4, minmax(0,1fr));
+      }
+    }
 
-/* Featured */
+    .featured-card{
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+      background:linear-gradient(180deg, rgba(51,21,104,.82), rgba(26,7,65,.96));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:24px;
+      padding:14px;
+      box-shadow:0 16px 38px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
 
-.home-section{
-margin:30px 0 18px;
-}
+    .featured-card a{
+      text-decoration:none;
+      color:inherit;
+    }
 
-.home-section h2{
-margin:0 0 8px;
-font-size:1.8rem;
-}
+    .featured-image-wrap{
+      display:block;
+      width:100%;
+      aspect-ratio:1 / 1;
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      margin-bottom:14px;
+    }
 
-.subtitle{
-margin:0 0 18px;
-color:var(--muted);
-line-height:1.5;
-}
+    .featured-image-wrap img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
 
-.featured-grid{
-display:grid;
-grid-template-columns:repeat(2, minmax(0,1fr));
-gap:16px;
-}
+    .featured-title{
+      font-size:1.1rem;
+      line-height:1.14;
+      font-weight:900;
+      margin:0 0 10px;
+      min-height:2.5em;
+    }
 
-@media (min-width:900px){
-.featured-grid{
-grid-template-columns:repeat(4, minmax(0,1fr));
-}
-}
+    .featured-grade{
+      color:var(--muted);
+      font-size:.98rem;
+      margin:0 0 12px;
+    }
 
-.home-bottom-actions{
-display:flex;
-flex-wrap:wrap;
-gap:12px;
-margin-top:18px;
-}
+    .featured-price{
+      font-size:1.2rem;
+      font-weight:900;
+      margin:0 0 16px;
+    }
 
-.empty-featured{
-padding:18px;
-border-radius:20px;
-border:1px solid rgba(255,255,255,.08);
-background:rgba(255,255,255,.03);
-color:var(--muted);
-}
+    .featured-actions{
+      margin-top:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
 
-</style>
+    .featured-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48px;
+      padding:0 16px;
+      border-radius:999px;
+      font-weight:900;
+      text-decoration:none;
+      cursor:pointer;
+      border:none;
+    }
+
+    .featured-btn-primary{
+      background:var(--accent);
+      color:#0a0714;
+    }
+
+    .featured-btn-outline{
+      background:rgba(123,255,90,.09);
+      color:var(--accent);
+      border:1px solid rgba(123,255,90,.35);
+    }
+
+    .home-bottom-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .empty-featured{
+      padding:18px;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+  </style>
 </head>
 
 <body>
+  <header>
+    <div class="nav-inner">
+      <a href="index.html" class="logo-link" aria-label="KornDog Records Home">
+        <div class="logo-circle">
+          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
+        </div>
+      </a>
 
-<header>
-<div class="nav-inner">
+      <nav>
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="cart.html" class="nav-link cart-pill">Cart <span data-cart-count>0</span></a>
+      </nav>
+    </div>
+  </header>
 
-<a href="index.html" class="logo-link">
-<div class="logo-circle">
-<img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
-</div>
-</a>
+  <main class="page">
+    <img
+      id="heroBanner"
+      class="hero-banner"
+      src="images/korndog-banner.png"
+      alt="KornDog Records banner"
+    />
 
-<nav>
-<a href="index.html" class="nav-link active">Home</a>
-<a href="shop.html" class="nav-link">Shop</a>
-<a href="cart.html" class="nav-link cart-pill">Cart <span data-cart-count>0</span></a>
-</nav>
+    <section class="hero-card">
+      <h1>Turn the noise <span class="accent">into therapy.</span></h1>
 
-</div>
-</header>
+      <p>
+        KornDog Records is where grief, grit, and groove collide. No fake hype. No algorithms.
+        Just real records, real stories, and that needle-drop that makes the world slow down.
+      </p>
 
-<main class="page">
+      <div class="hero-panel">
+        <div class="hero-buttons">
+          <a class="btn-home btn-home-primary" href="https://www.whatnot.com/" target="_blank" rel="noopener noreferrer">
+            Shop live on Whatnot
+          </a>
+          <a class="btn-home btn-home-outline" href="https://www.discogs.com/seller/" target="_blank" rel="noopener noreferrer">
+            Browse my Discogs store
+          </a>
+        </div>
 
-<!-- GRAFFITI BANNER -->
-<img
-class="hero-banner"
-src="images/korndog-banner.png"
-alt="KornDog Records banner"
-/>
+        <p class="hero-proof">
+          90+ 5★ Whatnot sales · 10+ 5★ Discogs ratings — no BS, no corners cut, just vinyl therapy done right.
+        </p>
 
-<section class="hero-card">
+        <div class="hero-trust">
+          ⭐ Trusted Seller — 5★ Across Whatnot & Discogs ⭐
+        </div>
+      </div>
+    </section>
 
-<h1>Turn the noise <span class="accent">into therapy.</span></h1>
+    <section class="home-section" id="featuredSection">
+      <h2>Featured Records of the Week</h2>
+      <p class="subtitle">Hand-picked heat from the stack. When they’re gone, they’re gone.</p>
 
-<p>
-KornDog Records is where grief, grit, and groove collide.  
-No fake hype. No algorithms. Just real records, real stories,
-and that needle-drop that makes the world slow down.
-</p>
+      <div id="featuredGrid" class="featured-grid"></div>
 
-<div class="hero-panel">
+      <div class="home-bottom-actions">
+        <a class="btn-home btn-home-primary" href="shop.html">Shop all vinyl</a>
+      </div>
+    </section>
+  </main>
 
-<div class="hero-buttons">
+  <footer>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</footer>
 
-<a class="btn-home btn-home-primary"
-href="https://www.whatnot.com/"
-target="_blank">
-Shop live on Whatnot
-</a>
+  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
 
-<a class="btn-home btn-home-outline"
-href="https://www.discogs.com/seller/"
-target="_blank">
-Browse my Discogs store
-</a>
+  <div id="zkOverlay" class="zk-overlay">
+    <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
+    <div class="zk-bubble" id="zkBubble">
+      <div class="zk-tail"></div>
+      Hi! I'm Zombie Kitty — your crate-digging assistant.<br><br>
+      Tap here to text KornDog.
+    </div>
+  </div>
 
-</div>
+  <script>
+    const CART_KEY = "korndog_cart_v1";
 
-<p class="hero-proof">
-90+ 5★ Whatnot sales · 10+ 5★ Discogs ratings — no BS, no corners cut,
-just vinyl therapy done right.
-</p>
+    function updateCartCount() {
+      try {
+        const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+        const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+        document.querySelectorAll("[data-cart-count]").forEach(el => {
+          el.textContent = String(count);
+        });
+      } catch (err) {
+        document.querySelectorAll("[data-cart-count]").forEach(el => {
+          el.textContent = "0";
+        });
+      }
+    }
 
-<div class="hero-trust">
-⭐ Trusted Seller — 5★ Across Whatnot & Discogs ⭐
-</div>
+    function formatPrice(price) {
+      const n = Number(price) || 0;
+      return "$" + n.toFixed(2);
+    }
 
-</div>
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
 
-</section>
+    function getProductPid(product) {
+      return product.id || product.pid || product.slug || "";
+    }
 
-<section class="home-section">
+    function getProductImage(product) {
+      return (
+        product.imageFront ||
+        (Array.isArray(product.images) ? product.images[0] : "") ||
+        (product.images && product.images.front) ||
+        product.image ||
+        ""
+      );
+    }
 
-<h2>Featured Records of the Week</h2>
-<p class="subtitle">
-Hand-picked heat from the stack. When they’re gone, they’re gone.
-</p>
+    function getQty(product) {
+      return Number(product.quantity ?? product.qty ?? 1);
+    }
 
-<div id="featuredGrid" class="featured-grid"></div>
+    function isAvailable(product) {
+      if (product.sold === true) return false;
+      if (product.available === false) return false;
+      if (getQty(product) <= 0) return false;
+      return true;
+    }
 
-<div class="home-bottom-actions">
-<a class="btn-home btn-home-primary" href="shop.html">
-Shop all vinyl
-</a>
-</div>
+    function addToCart(product) {
+      const pid = getProductPid(product);
+      if (!pid) return;
 
-</section>
+      const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+      const maxQty = getQty(product);
+      const existing = cart.find(item => String(item.id) === String(pid));
 
-</main>
+      if (existing) {
+        if ((Number(existing.qty) || 0) >= maxQty) {
+          alert(maxQty === 1 ? "You only have 1 copy in stock." : `You only have ${maxQty} copies in stock.`);
+          return;
+        }
+        existing.qty += 1;
+      } else {
+        cart.push({
+          id: pid,
+          title: product.title || "",
+          artist: product.artist || "",
+          price: Number(product.price) || 0,
+          grade: product.grade || "",
+          tier: String(product.tier || "premium").toLowerCase(),
+          image: getProductImage(product),
+          qty: 1
+        });
+      }
 
-<footer>
-© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
-</footer>
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      updateCartCount();
+      alert("Dropped in the cart.");
+    }
 
-<a id="floatingJoey" class="floating-message">💬</a>
+    function buildFeaturedCard(product) {
+      const pid = getProductPid(product);
+      const image = getProductImage(product);
+      const titleText = [product.artist, product.title].filter(Boolean).join(" – ");
+      const title = escapeHtml(titleText || "Record");
+      const grade = escapeHtml(product.grade || "—");
+      const price = formatPrice(product.price);
+      const productUrl = "product.html?pid=" + encodeURIComponent(pid);
 
-<div id="zkOverlay" class="zk-overlay">
-<img src="images/3817.png" class="zk-kitty" />
-<div class="zk-bubble">
-Hi! I'm Zombie Kitty — your crate digging assistant.
-</div>
-</div>
+      const card = document.createElement("article");
+      card.className = "featured-card";
 
+      card.innerHTML = `
+        <a href="${productUrl}" class="featured-image-wrap" aria-label="Open ${title}">
+          <img src="${escapeHtml(image)}" alt="${title}" loading="lazy" />
+        </a>
+
+        <a href="${productUrl}">
+          <h3 class="featured-title">${title}</h3>
+        </a>
+
+        <div class="featured-grade">Grade: ${grade}</div>
+        <div class="featured-price">${price}</div>
+
+        <div class="featured-actions">
+          <a class="featured-btn featured-btn-outline" href="${productUrl}">View Record</a>
+          <button class="featured-btn featured-btn-primary" type="button">Add to Cart</button>
+        </div>
+      `;
+
+      const addBtn = card.querySelector("button");
+      addBtn.addEventListener("click", () => addToCart(product));
+
+      return card;
+    }
+
+    async function loadFeaturedRecords() {
+      const grid = document.getElementById("featuredGrid");
+      if (!grid) return;
+
+      grid.innerHTML = `<div class="empty-featured">Loading featured records…</div>`;
+
+      try {
+        const res = await fetch("products.json2?v=homefix2", { cache: "no-store" });
+        if (!res.ok) throw new Error("Could not load products.json2");
+
+        const data = await res.json();
+        const products = Array.isArray(data) ? data : [];
+
+        const featured = products
+          .filter(product => product.featured === true && isAvailable(product))
+          .slice(0, 4);
+
+        grid.innerHTML = "";
+
+        if (!featured.length) {
+          grid.innerHTML = `<div class="empty-featured">No featured records are set yet.</div>`;
+          return;
+        }
+
+        featured.forEach(product => {
+          grid.appendChild(buildFeaturedCard(product));
+        });
+      } catch (err) {
+        grid.innerHTML = `<div class="empty-featured">Couldn’t load featured records right now.</div>`;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateCartCount();
+      loadFeaturedRecords();
+    });
+  </script>
 </body>
 </html>
