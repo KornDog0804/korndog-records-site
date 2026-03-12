@@ -6,10 +6,32 @@
   <title>KornDog Records</title>
   <meta name="description" content="KornDog Records — real records, real stories, vinyl therapy never dies." />
 
-  <link rel="stylesheet" href="styles.css?v=featured1" />
-  <script defer src="zk.js?v=featured1"></script>
+  <link rel="stylesheet" href="styles.css?v=featured2" />
+  <script defer src="script.js?v=featured2"></script>
+  <script defer src="zk.js?v=featured2"></script>
 
   <style>
+    /* homepage-only logo alignment fix */
+    header .logo-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height:100%;
+    }
+    header .logo-circle{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    header .logo-circle img{
+      display:block;
+    }
+    @media (max-width:768px){
+      header .logo-circle{
+        transform: translateY(-1px);
+      }
+    }
+
     .hero-banner{
       width:100%;
       border-radius:28px;
@@ -152,11 +174,37 @@
       padding:14px;
       box-shadow:0 16px 38px rgba(0,0,0,.25);
       overflow:hidden;
+      position:relative;
     }
 
     .featured-card a{
       text-decoration:none;
       color:inherit;
+    }
+
+    .featured-badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-bottom:10px;
+    }
+
+    .featured-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:28px;
+      padding:0 10px;
+      border-radius:999px;
+      font-size:.74rem;
+      font-weight:900;
+      letter-spacing:.03em;
+    }
+
+    .featured-badge-pick{
+      background:rgba(255,213,74,.14);
+      color:#ffd54a;
+      border:1px solid rgba(255,213,74,.38);
     }
 
     .featured-image-wrap{
@@ -263,7 +311,12 @@
   </header>
 
   <main class="page">
-    <img class="hero-banner" src="images/Screenshot_20250827-211941.png" alt="KornDog Records banner" />
+    <img
+      id="heroBanner"
+      class="hero-banner"
+      src="images/Screenshot_20250827-211941.png"
+      alt="KornDog Records banner"
+    />
 
     <section class="hero-card">
       <h1>Turn the noise <span class="accent">into therapy.</span></h1>
@@ -319,11 +372,31 @@
   </div>
 
   <script>
-    const CART_KEY = "kd_cart_v1";
+    const HOME_CART_KEY = "korndog_cart_v1";
+    const HOME_LEGACY_CART_KEY = "kd_cart_v1";
+
+    function readHomeCart() {
+      try {
+        const main = JSON.parse(localStorage.getItem(HOME_CART_KEY) || "[]");
+        if (Array.isArray(main) && main.length) return main;
+      } catch (e) {}
+
+      try {
+        const legacy = JSON.parse(localStorage.getItem(HOME_LEGACY_CART_KEY) || "[]");
+        if (Array.isArray(legacy) && legacy.length) return legacy;
+      } catch (e) {}
+
+      return [];
+    }
+
+    function writeHomeCart(cart) {
+      localStorage.setItem(HOME_CART_KEY, JSON.stringify(cart));
+      localStorage.setItem(HOME_LEGACY_CART_KEY, JSON.stringify(cart));
+    }
 
     function updateCartCount() {
       try {
-        const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+        const cart = readHomeCart();
         const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
         document.querySelectorAll("[data-cart-count]").forEach(el => {
           el.textContent = String(count);
@@ -356,6 +429,7 @@
     function getProductImage(product) {
       return (
         product.imageFront ||
+        (Array.isArray(product.images) ? product.images[0] : "") ||
         (product.images && product.images.front) ||
         product.image ||
         ""
@@ -373,29 +447,38 @@
       return true;
     }
 
-    function addToCart(product) {
+    function addToCartFromHomepage(product) {
       const pid = getProductPid(product);
       if (!pid) return;
 
-      const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+      // If shared site addToCart exists from script.js, use it
+      if (typeof window.addToCart === "function") {
+        window.addToCart(pid);
+        updateCartCount();
+        return;
+      }
+
+      // Fallback only if script.js somehow doesn't load
+      const cart = readHomeCart();
       const maxQty = getQty(product);
-      const existing = cart.find(item => item.pid === pid);
+      const existing = cart.find(item => String(item.id || item.pid) === String(pid));
 
       if (existing) {
         existing.qty = Math.min((Number(existing.qty) || 0) + 1, maxQty);
       } else {
         cart.push({
-          pid,
-          name: product.title || product.name || "Record",
+          id: pid,
+          title: product.title || product.name || "Record",
           artist: product.artist || "",
           price: Number(product.price) || 0,
+          grade: product.grade || "",
+          tier: String(product.tier || "premium").toLowerCase(),
           image: getProductImage(product),
-          qty: 1,
-          maxQty
+          qty: 1
         });
       }
 
-      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      writeHomeCart(cart);
       updateCartCount();
       alert("Dropped in the cart.");
     }
@@ -412,7 +495,13 @@
       const card = document.createElement("article");
       card.className = "featured-card";
 
+      const joeysPickBadge = product.joeysPick
+        ? `<div class="featured-badges"><span class="featured-badge featured-badge-pick">⭐ Joey’s Pick</span></div>`
+        : "";
+
       card.innerHTML = `
+        ${joeysPickBadge}
+
         <a href="${productUrl}" class="featured-image-wrap" aria-label="Open ${title}">
           <img src="${escapeHtml(image)}" alt="${title}" loading="lazy" />
         </a>
@@ -431,7 +520,7 @@
       `;
 
       const addBtn = card.querySelector("button");
-      addBtn.addEventListener("click", () => addToCart(product));
+      addBtn.addEventListener("click", () => addToCartFromHomepage(product));
 
       return card;
     }
@@ -443,13 +532,15 @@
       grid.innerHTML = `<div class="empty-featured">Loading featured records…</div>`;
 
       try {
-        const res = await fetch("products.json2?v=featured1", { cache: "no-store" });
+        const res = await fetch("products.json2?v=featured2", { cache: "no-store" });
         if (!res.ok) throw new Error("Could not load products.json2");
 
         const data = await res.json();
         const products = Array.isArray(data) ? data : [];
 
-        const featured = products.filter(product => product.featured === true && isAvailable(product)).slice(0, 4);
+        const featured = products
+          .filter(product => product.featured === true && isAvailable(product))
+          .slice(0, 4);
 
         grid.innerHTML = "";
 
@@ -462,11 +553,35 @@
           grid.appendChild(buildFeaturedCard(product));
         });
       } catch (err) {
+        console.error(err);
         grid.innerHTML = `<div class="empty-featured">Couldn’t load featured records right now.</div>`;
       }
     }
 
+    function setupBannerFallback() {
+      const banner = document.getElementById("heroBanner");
+      if (!banner) return;
+
+      const tries = [
+        "images/Screenshot_20250827-211941.png",
+        "images/Screenshot_20250827-211941.jpg",
+        "images/Screenshot_20250827-211941.jpeg",
+        "images/screenshot_20250827-211941.png"
+      ];
+
+      let index = 0;
+      banner.onerror = () => {
+        index += 1;
+        if (index < tries.length) {
+          banner.src = tries[index];
+        } else {
+          banner.style.display = "none";
+        }
+      };
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
+      setupBannerFallback();
       updateCartCount();
       loadFeaturedRecords();
     });
