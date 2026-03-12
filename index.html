@@ -6,8 +6,8 @@
   <title>KornDog Records</title>
   <meta name="description" content="KornDog Records — real records, real stories, vinyl therapy never dies." />
 
-  <link rel="stylesheet" href="styles.css?v=homefix2" />
-  <script defer src="zk.js?v=homefix2"></script>
+  <link rel="stylesheet" href="styles.css?v=homefix3" />
+  <script defer src="zk.js?v=homefix3"></script>
 
   <style>
     .hero-banner{
@@ -164,6 +164,7 @@
       padding:14px;
       box-shadow:0 16px 38px rgba(0,0,0,.25);
       overflow:hidden;
+      position:relative;
     }
 
     .featured-card a{
@@ -187,6 +188,23 @@
       height:100%;
       object-fit:cover;
       display:block;
+    }
+
+    .featured-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      width:max-content;
+      margin:0 0 10px;
+      padding:7px 12px;
+      border-radius:999px;
+      background:rgba(255,215,0,.12);
+      color:#ffd95a;
+      border:1px solid rgba(255,215,0,.35);
+      font-size:.82rem;
+      font-weight:900;
+      letter-spacing:.04em;
+      box-shadow:0 0 18px rgba(255,215,0,.12);
     }
 
     .featured-title{
@@ -295,7 +313,7 @@
           <a class="btn-home btn-home-primary" href="https://www.whatnot.com/" target="_blank" rel="noopener noreferrer">
             Shop live on Whatnot
           </a>
-          <a class="btn-home btn-home-outline" href="https://www.discogs.com/seller/" target="_blank" rel="noopener noreferrer">
+          <a class="btn-home btn-home-outline" href="https://www.discogs.com/seller/korndog0804" target="_blank" rel="noopener noreferrer">
             Browse my Discogs store
           </a>
         </div>
@@ -391,6 +409,10 @@
       return true;
     }
 
+    function isJoeysPick(product) {
+      return product.joeysPick === true || product.joeys_pick === true || product.joeys_pick === true;
+    }
+
     function addToCart(product) {
       const pid = getProductPid(product);
       if (!pid) return;
@@ -431,6 +453,9 @@
       const grade = escapeHtml(product.grade || "—");
       const price = formatPrice(product.price);
       const productUrl = "product.html?pid=" + encodeURIComponent(pid);
+      const joeysPickMarkup = isJoeysPick(product)
+        ? `<div class="featured-badge">⭐ Joey's Pick</div>`
+        : "";
 
       const card = document.createElement("article");
       card.className = "featured-card";
@@ -439,6 +464,8 @@
         <a href="${productUrl}" class="featured-image-wrap" aria-label="Open ${title}">
           <img src="${escapeHtml(image)}" alt="${title}" loading="lazy" />
         </a>
+
+        ${joeysPickMarkup}
 
         <a href="${productUrl}">
           <h3 class="featured-title">${title}</h3>
@@ -466,7 +493,7 @@
       grid.innerHTML = `<div class="empty-featured">Loading featured records…</div>`;
 
       try {
-        const res = await fetch("products.json2?v=homefix2", { cache: "no-store" });
+        const res = await fetch("products.json2?v=homefix3", { cache: "no-store" });
         if (!res.ok) throw new Error("Could not load products.json2");
 
         const data = await res.json();
