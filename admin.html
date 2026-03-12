@@ -8,7 +8,7 @@
 :root{
   --bg:#050013;--bg2:#2a0a60;--card:rgba(255,255,255,.04);--card2:rgba(0,0,0,.18);
   --border:rgba(255,255,255,.10);--text:#f5f5ff;--muted:#a1a1c5;
-  --accent:#7bff5a;--accent2:#7ef7ff;--danger:#ff4b6a;--warn:#ff9f43;
+  --accent:#7bff5a;--accent2:#7ef7ff;--danger:#ff4b6a;--warn:#ff9f43;--pick:#ffd54a;
 }
 *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
 body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at top,var(--bg2) 0,var(--bg) 55%)}
@@ -66,6 +66,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .badge.hidden{border-color:rgba(255,75,106,.35);color:var(--danger)}
 .badge.sold{border-color:rgba(255,159,67,.55);color:#ffd4a8}
 .badge.featured{border-color:rgba(126,247,255,.50);color:var(--accent2)}
+.badge.pick{border-color:rgba(255,213,74,.55);color:var(--pick)}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .pill-row{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
 .search-pill{border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.03);color:var(--muted);
@@ -163,6 +164,14 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
         <div class="checkbox-row">
           <input id="featured" type="checkbox"/>
           <span class="hint" style="margin:0">Show on homepage Featured Records section</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Joey’s Pick</label>
+        <div class="checkbox-row">
+          <input id="joeysPick" type="checkbox"/>
+          <span class="hint" style="margin:0">Mark this record as a Joey’s Pick / grail highlight</span>
         </div>
       </div>
 
@@ -269,16 +278,10 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
 </main>
 
 <script>
-/** =========================
- *  CONFIG
- *  ========================= */
 const OWNER="KornDog0804", REPO="korndog-records-site", BRANCH="main";
 const PRODUCTS_PATH="products.json2";
 const IMAGES_FOLDER="images";
 
-/** =========================
- *  DOM + STATUS
- *  ========================= */
 const $=id=>document.getElementById(id);
 const statusEl=$("status"), statusText=$("statusText");
 function setStatus(msg, kind="ok"){
@@ -288,9 +291,6 @@ function setStatus(msg, kind="ok"){
   if(kind==="warn")  statusEl.classList.add("warn");
 }
 
-/** =========================
- *  TOKEN STORAGE
- *  ========================= */
 const TOKEN_KEY="korndog_github_token";
 function getToken(){ return localStorage.getItem(TOKEN_KEY) || ""; }
 function setToken(v){ localStorage.setItem(TOKEN_KEY, v); }
@@ -304,9 +304,6 @@ function requireToken(){
   return t;
 }
 
-/** =========================
- *  UTIL
- *  ========================= */
 function norm(s){ return (s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
 function escapeHtml(s){ return String(s??"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])); }
 function safeFileName(name){
@@ -325,9 +322,6 @@ async function textToBase64(text){
   return bytesToBase64(enc);
 }
 
-/** =========================
- *  DUMMY-PROOF PID/ID
- *  ========================= */
 function slugify(raw){
   let s = String(raw || "").trim().toLowerCase();
   try{ s = s.normalize("NFKD"); }catch(e){}
@@ -348,9 +342,6 @@ function ensureUniquePid(base, products){
   return `${base}-${n}`;
 }
 
-/** =========================
- *  GITHUB API
- *  ========================= */
 async function github(path, opts={}){
   const token=requireToken();
   const url=`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`;
@@ -399,9 +390,6 @@ async function putBase64(path, b64, message, sha){
   return github(path, { method:"PUT", body });
 }
 
-/** =========================
- *  IMAGE COMPRESSION
- *  ========================= */
 async function compressImageToJpegBase64(file, maxW=1400, maxH=1400, quality=0.86){
   const img = await new Promise((resolve, reject)=>{
     const i = new Image();
@@ -442,9 +430,6 @@ async function uploadImage(file){
   return path;
 }
 
-/** =========================
- *  PRODUCTS LOAD/SAVE
- *  ========================= */
 async function loadProducts(){
   try{
     const { text, sha } = await getFile(PRODUCTS_PATH);
@@ -456,6 +441,7 @@ async function loadProducts(){
       if(p.tier==null) p.tier="premium";
       if(p.sold==null) p.sold=false;
       if(p.featured==null) p.featured=false;
+      if(p.joeysPick==null) p.joeysPick=false;
       if(!p.pid && p.id) p.pid = String(p.id);
     });
     return { products: arr, sha };
@@ -469,9 +455,6 @@ async function saveProducts(products, sha, msg){
   await putText(PRODUCTS_PATH, JSON.stringify(products,null,2), msg, sha);
 }
 
-/** =========================
- *  STATE
- *  ========================= */
 let cache = null;
 let editMode = { active:false, id:"" };
 
@@ -485,9 +468,6 @@ async function getProducts(){
   return cache;
 }
 
-/** =========================
- *  TOKEN UI
- *  ========================= */
 (function initTokenUI(){
   const t=getToken();
   if(t){
@@ -542,9 +522,6 @@ $("btnRefresh").onclick=async()=>{
 };
 $("btnRefresh2").onclick=$("btnRefresh").onclick;
 
-/** =========================
- *  EDIT MODE
- *  ========================= */
 function enterEditMode(p){
   editMode={active:true,id:(p.pid||p.id)};
   $("editHint").style.display="block";
@@ -563,6 +540,7 @@ function enterEditMode(p){
   $("tier").value=p.tier||"premium";
   $("available").checked=(p.available!==false);
   $("featured").checked=!!p.featured;
+  $("joeysPick").checked=!!p.joeysPick;
   $("desc").value=p.description||"";
 
   $("front").value="";
@@ -585,22 +563,18 @@ function exitEditMode(){
   $("tier").value="premium";
   $("available").checked=true;
   $("featured").checked=false;
+  $("joeysPick").checked=false;
   $("rid").disabled=false;
   setStatus("Ready for a new record.");
 }
 $("btnCancel").onclick=exitEditMode;
 
-/** choose file preference:
- *  if library has file use it, else camera file */
 function pickFile(libInputId, camInputId){
   const lib = $(libInputId).files && $(libInputId).files[0];
   const cam = $(camInputId).files && $(camInputId).files[0];
   return lib || cam || null;
 }
 
-/** =========================
- *  SAVE RECORD
- *  ========================= */
 $("form").addEventListener("submit", async (e)=>{
   e.preventDefault();
   try{ requireToken(); }catch{ return; }
@@ -614,6 +588,7 @@ $("form").addEventListener("submit", async (e)=>{
   const tier=$("tier").value||"premium";
   const available=!!$("available").checked;
   const featured=!!$("featured").checked;
+  const joeysPick=!!$("joeysPick").checked;
   const description=$("desc").value.trim();
 
   const frontFile = pickFile("front","frontCam");
@@ -670,6 +645,7 @@ $("form").addEventListener("submit", async (e)=>{
       tier,
       available,
       featured,
+      joeysPick,
       description,
       sold,
       image: frontPath,
@@ -702,6 +678,7 @@ $("form").addEventListener("submit", async (e)=>{
       $("tier").value="premium";
       $("available").checked=true;
       $("featured").checked=false;
+      $("joeysPick").checked=false;
       $("rid").value="";
     }
 
@@ -711,9 +688,6 @@ $("form").addEventListener("submit", async (e)=>{
   }
 });
 
-/** =========================
- *  DELETE
- *  ========================= */
 $("btnDel").onclick=async()=>{
   try{ requireToken(); }catch{ return; }
   if(!editMode.active) return;
@@ -739,9 +713,6 @@ $("btnDel").onclick=async()=>{
   }
 };
 
-/** =========================
- *  SOLD SEARCH + ACTIONS
- *  ========================= */
 $("soldSearch").addEventListener("input", async ()=>{
   $("soldPills").innerHTML="";
   const term=norm($("soldSearch").value.trim());
@@ -802,9 +773,6 @@ $("btnSoldSave").onclick=()=>applySoldAction($("soldAction").value);
 $("btnQuickSold").onclick=()=>applySoldAction("sold");
 $("btnQuickAvail").onclick=()=>applySoldAction("available");
 
-/** =========================
- *  INVENTORY RENDER
- *  ========================= */
 function badge(text,cls){ return `<span class="badge ${cls||""}">${escapeHtml(text)}</span>`; }
 function getThumb(p){ return p.imageFront||p.image||""; }
 
@@ -863,6 +831,7 @@ async function renderInventory(){
           ${sold ? badge("SOLD","sold") : (live ? badge("LIVE","live") : badge("HIDDEN","hidden"))}
           ${badge("Tier: "+(p.tier||"premium"))}
           ${p.featured ? badge("FEATURED","featured") : ""}
+          ${p.joeysPick ? badge("JOEY’S PICK","pick") : ""}
         </div>
       </div>
       <div class="actions">
@@ -883,9 +852,6 @@ async function renderInventory(){
 $("invSearch").addEventListener("input",()=>renderInventory().catch(()=>{}));
 $("invFilter").addEventListener("change",()=>renderInventory().catch(()=>{}));
 
-/** =========================
- *  BOOT
- *  ========================= */
 (async function boot(){
   if(!getToken()){
     setStatus("Paste token to enable admin actions…","warn");
