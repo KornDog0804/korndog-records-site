@@ -990,9 +990,8 @@ function setDmStatus(msg, kind="ok"){
 // Load Discogs folders into dropdown
 (async function loadDcFolders(){
   try{
-    const res=await fetch(`https://api.discogs.com/users/${DISCOGS_USER}/collection/folders`,{
-      headers:{"User-Agent":"KorndogRecordsAdmin/1.0 +https://korndogrecords.com"}
-    });
+    const dcFolderUrl = `https://api.discogs.com/users/${DISCOGS_USER}/collection/folders`;
+    const res=await fetch("https://corsproxy.io/?url="+encodeURIComponent(dcFolderUrl));
     if(!res.ok) return;
     const data=await res.json();
     (data.folders||[]).forEach(f=>{
@@ -1016,8 +1015,8 @@ async function loadDcCollection(page){
   $("dcPagBot").style.display="none";
 
   try{
-    const url=`https://api.discogs.com/users/${DISCOGS_USER}/collection/folders/${folder}/releases?per_page=25&page=${page}&sort=${sort}&sort_order=asc`;
-    const res=await fetch(url,{headers:{"User-Agent":"KorndogRecordsAdmin/1.0 +https://korndogrecords.com"}});
+    const dcUrl=`https://api.discogs.com/users/${DISCOGS_USER}/collection/folders/${folder}/releases?per_page=25&page=${page}&sort=${sort}&sort_order=asc`;
+    const res=await fetch("https://corsproxy.io/?url="+encodeURIComponent(dcUrl));
     if(!res.ok) throw new Error("Discogs API "+res.status+". Make sure your Discogs collection is set to Public in your Discogs privacy settings.");
     const data=await res.json();
 
