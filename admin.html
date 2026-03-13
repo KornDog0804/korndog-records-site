@@ -53,21 +53,33 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .status.error{border-color:rgba(255,75,106,.45);background:rgba(255,75,106,.08);color:var(--danger)}
 .status.warn{border-color:rgba(255,159,67,.45);background:rgba(255,159,67,.08);color:#ffd4a8}
 .inv-toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-.inv-list{display:flex;flex-direction:column;gap:12px;margin-top:12px}
-.inv-card{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:var(--card2)}
-.inv-thumb{width:78px;height:78px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);overflow:hidden;flex:0 0 auto}
+/* ── Section 4 horizontal scroll rail ── */
+.inv-list{display:flex;flex-direction:row;gap:14px;margin-top:12px;
+  overflow-x:auto;overflow-y:visible;padding-bottom:10px;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.inv-list::-webkit-scrollbar{height:6px}
+.inv-list::-webkit-scrollbar-track{background:rgba(255,255,255,.04);border-radius:999px}
+.inv-list::-webkit-scrollbar-thumb{background:rgba(123,255,90,.35);border-radius:999px}
+.inv-card{display:flex;flex-direction:column;flex:0 0 220px;width:220px;
+  padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);
+  background:var(--card2);scroll-snap-align:start}
+.inv-thumb{width:100%;aspect-ratio:1/1;border-radius:10px;border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:8px}
 .inv-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .inv-meta{flex:1;min-width:0}
-.inv-title{margin:0 0 4px;font-weight:950;font-size:1rem}
-.inv-sub{margin:0;color:var(--muted);font-size:.86rem;line-height:1.25}
-.badges{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
-.badge{font-size:.72rem;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.18);color:var(--muted)}
+.inv-title{margin:0 0 4px;font-weight:950;font-size:.88rem;line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inv-sub{margin:0;color:var(--muted);font-size:.78rem;line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badges{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
+.badge{font-size:.68rem;padding:3px 7px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.18);color:var(--muted)}
 .badge.live{border-color:rgba(123,255,90,.35);color:var(--accent)}
 .badge.hidden{border-color:rgba(255,75,106,.35);color:var(--danger)}
 .badge.sold{border-color:rgba(255,159,67,.55);color:#ffd4a8}
 .badge.featured{border-color:rgba(126,247,255,.50);color:var(--accent2)}
 .badge.pick{border-color:rgba(255,213,74,.55);color:var(--pick)}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.actions .btn{font-size:.7rem;padding:7px 10px}
 .pill-row{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
 .search-pill{border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.03);color:var(--muted);
   padding:6px 10px;font-size:.78rem;cursor:pointer}
@@ -75,7 +87,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 
 .checkbox-row{display:flex;align-items:center;gap:8px;margin-top:6px}
 .checkbox-row input{width:16px;height:16px}
 .hr{height:1px;background:rgba(255,255,255,.08);margin:10px 0}
-@media(max-width:720px){.inv-card{flex-direction:column}.inv-thumb{width:100%;height:auto;aspect-ratio:1/1}}
 small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;color:var(--muted)}
 </style>
 </head>
@@ -242,8 +253,8 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
     </div>
     <div class="btn-row">
       <button id="btnSoldSave" class="btn btn-primary" type="button">Save Change to Site</button>
-      <button id="btnQuickSold" class="btn btn-danger" type="button">Quick: Mark Sold</button>
-      <button id="btnQuickAvail" class="btn btn-soft" type="button">Quick: Mark Available</button>
+        <button class="btn btn-danger" type="button">Sold</button>
+        <button class="btn btn-soft" type="button">Avail</button>
     </div>
   </section>
 
@@ -275,7 +286,112 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
     <div class="hint" style="margin-top:8px">Tap <b>Edit</b> to load into Section 2, then save.</div>
     <div id="invList" class="inv-list"></div>
   </section>
+  <!-- ── SECTION 5: DISCOGS COLLECTION IMPORT ─────────────────────────────── -->
+  <section class="section" id="sec5">
+    <div class="section-title">5. Import from My Discogs Collection (korndog0804)</div>
+    <div class="hint" style="margin-bottom:12px">
+      Browse your 300-record Discogs collection. Hit <b>Import</b> on any record, set price &amp; grade, upload a photo — it goes live into your shop without touching anything else.
+    </div>
+
+    <div class="row" style="align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+      <div class="field" style="margin:0;flex:2;min-width:200px">
+        <label for="dcSearch">Search Collection</label>
+        <input id="dcSearch" type="text" placeholder="Artist or title… (press Enter)"/>
+      </div>
+      <div class="field" style="margin:0;min-width:160px">
+        <label for="dcSort">Sort</label>
+        <select id="dcSort">
+          <option value="added">Recently Added</option>
+          <option value="artist">Artist A–Z</option>
+          <option value="year">Year</option>
+          <option value="title">Title A–Z</option>
+        </select>
+      </div>
+      <div class="field" style="margin:0;min-width:160px">
+        <label for="dcFolder">Folder</label>
+        <select id="dcFolder"><option value="0">All Records</option></select>
+      </div>
+      <div style="padding-bottom:10px">
+        <button id="btnDcLoad" class="btn btn-primary" type="button">Load Collection</button>
+      </div>
+    </div>
+
+    <div id="dcStatus" class="status" style="display:none"><span id="dcStatusText"></span></div>
+
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px" id="dcPagTop" style="display:none">
+      <button id="dcPrev" class="btn btn-outline" type="button" disabled>◀ Prev</button>
+      <span id="dcPageInfo" style="color:var(--muted);font-size:.85rem"></span>
+      <button id="dcNext" class="btn btn-outline" type="button" disabled>Next ▶</button>
+    </div>
+
+    <div id="dcList" class="inv-list"></div>
+
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px" id="dcPagBot" style="display:none">
+      <button id="dcPrev2" class="btn btn-outline" type="button" disabled>◀ Prev</button>
+      <span id="dcPageInfo2" style="color:var(--muted);font-size:.85rem"></span>
+      <button id="dcNext2" class="btn btn-outline" type="button" disabled>Next ▶</button>
+    </div>
+  </section>
 </main>
+
+<!-- ── Discogs Import Modal ──────────────────────────────────────────────────── -->
+<div id="dcModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.78);backdrop-filter:blur(7px);align-items:center;justify-content:center">
+  <div style="background:#0e0128;border:1px solid rgba(123,255,90,.3);border-radius:1.6rem;padding:1.5rem;width:min(96vw,520px);max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.7)">
+    <div style="margin:0 0 1rem;font-size:1rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2)">Import Record to Shop</div>
+
+    <div class="field"><label for="dmArtist">Artist</label><input id="dmArtist" type="text"/></div>
+    <div class="field"><label for="dmTitle">Title</label><input id="dmTitle" type="text"/></div>
+
+    <div class="row">
+      <div class="field"><label for="dmPrice">Price ($)</label><input id="dmPrice" type="number" step="0.01" placeholder="17.99"/></div>
+      <div class="field"><label for="dmGrade">Grade</label><input id="dmGrade" type="text" placeholder="NM/NM"/></div>
+      <div class="field"><label for="dmQty">Qty</label><input id="dmQty" type="number" min="1" value="1"/></div>
+    </div>
+
+    <div class="field">
+      <label for="dmTier">Tier</label>
+      <select id="dmTier">
+        <option value="premium">Premium</option>
+        <option value="tenbin">$10 Bin</option>
+        <option value="threefor25">3 for $25</option>
+        <option value="budget">Budget</option>
+        <option value="sealed">Sealed</option>
+      </select>
+    </div>
+
+    <div class="field"><label for="dmDesc">Description / Notes</label><textarea id="dmDesc"></textarea></div>
+
+    <div class="hint" style="margin-bottom:8px"><b>Mobile tip:</b> Use Library Picker to choose from Photos.</div>
+    <div class="row">
+      <div class="field">
+        <label>Front Photo (Library)</label>
+        <input id="dmFront" type="file" accept="image/*"/>
+        <div class="hint">Required.</div>
+      </div>
+      <div class="field">
+        <label>Front Photo (Camera)</label>
+        <input id="dmFrontCam" type="file" accept="image/*" capture="environment"/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Back Photo (Library)</label>
+        <input id="dmBack" type="file" accept="image/*"/>
+        <div class="hint">Optional.</div>
+      </div>
+      <div class="field">
+        <label>Back Photo (Camera)</label>
+        <input id="dmBackCam" type="file" accept="image/*" capture="environment"/>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:14px">
+      <button id="btnDmSave" class="btn btn-primary" type="button">Save to Shop</button>
+      <button id="btnDmCancel" class="btn btn-outline" type="button">Cancel</button>
+    </div>
+    <div id="dmStatus" class="status" style="display:none"><span id="dmStatusText"></span></div>
+  </div>
+</div>
 
 <script>
 const OWNER="KornDog0804", REPO="korndog-records-site", BRANCH="main";
@@ -826,18 +942,18 @@ async function renderInventory(){
       <div class="inv-thumb"><img src="${imgSrc}" alt="${escapeHtml((p.artist?p.artist+" — ":"")+(p.title||pid||"Record"))}"></div>
       <div class="inv-meta">
         <p class="inv-title">${escapeHtml((p.artist?p.artist+" — ":"")+(p.title||pid||"Unknown"))}</p>
-        <p class="inv-sub">PID: ${escapeHtml(pid)} · $${escapeHtml(p.price??"")} · ${escapeHtml(p.grade||"")} · Qty: ${escapeHtml(p.quantity??0)}</p>
+        <p class="inv-sub">$${escapeHtml(p.price??"")} · ${escapeHtml(p.grade||"")} · Qty: ${escapeHtml(p.quantity??0)}</p>
         <div class="badges">
           ${sold ? badge("SOLD","sold") : (live ? badge("LIVE","live") : badge("HIDDEN","hidden"))}
-          ${badge("Tier: "+(p.tier||"premium"))}
+          ${badge(p.tier||"premium")}
           ${p.featured ? badge("FEATURED","featured") : ""}
-          ${p.joeysPick ? badge("JOEY’S PICK","pick") : ""}
+          ${p.joeysPick ? badge("PICK","pick") : ""}
         </div>
       </div>
       <div class="actions">
         <button class="btn btn-primary" type="button">Edit</button>
-        <button class="btn btn-danger" type="button">Mark Sold</button>
-        <button class="btn btn-soft" type="button">Mark Available</button>
+        <button class="btn btn-danger" type="button">Sold</button>
+        <button class="btn btn-soft" type="button">Avail</button>
       </div>`;
 
     const btns=card.querySelectorAll("button");
@@ -851,6 +967,230 @@ async function renderInventory(){
 
 $("invSearch").addEventListener("input",()=>renderInventory().catch(()=>{}));
 $("invFilter").addEventListener("change",()=>renderInventory().catch(()=>{}));
+
+// ── SECTION 5: DISCOGS COLLECTION IMPORT ────────────────────────────────────
+const DISCOGS_USER = "korndog0804";
+let dcPage = 1, dcPages = 1, dcModalData = {};
+
+function setDcStatus(msg, kind="ok"){
+  const el=$("dcStatus"), txt=$("dcStatusText");
+  el.style.display="block"; txt.textContent=msg;
+  el.classList.remove("error","warn");
+  if(kind==="error") el.classList.add("error");
+  if(kind==="warn")  el.classList.add("warn");
+}
+function setDmStatus(msg, kind="ok"){
+  const el=$("dmStatus"), txt=$("dmStatusText");
+  el.style.display="block"; txt.textContent=msg;
+  el.classList.remove("error","warn");
+  if(kind==="error") el.classList.add("error");
+  if(kind==="warn")  el.classList.add("warn");
+}
+
+// Load Discogs folders into dropdown
+(async function loadDcFolders(){
+  try{
+    const res=await fetch(`https://api.discogs.com/users/${DISCOGS_USER}/collection/folders`,{
+      headers:{"User-Agent":"KorndogRecordsAdmin/1.0 +https://korndogrecords.com"}
+    });
+    if(!res.ok) return;
+    const data=await res.json();
+    (data.folders||[]).forEach(f=>{
+      if(f.id===0) return;
+      const opt=document.createElement("option");
+      opt.value=f.id;
+      opt.textContent=`${f.name} (${f.count})`;
+      $("dcFolder").appendChild(opt);
+    });
+  }catch(e){}
+})();
+
+async function loadDcCollection(page){
+  const folder=$("dcFolder").value||"0";
+  const sort=$("dcSort").value;
+  const search=($("dcSearch").value.trim()).toLowerCase().replace(/[^a-z0-9]/g,"");
+
+  setDcStatus("Loading your Discogs collection…");
+  $("dcList").innerHTML="";
+  $("dcPagTop").style.display="none";
+  $("dcPagBot").style.display="none";
+
+  try{
+    const url=`https://api.discogs.com/users/${DISCOGS_USER}/collection/folders/${folder}/releases?per_page=25&page=${page}&sort=${sort}&sort_order=asc`;
+    const res=await fetch(url,{headers:{"User-Agent":"KorndogRecordsAdmin/1.0 +https://korndogrecords.com"}});
+    if(!res.ok) throw new Error("Discogs API "+res.status+". Make sure your Discogs collection is set to Public in your Discogs privacy settings.");
+    const data=await res.json();
+
+    let releases=data.releases||[];
+    dcPages=data.pagination?.pages||1;
+    dcPage=page;
+
+    if(search) releases=releases.filter(r=>{
+      const bi=r.basic_information||{};
+      const a=(bi.artists||[]).map(x=>(x.name||"").toLowerCase().replace(/[^a-z0-9]/g,"")).join(" ");
+      return (bi.title||"").toLowerCase().replace(/[^a-z0-9]/g,"").includes(search)||a.includes(search);
+    });
+
+    const total=data.pagination?.items||"?";
+    setDcStatus(`Page ${page} of ${dcPages} · ${total} records in collection${search?" · filtered":""}` );
+
+    if(releases.length){
+      const updatePag=()=>{
+        [$("dcPrev"),$("dcPrev2")].forEach(b=>b.disabled=page<=1);
+        [$("dcNext"),$("dcNext2")].forEach(b=>b.disabled=page>=dcPages);
+        [$("dcPageInfo"),$("dcPageInfo2")].forEach(el=>el.textContent=`Page ${page} of ${dcPages}`);
+        $("dcPagTop").style.display="flex";
+        $("dcPagBot").style.display="flex";
+      };
+      updatePag();
+    }
+
+    if(!releases.length){ setDcStatus("No records found"+(search?" matching that search":"")+".", "warn"); return; }
+
+    releases.forEach(r=>{
+      const bi=r.basic_information||{};
+      const artists=(bi.artists||[]).map(a=>(a.name||"").replace(/\s*\(\d+\)\s*$/,"").trim()).filter(Boolean).join(" / ");
+      const title=bi.title||"";
+      const year=bi.year||"";
+      const thumb=bi.thumb||bi.cover_image||"";
+      const genres=[...(bi.genres||[]),...(bi.styles||[])].slice(0,4).join(", ");
+      const labels=(bi.labels||[]).map(l=>(l.name||"").replace(/\s*\(\d+\)\s*$/,"").trim()).filter(Boolean).join(", ");
+      const formats=(bi.formats||[]).flatMap(f=>[f.name,...(f.descriptions||[])]).filter(Boolean).slice(0,3).join(", ");
+      const releaseId=bi.id||r.id||"";
+
+      const card=document.createElement("div");
+      card.className="inv-card";
+      card.innerHTML=`
+        <div class="inv-thumb">
+          ${thumb?`<img src="${escapeHtml(thumb)}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.7rem">No img</div>`}
+        </div>
+        <div class="inv-meta">
+          <p class="inv-title">${escapeHtml(artists?artists+" — "+title:title)}</p>
+          <p class="inv-sub">
+            ${year?`<span class="badge">${escapeHtml(String(year))}</span> `:""}
+            ${labels?`<span class="badge">${escapeHtml(labels)}</span> `:""}
+            ${formats?`<span class="badge">${escapeHtml(formats)}</span>`:""}
+          </p>
+          ${genres?`<p class="inv-sub" style="margin-top:3px;font-size:.78rem">${escapeHtml(genres)}</p>`:""}
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" type="button">Import</button>
+        </div>`;
+
+      card.querySelector("button").onclick=()=>openDcModal({artists,title,year,labels,formats,genres,releaseId});
+      $("dcList").appendChild(card);
+    });
+
+  }catch(err){
+    console.error(err);
+    setDcStatus("Failed: "+err.message,"error");
+  }
+}
+
+[$("dcPrev"),$("dcPrev2")].forEach(b=>b.onclick=()=>loadDcCollection(dcPage-1));
+[$("dcNext"),$("dcNext2")].forEach(b=>b.onclick=()=>loadDcCollection(dcPage+1));
+$("btnDcLoad").onclick=()=>loadDcCollection(1);
+$("dcSearch").addEventListener("keydown",e=>{ if(e.key==="Enter") loadDcCollection(1); });
+
+// ── Discogs Import Modal ──────────────────────────────────────────────────────
+function openDcModal(d){
+  dcModalData=d;
+  $("dmArtist").value=d.artists||"";
+  $("dmTitle").value=d.title||"";
+  $("dmPrice").value="";
+  $("dmGrade").value="";
+  $("dmQty").value="1";
+  $("dmTier").value="premium";
+  $("dmFront").value=""; $("dmFrontCam").value="";
+  $("dmBack").value="";  $("dmBackCam").value="";
+  $("dmStatus").style.display="none";
+
+  const descParts=[];
+  if(d.labels)    descParts.push("Label: "+d.labels);
+  if(d.formats)   descParts.push("Format: "+d.formats);
+  if(d.year)      descParts.push("Year: "+d.year);
+  if(d.genres)    descParts.push("Genres: "+d.genres);
+  if(d.releaseId) descParts.push("Discogs: https://www.discogs.com/release/"+d.releaseId);
+  $("dmDesc").value=descParts.join("\n");
+
+  $("dcModal").style.display="flex";
+  $("btnDmSave").disabled=false;
+}
+
+$("btnDmCancel").onclick=()=>$("dcModal").style.display="none";
+$("dcModal").addEventListener("click",e=>{ if(e.target===$("dcModal")) $("dcModal").style.display="none"; });
+
+$("btnDmSave").onclick=async()=>{
+  const artist=$("dmArtist").value.trim();
+  const title=$("dmTitle").value.trim();
+  const price=parseFloat($("dmPrice").value);
+  const grade=$("dmGrade").value.trim();
+  const quantity=parseInt($("dmQty").value||"1",10);
+  const tier=$("dmTier").value||"premium";
+  const description=$("dmDesc").value.trim();
+
+  // pick file: library picker wins over camera
+  const frontFile=($("dmFront").files&&$("dmFront").files[0])||($("dmFrontCam").files&&$("dmFrontCam").files[0])||null;
+  const backFile =($("dmBack").files&&$("dmBack").files[0])||($("dmBackCam").files&&$("dmBackCam").files[0])||null;
+
+  if(!artist||!title||!grade||Number.isNaN(price)){
+    setDmStatus("Missing: Artist, Title, Price, and Grade.","error"); return;
+  }
+  if(!frontFile){
+    setDmStatus("Front photo is required.","error"); return;
+  }
+
+  try{ requireToken(); }catch(e){ setDmStatus(e.message,"error"); return; }
+
+  $("btnDmSave").disabled=true;
+  setDmStatus("Uploading front photo…");
+
+  try{
+    const{products,sha}=await loadProducts();
+
+    const frontPath=await uploadImage(frontFile);
+    let backPath=frontPath;
+    if(backFile){
+      setDmStatus("Uploading back photo…");
+      backPath=await uploadImage(backFile);
+    }
+
+    setDmStatus("Saving to products.json2…");
+
+    const base=slugify(artist+" "+title);
+    const pid=ensureUniquePid(base,products);
+
+    const record={
+      pid,id:pid,artist,title,price,grade,
+      quantity:Number.isFinite(quantity)?quantity:1,
+      tier,available:true,featured:false,joeysPick:false,
+      description,sold:false,
+      image:frontPath,imageFront:frontPath,imageBack:backPath,
+      images:[frontPath,backPath],
+      imagesObj:{front:frontPath,back:backPath},
+      discogsReleaseId:dcModalData.releaseId||""
+    };
+
+    products.push(record);
+    products.sort((a,b)=>(a.artist||"").localeCompare(b.artist||"")||(a.title||"").localeCompare(b.title||""));
+    await saveProducts(products,sha,"Add record from Discogs: "+pid);
+
+    // Refresh local cache so Section 4 inventory picks it up immediately
+    await refresh();
+    await renderInventory();
+
+    setStatus("✅ Added from Discogs: "+artist+" — "+title+" (pid: "+pid+")");
+    setDmStatus("✅ Saved! "+artist+" — "+title);
+
+    setTimeout(()=>{ $("dcModal").style.display="none"; $("btnDmSave").disabled=false; },2200);
+
+  }catch(err){
+    console.error(err);
+    setDmStatus("Save failed: "+err.message,"error");
+    $("btnDmSave").disabled=false;
+  }
+};
+// ── END SECTION 5 ────────────────────────────────────────────────────────────
 
 (async function boot(){
   if(!getToken()){
