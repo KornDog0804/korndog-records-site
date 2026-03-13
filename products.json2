@@ -509,6 +509,33 @@
     "joeysPick": false
   },
   {
+    "pid": "mo-tley-cru-e-greatest-hits",
+    "id": "mo-tley-cru-e-greatest-hits",
+    "artist": "Mötley Crüe",
+    "title": "Greatest Hits",
+    "price": 32,
+    "grade": "NM/NM",
+    "quantity": 1,
+    "tier": "premium",
+    "available": true,
+    "featured": false,
+    "joeysPick": false,
+    "description": "Label: BMG\nFormat: Vinyl, LP, Compilation\nYear: 2024\nGenres: Rock, Hard Rock, Heavy Metal\nDiscogs: https://www.discogs.com/release/32014742",
+    "sold": false,
+    "image": "https://i.discogs.com/B2060gdOjbkZw59U2FReBpp4DaFsafFn6tVOvie_a9k/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTMyMDE0/NzQyLTE3NDAxMzcw/MzktNTgzMy5qcGVn.jpeg",
+    "imageFront": "https://i.discogs.com/B2060gdOjbkZw59U2FReBpp4DaFsafFn6tVOvie_a9k/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTMyMDE0/NzQyLTE3NDAxMzcw/MzktNTgzMy5qcGVn.jpeg",
+    "imageBack": "https://i.discogs.com/B2060gdOjbkZw59U2FReBpp4DaFsafFn6tVOvie_a9k/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTMyMDE0/NzQyLTE3NDAxMzcw/MzktNTgzMy5qcGVn.jpeg",
+    "images": [
+      "https://i.discogs.com/B2060gdOjbkZw59U2FReBpp4DaFsafFn6tVOvie_a9k/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTMyMDE0/NzQyLTE3NDAxMzcw/MzktNTgzMy5qcGVn.jpeg",
+      "https://i.discogs.com/B2060gdOjbkZw59U2FReBpp4DaFsafFn6tVOvie_a9k/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTMyMDE0/NzQyLTE3NDAxMzcw/MzktNTgzMy5qcGVn.jpeg"
+    ],
+    "imagesObj": {
+      "front": "https://i.discogs.com/B2060gdOjbkZw59U2FReBpp4DaFsafFn6tVOvie_a9k/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTMyMDE0/NzQyLTE3NDAxMzcw/MzktNTgzMy5qcGVn.jpeg",
+      "back": "https://i.discogs.com/B2060gdOjbkZw59U2FReBpp4DaFsafFn6tVOvie_a9k/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTMyMDE0/NzQyLTE3NDAxMzcw/MzktNTgzMy5qcGVn.jpeg"
+    },
+    "discogsReleaseId": 32014742
+  },
+  {
     "id": "ten-dolla-holla",
     "artist": "Mystery Pull",
     "title": "$10 Dolla Holla Mystery Record",
