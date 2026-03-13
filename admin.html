@@ -1023,11 +1023,13 @@ function setDmStatus(msg, kind="ok"){
   if(kind==="warn")  el.classList.add("warn");
 }
 
-// Fetch via Discogs API with token — tries multiple CORS proxies
+// Fetch via Discogs API — token passed as URL param (proxies can't strip it)
 async function discogsGet(endpoint){
   const token = getDcToken();
-  const fullUrl = "https://api.discogs.com" + endpoint;
-  
+  // Append token as query param — Discogs fully supports this
+  const sep = endpoint.includes("?") ? "&" : "?";
+  const authedUrl = "https://api.discogs.com" + endpoint + (token ? sep+"token="+token : "");
+
   // Proxies to try in order
   const proxies = [
     u => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
@@ -1035,24 +1037,20 @@ async function discogsGet(endpoint){
     u => `https://thingproxy.freeboard.io/fetch/${u}`,
   ];
 
-  const headers = token
-    ? { "Authorization": "Discogs token=" + token, "User-Agent": "KorndogRecordsAdmin/1.0" }
-    : { "User-Agent": "KorndogRecordsAdmin/1.0" };
-
   let lastErr = null;
   for(const makeProxy of proxies){
     try{
-      const res = await fetch(makeProxy(fullUrl), { headers });
+      const res = await fetch(makeProxy(authedUrl));
       if(res.ok){
         const data = await res.json();
         return data;
       }
-      lastErr = new Error("HTTP " + res.status);
+      lastErr = new Error("HTTP " + res.status + " via proxy");
     }catch(e){
       lastErr = e;
     }
   }
-  throw lastErr || new Error("All proxies failed");
+  throw lastErr || new Error("All proxies failed — check your token and try again");
 }
 
 // Load Discogs folders into dropdown
