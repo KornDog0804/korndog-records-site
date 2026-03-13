@@ -5,300 +5,382 @@
   <title>Your Cart • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-  <link rel="stylesheet" href="styles.css?v=cartcash1" />
-  <script defer src="zk.js?v=cartcash1"></script>
+  <link rel="stylesheet" href="styles.css?v=carttrust2" />
   <script defer src="script.js"></script>
+  <script defer src="zk.js?v=carttrust2"></script>
 
   <style>
-    :root {
-      --bg: #050013;
-      --bg-alt: #0b0420;
-      --accent: #7bff5a;
-      --accent-soft: rgba(123, 255, 90, 0.1);
-      --text: #f5f5ff;
-      --muted: #a1a1c5;
-      --card: #12052b;
-      --border: #2b1550;
-      --danger: #ff4b6a;
-      --cash: #00d64f;
+    :root{
+      --bg:#050013;
+      --accent:#7bff5a;
+      --text:#f5f5ff;
+      --muted:#a1a1c5;
+      --card:#12052b;
+      --border:#2b1550;
+      --danger:#ff4b6a;
     }
 
-    * { box-sizing: border-box; }
+    *{box-sizing:border-box}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:radial-gradient(circle at top,#2a0a60 0,var(--bg) 55%);
     }
 
-    a { color: inherit; text-decoration: none; }
+    a{color:inherit;text-decoration:none}
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      backdrop-filter: blur(12px);
-      background: linear-gradient(to right, rgba(10, 1, 30, 0.95), rgba(10, 1, 25, 0.9));
-      border-bottom: 1px solid rgba(123, 255, 90, 0.2);
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter:blur(12px);
+      background:linear-gradient(to right,rgba(10,1,30,.95),rgba(10,1,25,.9));
+      border-bottom:1px solid rgba(123,255,90,.2);
     }
 
-    .nav-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0.75rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
+    .nav-inner{
+      max-width:1100px;
+      margin:0 auto;
+      padding:.75rem 1.25rem;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:.75rem;
     }
 
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      border: 2px solid var(--accent);
-      background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .brand-logo{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      border:2px solid var(--accent);
+      background:radial-gradient(circle at 30% 30%,#5a00ff,#140032);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
-    .brand-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+    .brand-logo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
     }
 
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      font-size: 0.8rem;
-      line-height: 1.1;
+    .brand-text{
+      display:flex;
+      flex-direction:column;
+      font-size:.8rem;
+      line-height:1.1;
     }
 
-    .brand-text strong {
-      letter-spacing: 0.08em;
-      font-size: 0.9rem;
+    .brand-text strong{
+      letter-spacing:.08em;
+      font-size:.9rem;
     }
 
-    .brand-text span {
-      color: var(--muted);
-      font-size: 0.75rem;
+    .brand-text span{
+      color:var(--muted);
+      font-size:.75rem;
     }
 
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+    nav{
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+      flex-wrap:wrap;
     }
 
-    .nav-link {
-      padding: 0.6rem 1.6rem;
-      border-radius: 999px;
-      font-size: 0.92rem;
-      color: var(--muted);
-      border: 1px solid transparent;
-      font-weight: 500;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    .nav-link{
+      padding:.6rem 1.6rem;
+      border-radius:999px;
+      font-size:.92rem;
+      color:var(--muted);
+      border:1px solid transparent;
+      font-weight:500;
+      transition:background .15s ease,color .15s ease,border-color .15s ease;
     }
 
-    .nav-link.active {
-      background: var(--accent);
-      color: #02010a;
-      font-weight: 700;
+    .nav-link.active{
+      background:var(--accent);
+      color:#02010a;
+      font-weight:700;
     }
 
-    .nav-link:hover {
-      border-color: rgba(123, 255, 90, 0.6);
-      color: var(--text);
+    .nav-link:hover{
+      border-color:rgba(123,255,90,.6);
+      color:var(--text);
     }
 
-    .cart-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      background: rgba(123, 255, 90, 0.12);
-      border: 1px solid rgba(123, 255, 90, 0.5);
-      font-size: 0.88rem;
+    .cart-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+      padding:.45rem .9rem;
+      border-radius:999px;
+      background:rgba(123,255,90,.12);
+      border:1px solid rgba(123,255,90,.5);
+      font-size:.88rem;
     }
 
-    .cart-pill span {
-      background: var(--accent);
-      color: #02010a;
-      border-radius: 999px;
-      padding: 0.2rem 0.6rem;
-      font-weight: 700;
+    .cart-pill span{
+      background:var(--accent);
+      color:#02010a;
+      border-radius:999px;
+      padding:.2rem .6rem;
+      font-weight:700;
     }
 
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1.5rem 1.25rem 3rem;
+    .trust-strip-wrap{
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.02);
     }
 
-    .section { margin-top: 1.5rem; }
-    .section h2 { margin: 0 0 0.75rem; font-size: 1.8rem; }
-    .section p { margin: 0; color: var(--muted); font-size: 0.95rem; }
-
-    .cart-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr);
-      gap: 1.75rem;
-      margin-top: 1.75rem;
+    .trust-strip{
+      max-width:1100px;
+      margin:0 auto;
+      padding:.65rem 1.25rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.55rem;
+      align-items:center;
     }
 
-    .card {
-      background: var(--card);
-      border-radius: 1.4rem;
-      padding: 1.25rem;
-      border: 1px solid var(--border);
-      box-shadow: 0 16px 38px rgba(0,0,0,.28);
+    .trust-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.38rem .8rem;
+      border-radius:999px;
+      background:rgba(123,255,90,.08);
+      border:1px solid rgba(123,255,90,.22);
+      color:#d9ffd0;
+      font-size:.76rem;
+      font-weight:700;
     }
 
-    .cart-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.7rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding:1.5rem 1.25rem 3rem;
     }
 
-    .cart-row:last-child { border-bottom: none; }
+    .section{margin-top:1.5rem}
+    .section h2{margin:0 0 .75rem;font-size:1.8rem}
+    .section p{margin:0;color:var(--muted);font-size:.95rem}
 
-    .cart-title { font-size: 0.95rem; margin: 0 0 0.15rem; }
-    .cart-grade { margin: 0; font-size: 0.8rem; color: var(--muted); }
-
-    .cart-qty {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
+    .cart-layout{
+      display:grid;
+      grid-template-columns:minmax(0,2fr) minmax(0,1.3fr);
+      gap:1.75rem;
+      margin-top:1.75rem;
     }
 
-    .cart-qty button {
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      background: transparent;
-      color: var(--text);
-      width: 1.9rem;
-      height: 1.9rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+    .card{
+      background:var(--card);
+      border-radius:1.4rem;
+      padding:1.25rem;
+      border:1px solid var(--border);
+      box-shadow:0 16px 38px rgba(0,0,0,.28);
     }
 
-    .cart-line-price { font-weight: 700; font-size: 0.95rem; }
-
-    .btn-primary, .btn-secondary, .btn-danger {
-      border-radius: 999px;
-      padding: 0.75rem 1.3rem;
-      font-size: 0.92rem;
-      border: none;
-      cursor: pointer;
-      font-weight: 700;
+    .cart-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:1rem;
+      padding:.7rem 0;
+      border-bottom:1px solid rgba(255,255,255,.04);
     }
 
-    .btn-primary { background: var(--accent); color: #02010a; }
-    .btn-secondary {
-      background: rgba(123, 255, 90, 0.16);
-      border: 1px solid rgba(123, 255, 90, 0.5);
-      color: var(--accent);
-    }
-    .btn-danger { background: var(--danger); color: #fff; }
+    .cart-row:last-child{border-bottom:none}
 
-    .btn-primary:hover { filter: brightness(1.05); }
-    .btn-secondary:hover { background: rgba(123, 255, 90, 0.24); }
+    .cart-title{font-size:.95rem;margin:0 0 .15rem}
+    .cart-grade{margin:0;font-size:.8rem;color:var(--muted)}
 
-    .checkout-box {
-      margin-top: 1rem;
-      padding: 1rem;
-      border-radius: 1rem;
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border: 1px solid rgba(255,255,255,.08);
+    .cart-qty{
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
     }
 
-    .checkout-box h4 {
-      margin: 0 0 0.45rem;
-      font-size: 0.95rem;
-      color: var(--text);
+    .cart-qty button{
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      background:transparent;
+      color:var(--text);
+      width:1.9rem;
+      height:1.9rem;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
     }
 
-    .checkout-box p {
-      margin: 0;
-      font-size: 0.82rem;
-      line-height: 1.45;
-      color: var(--muted);
+    .cart-line-price{font-weight:700;font-size:.95rem}
+
+    .btn-primary,.btn-secondary,.btn-danger,.btn-outline{
+      border-radius:999px;
+      padding:.78rem 1.25rem;
+      font-size:.92rem;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
     }
 
-    .cashapp-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      margin-top: 0.75rem;
-      padding: 0.45rem 0.8rem;
-      border-radius: 999px;
-      background: rgba(0,214,79,.12);
-      border: 1px solid rgba(0,214,79,.28);
-      color: #d6ffe4;
-      font-size: 0.78rem;
-      font-weight: 700;
+    .btn-primary{
+      background:var(--accent);
+      color:#02010a;
     }
 
-    .cashapp-note {
-      margin-top: 0.9rem;
-      padding: 0.9rem 1rem;
-      border-radius: 1rem;
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.08);
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.5;
+    .btn-secondary{
+      background:rgba(123,255,90,.16);
+      border:1px solid rgba(123,255,90,.5);
+      color:var(--accent);
     }
 
-    .cashapp-note strong {
-      color: var(--text);
+    .btn-outline{
+      background:transparent;
+      border:1px solid rgba(255,255,255,.16);
+      color:var(--text);
     }
 
-    .checkout-help {
-      margin-top: 0.9rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-      line-height: 1.45;
+    .btn-danger{
+      background:var(--danger);
+      color:#fff;
     }
 
-    .checkout-help strong {
-      color: var(--text);
+    .btn-primary:hover{filter:brightness(1.05)}
+    .btn-secondary:hover{background:rgba(123,255,90,.24)}
+
+    .checkout-box{
+      margin-top:1rem;
+      padding:1rem;
+      border-radius:1rem;
+      background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
     }
 
-    footer {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 1.25rem 2rem;
-      font-size: 0.78rem;
-      color: var(--muted);
-      text-align: center;
+    .checkout-box h4{
+      margin:0 0 .45rem;
+      font-size:.98rem;
+      color:var(--text);
     }
 
-    footer strong { color: var(--accent); }
+    .checkout-box p{
+      margin:0;
+      font-size:.82rem;
+      line-height:1.45;
+      color:var(--muted);
+    }
 
-    @media (max-width: 800px) {
-      .cart-layout { grid-template-columns: minmax(0, 1fr); }
-      .nav-inner { flex-wrap: wrap; justify-content: center; }
-      .brand-text { display: none; }
+    .business-card{
+      margin-top:.8rem;
+      padding:.9rem 1rem;
+      border-radius:1rem;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      line-height:1.5;
+    }
+
+    .badge-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.45rem;
+      margin-top:.8rem;
+    }
+
+    .badge-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      padding:.4rem .75rem;
+      border-radius:999px;
+      background:rgba(123,255,90,.1);
+      border:1px solid rgba(123,255,90,.25);
+      color:#d9ffd0;
+      font-size:.76rem;
+      font-weight:700;
+    }
+
+    .checkout-actions{
+      display:flex;
+      flex-direction:column;
+      gap:.75rem;
+      margin-top:1rem;
+    }
+
+    .qr-box{
+      margin-top:.95rem;
+      padding:1rem;
+      border-radius:1rem;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      text-align:center;
+    }
+
+    .qr-box img{
+      width:190px;
+      max-width:100%;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:#fff;
+      padding:8px;
+      display:block;
+      margin:0 auto .8rem;
+    }
+
+    .cashapp-note{
+      margin-top:.9rem;
+      padding:.9rem 1rem;
+      border-radius:1rem;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+      font-size:.82rem;
+      line-height:1.5;
+    }
+
+    .cashapp-note strong{
+      color:var(--text);
+    }
+
+    .checkout-help{
+      margin-top:.9rem;
+      font-size:.82rem;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .checkout-help strong{
+      color:var(--text);
+    }
+
+    footer{
+      max-width:1100px;
+      margin:0 auto;
+      padding:0 1.25rem 2rem;
+      font-size:.78rem;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    footer strong{color:var(--accent)}
+
+    @media (max-width:800px){
+      .cart-layout{grid-template-columns:minmax(0,1fr)}
+      .nav-inner{flex-wrap:wrap;justify-content:center}
+      .brand-text{display:none}
+      .trust-strip{justify-content:center}
     }
   </style>
 </head>
@@ -326,6 +408,16 @@
     </div>
   </header>
 
+  <div class="trust-strip-wrap">
+    <div class="trust-strip">
+      <span class="trust-chip">🔒 Secure Small Business Checkout</span>
+      <span class="trust-chip">📍 Ships from Kentucky</span>
+      <span class="trust-chip">💼 Cash App Business</span>
+      <span class="trust-chip">🎵 Whatnot Seller</span>
+      <span class="trust-chip">💿 Discogs Collection</span>
+    </div>
+  </div>
+
   <main>
     <section class="section">
       <h2>Your Cart</h2>
@@ -352,22 +444,52 @@
           <div id="cart-summary" style="margin-top:0.75rem;"></div>
 
           <div class="checkout-box">
-            <h4>Secure checkout via Cash App Business</h4>
-            <p>KORNDOG RECORDS, LLC • <strong>$korndog0804</strong></p>
-            <div class="cashapp-pill">💼 Business Account</div>
-          </div>
+            <h4>🔒 Secure checkout via Cash App Business</h4>
+            <p>Independent Kentucky record shop with real inventory, real contact info, and direct customer support.</p>
 
-          <button id="paypal-button" class="btn-primary" style="margin-top:1rem;width:100%;">
-            Pay with Cash App
-          </button>
+            <div class="business-card">
+              <strong>KORNDOG RECORDS, LLC</strong><br>
+              Cash App Business: <strong>$korndog0804</strong><br>
+              Contact: <strong>270-784-3283</strong><br>
+              Location: <strong>Kentucky, USA</strong>
+            </div>
 
-          <div class="cashapp-note" id="cashapp-note">
-            <strong>Checkout note:</strong> After tapping the button, send the exact total shown above to
-            <strong>$korndog0804</strong> in Cash App. Put your name and record order in the note so Joey can match it fast.
-          </div>
+            <div class="badge-row">
+              <span class="badge-pill">💼 Business Account</span>
+              <span class="badge-pill">📦 Ships from Kentucky</span>
+              <span class="badge-pill">🎵 Whatnot Seller</span>
+              <span class="badge-pill">💿 Discogs Seller/Collector</span>
+            </div>
 
-          <div class="checkout-help">
-            Questions or special requests? Text <strong>Joey</strong> at <strong>270-784-3283</strong>.
+            <div class="checkout-actions">
+              <button id="cashapp-button" class="btn-primary" style="width:100%;">
+                Pay with Cash App
+              </button>
+
+              <button id="cashapp-qr-button" class="btn-outline" style="width:100%;">
+                Open Cash App QR Checkout
+              </button>
+            </div>
+
+            <div class="qr-box" id="qr-box">
+              <img
+                id="cashapp-qr"
+                src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=https%3A%2F%2Fcash.app%2F%24korndog0804"
+                alt="Cash App QR for KornDog Records"
+              />
+              <div style="font-size:.82rem;color:var(--muted);line-height:1.45;">
+                Scan to open <strong>Cash App Business</strong> directly.
+              </div>
+            </div>
+
+            <div class="cashapp-note" id="cashapp-note">
+              <strong>Checkout note:</strong> After tapping the button, send the exact total shown above to <strong>$korndog0804</strong> in Cash App. Put your name and record order in the note so Joey can match it fast.
+            </div>
+
+            <div class="checkout-help">
+              Questions before checkout? Text <strong>Joey</strong> at <strong>270-784-3283</strong>.<br>
+              Orders ship from <strong>Kentucky</strong> after payment is confirmed.
+            </div>
           </div>
         </div>
       </div>
@@ -393,12 +515,11 @@
     (function () {
       const CASHAPP_URL = "https://cash.app/$korndog0804";
 
-      function getCartTotalFromSummary() {
+      function getDisplayedTotal() {
         const summary = document.getElementById("cart-summary");
         if (!summary) return null;
-
-        const text = summary.innerText || summary.textContent || "";
-        const match = text.match(/Total:\s*\$([0-9,]+\.\d{2})/i);
+        const text = summary.textContent || "";
+        const match = text.match(/Total:\s*\$([0-9]+(?:\.[0-9]{2})?)/i);
         return match ? match[1] : null;
       }
 
@@ -410,42 +531,57 @@
         }
       }
 
-      function wireCashAppCheckout() {
-        const btn = document.getElementById("paypal-button");
+      function updateCashAppUI() {
+        const payBtn = document.getElementById("cashapp-button");
+        const qrBtn = document.getElementById("cashapp-qr-button");
         const note = document.getElementById("cashapp-note");
-        if (!btn) return;
+        const qr = document.getElementById("cashapp-qr");
+        if (!payBtn || !qrBtn || !note || !qr) return;
 
-        const total = getCartTotalFromSummary();
+        const total = getDisplayedTotal();
+
         if (total) {
-          btn.textContent = `Pay $${total} with Cash App`;
-          if (note) {
-            note.innerHTML = `<strong>Checkout note:</strong> After tapping the button, send <strong>$${total}</strong> to <strong>$korndog0804</strong> in Cash App. Put your name and record order in the note so Joey can match it fast.`;
-          }
+          payBtn.textContent = `Pay $${total} with Cash App`;
+          qrBtn.textContent = `Open QR for $${total} Checkout`;
+          note.innerHTML = `<strong>Checkout note:</strong> After tapping the button, send <strong>$${total}</strong> to <strong>$korndog0804</strong> in Cash App. Put your name and record order in the note so Joey can match it fast.`;
+
+          const encodedUrl = encodeURIComponent(CASHAPP_URL);
+          qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodedUrl}`;
         } else {
-          btn.textContent = "Pay with Cash App";
+          payBtn.textContent = "Pay with Cash App";
+          qrBtn.textContent = "Open Cash App QR Checkout";
         }
 
-        btn.onclick = function (e) {
+        payBtn.onclick = function (e) {
           e.preventDefault();
-
           const cart = getCartItems();
           if (!cart.length) {
             alert("Cart is empty.");
             return;
           }
+          window.open(CASHAPP_URL, "_blank", "noopener,noreferrer");
+        };
 
+        qrBtn.onclick = function (e) {
+          e.preventDefault();
+          const cart = getCartItems();
+          if (!cart.length) {
+            alert("Cart is empty.");
+            return;
+          }
           window.open(CASHAPP_URL, "_blank", "noopener,noreferrer");
         };
       }
 
       document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(wireCashAppCheckout, 350);
+        setTimeout(updateCashAppUI, 600);
 
         const summary = document.getElementById("cart-summary");
         if (summary) {
           const observer = new MutationObserver(function () {
-            wireCashAppCheckout();
+            updateCashAppUI();
           });
+
           observer.observe(summary, {
             childList: true,
             subtree: true,
