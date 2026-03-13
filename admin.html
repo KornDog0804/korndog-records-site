@@ -582,6 +582,11 @@ async function loadProducts(){
 }
 
 async function saveProducts(products, sha, msg){
+  // Always fetch a fresh SHA right before writing to avoid 409 conflicts
+  try {
+    const fresh = await getFile(PRODUCTS_PATH);
+    sha = fresh.sha;
+  } catch(e) { /* use passed-in sha as fallback */ }
   await putText(PRODUCTS_PATH, JSON.stringify(products,null,2), msg, sha);
 }
 
