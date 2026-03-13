@@ -977,9 +977,9 @@ $("invSearch").addEventListener("input",()=>renderInventory().catch(()=>{}));
 $("invFilter").addEventListener("change",()=>renderInventory().catch(()=>{}));
 
 // ── SECTION 5: DISCOGS COLLECTION IMPORT ────────────────────────────────────
-const DISCOGS_USER  = "korndog0804";
-const DISCOGS_TOKEN = "pQZkNeqJhFJrNaYCiHkalTRbZIuqGqDohKryLQwk";
-let dcPage = 1, dcPages = 1, dcModalData = {};
+var DISCOGS_USER  = "korndog0804";
+var DISCOGS_TOKEN = "pQZkNeqJhFJrNaYCiHkalTRbZIuqGqDohKryLQwk";
+var dcPage = 1, dcPages = 1, dcModalData = {};
 
 // ── Define button functions FIRST before anything can crash ──────────────────
 function dcBtnTest(){
