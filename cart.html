@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <title>Your Cart • KornDog Records</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-  <!-- Optional shared stylesheet (fine if it 404s) -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css?v=cartcash1" />
+  <script defer src="zk.js?v=cartcash1"></script>
+  <script defer src="script.js"></script>
 
   <style>
     :root {
@@ -19,6 +20,7 @@
       --card: #12052b;
       --border: #2b1550;
       --danger: #ff4b6a;
+      --cash: #00d64f;
     }
 
     * { box-sizing: border-box; }
@@ -33,11 +35,10 @@
 
     a { color: inherit; text-decoration: none; }
 
-    /* HEADER / NAV */
     header {
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
       backdrop-filter: blur(12px);
       background: linear-gradient(to right, rgba(10, 1, 30, 0.95), rgba(10, 1, 25, 0.9));
       border-bottom: 1px solid rgba(123, 255, 90, 0.2);
@@ -99,6 +100,7 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
     .nav-link {
@@ -114,7 +116,7 @@
     .nav-link.active {
       background: var(--accent);
       color: #02010a;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .nav-link:hover {
@@ -138,10 +140,9 @@
       color: #02010a;
       border-radius: 999px;
       padding: 0.2rem 0.6rem;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    /* MAIN / CART */
     main {
       max-width: 1100px;
       margin: 0 auto;
@@ -164,6 +165,7 @@
       border-radius: 1.4rem;
       padding: 1.25rem;
       border: 1px solid var(--border);
+      box-shadow: 0 16px 38px rgba(0,0,0,.28);
     }
 
     .cart-row {
@@ -171,7 +173,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
-      padding: 0.6rem 0;
+      padding: 0.7rem 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     }
 
@@ -191,24 +193,23 @@
       border: 1px solid rgba(255, 255, 255, 0.25);
       background: transparent;
       color: var(--text);
-      width: 1.6rem;
-      height: 1.6rem;
+      width: 1.9rem;
+      height: 1.9rem;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
 
-    .cart-line-price { font-weight: 600; font-size: 0.95rem; }
+    .cart-line-price { font-weight: 700; font-size: 0.95rem; }
 
-    /* Buttons */
     .btn-primary, .btn-secondary, .btn-danger {
       border-radius: 999px;
-      padding: 0.6rem 1.3rem;
+      padding: 0.75rem 1.3rem;
       font-size: 0.92rem;
       border: none;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .btn-primary { background: var(--accent); color: #02010a; }
@@ -221,6 +222,67 @@
 
     .btn-primary:hover { filter: brightness(1.05); }
     .btn-secondary:hover { background: rgba(123, 255, 90, 0.24); }
+
+    .checkout-box {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 1rem;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .checkout-box h4 {
+      margin: 0 0 0.45rem;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .checkout-box p {
+      margin: 0;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .cashapp-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.75rem;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(0,214,79,.12);
+      border: 1px solid rgba(0,214,79,.28);
+      color: #d6ffe4;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .cashapp-note {
+      margin-top: 0.9rem;
+      padding: 0.9rem 1rem;
+      border-radius: 1rem;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .cashapp-note strong {
+      color: var(--text);
+    }
+
+    .checkout-help {
+      margin-top: 0.9rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .checkout-help strong {
+      color: var(--text);
+    }
 
     footer {
       max-width: 1100px;
@@ -239,9 +301,6 @@
       .brand-text { display: none; }
     }
   </style>
-
-  <!-- Your site logic -->
-  <script defer src="script.js"></script>
 </head>
 
 <body>
@@ -273,7 +332,6 @@
       <p>Double-check titles and grades before you pay. Once it ships, the therapy session begins.</p>
 
       <div class="cart-layout">
-        <!-- LEFT: ITEMS -->
         <div class="card">
           <h3 style="margin:0;">Records</h3>
           <div id="cart-items" style="margin-top:0.75rem;"></div>
@@ -283,7 +341,6 @@
           </button>
         </div>
 
-        <!-- RIGHT: SUMMARY -->
         <div class="card">
           <h3 style="margin:0;">Summary</h3>
 
@@ -294,15 +351,24 @@
 
           <div id="cart-summary" style="margin-top:0.75rem;"></div>
 
+          <div class="checkout-box">
+            <h4>Secure checkout via Cash App Business</h4>
+            <p>KORNDOG RECORDS, LLC • <strong>$korndog0804</strong></p>
+            <div class="cashapp-pill">💼 Business Account</div>
+          </div>
+
           <button id="paypal-button" class="btn-primary" style="margin-top:1rem;width:100%;">
-            Pay with PayPal
+            Pay with Cash App
           </button>
 
-          <form id="paypal-form" style="display:none;"></form>
+          <div class="cashapp-note" id="cashapp-note">
+            <strong>Checkout note:</strong> After tapping the button, send the exact total shown above to
+            <strong>$korndog0804</strong> in Cash App. Put your name and record order in the note so Joey can match it fast.
+          </div>
 
-          <p style="margin-top:0.75rem;font-size:0.8rem;color:var(--muted);">
-            Questions or special requests? Add a note in PayPal and Joey will hit you back.
-          </p>
+          <div class="checkout-help">
+            Questions or special requests? Text <strong>Joey</strong> at <strong>270-784-3283</strong>.
+          </div>
         </div>
       </div>
     </section>
@@ -311,5 +377,83 @@
   <footer>
     © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
+
+  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
+
+  <div id="zkOverlay" class="zk-overlay">
+    <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
+    <div class="zk-bubble" id="zkBubble">
+      <div class="zk-tail"></div>
+      Hi! I'm Zombie Kitty — your crate-digging assistant.<br><br>
+      Tap here to text KornDog.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const CASHAPP_URL = "https://cash.app/$korndog0804";
+
+      function getCartTotalFromSummary() {
+        const summary = document.getElementById("cart-summary");
+        if (!summary) return null;
+
+        const text = summary.innerText || summary.textContent || "";
+        const match = text.match(/Total:\s*\$([0-9,]+\.\d{2})/i);
+        return match ? match[1] : null;
+      }
+
+      function getCartItems() {
+        try {
+          return JSON.parse(localStorage.getItem("korndog_cart_v1") || "[]");
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function wireCashAppCheckout() {
+        const btn = document.getElementById("paypal-button");
+        const note = document.getElementById("cashapp-note");
+        if (!btn) return;
+
+        const total = getCartTotalFromSummary();
+        if (total) {
+          btn.textContent = `Pay $${total} with Cash App`;
+          if (note) {
+            note.innerHTML = `<strong>Checkout note:</strong> After tapping the button, send <strong>$${total}</strong> to <strong>$korndog0804</strong> in Cash App. Put your name and record order in the note so Joey can match it fast.`;
+          }
+        } else {
+          btn.textContent = "Pay with Cash App";
+        }
+
+        btn.onclick = function (e) {
+          e.preventDefault();
+
+          const cart = getCartItems();
+          if (!cart.length) {
+            alert("Cart is empty.");
+            return;
+          }
+
+          window.open(CASHAPP_URL, "_blank", "noopener,noreferrer");
+        };
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(wireCashAppCheckout, 350);
+
+        const summary = document.getElementById("cart-summary");
+        if (summary) {
+          const observer = new MutationObserver(function () {
+            wireCashAppCheckout();
+          });
+          observer.observe(summary, {
+            childList: true,
+            subtree: true,
+            characterData: true
+          });
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
