@@ -293,14 +293,11 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
       Browse your 300-record Discogs collection. Hit <b>Import</b> on any record, set price &amp; grade, upload a photo — it goes live into your shop without touching anything else.
     </div>
 
-    <!-- Discogs Personal Token -->
-    <div class="field" style="margin-bottom:10px">
-      <label for="discogsToken">Discogs Personal Access Token</label>
-      <input id="discogsToken" type="password" placeholder="Paste your Discogs token…"/>
-      <div class="hint">
-        Get it free at <b>discogs.com → Settings → Developers → Generate token</b>. Saved on this device only.
-        <div style="margin-top:4px"><button id="btnSaveDcToken" class="btn btn-outline" type="button" style="font-size:.72rem;padding:6px 14px">Save Discogs Token</button> <button id="btnClearDcToken" class="btn btn-warn" type="button" style="font-size:.72rem;padding:6px 14px">Clear</button></div>
-      </div>
+    <!-- Discogs token baked in -->
+    <div style="display:none">
+      <input id="discogsToken"/>
+      <button id="btnSaveDcToken" type="button"></button>
+      <button id="btnClearDcToken" type="button"></button>
     </div>
 
     <div class="row" style="align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:4px">
@@ -981,9 +978,10 @@ $("invFilter").addEventListener("change",()=>renderInventory().catch(()=>{}));
 // ── SECTION 5: DISCOGS COLLECTION IMPORT ────────────────────────────────────
 const DISCOGS_USER = "korndog0804";
 const DC_TOKEN_KEY = "korndog_discogs_token";
+const DC_TOKEN_BAKED = "pQZkNeqJhFJrNaYCiHkalTRbZIuqGqDohKryLQwk";
 let dcPage = 1, dcPages = 1, dcModalData = {};
 
-function getDcToken(){ return localStorage.getItem(DC_TOKEN_KEY)||""; }
+function getDcToken(){ return localStorage.getItem(DC_TOKEN_KEY) || DC_TOKEN_BAKED; }
 
 // Init Discogs token UI
 (function initDcToken(){
