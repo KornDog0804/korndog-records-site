@@ -1080,9 +1080,12 @@ async function loadDcCollection(page) {
 
   try {
     var folderVal = document.getElementById("dcFolder").value || "0";
-    const endpoint = "/users/" + DISCOGS_USER + "/collection/folders/" + folderVal +
+    var dcUrl = "https://api.discogs.com/users/" + DISCOGS_USER + "/collection/folders/" + folderVal +
       "/releases?per_page=50&page=" + page + "&token=" + DISCOGS_TOKEN;
-    const data = await discogsGet(endpoint);
+    const data = await fetch(dcUrl).then(function(r){
+      if(!r.ok) throw new Error("Discogs returned " + r.status);
+      return r.json();
+    });
 
     let releases = data.releases || [];
     dcPages = (data.pagination && data.pagination.pages) || 1;
