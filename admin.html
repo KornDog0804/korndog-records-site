@@ -1005,9 +1005,34 @@ function setDmStatus(msg, kind){
 async function discogsGet(endpoint) {
   const url = "https://api.discogs.com" + endpoint +
     (endpoint.includes("?") ? "&" : "?") + "token=" + DISCOGS_TOKEN;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Discogs returned " + res.status);
-  return res.json();
+
+  // Hard 10s timeout using AbortController
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error("Discogs API error: " + res.status);
+    return res.json();
+  } catch(e) {
+    clearTimeout(timer);
+    if (e.name === "AbortError") {
+      // Direct call timed out — try corsproxy as fallback
+      const controller2 = new AbortController();
+      const timer2 = setTimeout(() => controller2.abort(), 10000);
+      try {
+        const res2 = await fetch("https://corsproxy.io/?url=" + encodeURIComponent(url), { signal: controller2.signal });
+        clearTimeout(timer2);
+        if (!res2.ok) throw new Error("Proxy error: " + res2.status);
+        return res2.json();
+      } catch(e2) {
+        clearTimeout(timer2);
+        throw new Error("Direct and proxy both failed. Check internet connection.");
+      }
+    }
+    throw e;
+  }
 }
 
 async function loadDcCollection(page) {
@@ -1092,9 +1117,12 @@ async function loadDcCollection(page) {
 }
 
 // Button handlers
-document.getElementById("btnDcLoad").onclick  = function(){ loadDcCollection(1); };
-document.getElementById("btnDcTest").onclick  = async function(){
-  setDcStatus("Testing connection to Discogs\u2026", "warn");
+document.getElementById("btnDcLoad").onclick = function(){
+  setDcStatus("Starting… please wait up to 10 seconds.", "warn");
+  setTimeout(function(){ loadDcCollection(1); }, 50);
+};
+document.getElementById("btnDcTest").onclick = async function(){
+  setDcStatus("Testing… please wait up to 10 seconds.", "warn");
   try {
     const data = await discogsGet("/users/" + DISCOGS_USER + "/collection/folders");
     const total = (data.folders||[]).reduce(function(s,f){ return s+(f.count||0); }, 0);
