@@ -1081,7 +1081,8 @@ async function loadDcCollection(page) {
   try {
     var folderVal = document.getElementById("dcFolder").value || "0";
     var dcUrl = "https://api.discogs.com/users/" + DISCOGS_USER + "/collection/folders/" + folderVal +
-      "/releases?per_page=50&page=" + page + "&token=" + DISCOGS_TOKEN;
+      "/releases?page=" + page + "&per_page=25&token=" + DISCOGS_TOKEN;
+    setDcStatus("Fetching: " + dcUrl.replace(DISCOGS_TOKEN, "***"), "warn");
     const data = await fetch(dcUrl).then(function(r){
       if(!r.ok) throw new Error("Discogs returned " + r.status);
       return r.json();
