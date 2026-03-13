@@ -1075,8 +1075,9 @@ async function loadDcCollection(page) {
   document.getElementById("dcPagBot").style.display = "none";
 
   try {
-    // Use folder 0 = All, but fall back to /collection/releases if it returns < 5 items
-    var folderVal = document.getElementById("dcFolder").value || "0";
+    // Folder 0 = virtual "All" on Discogs — use folder 1 (Uncategorized) which holds actual records
+    var folderVal = document.getElementById("dcFolder").value;
+    if(!folderVal || folderVal === "0") folderVal = "1";
     const endpoint = "/users/" + DISCOGS_USER + "/collection/folders/" + folderVal +
       "/releases?per_page=50&page=" + page + "&sort=" + sort + "&sort_order=" + (sort === "added" ? "desc" : "asc");
     const data = await discogsGet(endpoint);
@@ -1098,7 +1099,7 @@ async function loadDcCollection(page) {
     }
 
     const total = (data.pagination && data.pagination.items) || releases.length;
-    setDcStatus("Page " + page + " of " + dcPages + " · " + total + " records · " + releases.length + " on this page" + (search ? " · filtered" : ""));
+    setDcStatus("Folder " + folderVal + " · Page " + page + " of " + dcPages + " · " + total + " total · " + releases.length + " on page" + (search ? " · filtered" : ""));
 
     if (releases.length) {
       document.getElementById("dcPrev").disabled  = page <= 1;
