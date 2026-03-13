@@ -324,9 +324,9 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
       </div>
     </div>
 
-    <div id="dcStatus" class="status" style="display:none"><span id="dcStatusText"></span></div>
+    <div id="dcStatus" class="status warn" style="margin-top:10px"><span id="dcStatusText">Hit Test Connection to check, then Load Collection.</span></div>
 
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px" id="dcPagTop" style="display:none">
+    <div id="dcPagTop" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px">
       <button id="dcPrev" class="btn btn-outline" type="button" disabled>◀ Prev</button>
       <span id="dcPageInfo" style="color:var(--muted);font-size:.85rem"></span>
       <button id="dcNext" class="btn btn-outline" type="button" disabled>Next ▶</button>
@@ -334,7 +334,7 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
 
     <div id="dcList" class="inv-list"></div>
 
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px" id="dcPagBot" style="display:none">
+    <div id="dcPagBot" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px">
       <button id="dcPrev2" class="btn btn-outline" type="button" disabled>◀ Prev</button>
       <span id="dcPageInfo2" style="color:var(--muted);font-size:.85rem"></span>
       <button id="dcNext2" class="btn btn-outline" type="button" disabled>Next ▶</button>
@@ -977,291 +977,220 @@ $("invSearch").addEventListener("input",()=>renderInventory().catch(()=>{}));
 $("invFilter").addEventListener("change",()=>renderInventory().catch(()=>{}));
 
 // ── SECTION 5: DISCOGS COLLECTION IMPORT ────────────────────────────────────
-const DISCOGS_USER = "korndog0804";
-const DC_TOKEN_KEY = "korndog_discogs_token";
-const DC_TOKEN_BAKED = "pQZkNeqJhFJrNaYCiHkalTRbZIuqGqDohKryLQwk";
+const DISCOGS_USER  = "korndog0804";
+const DISCOGS_TOKEN = "pQZkNeqJhFJrNaYCiHkalTRbZIuqGqDohKryLQwk";
 let dcPage = 1, dcPages = 1, dcModalData = {};
 
-function getDcToken(){ return localStorage.getItem(DC_TOKEN_KEY) || DC_TOKEN_BAKED; }
+// Hidden token buttons (kept in DOM so no null errors)
+document.getElementById("btnSaveDcToken").onclick = ()=>{};
+document.getElementById("btnClearDcToken").onclick = ()=>{};
 
-// Init Discogs token UI
-(function initDcToken(){
-  const t = getDcToken();
-  if(t){
-    $("discogsToken").placeholder = "Token saved (•••" + t.slice(-6) + ")";
-  }
-})();
-
-$("btnSaveDcToken").onclick = ()=>{
-  const v = $("discogsToken").value.trim();
-  if(!v){ setDcStatus("Paste your Discogs token first.", "warn"); return; }
-  localStorage.setItem(DC_TOKEN_KEY, v);
-  $("discogsToken").value = "";
-  $("discogsToken").placeholder = "Token saved (•••" + v.slice(-6) + ")";
-  setDcStatus("Discogs token saved ✅ — now hit Load Collection.");
-};
-$("btnClearDcToken").onclick = ()=>{
-  localStorage.removeItem(DC_TOKEN_KEY);
-  $("discogsToken").value = "";
-  $("discogsToken").placeholder = "Paste your Discogs token…";
-  setDcStatus("Discogs token cleared.", "warn");
-};
-
-function setDcStatus(msg, kind="ok"){
-  const el=$("dcStatus"), txt=$("dcStatusText");
-  el.style.display="block"; txt.textContent=msg;
-  el.classList.remove("error","warn");
-  if(kind==="error") el.classList.add("error");
-  if(kind==="warn")  el.classList.add("warn");
-}
-function setDmStatus(msg, kind="ok"){
-  const el=$("dmStatus"), txt=$("dmStatusText");
-  el.style.display="block"; txt.textContent=msg;
-  el.classList.remove("error","warn");
-  if(kind==="error") el.classList.add("error");
-  if(kind==="warn")  el.classList.add("warn");
+function setDcStatus(msg, kind){
+  const el = document.getElementById("dcStatus");
+  const txt = document.getElementById("dcStatusText");
+  if(!el || !txt) return;
+  txt.textContent = msg;
+  el.className = "status" + (kind === "error" ? " error" : kind === "warn" ? " warn" : "");
 }
 
-// Fetch via Discogs API with timeout helper
-function fetchWithTimeout(url, opts={}, ms=8000){
-  return Promise.race([
-    fetch(url, opts),
-    new Promise((_,rej)=>setTimeout(()=>rej(new Error("Timeout after "+ms+"ms")), ms))
-  ]);
+function setDmStatus(msg, kind){
+  const el = document.getElementById("dmStatus");
+  const txt = document.getElementById("dmStatusText");
+  if(!el || !txt) return;
+  el.style.display = "block";
+  txt.textContent = msg;
+  el.className = "status" + (kind === "error" ? " error" : kind === "warn" ? " warn" : "");
 }
 
-async function discogsGet(endpoint){
-  const token = getDcToken();
-  const sep = endpoint.includes("?") ? "&" : "?";
-  const authedUrl = "https://api.discogs.com" + endpoint + (token ? sep+"token="+token : "");
-
-  // Try 1: Direct call — Discogs supports CORS with a token
-  try{
-    const res = await fetchWithTimeout(authedUrl, {
-      headers:{"Authorization":"Discogs token="+token}
-    }, 8000);
-    if(res.ok){ return await res.json(); }
-    if(res.status===401) throw new Error("Token rejected by Discogs (401). Token may be expired — get a new one at discogs.com/settings/developers");
-    if(res.status===403) throw new Error("Access denied (403). Make sure collection is set to Public in Discogs privacy settings.");
-    console.warn("Direct call status:", res.status);
-  }catch(e){
-    if(e.message.includes("401")||e.message.includes("403")||e.message.includes("Token")) throw e;
-    console.warn("Direct call failed:", e.message);
-  }
-
-  // Try 2: corsproxy.io with token in URL
-  try{
-    const res = await fetchWithTimeout("https://corsproxy.io/?url="+encodeURIComponent(authedUrl), {}, 8000);
-    if(res.ok){ return await res.json(); }
-    console.warn("corsproxy status:", res.status);
-  }catch(e){ console.warn("corsproxy failed:", e.message); }
-
-  // Try 3: allorigins
-  try{
-    const res = await fetchWithTimeout("https://api.allorigins.win/get?url="+encodeURIComponent(authedUrl), {}, 8000);
-    if(res.ok){
-      const w = await res.json();
-      if(w.contents) return JSON.parse(w.contents);
-    }
-    console.warn("allorigins status:", res.status);
-  }catch(e){ console.warn("allorigins failed:", e.message); }
-
-  throw new Error("Could not reach Discogs after 3 attempts. Check your internet connection and try again.");
+async function discogsGet(endpoint) {
+  const url = "https://api.discogs.com" + endpoint +
+    (endpoint.includes("?") ? "&" : "?") + "token=" + DISCOGS_TOKEN;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Discogs returned " + res.status);
+  return res.json();
 }
 
-// Load Discogs folders into dropdown
-(async function loadDcFolders(){
-  try{
-    const data = await discogsGet(`/users/${DISCOGS_USER}/collection/folders`);
-    (data.folders||[]).forEach(f=>{
-      if(f.id===0) return;
-      const opt=document.createElement("option");
-      opt.value=f.id;
-      opt.textContent=`${f.name} (${f.count})`;
-      $("dcFolder").appendChild(opt);
-    });
-  }catch(e){ /* folders optional, skip silently */ }
-})();
+async function loadDcCollection(page) {
+  const folder = document.getElementById("dcFolder").value || "0";
+  const sort   = document.getElementById("dcSort").value || "added";
+  const raw    = document.getElementById("dcSearch").value.trim();
+  const search = raw.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-async function loadDcCollection(page){
-  const folder=$("dcFolder").value||"0";
-  const sort=$("dcSort").value;
-  const search=($("dcSearch").value.trim()).toLowerCase().replace(/[^a-z0-9]/g,"");
+  setDcStatus("Loading your Discogs collection… please wait.", "warn");
+  document.getElementById("dcList").innerHTML = "";
+  document.getElementById("dcPagTop").style.display = "none";
+  document.getElementById("dcPagBot").style.display = "none";
 
-  setDcStatus("Loading your Discogs collection…");
-  $("dcList").innerHTML="";
-  $("dcPagTop").style.display="none";
-  $("dcPagBot").style.display="none";
-
-  try{
-    const endpoint = `/users/${DISCOGS_USER}/collection/folders/${folder}/releases?per_page=25&page=${page}&sort=${sort}&sort_order=asc`;
+  try {
+    const endpoint = "/users/" + DISCOGS_USER + "/collection/folders/" + folder +
+      "/releases?per_page=25&page=" + page + "&sort=" + sort + "&sort_order=asc";
     const data = await discogsGet(endpoint);
 
-    let releases = data.releases||[];
-    dcPages = data.pagination?.pages||1;
-    dcPage = page;
+    let releases = data.releases || [];
+    dcPages = (data.pagination && data.pagination.pages) || 1;
+    dcPage  = page;
 
-    if(search) releases = releases.filter(r=>{
-      const bi=r.basic_information||{};
-      const a=(bi.artists||[]).map(x=>(x.name||"").toLowerCase().replace(/[^a-z0-9]/g,"")).join(" ");
-      return (bi.title||"").toLowerCase().replace(/[^a-z0-9]/g,"").includes(search)||a.includes(search);
-    });
-
-    const total = data.pagination?.items||"?";
-    setDcStatus(`Page ${page} of ${dcPages} · ${total} records in collection${search?" · filtered":""}`);
-
-    if(releases.length){
-      const updatePag=()=>{
-        [$("dcPrev"),$("dcPrev2")].forEach(b=>b.disabled=page<=1);
-        [$("dcNext"),$("dcNext2")].forEach(b=>b.disabled=page>=dcPages);
-        [$("dcPageInfo"),$("dcPageInfo2")].forEach(el=>el.textContent=`Page ${page} of ${dcPages}`);
-        $("dcPagTop").style.display="flex";
-        $("dcPagBot").style.display="flex";
-      };
-      updatePag();
+    if (search) {
+      releases = releases.filter(function(r) {
+        const bi = r.basic_information || {};
+        const a  = (bi.artists || []).map(function(x){ return (x.name||"").toLowerCase().replace(/[^a-z0-9]/g,""); }).join(" ");
+        return (bi.title||"").toLowerCase().replace(/[^a-z0-9]/g,"").includes(search) || a.includes(search);
+      });
     }
 
-    if(!releases.length){ setDcStatus("No records found"+(search?" matching that search":"")+".", "warn"); return; }
+    const total = (data.pagination && data.pagination.items) || "?";
+    setDcStatus("Page " + page + " of " + dcPages + " \u00b7 " + total + " records" + (search ? " \u00b7 filtered" : ""));
 
-    releases.forEach(r=>{
-      const bi=r.basic_information||{};
-      const artists=(bi.artists||[]).map(a=>(a.name||"").replace(/\s*\(\d+\)\s*$/,"").trim()).filter(Boolean).join(" / ");
-      const title=bi.title||"";
-      const year=bi.year||"";
-      const thumb=bi.thumb||bi.cover_image||"";
-      const genres=[...(bi.genres||[]),...(bi.styles||[])].slice(0,4).join(", ");
-      const labels=(bi.labels||[]).map(l=>(l.name||"").replace(/\s*\(\d+\)\s*$/,"").trim()).filter(Boolean).join(", ");
-      const formats=(bi.formats||[]).flatMap(f=>[f.name,...(f.descriptions||[])]).filter(Boolean).slice(0,3).join(", ");
-      const releaseId=bi.id||r.id||"";
+    if (releases.length) {
+      document.getElementById("dcPrev").disabled  = page <= 1;
+      document.getElementById("dcPrev2").disabled = page <= 1;
+      document.getElementById("dcNext").disabled  = page >= dcPages;
+      document.getElementById("dcNext2").disabled = page >= dcPages;
+      document.getElementById("dcPageInfo").textContent  = "Page " + page + " of " + dcPages;
+      document.getElementById("dcPageInfo2").textContent = "Page " + page + " of " + dcPages;
+      document.getElementById("dcPagTop").style.display = "flex";
+      document.getElementById("dcPagBot").style.display = "flex";
+    }
 
-      const card=document.createElement("div");
-      card.className="inv-card";
-      card.innerHTML=`
-        <div class="inv-thumb">
-          ${thumb?`<img src="${escapeHtml(thumb)}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.7rem">No img</div>`}
-        </div>
-        <div class="inv-meta">
-          <p class="inv-title">${escapeHtml(artists?artists+"—"+title:title)}</p>
-          <p class="inv-sub">
-            ${year?`<span class="badge">${escapeHtml(String(year))}</span> `:""}
-            ${labels?`<span class="badge">${escapeHtml(labels)}</span>`:""}
-          </p>
-          ${formats?`<p class="inv-sub" style="margin-top:2px;font-size:.75rem">${escapeHtml(formats)}</p>`:""}
-        </div>
-        <div class="actions">
-          <button class="btn btn-primary" type="button">Import</button>
-        </div>`;
+    if (!releases.length) {
+      setDcStatus("No records found" + (search ? " matching \u201c" + raw + "\u201d" : "") + ".", "warn");
+      return;
+    }
 
-      card.querySelector("button").onclick=()=>openDcModal({artists,title,year,labels,formats,genres,releaseId});
-      $("dcList").appendChild(card);
+    releases.forEach(function(r) {
+      const bi      = r.basic_information || {};
+      const artists = (bi.artists||[]).map(function(a){ return (a.name||"").replace(/\s*\(\d+\)\s*$/,"").trim(); }).filter(Boolean).join(" / ");
+      const title   = bi.title || "";
+      const year    = bi.year  || "";
+      const thumb   = bi.thumb || bi.cover_image || "";
+      const genres  = [].concat(bi.genres||[]).concat(bi.styles||[]).slice(0,4).join(", ");
+      const labels  = (bi.labels||[]).map(function(l){ return (l.name||"").replace(/\s*\(\d+\)\s*$/,"").trim(); }).filter(Boolean).join(", ");
+      const formats = (bi.formats||[]).reduce(function(acc,f){ return acc.concat([f.name||""]).concat(f.descriptions||[]); },[]).filter(Boolean).slice(0,3).join(", ");
+      const releaseId = bi.id || r.id || "";
+
+      const card = document.createElement("div");
+      card.className = "inv-card";
+      card.innerHTML =
+        '<div class="inv-thumb">' +
+          (thumb ? '<img src="' + escapeHtml(thumb) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.7rem">No img</div>') +
+        '</div>' +
+        '<div class="inv-meta">' +
+          '<p class="inv-title">' + escapeHtml(artists ? artists + " \u2014 " + title : title) + '</p>' +
+          '<p class="inv-sub">' + (year ? '<span class="badge">' + escapeHtml(String(year)) + '</span> ' : '') + (labels ? '<span class="badge">' + escapeHtml(labels) + '</span>' : '') + '</p>' +
+          (formats ? '<p class="inv-sub" style="font-size:.75rem;margin-top:2px">' + escapeHtml(formats) + '</p>' : '') +
+        '</div>' +
+        '<div class="actions"><button class="btn btn-primary" type="button">Import</button></div>';
+
+      card.querySelector("button").onclick = function(){ openDcModal({artists:artists, title:title, year:year, labels:labels, formats:formats, genres:genres, releaseId:releaseId}); };
+      document.getElementById("dcList").appendChild(card);
     });
 
-  }catch(err){
-    console.error(err);
-    setDcStatus("Failed to load: " + err.message + " — Make sure your Discogs token is saved above.", "error");
+  } catch(err) {
+    console.error("Discogs error:", err);
+    setDcStatus("\u274C Failed: " + err.message, "error");
   }
 }
 
-[$("dcPrev"),$("dcPrev2")].forEach(b=>b.onclick=()=>loadDcCollection(dcPage-1));
-[$("dcNext"),$("dcNext2")].forEach(b=>b.onclick=()=>loadDcCollection(dcPage+1));
-$("btnDcLoad").onclick=()=>loadDcCollection(1);
-$("btnDcTest").onclick=async()=>{
-  setDcStatus("Testing Discogs connection…");
-  try{
-    const data = await discogsGet("/users/korndog0804/collection/folders");
-    const count = (data.folders||[]).reduce((s,f)=>s+(f.count||0),0);
-    setDcStatus("✅ Connected! Found " + count + " records across " + (data.folders||[]).length + " folders. Now hit Load Collection.");
-  }catch(e){
-    setDcStatus("❌ Connection failed: " + e.message, "error");
+// Button handlers
+document.getElementById("btnDcLoad").onclick  = function(){ loadDcCollection(1); };
+document.getElementById("btnDcTest").onclick  = async function(){
+  setDcStatus("Testing connection to Discogs\u2026", "warn");
+  try {
+    const data = await discogsGet("/users/" + DISCOGS_USER + "/collection/folders");
+    const total = (data.folders||[]).reduce(function(s,f){ return s+(f.count||0); }, 0);
+    setDcStatus("\u2705 Connected! " + total + " records found. Now hit Load Collection.");
+  } catch(e) {
+    setDcStatus("\u274C " + e.message, "error");
   }
 };
-$("dcSearch").addEventListener("keydown",e=>{ if(e.key==="Enter") loadDcCollection(1); });
+document.getElementById("dcPrev").onclick  = function(){ loadDcCollection(dcPage - 1); };
+document.getElementById("dcPrev2").onclick = function(){ loadDcCollection(dcPage - 1); };
+document.getElementById("dcNext").onclick  = function(){ loadDcCollection(dcPage + 1); };
+document.getElementById("dcNext2").onclick = function(){ loadDcCollection(dcPage + 1); };
+document.getElementById("dcSearch").addEventListener("keydown", function(e){ if(e.key === "Enter") loadDcCollection(1); });
 
 // ── Discogs Import Modal ──────────────────────────────────────────────────────
-function openDcModal(d){
-  dcModalData=d;
-  $("dmArtist").value=d.artists||"";
-  $("dmTitle").value=d.title||"";
-  $("dmPrice").value="";
-  $("dmGrade").value="";
-  $("dmQty").value="1";
-  $("dmTier").value="premium";
-  $("dmFront").value=""; $("dmFrontCam").value="";
-  $("dmBack").value="";  $("dmBackCam").value="";
-  $("dmStatus").style.display="none";
+function openDcModal(d) {
+  dcModalData = d;
+  document.getElementById("dmArtist").value = d.artists || "";
+  document.getElementById("dmTitle").value  = d.title   || "";
+  document.getElementById("dmPrice").value  = "";
+  document.getElementById("dmGrade").value  = "";
+  document.getElementById("dmQty").value    = "1";
+  document.getElementById("dmTier").value   = "premium";
+  document.getElementById("dmFront").value  = "";
+  document.getElementById("dmFrontCam").value = "";
+  document.getElementById("dmBack").value   = "";
+  document.getElementById("dmBackCam").value  = "";
+  document.getElementById("dmStatus").style.display = "none";
 
-  const descParts=[];
-  if(d.labels)    descParts.push("Label: "+d.labels);
-  if(d.formats)   descParts.push("Format: "+d.formats);
-  if(d.year)      descParts.push("Year: "+d.year);
-  if(d.genres)    descParts.push("Genres: "+d.genres);
-  if(d.releaseId) descParts.push("Discogs: https://www.discogs.com/release/"+d.releaseId);
-  $("dmDesc").value=descParts.join("\n");
+  var descParts = [];
+  if (d.labels)    descParts.push("Label: "   + d.labels);
+  if (d.formats)   descParts.push("Format: "  + d.formats);
+  if (d.year)      descParts.push("Year: "    + d.year);
+  if (d.genres)    descParts.push("Genres: "  + d.genres);
+  if (d.releaseId) descParts.push("Discogs: https://www.discogs.com/release/" + d.releaseId);
+  document.getElementById("dmDesc").value = descParts.join("\n");
 
-  $("dcModal").style.display="flex";
-  $("btnDmSave").disabled=false;
+  document.getElementById("dcModal").style.display = "flex";
+  document.getElementById("btnDmSave").disabled = false;
 }
 
-$("btnDmCancel").onclick=()=>$("dcModal").style.display="none";
-$("dcModal").addEventListener("click",e=>{ if(e.target===$("dcModal")) $("dcModal").style.display="none"; });
+document.getElementById("btnDmCancel").onclick = function(){ document.getElementById("dcModal").style.display = "none"; };
+document.getElementById("dcModal").addEventListener("click", function(e){ if(e.target === document.getElementById("dcModal")) document.getElementById("dcModal").style.display = "none"; });
 
-$("btnDmSave").onclick=async()=>{
-  const artist=$("dmArtist").value.trim();
-  const title=$("dmTitle").value.trim();
-  const price=parseFloat($("dmPrice").value);
-  const grade=$("dmGrade").value.trim();
-  const quantity=parseInt($("dmQty").value||"1",10);
-  const tier=$("dmTier").value||"premium";
-  const description=$("dmDesc").value.trim();
-  const frontFile=($("dmFront").files&&$("dmFront").files[0])||($("dmFrontCam").files&&$("dmFrontCam").files[0])||null;
-  const backFile =($("dmBack").files&&$("dmBack").files[0])||($("dmBackCam").files&&$("dmBackCam").files[0])||null;
+document.getElementById("btnDmSave").onclick = async function(){
+  var artist      = document.getElementById("dmArtist").value.trim();
+  var title       = document.getElementById("dmTitle").value.trim();
+  var price       = parseFloat(document.getElementById("dmPrice").value);
+  var grade       = document.getElementById("dmGrade").value.trim();
+  var quantity    = parseInt(document.getElementById("dmQty").value || "1", 10);
+  var tier        = document.getElementById("dmTier").value || "premium";
+  var description = document.getElementById("dmDesc").value.trim();
+  var frontFile   = (document.getElementById("dmFront").files    && document.getElementById("dmFront").files[0])    ||
+                    (document.getElementById("dmFrontCam").files && document.getElementById("dmFrontCam").files[0]) || null;
+  var backFile    = (document.getElementById("dmBack").files     && document.getElementById("dmBack").files[0])     ||
+                    (document.getElementById("dmBackCam").files  && document.getElementById("dmBackCam").files[0])  || null;
 
-  if(!artist||!title||!grade||Number.isNaN(price)){
-    setDmStatus("Missing: Artist, Title, Price, and Grade.","error"); return;
-  }
-  if(!frontFile){
-    setDmStatus("Front photo is required.","error"); return;
-  }
-  try{ requireToken(); }catch(e){ setDmStatus(e.message,"error"); return; }
+  if (!artist || !title || !grade || isNaN(price)) { setDmStatus("Missing: Artist, Title, Price, and Grade.", "error"); return; }
+  if (!frontFile) { setDmStatus("Front photo is required.", "error"); return; }
+  try { requireToken(); } catch(e) { setDmStatus(e.message, "error"); return; }
 
-  $("btnDmSave").disabled=true;
-  setDmStatus("Uploading front photo…");
+  document.getElementById("btnDmSave").disabled = true;
+  setDmStatus("Uploading front photo\u2026");
 
-  try{
-    const{products,sha}=await loadProducts();
-    const frontPath=await uploadImage(frontFile);
-    let backPath=frontPath;
-    if(backFile){ setDmStatus("Uploading back photo…"); backPath=await uploadImage(backFile); }
+  try {
+    var loaded     = await loadProducts();
+    var products   = loaded.products;
+    var sha        = loaded.sha;
+    var frontPath  = await uploadImage(frontFile);
+    var backPath   = frontPath;
+    if (backFile) { setDmStatus("Uploading back photo\u2026"); backPath = await uploadImage(backFile); }
 
-    setDmStatus("Saving to products.json2…");
-    const base=slugify(artist+" "+title);
-    const pid=ensureUniquePid(base,products);
-
-    const record={
-      pid,id:pid,artist,title,price,grade,
-      quantity:Number.isFinite(quantity)?quantity:1,
-      tier,available:true,featured:false,joeysPick:false,
-      description,sold:false,
-      image:frontPath,imageFront:frontPath,imageBack:backPath,
-      images:[frontPath,backPath],
-      imagesObj:{front:frontPath,back:backPath},
-      discogsReleaseId:dcModalData.releaseId||""
+    setDmStatus("Saving to products.json2\u2026");
+    var base   = slugify(artist + " " + title);
+    var pid    = ensureUniquePid(base, products);
+    var record = {
+      pid:pid, id:pid, artist:artist, title:title, price:price, grade:grade,
+      quantity: isFinite(quantity) ? quantity : 1,
+      tier:tier, available:true, featured:false, joeysPick:false,
+      description:description, sold:false,
+      image:frontPath, imageFront:frontPath, imageBack:backPath,
+      images:[frontPath, backPath], imagesObj:{front:frontPath, back:backPath},
+      discogsReleaseId: dcModalData.releaseId || ""
     };
-
     products.push(record);
-    products.sort((a,b)=>(a.artist||"").localeCompare(b.artist||"")||(a.title||"").localeCompare(b.title||""));
-    await saveProducts(products,sha,"Add record from Discogs: "+pid);
+    products.sort(function(a,b){ return (a.artist||"").localeCompare(b.artist||"") || (a.title||"").localeCompare(b.title||""); });
+    await saveProducts(products, sha, "Add record from Discogs: " + pid);
     await refresh();
     await renderInventory();
-
-    setStatus("✅ Added from Discogs: "+artist+" — "+title+" (pid: "+pid+")");
-    setDmStatus("✅ Saved! "+artist+" — "+title);
-    setTimeout(()=>{ $("dcModal").style.display="none"; $("btnDmSave").disabled=false; },2200);
-
-  }catch(err){
+    setStatus("\u2705 Added from Discogs: " + artist + " \u2014 " + title);
+    setDmStatus("\u2705 Saved! " + artist + " \u2014 " + title);
+    setTimeout(function(){ document.getElementById("dcModal").style.display = "none"; document.getElementById("btnDmSave").disabled = false; }, 2200);
+  } catch(err) {
     console.error(err);
-    setDmStatus("Save failed: "+err.message,"error");
-    $("btnDmSave").disabled=false;
+    setDmStatus("Save failed: " + err.message, "error");
+    document.getElementById("btnDmSave").disabled = false;
   }
 };
 // ── END SECTION 5 ────────────────────────────────────────────────────────────
