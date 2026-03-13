@@ -293,6 +293,16 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
       Browse your 300-record Discogs collection. Hit <b>Import</b> on any record, set price &amp; grade, upload a photo — it goes live into your shop without touching anything else.
     </div>
 
+    <!-- Discogs Personal Token -->
+    <div class="field" style="margin-bottom:10px">
+      <label for="discogsToken">Discogs Personal Access Token</label>
+      <input id="discogsToken" type="password" placeholder="Paste your Discogs token…"/>
+      <div class="hint">
+        Get it free at <b>discogs.com → Settings → Developers → Generate token</b>. Saved on this device only.
+        <div style="margin-top:4px"><button id="btnSaveDcToken" class="btn btn-outline" type="button" style="font-size:.72rem;padding:6px 14px">Save Discogs Token</button> <button id="btnClearDcToken" class="btn btn-warn" type="button" style="font-size:.72rem;padding:6px 14px">Clear</button></div>
+      </div>
+    </div>
+
     <div class="row" style="align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:4px">
       <div class="field" style="margin:0;flex:2;min-width:200px">
         <label for="dcSearch">Search Collection</label>
@@ -970,7 +980,33 @@ $("invFilter").addEventListener("change",()=>renderInventory().catch(()=>{}));
 
 // ── SECTION 5: DISCOGS COLLECTION IMPORT ────────────────────────────────────
 const DISCOGS_USER = "korndog0804";
+const DC_TOKEN_KEY = "korndog_discogs_token";
 let dcPage = 1, dcPages = 1, dcModalData = {};
+
+function getDcToken(){ return localStorage.getItem(DC_TOKEN_KEY)||""; }
+
+// Init Discogs token UI
+(function initDcToken(){
+  const t = getDcToken();
+  if(t){
+    $("discogsToken").placeholder = "Token saved (•••" + t.slice(-6) + ")";
+  }
+})();
+
+$("btnSaveDcToken").onclick = ()=>{
+  const v = $("discogsToken").value.trim();
+  if(!v){ setDcStatus("Paste your Discogs token first.", "warn"); return; }
+  localStorage.setItem(DC_TOKEN_KEY, v);
+  $("discogsToken").value = "";
+  $("discogsToken").placeholder = "Token saved (•••" + v.slice(-6) + ")";
+  setDcStatus("Discogs token saved ✅ — now hit Load Collection.");
+};
+$("btnClearDcToken").onclick = ()=>{
+  localStorage.removeItem(DC_TOKEN_KEY);
+  $("discogsToken").value = "";
+  $("discogsToken").placeholder = "Paste your Discogs token…";
+  setDcStatus("Discogs token cleared.", "warn");
+};
 
 function setDcStatus(msg, kind="ok"){
   const el=$("dcStatus"), txt=$("dcStatusText");
@@ -987,13 +1023,42 @@ function setDmStatus(msg, kind="ok"){
   if(kind==="warn")  el.classList.add("warn");
 }
 
+// Fetch via Discogs API with token — tries multiple CORS proxies
+async function discogsGet(endpoint){
+  const token = getDcToken();
+  const fullUrl = "https://api.discogs.com" + endpoint;
+  
+  // Proxies to try in order
+  const proxies = [
+    u => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+    u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u => `https://thingproxy.freeboard.io/fetch/${u}`,
+  ];
+
+  const headers = token
+    ? { "Authorization": "Discogs token=" + token, "User-Agent": "KorndogRecordsAdmin/1.0" }
+    : { "User-Agent": "KorndogRecordsAdmin/1.0" };
+
+  let lastErr = null;
+  for(const makeProxy of proxies){
+    try{
+      const res = await fetch(makeProxy(fullUrl), { headers });
+      if(res.ok){
+        const data = await res.json();
+        return data;
+      }
+      lastErr = new Error("HTTP " + res.status);
+    }catch(e){
+      lastErr = e;
+    }
+  }
+  throw lastErr || new Error("All proxies failed");
+}
+
 // Load Discogs folders into dropdown
 (async function loadDcFolders(){
   try{
-    const dcFolderUrl = `https://api.discogs.com/users/${DISCOGS_USER}/collection/folders`;
-    const res=await fetch("https://corsproxy.io/?url="+encodeURIComponent(dcFolderUrl));
-    if(!res.ok) return;
-    const data=await res.json();
+    const data = await discogsGet(`/users/${DISCOGS_USER}/collection/folders`);
     (data.folders||[]).forEach(f=>{
       if(f.id===0) return;
       const opt=document.createElement("option");
@@ -1001,7 +1066,7 @@ function setDmStatus(msg, kind="ok"){
       opt.textContent=`${f.name} (${f.count})`;
       $("dcFolder").appendChild(opt);
     });
-  }catch(e){}
+  }catch(e){ /* folders optional, skip silently */ }
 })();
 
 async function loadDcCollection(page){
@@ -1015,23 +1080,21 @@ async function loadDcCollection(page){
   $("dcPagBot").style.display="none";
 
   try{
-    const dcUrl=`https://api.discogs.com/users/${DISCOGS_USER}/collection/folders/${folder}/releases?per_page=25&page=${page}&sort=${sort}&sort_order=asc`;
-    const res=await fetch("https://corsproxy.io/?url="+encodeURIComponent(dcUrl));
-    if(!res.ok) throw new Error("Discogs API "+res.status+". Make sure your Discogs collection is set to Public in your Discogs privacy settings.");
-    const data=await res.json();
+    const endpoint = `/users/${DISCOGS_USER}/collection/folders/${folder}/releases?per_page=25&page=${page}&sort=${sort}&sort_order=asc`;
+    const data = await discogsGet(endpoint);
 
-    let releases=data.releases||[];
-    dcPages=data.pagination?.pages||1;
-    dcPage=page;
+    let releases = data.releases||[];
+    dcPages = data.pagination?.pages||1;
+    dcPage = page;
 
-    if(search) releases=releases.filter(r=>{
+    if(search) releases = releases.filter(r=>{
       const bi=r.basic_information||{};
       const a=(bi.artists||[]).map(x=>(x.name||"").toLowerCase().replace(/[^a-z0-9]/g,"")).join(" ");
       return (bi.title||"").toLowerCase().replace(/[^a-z0-9]/g,"").includes(search)||a.includes(search);
     });
 
-    const total=data.pagination?.items||"?";
-    setDcStatus(`Page ${page} of ${dcPages} · ${total} records in collection${search?" · filtered":""}` );
+    const total = data.pagination?.items||"?";
+    setDcStatus(`Page ${page} of ${dcPages} · ${total} records in collection${search?" · filtered":""}`);
 
     if(releases.length){
       const updatePag=()=>{
@@ -1064,13 +1127,12 @@ async function loadDcCollection(page){
           ${thumb?`<img src="${escapeHtml(thumb)}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.7rem">No img</div>`}
         </div>
         <div class="inv-meta">
-          <p class="inv-title">${escapeHtml(artists?artists+" — "+title:title)}</p>
+          <p class="inv-title">${escapeHtml(artists?artists+"—"+title:title)}</p>
           <p class="inv-sub">
             ${year?`<span class="badge">${escapeHtml(String(year))}</span> `:""}
-            ${labels?`<span class="badge">${escapeHtml(labels)}</span> `:""}
-            ${formats?`<span class="badge">${escapeHtml(formats)}</span>`:""}
+            ${labels?`<span class="badge">${escapeHtml(labels)}</span>`:""}
           </p>
-          ${genres?`<p class="inv-sub" style="margin-top:3px;font-size:.78rem">${escapeHtml(genres)}</p>`:""}
+          ${formats?`<p class="inv-sub" style="margin-top:2px;font-size:.75rem">${escapeHtml(formats)}</p>`:""}
         </div>
         <div class="actions">
           <button class="btn btn-primary" type="button">Import</button>
@@ -1082,7 +1144,7 @@ async function loadDcCollection(page){
 
   }catch(err){
     console.error(err);
-    setDcStatus("Failed: "+err.message,"error");
+    setDcStatus("Failed to load: " + err.message + " — Make sure your Discogs token is saved above.", "error");
   }
 }
 
@@ -1127,8 +1189,6 @@ $("btnDmSave").onclick=async()=>{
   const quantity=parseInt($("dmQty").value||"1",10);
   const tier=$("dmTier").value||"premium";
   const description=$("dmDesc").value.trim();
-
-  // pick file: library picker wins over camera
   const frontFile=($("dmFront").files&&$("dmFront").files[0])||($("dmFrontCam").files&&$("dmFrontCam").files[0])||null;
   const backFile =($("dmBack").files&&$("dmBack").files[0])||($("dmBackCam").files&&$("dmBackCam").files[0])||null;
 
@@ -1138,7 +1198,6 @@ $("btnDmSave").onclick=async()=>{
   if(!frontFile){
     setDmStatus("Front photo is required.","error"); return;
   }
-
   try{ requireToken(); }catch(e){ setDmStatus(e.message,"error"); return; }
 
   $("btnDmSave").disabled=true;
@@ -1146,16 +1205,11 @@ $("btnDmSave").onclick=async()=>{
 
   try{
     const{products,sha}=await loadProducts();
-
     const frontPath=await uploadImage(frontFile);
     let backPath=frontPath;
-    if(backFile){
-      setDmStatus("Uploading back photo…");
-      backPath=await uploadImage(backFile);
-    }
+    if(backFile){ setDmStatus("Uploading back photo…"); backPath=await uploadImage(backFile); }
 
     setDmStatus("Saving to products.json2…");
-
     const base=slugify(artist+" "+title);
     const pid=ensureUniquePid(base,products);
 
@@ -1173,14 +1227,11 @@ $("btnDmSave").onclick=async()=>{
     products.push(record);
     products.sort((a,b)=>(a.artist||"").localeCompare(b.artist||"")||(a.title||"").localeCompare(b.title||""));
     await saveProducts(products,sha,"Add record from Discogs: "+pid);
-
-    // Refresh local cache so Section 4 inventory picks it up immediately
     await refresh();
     await renderInventory();
 
     setStatus("✅ Added from Discogs: "+artist+" — "+title+" (pid: "+pid+")");
     setDmStatus("✅ Saved! "+artist+" — "+title);
-
     setTimeout(()=>{ $("dcModal").style.display="none"; $("btnDmSave").disabled=false; },2200);
 
   }catch(err){
