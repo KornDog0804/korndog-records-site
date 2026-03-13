@@ -1022,44 +1022,51 @@ function setDmStatus(msg, kind="ok"){
   if(kind==="warn")  el.classList.add("warn");
 }
 
-// Fetch via Discogs API — token in URL param, tries multiple proxy strategies
+// Fetch via Discogs API with timeout helper
+function fetchWithTimeout(url, opts={}, ms=8000){
+  return Promise.race([
+    fetch(url, opts),
+    new Promise((_,rej)=>setTimeout(()=>rej(new Error("Timeout after "+ms+"ms")), ms))
+  ]);
+}
+
 async function discogsGet(endpoint){
   const token = getDcToken();
   const sep = endpoint.includes("?") ? "&" : "?";
   const authedUrl = "https://api.discogs.com" + endpoint + (token ? sep+"token="+token : "");
 
-  // Strategy 1: corsproxy.io (direct)
+  // Try 1: Direct call — Discogs supports CORS with a token
   try{
-    const res = await fetch("https://corsproxy.io/?url=" + encodeURIComponent(authedUrl));
+    const res = await fetchWithTimeout(authedUrl, {
+      headers:{"Authorization":"Discogs token="+token}
+    }, 8000);
     if(res.ok){ return await res.json(); }
-    console.warn("corsproxy.io status:", res.status);
-  }catch(e){ console.warn("corsproxy.io failed:", e.message); }
+    if(res.status===401) throw new Error("Token rejected by Discogs (401). Token may be expired — get a new one at discogs.com/settings/developers");
+    if(res.status===403) throw new Error("Access denied (403). Make sure collection is set to Public in Discogs privacy settings.");
+    console.warn("Direct call status:", res.status);
+  }catch(e){
+    if(e.message.includes("401")||e.message.includes("403")||e.message.includes("Token")) throw e;
+    console.warn("Direct call failed:", e.message);
+  }
 
-  // Strategy 2: allorigins raw
+  // Try 2: corsproxy.io with token in URL
   try{
-    const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(authedUrl));
+    const res = await fetchWithTimeout("https://corsproxy.io/?url="+encodeURIComponent(authedUrl), {}, 8000);
     if(res.ok){ return await res.json(); }
-    console.warn("allorigins raw status:", res.status);
-  }catch(e){ console.warn("allorigins raw failed:", e.message); }
+    console.warn("corsproxy status:", res.status);
+  }catch(e){ console.warn("corsproxy failed:", e.message); }
 
-  // Strategy 3: allorigins get (wraps in {contents})
+  // Try 3: allorigins
   try{
-    const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(authedUrl));
+    const res = await fetchWithTimeout("https://api.allorigins.win/get?url="+encodeURIComponent(authedUrl), {}, 8000);
     if(res.ok){
-      const wrapper = await res.json();
-      return JSON.parse(wrapper.contents);
+      const w = await res.json();
+      if(w.contents) return JSON.parse(w.contents);
     }
-    console.warn("allorigins get status:", res.status);
-  }catch(e){ console.warn("allorigins get failed:", e.message); }
+    console.warn("allorigins status:", res.status);
+  }catch(e){ console.warn("allorigins failed:", e.message); }
 
-  // Strategy 4: jsonp.afeld.me
-  try{
-    const res = await fetch("https://jsonp.afeld.me/?url=" + encodeURIComponent(authedUrl));
-    if(res.ok){ return await res.json(); }
-    console.warn("jsonp.afeld status:", res.status);
-  }catch(e){ console.warn("jsonp.afeld failed:", e.message); }
-
-  throw new Error("All 4 proxies failed. Open browser console (F12) to see which proxy error is showing, and send a screenshot to get it fixed.");
+  throw new Error("Could not reach Discogs after 3 attempts. Check your internet connection and try again.");
 }
 
 // Load Discogs folders into dropdown
