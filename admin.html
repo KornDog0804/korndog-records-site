@@ -1035,8 +1035,8 @@ function setDmStatus(msg, kind){
 }
 
 async function discogsGet(endpoint) {
-  const url = "https://api.discogs.com" + endpoint +
-    (endpoint.includes("?") ? "&" : "?") + "token=" + DISCOGS_TOKEN;
+  // Token is already in the endpoint URL
+  const url = "https://api.discogs.com" + endpoint;
 
   // Hard 10s timeout using AbortController
   const controller = new AbortController();
@@ -1079,10 +1079,9 @@ async function loadDcCollection(page) {
   document.getElementById("dcPagBot").style.display = "none";
 
   try {
-    // Folder 0 = All records (confirmed working)
     var folderVal = document.getElementById("dcFolder").value || "0";
     const endpoint = "/users/" + DISCOGS_USER + "/collection/folders/" + folderVal +
-      "/releases?per_page=50&page=" + page + "&sort=" + sort + "&sort_order=" + (sort === "added" ? "desc" : "asc");
+      "/releases?per_page=50&page=" + page + "&token=" + DISCOGS_TOKEN;
     const data = await discogsGet(endpoint);
 
     let releases = data.releases || [];
