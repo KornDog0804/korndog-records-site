@@ -1080,9 +1080,11 @@ async function loadDcCollection(page) {
 
   try {
     var folderVal = document.getElementById("dcFolder").value || "0";
-    var dcUrl = "https://api.discogs.com/users/" + DISCOGS_USER + "/collection/folders/" + folderVal +
-      "/releases?page=" + page + "&per_page=25&token=" + DISCOGS_TOKEN;
-    setDcStatus("Fetching: " + dcUrl.replace(DISCOGS_TOKEN, "***"), "warn");
+    var _user  = "korndog0804";
+    var _token = "pQZkNeqJhFJrNaYCiHkalTRbZIuqGqDohKryLQwk";
+    var dcUrl = "https://api.discogs.com/users/" + _user + "/collection/folders/" + folderVal +
+      "/releases?page=" + page + "&per_page=25&token=" + _token;
+    setDcStatus("Fetching page " + page + "...", "warn");
     const data = await fetch(dcUrl).then(function(r){
       if(!r.ok) throw new Error("Discogs returned " + r.status);
       return r.json();
