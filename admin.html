@@ -319,8 +319,8 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
         <select id="dcFolder"><option value="0">All Records</option></select>
       </div>
       <div style="padding-bottom:10px">
-        <button id="btnDcLoad" class="btn btn-primary" type="button">Load Collection</button>
-        <button id="btnDcTest" class="btn btn-warn" type="button" style="margin-left:8px">Test Connection</button>
+        <button id="btnDcLoad" class="btn btn-primary" type="button" onclick="dcBtnLoad()">Load Collection</button>
+        <button id="btnDcTest" class="btn btn-warn" type="button" style="margin-left:8px" onclick="dcBtnTest()">Test Connection</button>
       </div>
     </div>
 
@@ -981,9 +981,36 @@ const DISCOGS_USER  = "korndog0804";
 const DISCOGS_TOKEN = "pQZkNeqJhFJrNaYCiHkalTRbZIuqGqDohKryLQwk";
 let dcPage = 1, dcPages = 1, dcModalData = {};
 
+// ── Define button functions FIRST before anything can crash ──────────────────
+function dcBtnTest(){
+  var txt = document.getElementById("dcStatusText");
+  var el  = document.getElementById("dcStatus");
+  if(txt) txt.textContent = "Testing… please wait up to 10 seconds.";
+  if(el)  el.className = "status warn";
+  var url = "https://api.discogs.com/users/korndog0804/collection/folders?token=" + DISCOGS_TOKEN;
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var total = (data.folders||[]).reduce(function(s,f){ return s+(f.count||0); },0);
+      if(txt) txt.textContent = "✅ Connected! " + total + " records. Hit Load Collection.";
+      if(el)  el.className = "status";
+    })
+    .catch(function(e){
+      if(txt) txt.textContent = "❌ Failed: " + e.message;
+      if(el)  el.className = "status error";
+    });
+}
+function dcBtnLoad(){
+  var txt = document.getElementById("dcStatusText");
+  var el  = document.getElementById("dcStatus");
+  if(txt) txt.textContent = "Loading collection… please wait.";
+  if(el)  el.className = "status warn";
+  setTimeout(function(){ loadDcCollection(1); }, 30);
+}
+
 // Hidden token buttons (kept in DOM so no null errors)
-document.getElementById("btnSaveDcToken").onclick = ()=>{};
-document.getElementById("btnClearDcToken").onclick = ()=>{};
+document.getElementById("btnSaveDcToken").onclick = function(){};
+document.getElementById("btnClearDcToken").onclick = function(){};
 
 function setDcStatus(msg, kind){
   const el = document.getElementById("dcStatus");
@@ -1222,6 +1249,8 @@ document.getElementById("btnDmSave").onclick = async function(){
   }
 };
 // ── END SECTION 5 ────────────────────────────────────────────────────────────
+
+// (dcBtnTest and dcBtnLoad defined at top of Section 5)
 
 (async function boot(){
   if(!getToken()){
