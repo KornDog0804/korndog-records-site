@@ -1079,9 +1079,8 @@ async function loadDcCollection(page) {
   document.getElementById("dcPagBot").style.display = "none";
 
   try {
-    // Folder 0 = virtual "All" on Discogs — use folder 1 (Uncategorized) which holds actual records
-    var folderVal = document.getElementById("dcFolder").value;
-    if(!folderVal || folderVal === "0") folderVal = "1";
+    // Folder 0 = All records (confirmed working)
+    var folderVal = document.getElementById("dcFolder").value || "0";
     const endpoint = "/users/" + DISCOGS_USER + "/collection/folders/" + folderVal +
       "/releases?per_page=50&page=" + page + "&sort=" + sort + "&sort_order=" + (sort === "added" ? "desc" : "asc");
     const data = await discogsGet(endpoint);
