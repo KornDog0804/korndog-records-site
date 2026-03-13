@@ -985,19 +985,23 @@ var dcPage = 1, dcPages = 1, dcModalData = {};
 function dcBtnTest(){
   var txt = document.getElementById("dcStatusText");
   var el  = document.getElementById("dcStatus");
-  if(txt) txt.textContent = "Testing… please wait up to 10 seconds.";
+  if(txt) txt.textContent = "Testing… fetching releases directly…";
   if(el)  el.className = "status warn";
-  var url = "https://api.discogs.com/users/korndog0804/collection/folders?token=" + DISCOGS_TOKEN;
+  // Fetch releases from folder 0 directly and show what comes back
+  var url = "https://api.discogs.com/users/korndog0804/collection/folders/0/releases?per_page=3&page=1&token=" + DISCOGS_TOKEN;
   fetch(url)
     .then(function(r){ return r.json(); })
     .then(function(data){
-      var folders = data.folders || [];
-      var info = folders.map(function(f){ return "ID="+f.id+" "+f.name+"("+f.count+")"; }).join(" | ");
-      if(txt) txt.textContent = "\u2705 " + info;
+      var releases = data.releases || [];
+      var pages = (data.pagination && data.pagination.pages) || "?";
+      var total = (data.pagination && data.pagination.items) || "?";
+      var keys = Object.keys(data).join(",");
+      var titles = releases.map(function(r){ return (r.basic_information||{}).title||r.id; }).join(" / ");
+      if(txt) txt.textContent = "\u2705 keys=" + keys + " | total=" + total + " pages=" + pages + " | first: " + titles;
       if(el)  el.className = "status";
     })
     .catch(function(e){
-      if(txt) txt.textContent = "\u274C Failed: " + e.message;
+      if(txt) txt.textContent = "\u274C " + e.message;
       if(el)  el.className = "status error";
     });
 }
