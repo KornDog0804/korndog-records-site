@@ -253,8 +253,8 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
     </div>
     <div class="btn-row">
       <button id="btnSoldSave" class="btn btn-primary" type="button">Save Change to Site</button>
-        <button class="btn btn-danger" type="button">Sold</button>
-        <button class="btn btn-soft" type="button">Avail</button>
+        <button id="btnQuickSold" class="btn btn-danger" type="button">Sold</button>
+        <button id="btnQuickAvail" class="btn btn-soft" type="button">Avail</button>
     </div>
   </section>
 
@@ -1006,6 +1006,7 @@ function dcBtnTest(){
     });
 }
 function dcBtnLoad(){
+  document.getElementById("dcSearch").value = "";
   var txt = document.getElementById("dcStatusText");
   var el  = document.getElementById("dcStatus");
   if(txt) txt.textContent = "Loading collection… please wait.";
