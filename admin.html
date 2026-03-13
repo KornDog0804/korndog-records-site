@@ -320,6 +320,7 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
       </div>
       <div style="padding-bottom:10px">
         <button id="btnDcLoad" class="btn btn-primary" type="button">Load Collection</button>
+        <button id="btnDcTest" class="btn btn-warn" type="button" style="margin-left:8px">Test Connection</button>
       </div>
     </div>
 
@@ -1021,34 +1022,44 @@ function setDmStatus(msg, kind="ok"){
   if(kind==="warn")  el.classList.add("warn");
 }
 
-// Fetch via Discogs API — token passed as URL param (proxies can't strip it)
+// Fetch via Discogs API — token in URL param, tries multiple proxy strategies
 async function discogsGet(endpoint){
   const token = getDcToken();
-  // Append token as query param — Discogs fully supports this
   const sep = endpoint.includes("?") ? "&" : "?";
   const authedUrl = "https://api.discogs.com" + endpoint + (token ? sep+"token="+token : "");
 
-  // Proxies to try in order
-  const proxies = [
-    u => `https://corsproxy.io/?url=${encodeURIComponent(u)}`,
-    u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-    u => `https://thingproxy.freeboard.io/fetch/${u}`,
-  ];
+  // Strategy 1: corsproxy.io (direct)
+  try{
+    const res = await fetch("https://corsproxy.io/?url=" + encodeURIComponent(authedUrl));
+    if(res.ok){ return await res.json(); }
+    console.warn("corsproxy.io status:", res.status);
+  }catch(e){ console.warn("corsproxy.io failed:", e.message); }
 
-  let lastErr = null;
-  for(const makeProxy of proxies){
-    try{
-      const res = await fetch(makeProxy(authedUrl));
-      if(res.ok){
-        const data = await res.json();
-        return data;
-      }
-      lastErr = new Error("HTTP " + res.status + " via proxy");
-    }catch(e){
-      lastErr = e;
+  // Strategy 2: allorigins raw
+  try{
+    const res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(authedUrl));
+    if(res.ok){ return await res.json(); }
+    console.warn("allorigins raw status:", res.status);
+  }catch(e){ console.warn("allorigins raw failed:", e.message); }
+
+  // Strategy 3: allorigins get (wraps in {contents})
+  try{
+    const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(authedUrl));
+    if(res.ok){
+      const wrapper = await res.json();
+      return JSON.parse(wrapper.contents);
     }
-  }
-  throw lastErr || new Error("All proxies failed — check your token and try again");
+    console.warn("allorigins get status:", res.status);
+  }catch(e){ console.warn("allorigins get failed:", e.message); }
+
+  // Strategy 4: jsonp.afeld.me
+  try{
+    const res = await fetch("https://jsonp.afeld.me/?url=" + encodeURIComponent(authedUrl));
+    if(res.ok){ return await res.json(); }
+    console.warn("jsonp.afeld status:", res.status);
+  }catch(e){ console.warn("jsonp.afeld failed:", e.message); }
+
+  throw new Error("All 4 proxies failed. Open browser console (F12) to see which proxy error is showing, and send a screenshot to get it fixed.");
 }
 
 // Load Discogs folders into dropdown
@@ -1147,6 +1158,16 @@ async function loadDcCollection(page){
 [$("dcPrev"),$("dcPrev2")].forEach(b=>b.onclick=()=>loadDcCollection(dcPage-1));
 [$("dcNext"),$("dcNext2")].forEach(b=>b.onclick=()=>loadDcCollection(dcPage+1));
 $("btnDcLoad").onclick=()=>loadDcCollection(1);
+$("btnDcTest").onclick=async()=>{
+  setDcStatus("Testing Discogs connection…");
+  try{
+    const data = await discogsGet("/users/korndog0804/collection/folders");
+    const count = (data.folders||[]).reduce((s,f)=>s+(f.count||0),0);
+    setDcStatus("✅ Connected! Found " + count + " records across " + (data.folders||[]).length + " folders. Now hit Load Collection.");
+  }catch(e){
+    setDcStatus("❌ Connection failed: " + e.message, "error");
+  }
+};
 $("dcSearch").addEventListener("keydown",e=>{ if(e.key==="Enter") loadDcCollection(1); });
 
 // ── Discogs Import Modal ──────────────────────────────────────────────────────
