@@ -885,5 +885,32 @@
     "pid": "compilation-album-hiphop-50yrs",
     "featured": false,
     "joeysPick": false
+  },
+  {
+    "pid": "wings-band-on-the-run",
+    "id": "wings-band-on-the-run",
+    "artist": "Wings",
+    "title": "Band On The Run",
+    "price": 10,
+    "grade": "VG/VG",
+    "quantity": 1,
+    "tier": "threefor25",
+    "available": true,
+    "featured": false,
+    "joeysPick": false,
+    "description": "Label: Apple Records\nFormat: Vinyl, LP, Album\nYear: 1973\nGenres: Rock, Pop Rock\nDiscogs: https://www.discogs.com/release/471170",
+    "sold": false,
+    "image": "https://i.discogs.com/zeb5uJ8XYiPm66GT_NJYfha9YV7jOWibQZoO4-_dcoo/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3MTE3/MC0xNDA2NTEyNTc3/LTcxMTQuanBlZw.jpeg",
+    "imageFront": "https://i.discogs.com/zeb5uJ8XYiPm66GT_NJYfha9YV7jOWibQZoO4-_dcoo/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3MTE3/MC0xNDA2NTEyNTc3/LTcxMTQuanBlZw.jpeg",
+    "imageBack": "https://i.discogs.com/zeb5uJ8XYiPm66GT_NJYfha9YV7jOWibQZoO4-_dcoo/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3MTE3/MC0xNDA2NTEyNTc3/LTcxMTQuanBlZw.jpeg",
+    "images": [
+      "https://i.discogs.com/zeb5uJ8XYiPm66GT_NJYfha9YV7jOWibQZoO4-_dcoo/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3MTE3/MC0xNDA2NTEyNTc3/LTcxMTQuanBlZw.jpeg",
+      "https://i.discogs.com/zeb5uJ8XYiPm66GT_NJYfha9YV7jOWibQZoO4-_dcoo/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3MTE3/MC0xNDA2NTEyNTc3/LTcxMTQuanBlZw.jpeg"
+    ],
+    "imagesObj": {
+      "front": "https://i.discogs.com/zeb5uJ8XYiPm66GT_NJYfha9YV7jOWibQZoO4-_dcoo/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3MTE3/MC0xNDA2NTEyNTc3/LTcxMTQuanBlZw.jpeg",
+      "back": "https://i.discogs.com/zeb5uJ8XYiPm66GT_NJYfha9YV7jOWibQZoO4-_dcoo/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTQ3MTE3/MC0xNDA2NTEyNTc3/LTcxMTQuanBlZw.jpeg"
+    },
+    "discogsReleaseId": 471170
   }
 ]
