@@ -991,12 +991,13 @@ function dcBtnTest(){
   fetch(url)
     .then(function(r){ return r.json(); })
     .then(function(data){
-      var total = (data.folders||[]).reduce(function(s,f){ return s+(f.count||0); },0);
-      if(txt) txt.textContent = "✅ Connected! " + total + " records. Hit Load Collection.";
+      var folders = data.folders || [];
+      var info = folders.map(function(f){ return f.name+"("+f.count+")"; }).join(" | ");
+      if(txt) txt.textContent = "\u2705 Folders: " + info;
       if(el)  el.className = "status";
     })
     .catch(function(e){
-      if(txt) txt.textContent = "❌ Failed: " + e.message;
+      if(txt) txt.textContent = "\u274C Failed: " + e.message;
       if(el)  el.className = "status error";
     });
 }
@@ -1074,13 +1075,19 @@ async function loadDcCollection(page) {
   document.getElementById("dcPagBot").style.display = "none";
 
   try {
-    const endpoint = "/users/" + DISCOGS_USER + "/collection/folders/" + folder +
-      "/releases?per_page=25&page=" + page + "&sort=" + sort + "&sort_order=asc";
+    // Use folder 0 = All, but fall back to /collection/releases if it returns < 5 items
+    var folderVal = document.getElementById("dcFolder").value || "0";
+    const endpoint = "/users/" + DISCOGS_USER + "/collection/folders/" + folderVal +
+      "/releases?per_page=50&page=" + page + "&sort=" + sort + "&sort_order=" + (sort === "added" ? "desc" : "asc");
     const data = await discogsGet(endpoint);
 
     let releases = data.releases || [];
     dcPages = (data.pagination && data.pagination.pages) || 1;
     dcPage  = page;
+
+    // Debug: show raw response info
+    console.log("Discogs response keys:", Object.keys(data));
+    console.log("releases count:", releases.length, "pagination:", data.pagination);
 
     if (search) {
       releases = releases.filter(function(r) {
@@ -1090,8 +1097,8 @@ async function loadDcCollection(page) {
       });
     }
 
-    const total = (data.pagination && data.pagination.items) || "?";
-    setDcStatus("Page " + page + " of " + dcPages + " \u00b7 " + total + " records" + (search ? " \u00b7 filtered" : ""));
+    const total = (data.pagination && data.pagination.items) || releases.length;
+    setDcStatus("Page " + page + " of " + dcPages + " · " + total + " records · " + releases.length + " on this page" + (search ? " · filtered" : ""));
 
     if (releases.length) {
       document.getElementById("dcPrev").disabled  = page <= 1;
