@@ -992,8 +992,8 @@ function dcBtnTest(){
     .then(function(r){ return r.json(); })
     .then(function(data){
       var folders = data.folders || [];
-      var info = folders.map(function(f){ return f.name+"("+f.count+")"; }).join(" | ");
-      if(txt) txt.textContent = "\u2705 Folders: " + info;
+      var info = folders.map(function(f){ return "ID="+f.id+" "+f.name+"("+f.count+")"; }).join(" | ");
+      if(txt) txt.textContent = "\u2705 " + info;
       if(el)  el.className = "status";
     })
     .catch(function(e){
