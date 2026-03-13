@@ -370,6 +370,12 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
     <div class="field"><label for="dmDesc">Description / Notes</label><textarea id="dmDesc"></textarea></div>
 
     <div class="hint" style="margin-bottom:8px"><b>Mobile tip:</b> Use Library Picker to choose from Photos.</div>
+
+    <div id="dmDiscogsCover" style="display:none;margin-bottom:12px">
+      <div class="hint" style="margin-bottom:4px">📀 Discogs cover (will be used if no photo uploaded):</div>
+      <img id="dmDiscogsCoverImg" src="" alt="Discogs cover" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.2)"/>
+      <div class="hint" style="margin-top:4px">Upload your own photo below to override.</div>
+    </div>
     <div class="row">
       <div class="field">
         <label>Front Photo (Library)</label>
@@ -1152,7 +1158,7 @@ async function loadDcCollection(page) {
         '</div>' +
         '<div class="actions"><button class="btn btn-primary" type="button">Import</button></div>';
 
-      card.querySelector("button").onclick = function(){ openDcModal({artists:artists, title:title, year:year, labels:labels, formats:formats, genres:genres, releaseId:releaseId}); };
+      card.querySelector("button").onclick = function(){ openDcModal({artists:artists, title:title, year:year, labels:labels, formats:formats, genres:genres, releaseId:releaseId, thumb:thumb}); };
       document.getElementById("dcList").appendChild(card);
     });
 
@@ -1198,6 +1204,16 @@ function openDcModal(d) {
   document.getElementById("dmBackCam").value  = "";
   document.getElementById("dmStatus").style.display = "none";
 
+  // Show Discogs cover preview
+  var coverDiv = document.getElementById("dmDiscogsCover");
+  var coverImg = document.getElementById("dmDiscogsCoverImg");
+  if (d.thumb) {
+    coverImg.src = d.thumb;
+    coverDiv.style.display = "block";
+  } else {
+    coverDiv.style.display = "none";
+  }
+
   var descParts = [];
   if (d.labels)    descParts.push("Label: "   + d.labels);
   if (d.formats)   descParts.push("Format: "  + d.formats);
@@ -1227,18 +1243,25 @@ document.getElementById("btnDmSave").onclick = async function(){
                     (document.getElementById("dmBackCam").files  && document.getElementById("dmBackCam").files[0])  || null;
 
   if (!artist || !title || !grade || isNaN(price)) { setDmStatus("Missing: Artist, Title, Price, and Grade.", "error"); return; }
-  if (!frontFile) { setDmStatus("Front photo is required.", "error"); return; }
+  var discogsThumb = (dcModalData && dcModalData.thumb) || "";
+  if (!frontFile && !discogsThumb) { setDmStatus("Front photo is required.", "error"); return; }
   try { requireToken(); } catch(e) { setDmStatus(e.message, "error"); return; }
 
   document.getElementById("btnDmSave").disabled = true;
-  setDmStatus("Uploading front photo\u2026");
 
   try {
     var loaded     = await loadProducts();
     var products   = loaded.products;
     var sha        = loaded.sha;
-    var frontPath  = await uploadImage(frontFile);
-    var backPath   = frontPath;
+    var frontPath;
+    if (frontFile) {
+      setDmStatus("Uploading front photo\u2026");
+      frontPath = await uploadImage(frontFile);
+    } else {
+      setDmStatus("Using Discogs cover image\u2026");
+      frontPath = discogsThumb;
+    }
+    var backPath = frontPath;
     if (backFile) { setDmStatus("Uploading back photo\u2026"); backPath = await uploadImage(backFile); }
 
     setDmStatus("Saving to products.json2\u2026");
