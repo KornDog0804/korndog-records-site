@@ -516,7 +516,7 @@
     "grade": "VG/VG",
     "image": "images/Screenshot_20250822-074904.png",
     "description": "Random mystery pull from the stack. VG/VG.",
-    "available": false,
+    "available": true,
     "quantity": 1,
     "tier": "tenbin",
     "imageFront": "images/Screenshot_20250822-074904.png",
