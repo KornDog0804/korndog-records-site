@@ -597,6 +597,33 @@
     "joeysPick": false
   },
   {
+    "pid": "peter-frampton-frampton-comes-alive",
+    "id": "peter-frampton-frampton-comes-alive",
+    "artist": "Peter Frampton",
+    "title": "Frampton Comes Alive!",
+    "price": 8,
+    "grade": "VG/VG",
+    "quantity": 1,
+    "tier": "premium",
+    "available": true,
+    "featured": false,
+    "joeysPick": false,
+    "description": "Label: A&M Records\nFormat: Vinyl, LP, Album\nYear: 1976\nGenres: Rock, Arena Rock, Hard Rock, Pop Rock\nDiscogs: https://www.discogs.com/release/7655017",
+    "sold": false,
+    "image": "https://i.discogs.com/Cr4GlNfLS7fRhLHRcyzwHFV3jDxax_6s-G-nLfxDNn0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc2NTUw/MTctMTQ0NjA3NDky/OC05OTQ0LmpwZWc.jpeg",
+    "imageFront": "https://i.discogs.com/Cr4GlNfLS7fRhLHRcyzwHFV3jDxax_6s-G-nLfxDNn0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc2NTUw/MTctMTQ0NjA3NDky/OC05OTQ0LmpwZWc.jpeg",
+    "imageBack": "https://i.discogs.com/Cr4GlNfLS7fRhLHRcyzwHFV3jDxax_6s-G-nLfxDNn0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc2NTUw/MTctMTQ0NjA3NDky/OC05OTQ0LmpwZWc.jpeg",
+    "images": [
+      "https://i.discogs.com/Cr4GlNfLS7fRhLHRcyzwHFV3jDxax_6s-G-nLfxDNn0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc2NTUw/MTctMTQ0NjA3NDky/OC05OTQ0LmpwZWc.jpeg",
+      "https://i.discogs.com/Cr4GlNfLS7fRhLHRcyzwHFV3jDxax_6s-G-nLfxDNn0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc2NTUw/MTctMTQ0NjA3NDky/OC05OTQ0LmpwZWc.jpeg"
+    ],
+    "imagesObj": {
+      "front": "https://i.discogs.com/Cr4GlNfLS7fRhLHRcyzwHFV3jDxax_6s-G-nLfxDNn0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc2NTUw/MTctMTQ0NjA3NDky/OC05OTQ0LmpwZWc.jpeg",
+      "back": "https://i.discogs.com/Cr4GlNfLS7fRhLHRcyzwHFV3jDxax_6s-G-nLfxDNn0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTc2NTUw/MTctMTQ0NjA3NDky/OC05OTQ0LmpwZWc.jpeg"
+    },
+    "discogsReleaseId": 7655017
+  },
+  {
     "id": "Quaterflash",
     "artist": "Quaterflash",
     "title": "Quaterflash",
