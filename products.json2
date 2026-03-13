@@ -597,6 +597,33 @@
     "joeysPick": false
   },
   {
+    "pid": "paul-mccartney-mccartney",
+    "id": "paul-mccartney-mccartney",
+    "artist": "Paul McCartney",
+    "title": "McCartney",
+    "price": 15,
+    "grade": "VG/VG",
+    "quantity": 1,
+    "tier": "budget",
+    "available": true,
+    "featured": false,
+    "joeysPick": false,
+    "description": "Label: Apple Records, Apple Records\nFormat: Vinyl, LP, Album\nYear: 1970\nGenres: Rock, Acoustic, Pop Rock\nDiscogs: https://www.discogs.com/release/1873652",
+    "sold": false,
+    "image": "https://i.discogs.com/bEipnHsX2l1sVv16sXcbxVvOOx5Fxcg4WlmJSUZcZNc/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE4NzM2/NTItMTM5MTMzMzQ2/NS02ODgzLmpwZWc.jpeg",
+    "imageFront": "https://i.discogs.com/bEipnHsX2l1sVv16sXcbxVvOOx5Fxcg4WlmJSUZcZNc/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE4NzM2/NTItMTM5MTMzMzQ2/NS02ODgzLmpwZWc.jpeg",
+    "imageBack": "https://i.discogs.com/bEipnHsX2l1sVv16sXcbxVvOOx5Fxcg4WlmJSUZcZNc/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE4NzM2/NTItMTM5MTMzMzQ2/NS02ODgzLmpwZWc.jpeg",
+    "images": [
+      "https://i.discogs.com/bEipnHsX2l1sVv16sXcbxVvOOx5Fxcg4WlmJSUZcZNc/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE4NzM2/NTItMTM5MTMzMzQ2/NS02ODgzLmpwZWc.jpeg",
+      "https://i.discogs.com/bEipnHsX2l1sVv16sXcbxVvOOx5Fxcg4WlmJSUZcZNc/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE4NzM2/NTItMTM5MTMzMzQ2/NS02ODgzLmpwZWc.jpeg"
+    ],
+    "imagesObj": {
+      "front": "https://i.discogs.com/bEipnHsX2l1sVv16sXcbxVvOOx5Fxcg4WlmJSUZcZNc/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE4NzM2/NTItMTM5MTMzMzQ2/NS02ODgzLmpwZWc.jpeg",
+      "back": "https://i.discogs.com/bEipnHsX2l1sVv16sXcbxVvOOx5Fxcg4WlmJSUZcZNc/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE4NzM2/NTItMTM5MTMzMzQ2/NS02ODgzLmpwZWc.jpeg"
+    },
+    "discogsReleaseId": 1873652
+  },
+  {
     "pid": "peter-frampton-frampton-comes-alive",
     "id": "peter-frampton-frampton-comes-alive",
     "artist": "Peter Frampton",
