@@ -345,6 +345,7 @@ function renderShopPage() {
       const frontImg = document.createElement("img");
       frontImg.src = frontSrc;
       frontImg.alt = prod.title || prod.id || "Record front";
+      frontImg.referrerPolicy = "no-referrer"; // fix Discogs hotlink blocking on desktop
       frontDiv.appendChild(frontImg);
     } else {
       const placeholder = document.createElement("div");
@@ -356,6 +357,7 @@ function renderShopPage() {
       const backImg = document.createElement("img");
       backImg.src = backSrc;
       backImg.alt = prod.title || prod.id || "Record back";
+      backImg.referrerPolicy = "no-referrer"; // fix Discogs hotlink blocking on desktop
       backDiv.appendChild(backImg);
     } else {
       const placeholderBack = document.createElement("div");
