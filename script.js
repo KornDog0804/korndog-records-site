@@ -306,6 +306,14 @@ async function renderShop() {
   renderShopPage();
 }
 
+function proxyImg(src) {
+  // Route Discogs CDN images through weserv.nl to bypass hotlink blocking
+  if (src && src.includes("discogs.com")) {
+    return "https://images.weserv.nl/?url=" + encodeURIComponent(src);
+  }
+  return src;
+}
+
 function renderShopPage() {
   const container = document.getElementById("products");
   if (!container) return;
@@ -338,8 +346,8 @@ function renderShopPage() {
     const backDiv = document.createElement("div");
     backDiv.className = "flip-back";
 
-    const frontSrc = prod.imageFront || prod.image || prod.imageBack || "";
-    const backSrc = prod.imageBack || prod.imageFront || prod.image || "";
+    const frontSrc = proxyImg(prod.imageFront || prod.image || prod.imageBack || "");
+    const backSrc = proxyImg(prod.imageBack || prod.imageFront || prod.image || "");
 
     if (frontSrc) {
       const frontImg = document.createElement("img");
