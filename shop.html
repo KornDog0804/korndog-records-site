@@ -91,5 +91,31 @@
   </div>
 
   <!-- Quick View Modal is injected by shop-ui.js -->
+
+  <script>
+    // Fix Discogs images on desktop — set referrerpolicy on every img as it's added to DOM
+    (function(){
+      function patchImgs(root){
+        root.querySelectorAll("img").forEach(function(img){
+          if(!img.referrerPolicy || img.referrerPolicy !== "no-referrer"){
+            img.referrerPolicy = "no-referrer";
+          }
+        });
+      }
+      // Patch any imgs already in the DOM
+      patchImgs(document);
+      // Watch for dynamically added imgs (product cards, modal, etc.)
+      new MutationObserver(function(mutations){
+        mutations.forEach(function(m){
+          m.addedNodes.forEach(function(node){
+            if(node.nodeType === 1){
+              if(node.tagName === "IMG") node.referrerPolicy = "no-referrer";
+              else patchImgs(node);
+            }
+          });
+        });
+      }).observe(document.body, { childList: true, subtree: true });
+    })();
+  </script>
 </body>
 </html>
