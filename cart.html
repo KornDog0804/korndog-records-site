@@ -808,9 +808,14 @@
             <div id="qr-total-big" style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--cashapp);letter-spacing:.04em;line-height:1;margin-bottom:.8rem;text-shadow:0 0 20px rgba(0,214,50,.4);"></div>
             <img
               id="cashapp-qr"
-              src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=https%3A%2F%2Fcash.app%2F%24korndog0804"
+              src="images/cashapp-qr.png"
               alt="Cash App QR for KornDog Records"
+              onerror="this.style.display='none';document.getElementById('qr-fallback').style.display='block';"
             />
+            <div id="qr-fallback" style="display:none;padding:1rem;font-size:.82rem;color:var(--muted);border:1px dashed rgba(255,255,255,.15);border-radius:.8rem;">
+              📸 Add your Cash App QR:<br>
+              Cash App → QR icon → My Code → screenshot → save as <code style="color:var(--accent)">images/cashapp-qr.png</code>
+            </div>
             <p style="margin-top:.6rem;font-size:.78rem;">Open Cash App → tap the <strong>QR icon</strong> top-left → scan this</p>
           </div>
 
