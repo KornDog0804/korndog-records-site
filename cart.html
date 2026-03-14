@@ -25,7 +25,7 @@
       --border: rgba(123,255,90,.12);
       --border2: rgba(255,255,255,.07);
       --danger: #ff4b6a;
-      --cashapp: #00D632;
+      --cashapp: #006AFF;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -426,14 +426,14 @@
     /* CashApp specific */
     .btn-cashapp {
       background: var(--cashapp);
-      color: #000;
+      color: #fff;
       font-size: .95rem;
-      box-shadow: 0 4px 24px rgba(0,214,50,.25);
+      box-shadow: 0 4px 24px rgba(0,106,255,.25);
     }
     .btn-cashapp:hover {
       filter: brightness(1.08);
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0,214,50,.35);
+      box-shadow: 0 8px 32px rgba(0,106,255,.35);
     }
 
     /* ── CHECKOUT SECTION ── */
@@ -658,8 +658,8 @@
     .cart-layout > *:last-child  { animation: fadeUp .5s .2s ease both; }
 
     @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 4px 24px rgba(0,214,50,.25); }
-      50%       { box-shadow: 0 4px 36px rgba(0,214,50,.45); }
+      0%, 100% { box-shadow: 0 4px 24px rgba(0,106,255,.25); }
+      50%       { box-shadow: 0 4px 36px rgba(0,106,255,.45); }
     }
 
     .btn-cashapp { animation: pulse-glow 2.5s ease-in-out infinite; }
@@ -707,7 +707,7 @@
     <div class="trust-strip">
       <span class="trust-chip">🔒 Secure Checkout</span>
       <span class="trust-chip">📍 Ships from Kentucky</span>
-      <span class="trust-chip">💼 Cash App Business</span>
+      <span class="trust-chip">🟦 Square Checkout</span>
       <span class="trust-chip">🎵 Whatnot Seller</span>
       <span class="trust-chip">💿 Discogs Verified</span>
     </div>
@@ -747,19 +747,19 @@
         <!-- Checkout card -->
         <div class="card">
           <div class="secure-badge">
-            🔒 SECURE SMALL BUSINESS CHECKOUT
+            🔒 SECURE CHECKOUT VIA SQUARE
           </div>
 
           <div class="checkout-block">
             <h4>About This Shop</h4>
-            <p>Independent Kentucky record shop. Real inventory, real contact info, direct support from Joey — not a warehouse robot.</p>
+            <p>Independent Kentucky record shop. Checkout powered by <strong style="color:var(--text)">Square</strong> — the same payment processor used by millions of businesses worldwide.</p>
           </div>
 
           <div class="biz-card">
             <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em;margin-bottom:.6rem;color:var(--accent)">KORNDOG RECORDS, LLC</div>
             <div class="biz-row">
-              <span class="label">Cash App</span>
-              <span class="value accent">$korndog0804</span>
+              <span class="label">Checkout</span>
+              <span class="value accent">Square · Secured</span>
             </div>
             <div class="biz-row">
               <span class="label">Phone</span>
@@ -772,7 +772,7 @@
           </div>
 
           <div class="badge-row">
-            <span class="badge-pill">💼 LLC Business</span>
+            <span class="badge-pill">🟦 Square Verified</span>
             <span class="badge-pill">📦 KY Ships</span>
             <span class="badge-pill">🎵 Whatnot</span>
             <span class="badge-pill">💿 Discogs</span>
@@ -783,10 +783,7 @@
           <div class="checkout-actions">
             <button id="cashapp-button" class="btn-cashapp" style="width:100%;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13.7 12.3c-.4-.1-.8-.3-1.1-.4-.5-.2-.9-.3-.9-.6s.4-.5 1-.5c.8 0 1.6.3 2.1.5l.5-1.6c-.5-.2-1.1-.4-1.8-.5V8h-1.5v1.2c-1.3.3-2.2 1-2.2 2.2 0 1.4 1.2 1.9 2.3 2.2.5.2.9.3.9.6 0 .4-.4.6-1.1.6-.9 0-1.9-.3-2.5-.7l-.5 1.6c.6.4 1.5.6 2.4.7V17H13v-1.2c1.4-.3 2.3-1.1 2.3-2.3-.1-1.4-1.2-1.8-1.6-2.2z"/><path fill-rule="evenodd" d="M22 12c0 5.5-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2s10 4.5 10 10zm-2 0c0-4.4-3.6-8-8-8s-8 3.6-8 8 3.6 8 8 8 8-3.6 8-8z"/></svg>
-              Pay with Cash App
-            </button>
-            <button id="copy-amount-btn" class="btn-outline" style="width:100%;">
-              📋 Copy Amount to Clipboard
+              Checkout with Square
             </button>
             <button id="cashapp-qr-button" class="btn-outline" style="width:100%;">
               📱 Show QR Code
@@ -796,16 +793,17 @@
           <div class="qr-box" id="qr-box" style="display:none;">
             <div id="qr-total-big" style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--cashapp);letter-spacing:.04em;line-height:1;margin-bottom:.8rem;text-shadow:0 0 20px rgba(0,214,50,.4);"></div>
             <!-- src is NEVER changed by JS — this is your real Cash App business QR -->
-            <img src="images/cashapp-qr.png" alt="Cash App QR for KornDog Records" style="width:220px;max-width:100%;border-radius:12px;background:#fff;padding:10px;display:block;margin:0 auto;" />
-            <p style="margin-top:.7rem;font-size:.8rem;color:var(--muted);">Open Cash App → tap the <strong style="color:var(--text)">QR icon</strong> (top-left) → Scan → point at this</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=https%3A%2F%2Fsquare.link%2Fu%2FeMMCXRIk" alt="Square Checkout QR for KornDog Records" style="width:220px;max-width:100%;border-radius:12px;background:#fff;padding:10px;display:block;margin:0 auto;" />
+            <p style="margin-top:.7rem;font-size:.8rem;color:var(--muted);">Scan with your phone camera to open Square checkout</p>
           </div>
 
           <div class="send-note" id="cashapp-note">
-            <strong>📝 Payment Note:</strong> After tapping Pay, send the exact total shown above to <strong>$korndog0804</strong>. Include your name + record titles so Joey can match it fast.
+            <strong>📝 How it works:</strong> Tap <strong>Checkout with Square</strong> to complete your order securely. Square accepts all major cards. Or scan the QR if you're on another device.
+          </div>
           </div>
 
           <div class="checkout-help">
-            Questions before checkout? Text <strong>Joey</strong> at <strong>270-784-3283</strong>.<br>
+            Questions? Text <strong>Joey</strong> at <strong>270-784-3283</strong>.<br>
             Orders ship from <strong>Bowling Green, KY</strong> after payment confirmed.
           </div>
         </div>
@@ -831,7 +829,7 @@
 
   <script>
     (function () {
-      const CASHAPP_URL = "https://cash.app/$korndog0804";
+      const SQUARE_URL = "https://square.link/u/eMMCXRIk";
 
       function getDisplayedTotal() {
         const summary = document.getElementById("cart-summary");
@@ -853,46 +851,30 @@
 
       function updateCashAppUI() {
         const payBtn  = document.getElementById("cashapp-button");
-        const copyBtn = document.getElementById("copy-amount-btn");
         const qrBtn   = document.getElementById("cashapp-qr-button");
         const qrBox   = document.getElementById("qr-box");
         const bigTotal= document.getElementById("qr-total-big");
-        const note    = document.getElementById("cashapp-note");
         if (!payBtn) return;
 
-        const total  = getDisplayedTotal();
-        const payUrl = total ? `${CASHAPP_URL}/${total}` : CASHAPP_URL;
+        const total = getDisplayedTotal();
 
         if (total) {
-          payBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.7 12.3c-.4-.1-.8-.3-1.1-.4-.5-.2-.9-.3-.9-.6s.4-.5 1-.5c.8 0 1.6.3 2.1.5l.5-1.6c-.5-.2-1.1-.4-1.8-.5V8h-1.5v1.2c-1.3.3-2.2 1-2.2 2.2 0 1.4 1.2 1.9 2.3 2.2.5.2.9.3.9.6 0 .4-.4.6-1.1.6-.9 0-1.9-.3-2.5-.7l-.5 1.6c.6.4 1.5.6 2.4.7V17H13v-1.2c1.4-.3 2.3-1.1 2.3-2.3-.1-1.4-1.2-1.8-1.6-2.2z"/><path fill-rule="evenodd" d="M22 12c0 5.5-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2s10 4.5 10 10zm-2 0c0-4.4-3.6-8-8-8s-8 3.6-8 8 3.6 8 8 8 8-3.6 8-8z"/></svg> Pay $${total} with Cash App`;
-          if (copyBtn)  copyBtn.textContent  = `📋 Copy $${total} to Clipboard`;
+          payBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.7 12.3c-.4-.1-.8-.3-1.1-.4-.5-.2-.9-.3-.9-.6s.4-.5 1-.5c.8 0 1.6.3 2.1.5l.5-1.6c-.5-.2-1.1-.4-1.8-.5V8h-1.5v1.2c-1.3.3-2.2 1-2.2 2.2 0 1.4 1.2 1.9 2.3 2.2.5.2.9.3.9.6 0 .4-.4.6-1.1.6-.9 0-1.9-.3-2.5-.7l-.5 1.6c.6.4 1.5.6 2.4.7V17H13v-1.2c1.4-.3 2.3-1.1 2.3-2.3-.1-1.4-1.2-1.8-1.6-2.2z"/><path fill-rule="evenodd" d="M22 12c0 5.5-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2s10 4.5 10 10zm-2 0c0-4.4-3.6-8-8-8s-8 3.6-8 8 3.6 8 8 8 8-3.6 8-8z"/></svg> Checkout with Square — $${total}`;
           if (qrBtn)    qrBtn.textContent    = `📱 Show QR Code for $${total}`;
           if (bigTotal) bigTotal.textContent = "$" + total;
-          if (note) note.innerHTML = `<strong>📝 Payment Note:</strong> Send exactly <strong>$${total}</strong> to <strong>$korndog0804</strong>. Include your name + record titles so Joey can match it fast.`;
-          // NOTE: We never touch the QR image src — it stays as images/cashapp-qr.png always
         }
 
         payBtn.onclick = function (e) {
           e.preventDefault();
           if (!getCartItems().length) { alert("Your cart is empty."); return; }
-          window.open(payUrl, "_blank", "noopener,noreferrer");
+          window.open(SQUARE_URL, "_blank", "noopener,noreferrer");
         };
-
-        if (copyBtn) {
-          copyBtn.onclick = function () {
-            if (!total) return;
-            navigator.clipboard.writeText(total).then(function () {
-              copyBtn.textContent = "✅ Copied $" + total + "!";
-              setTimeout(function(){ copyBtn.textContent = "📋 Copy $" + total + " to Clipboard"; }, 2500);
-            });
-          };
-        }
 
         if (qrBtn && qrBox) {
           qrBtn.onclick = function () {
             var showing = qrBox.style.display !== "none";
             qrBox.style.display = showing ? "none" : "block";
-            qrBtn.textContent = showing ? `📱 Show QR Code for $${total||""}` : `❌ Hide QR Code`;
+            qrBtn.textContent = showing ? `📱 Show QR Code${total ? " for $"+total : ""}` : `❌ Hide QR Code`;
           };
         }
       }
