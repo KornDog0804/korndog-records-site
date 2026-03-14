@@ -131,15 +131,20 @@
     "quantity": 1,
     "imageFront": "images/Boston-1764230862646.jpg",
     "imageBack": "images/Boston-1764230862646.jpg",
-    "images": {
-      "front": "images/Boston-1764230862646.jpg",
-      "back": "images/Boston-1764230862646.jpg"
-    },
+    "images": [
+      "images/Boston-1764230862646.jpg",
+      "images/Boston-1764230862646.jpg"
+    ],
     "tier": "tenbin",
     "sold": false,
     "pid": "boston-1",
-    "featured": false,
-    "joeysPick": false
+    "featured": true,
+    "joeysPick": false,
+    "imagesObj": {
+      "front": "images/Boston-1764230862646.jpg",
+      "back": "images/Boston-1764230862646.jpg"
+    },
+    "originalId": "boston-1"
   },
   {
     "id": "bullet-for-my-valentine-the-poison-20th",
