@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Thank You • Korndog Records</title>
+<title>Thank You • KornDog Records</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+
 :root{
 --bg:#050013;
 --accent:#7bff5a;
@@ -13,111 +14,146 @@
 --muted:#a1a1c5;
 --card:#12052b;
 --border:#2b1550;
---warn:#ffeb3b;
+--bubble:#ffeb3b;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
 
 body{
 min-height:100vh;
-font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
 color:var(--text);
 background: radial-gradient(circle at top,#2a0a60 0,var(--bg) 55%);
 }
 
+a{text-decoration:none;color:inherit}
+
 header{
 position:sticky;
 top:0;
-background:rgba(10,1,30,.9);
-border-bottom:1px solid rgba(123,255,90,.25);
+background:linear-gradient(to right,#10002d,#12002a);
+border-bottom:1px solid rgba(123,255,90,.2);
 }
 
-.nav-inner{
-max-width:1000px;
+.nav{
+max-width:1100px;
 margin:auto;
-padding:12px 20px;
+padding:.7rem 1.2rem;
 display:flex;
 align-items:center;
-gap:10px;
+gap:12px;
 }
 
-.logo-circle{
+.logo{
 width:44px;
 height:44px;
 border-radius:50%;
-overflow:hidden;
 border:2px solid var(--accent);
+overflow:hidden;
 }
 
-.logo-circle img{
+.logo img{
 width:100%;
 height:100%;
 object-fit:cover;
 }
 
 main{
-max-width:800px;
+max-width:900px;
 margin:auto;
-padding:60px 20px;
+padding:2.5rem 1.3rem;
 text-align:center;
 }
 
 .card{
 background:var(--card);
 border:1px solid var(--border);
-border-radius:20px;
-padding:40px;
+border-radius:1.6rem;
+padding:2.2rem;
+box-shadow:0 0 28px rgba(0,0,0,.3);
 }
 
 h1{
-font-size:32px;
-margin-bottom:10px;
+font-size:2.2rem;
+margin-bottom:.5rem;
 }
 
-p{
+.lead{
 color:var(--muted);
-margin-bottom:20px;
-line-height:1.6;
+margin-bottom:1rem;
+}
+
+.customer{
+margin-top:.7rem;
+font-weight:800;
+color:var(--accent);
+}
+
+.order{
+margin-top:1.3rem;
+text-align:left;
+background:rgba(255,255,255,.04);
+border-radius:12px;
+padding:1rem;
+}
+
+.order h3{
+color:var(--accent);
+margin-bottom:.5rem;
+}
+
+.order ul{
+list-style:none;
+}
+
+.order li{
+padding:.4rem .5rem;
+border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.btns{
+margin-top:1.5rem;
+display:flex;
+gap:.7rem;
+justify-content:center;
+flex-wrap:wrap;
 }
 
 .btn{
-display:inline-block;
-background:var(--accent);
-color:#000;
+padding:.75rem 1.6rem;
+border-radius:999px;
 font-weight:900;
-padding:12px 26px;
-border-radius:40px;
 }
 
-.small{
-margin-top:10px;
-font-size:14px;
-color:var(--muted);
+.btn-main{
+background:var(--accent);
+color:#000;
+}
+
+.btn-alt{
+border:1px solid rgba(255,255,255,.2);
 }
 
 footer{
-text-align:center;
-padding:20px;
-font-size:12px;
+margin-top:2rem;
+font-size:.8rem;
 color:var(--muted);
 }
 
 footer strong{color:var(--accent)}
 
-/* Zombie Kitty */
-
 .zk-overlay{
 position:fixed;
-bottom:90px;
-left:-420px;
+bottom:80px;
+left:-460px;
 display:flex;
-align-items:flex-end;
 gap:10px;
-z-index:9999;
+align-items:flex-end;
 transition:left .6s ease;
+z-index:9999;
 }
 
-.zk-overlay.active{left:20px;}
+.zk-overlay.active{left:20px}
 
 .zk-kitty{
 width:140px;
@@ -127,91 +163,104 @@ transform-origin:top right;
 
 @keyframes wave{
 0%{transform:rotate(0)}
-25%{transform:rotate(8deg)}
-50%{transform:rotate(-8deg)}
-75%{transform:rotate(6deg)}
+25%{transform:rotate(6deg)}
+50%{transform:rotate(-6deg)}
+75%{transform:rotate(5deg)}
 100%{transform:rotate(0)}
 }
 
 .zk-bubble{
-background:#ffeb3b;
+background:var(--bubble);
 color:#000;
-padding:14px 18px;
-font-weight:900;
+padding:14px 16px;
 border-radius:12px;
-max-width:260px;
+font-weight:900;
+max-width:280px;
 position:relative;
 }
 
 .zk-tail{
-position:absolute;
-left:-12px;
-bottom:18px;
 width:0;
 height:0;
-border-left:12px solid #ffeb3b;
+border-left:12px solid var(--bubble);
 border-top:12px solid transparent;
 border-bottom:12px solid transparent;
+position:absolute;
+left:-12px;
+bottom:20px;
 }
 
 .zk-actions{
-margin-top:8px;
+margin-top:.7rem;
 display:flex;
-gap:6px;
+gap:.5rem;
 flex-wrap:wrap;
 }
 
 .zk-actions a{
 background:#000;
 color:#ffeb3b;
-padding:6px 12px;
+padding:.45rem .8rem;
 border-radius:999px;
-font-size:13px;
+font-size:.85rem;
 font-weight:900;
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-<div class="nav-inner">
-<div class="logo-circle">
+<div class="nav">
+<a href="index.html">
+<div class="logo">
 <img src="images/Screenshot_20250831-144625.png">
 </div>
+</a>
 </div>
 </header>
 
 <main>
+
 <div class="card">
 
 <h1>Payment Complete ✅</h1>
 
-<p>
+<p class="lead">
 Your order has been received.<br>
 Joey is packing your vinyl now.
 </p>
 
-<a class="btn" href="shop.html">Back to Shop</a>
+<div id="customer" class="customer"></div>
 
-<div class="small">
-Zombie Kitty will escort you back in a moment…
+<div id="orderBox" class="order" style="display:none">
+<h3>Your Order</h3>
+<ul id="orderList"></ul>
 </div>
 
+<div class="btns">
+<a class="btn btn-main" href="shop.html">Back to Shop</a>
+<a class="btn btn-alt" href="index.html">Home</a>
 </div>
-</main>
+
+<p style="margin-top:1rem;color:var(--muted)">
+Zombie Kitty will escort you back shortly…
+</p>
+
+</div>
 
 <footer>
-© 2025 <strong>Korndog Records</strong> • Vinyl Therapy Never Dies
+© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies
 </footer>
 
-<!-- Zombie Kitty -->
+</main>
 
 <div id="zkOverlay" class="zk-overlay">
 
 <img src="images/3817.png" class="zk-kitty">
 
-<div class="zk-bubble" id="zkBubble">
+<div id="zkBubble" class="zk-bubble">
 <div class="zk-tail"></div>
 </div>
 
@@ -219,66 +268,144 @@ Zombie Kitty will escort you back in a moment…
 
 <script>
 
-(function(){
+function getCart(){
 
-const overlay=document.getElementById("zkOverlay");
-const bubble=document.getElementById("zkBubble");
+try{
+return JSON.parse(localStorage.getItem("korndog_cart_v1")||"[]")
+}catch(e){
+return []
+}
 
-let seconds=6;
+}
+
+function getCustomer(){
+
+const params=new URLSearchParams(location.search)
+
+return params.get("name")||""
+
+}
+
+function showOrder(){
+
+const items=getCart()
+const list=document.getElementById("orderList")
+const box=document.getElementById("orderBox")
+
+if(!items.length)return
+
+box.style.display="block"
+
+items.forEach(i=>{
+
+const li=document.createElement("li")
+
+li.textContent=i.title||i.name||"Record"
+
+list.appendChild(li)
+
+})
+
+}
+
+function showCustomer(){
+
+const name=getCustomer()
+
+if(!name)return
+
+document.getElementById("customer").textContent="Thank you, "+name+"!"
+
+}
+
+function runKitty(){
+
+const overlay=document.getElementById("zkOverlay")
+const bubble=document.getElementById("zkBubble")
+
+const items=getCart()
+const firstItem=items[0]?items[0].title||items[0].name:""
+
+const sayings=[
+
+"THANK YOU for spinning with KornDog Records!",
+"Another vinyl rescued from the wild!",
+"Your turntable is about to get a workout!",
+"Fresh wax coming your way!",
+"Zombie Kitty approves this order!",
+"The crate digging gods are pleased!",
+"Your speakers are about to thank you!",
+"A fine addition to the collection!",
+"Needle to groove… problem solved!",
+"Vinyl therapy activated!"
+
+]
+
+if(firstItem){
+
+sayings.push("Excellent choice grabbing "+firstItem+"!")
+sayings.push(firstItem+" is headed your way!")
+sayings.push("Zombie Kitty loves "+firstItem+"!")
+
+}
+
+let msg=sayings[Math.floor(Math.random()*sayings.length)]
+
+let seconds=12
 
 function render(){
 
 bubble.innerHTML=
 '<div class="zk-tail"></div>'+
 'Yo! I’m <strong>Zombie Kitty</strong> 🧟‍🐱<br><br>'+
-'<strong>THANK YOU</strong> for your order!<br>'+
+'<strong>'+msg+'</strong><br>'+
 'Heading back to the shop in <strong>'+seconds+'s</strong>'+
 '<div class="zk-actions">'+
 '<a href="shop.html">Shop More Wax</a>'+
 '<a href="index.html">Home</a>'+
-'</div>';
+'</div>'
 
 }
 
-function runKitty(){
+overlay.classList.add("active")
 
-overlay.classList.add("active");
-
-render();
+render()
 
 const timer=setInterval(()=>{
 
-seconds--;
+seconds--
 
 if(seconds<=0){
 
-clearInterval(timer);
+clearInterval(timer)
 
-overlay.classList.remove("active");
+overlay.classList.remove("active")
 
 setTimeout(()=>{
 
-window.location.replace("shop.html");
+location.href="shop.html"
 
-},600);
+},600)
 
-}
+}else{
 
-else{
-
-render();
+render()
 
 }
 
-},1000);
+},1000)
 
 }
 
-runKitty();
+document.addEventListener("DOMContentLoaded",()=>{
 
-window.addEventListener("pageshow",runKitty);
+showCustomer()
 
-})();
+showOrder()
+
+runKitty()
+
+})
 
 </script>
 
