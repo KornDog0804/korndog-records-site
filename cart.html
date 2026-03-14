@@ -785,38 +785,19 @@
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13.7 12.3c-.4-.1-.8-.3-1.1-.4-.5-.2-.9-.3-.9-.6s.4-.5 1-.5c.8 0 1.6.3 2.1.5l.5-1.6c-.5-.2-1.1-.4-1.8-.5V8h-1.5v1.2c-1.3.3-2.2 1-2.2 2.2 0 1.4 1.2 1.9 2.3 2.2.5.2.9.3.9.6 0 .4-.4.6-1.1.6-.9 0-1.9-.3-2.5-.7l-.5 1.6c.6.4 1.5.6 2.4.7V17H13v-1.2c1.4-.3 2.3-1.1 2.3-2.3-.1-1.4-1.2-1.8-1.6-2.2z"/><path fill-rule="evenodd" d="M22 12c0 5.5-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2s10 4.5 10 10zm-2 0c0-4.4-3.6-8-8-8s-8 3.6-8 8 3.6 8 8 8 8-3.6 8-8z"/></svg>
               Pay with Cash App
             </button>
-
-            <!-- Mobile: copy amount button -->
-            <button id="copy-amount-btn" class="btn-outline" style="width:100%;display:none;">
+            <button id="copy-amount-btn" class="btn-outline" style="width:100%;">
               📋 Copy Amount to Clipboard
             </button>
-
-            <!-- Desktop only: QR toggle -->
-            <button id="cashapp-qr-button" class="btn-outline" style="width:100%;display:none;">
-              📱 Show QR Code (for desktop users)
+            <button id="cashapp-qr-button" class="btn-outline" style="width:100%;">
+              📱 Show QR Code
             </button>
           </div>
 
-          <!-- Mobile tip -->
-          <div id="mobile-tip" style="display:none;margin-top:.9rem;padding:.8rem 1rem;border-radius:.8rem;background:rgba(123,255,90,.07);border:1px solid rgba(123,255,90,.2);font-size:.8rem;color:#c8ffc0;line-height:1.5;">
-            📱 <strong>On your phone?</strong> Tap the button above — it opens Cash App directly with the amount ready.
-          </div>
-
-          <!-- QR box: desktop only -->
           <div class="qr-box" id="qr-box" style="display:none;">
-            <div style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.06em;">Scan with Cash App's built-in scanner</div>
             <div id="qr-total-big" style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--cashapp);letter-spacing:.04em;line-height:1;margin-bottom:.8rem;text-shadow:0 0 20px rgba(0,214,50,.4);"></div>
-            <img
-              id="cashapp-qr"
-              src="images/cashapp-qr.png"
-              alt="Cash App QR for KornDog Records"
-              onerror="this.style.display='none';document.getElementById('qr-fallback').style.display='block';"
-            />
-            <div id="qr-fallback" style="display:none;padding:1rem;font-size:.82rem;color:var(--muted);border:1px dashed rgba(255,255,255,.15);border-radius:.8rem;">
-              📸 Add your Cash App QR:<br>
-              Cash App → QR icon → My Code → screenshot → save as <code style="color:var(--accent)">images/cashapp-qr.png</code>
-            </div>
-            <p style="margin-top:.6rem;font-size:.78rem;">Open Cash App → tap the <strong>QR icon</strong> top-left → scan this</p>
+            <!-- src is NEVER changed by JS — this is your real Cash App business QR -->
+            <img src="images/cashapp-qr.png" alt="Cash App QR for KornDog Records" style="width:220px;max-width:100%;border-radius:12px;background:#fff;padding:10px;display:block;margin:0 auto;" />
+            <p style="margin-top:.7rem;font-size:.8rem;color:var(--muted);">Open Cash App → tap the <strong style="color:var(--text)">QR icon</strong> (top-left) → Scan → point at this</p>
           </div>
 
           <div class="send-note" id="cashapp-note">
@@ -871,14 +852,12 @@
       const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
       function updateCashAppUI() {
-        const payBtn    = document.getElementById("cashapp-button");
-        const qrBtn     = document.getElementById("cashapp-qr-button");
-        const copyBtn   = document.getElementById("copy-amount-btn");
-        const mobileTip = document.getElementById("mobile-tip");
-        const note      = document.getElementById("cashapp-note");
-        const qr        = document.getElementById("cashapp-qr");
-        const qrBox     = document.getElementById("qr-box");
-        const bigTotal  = document.getElementById("qr-total-big");
+        const payBtn  = document.getElementById("cashapp-button");
+        const copyBtn = document.getElementById("copy-amount-btn");
+        const qrBtn   = document.getElementById("cashapp-qr-button");
+        const qrBox   = document.getElementById("qr-box");
+        const bigTotal= document.getElementById("qr-total-big");
+        const note    = document.getElementById("cashapp-note");
         if (!payBtn) return;
 
         const total  = getDisplayedTotal();
@@ -886,22 +865,11 @@
 
         if (total) {
           payBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13.7 12.3c-.4-.1-.8-.3-1.1-.4-.5-.2-.9-.3-.9-.6s.4-.5 1-.5c.8 0 1.6.3 2.1.5l.5-1.6c-.5-.2-1.1-.4-1.8-.5V8h-1.5v1.2c-1.3.3-2.2 1-2.2 2.2 0 1.4 1.2 1.9 2.3 2.2.5.2.9.3.9.6 0 .4-.4.6-1.1.6-.9 0-1.9-.3-2.5-.7l-.5 1.6c.6.4 1.5.6 2.4.7V17H13v-1.2c1.4-.3 2.3-1.1 2.3-2.3-.1-1.4-1.2-1.8-1.6-2.2z"/><path fill-rule="evenodd" d="M22 12c0 5.5-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2s10 4.5 10 10zm-2 0c0-4.4-3.6-8-8-8s-8 3.6-8 8 3.6 8 8 8 8-3.6 8-8z"/></svg> Pay $${total} with Cash App`;
-          if (note) note.innerHTML = `<strong>📝 Payment Note:</strong> Send exactly <strong>$${total}</strong> to <strong>$korndog0804</strong>. Include your name + record titles so Joey can match it fast.`;
+          if (copyBtn)  copyBtn.textContent  = `📋 Copy $${total} to Clipboard`;
+          if (qrBtn)    qrBtn.textContent    = `📱 Show QR Code for $${total}`;
           if (bigTotal) bigTotal.textContent = "$" + total;
-          if (qr) qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(CASHAPP_URL)}`;
-        }
-
-        if (isMobile) {
-          // Mobile: show pay button + copy amount, hide QR
-          if (copyBtn) { copyBtn.style.display = "flex"; copyBtn.textContent = `📋 Copy $${total || "amount"} to Clipboard`; }
-          if (mobileTip) mobileTip.style.display = "block";
-          if (qrBtn)  qrBtn.style.display  = "none";
-          if (qrBox)  qrBox.style.display  = "none";
-        } else {
-          // Desktop: show QR toggle, hide copy/tip
-          if (qrBtn)    { qrBtn.style.display = "flex"; qrBtn.textContent = `📱 Show QR Code for $${total || ""}`; }
-          if (copyBtn)  copyBtn.style.display  = "none";
-          if (mobileTip) mobileTip.style.display = "none";
+          if (note) note.innerHTML = `<strong>📝 Payment Note:</strong> Send exactly <strong>$${total}</strong> to <strong>$korndog0804</strong>. Include your name + record titles so Joey can match it fast.`;
+          // NOTE: We never touch the QR image src — it stays as images/cashapp-qr.png always
         }
 
         payBtn.onclick = function (e) {
@@ -920,10 +888,11 @@
           };
         }
 
-        if (qrBtn) {
+        if (qrBtn && qrBox) {
           qrBtn.onclick = function () {
-            if (!getCartItems().length) { alert("Your cart is empty."); return; }
-            if (qrBox) qrBox.style.display = qrBox.style.display === "none" ? "block" : "none";
+            var showing = qrBox.style.display !== "none";
+            qrBox.style.display = showing ? "none" : "block";
+            qrBtn.textContent = showing ? `📱 Show QR Code for $${total||""}` : `❌ Hide QR Code`;
           };
         }
       }
