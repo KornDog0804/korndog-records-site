@@ -1,273 +1,286 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Thank You • KornDog Records (KITTY TEST v3)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<title>Thank You • Korndog Records</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    :root{
-      --bg:#050013;
-      --accent:#7bff5a;
-      --text:#f5f5ff;
-      --muted:#a1a1c5;
-      --card:#12052b;
-      --border:#2b1550;
-      --warn:#ffeb3b;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      min-height:100vh;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      color:var(--text);
-      background: radial-gradient(circle at top, #2a0a60 0, var(--bg) 55%);
-    }
-    a{color:inherit;text-decoration:none}
+<style>
+:root{
+--bg:#050013;
+--accent:#7bff5a;
+--text:#f5f5ff;
+--muted:#a1a1c5;
+--card:#12052b;
+--border:#2b1550;
+--warn:#ffeb3b;
+}
 
-    header{
-      position:sticky; top:0; z-index:20;
-      backdrop-filter: blur(12px);
-      background: linear-gradient(to right, rgba(10,1,30,.95), rgba(10,1,25,.9));
-      border-bottom:1px solid rgba(123,255,90,.2);
-    }
-    .nav-inner{
-      max-width:1100px; margin:0 auto;
-      padding:.75rem 1.25rem;
-      display:flex; align-items:center; justify-content:space-between; gap:1rem;
-    }
-    .logo-wrap{display:flex; align-items:center; gap:.75rem;}
-    .logo-circle{
-      width:44px;height:44px;border-radius:999px;
-      border:2px solid var(--accent);
-      background: radial-gradient(circle at 30% 30%, #5a00ff, #140032);
-      overflow:hidden;
-    }
-    .logo-circle img{width:100%;height:100%;object-fit:cover}
+*{box-sizing:border-box;margin:0;padding:0}
 
-    .debug-pill{
-      font-size:.72rem;
-      color:#000;
-      background:var(--warn);
-      padding:.35rem .65rem;
-      border-radius:999px;
-      font-weight:900;
-    }
+body{
+min-height:100vh;
+font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+color:var(--text);
+background: radial-gradient(circle at top,#2a0a60 0,var(--bg) 55%);
+}
 
-    main{
-      max-width:900px; margin:0 auto;
-      padding:2.5rem 1.25rem 3rem;
-      text-align:center;
-    }
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:1.6rem;
-      padding:2.25rem 1.5rem;
-      box-shadow: 0 0 28px rgba(0,0,0,.25);
-    }
-    h1{font-size:2.1rem;margin-bottom:.5rem}
-    p{color:var(--muted);font-size:1rem;line-height:1.55}
+header{
+position:sticky;
+top:0;
+background:rgba(10,1,30,.9);
+border-bottom:1px solid rgba(123,255,90,.25);
+}
 
-    .btn{
-      display:inline-block;
-      margin-top:1.25rem;
-      padding:.75rem 2rem;
-      border-radius:999px;
-      background:var(--accent);
-      color:#02010a;
-      font-weight:900;
-      font-size:1rem;
-    }
-    .small{
-      margin-top:.75rem;
-      font-size:.85rem;
-      color:var(--muted);
-    }
+.nav-inner{
+max-width:1000px;
+margin:auto;
+padding:12px 20px;
+display:flex;
+align-items:center;
+gap:10px;
+}
 
-    footer{
-      max-width:1100px;margin:0 auto;
-      padding:0 1.25rem 2rem;
-      font-size:.78rem;
-      color:var(--muted);
-      text-align:center;
-    }
-    footer strong{color:var(--accent)}
+.logo-circle{
+width:44px;
+height:44px;
+border-radius:50%;
+overflow:hidden;
+border:2px solid var(--accent);
+}
 
-    /* ZOMBIE KITTY OVERLAY */
-    .zk-overlay{
-      position:fixed;
-      bottom:90px;
-      left:-420px;
-      display:flex;
-      align-items:flex-end;
-      gap:10px;
-      z-index:9998;
-      transition:left .6s ease;
-      pointer-events:none;
-    }
-    .zk-overlay.active{left:20px;}
-    .zk-kitty{
-      width:140px;
-      opacity:.95;
-      animation: zk-blink 5s infinite, zk-wave 1.2s infinite ease-in-out;
-      transform-origin: top right;
-    }
-    @keyframes zk-blink{
-      0%,90%,100%{filter:brightness(1)}
-      92%{filter:brightness(.2)}
-      95%{filter:brightness(1)}
-    }
-    @keyframes zk-wave{
-      0%{transform:rotate(0)}
-      20%{transform:rotate(6deg)}
-      40%{transform:rotate(-6deg)}
-      60%{transform:rotate(6deg)}
-      80%{transform:rotate(-4deg)}
-      100%{transform:rotate(0)}
-    }
+.logo-circle img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
 
-    .zk-bubble{
-      background:#ffeb3b;
-      color:#000;
-      padding:12px 16px;
-      font-weight:900;
-      border-radius:12px;
-      box-shadow:0 4px 12px rgba(0,0,0,.3);
-      max-width:270px;
-      pointer-events:auto;
-      position:relative;
-      font-size:.92rem;
-      line-height:1.35;
-      text-align:left;
-    }
-    .zk-tail{
-      width:0;height:0;
-      border-left:12px solid #ffeb3b;
-      border-top:12px solid transparent;
-      border-bottom:12px solid transparent;
-      position:absolute;
-      left:-12px;
-      bottom:20px;
-    }
-    .zk-actions{
-      margin-top:.6rem;
-      display:flex;
-      gap:.5rem;
-      flex-wrap:wrap;
-    }
-    .zk-actions a{
-      display:inline-block;
-      padding:.45rem .9rem;
-      border-radius:999px;
-      background:#000;
-      color:#ffeb3b;
-      font-weight:900;
-      font-size:.85rem;
-    }
+main{
+max-width:800px;
+margin:auto;
+padding:60px 20px;
+text-align:center;
+}
 
-    /* tiny “JS running” indicator */
-    .js-ok{
-      margin-top:.75rem;
-      font-size:.8rem;
-      color:rgba(255,255,255,.75);
-    }
-    .js-ok strong{color:var(--accent)}
-  </style>
+.card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:20px;
+padding:40px;
+}
+
+h1{
+font-size:32px;
+margin-bottom:10px;
+}
+
+p{
+color:var(--muted);
+margin-bottom:20px;
+line-height:1.6;
+}
+
+.btn{
+display:inline-block;
+background:var(--accent);
+color:#000;
+font-weight:900;
+padding:12px 26px;
+border-radius:40px;
+}
+
+.small{
+margin-top:10px;
+font-size:14px;
+color:var(--muted);
+}
+
+footer{
+text-align:center;
+padding:20px;
+font-size:12px;
+color:var(--muted);
+}
+
+footer strong{color:var(--accent)}
+
+/* Zombie Kitty */
+
+.zk-overlay{
+position:fixed;
+bottom:90px;
+left:-420px;
+display:flex;
+align-items:flex-end;
+gap:10px;
+z-index:9999;
+transition:left .6s ease;
+}
+
+.zk-overlay.active{left:20px;}
+
+.zk-kitty{
+width:140px;
+animation:wave 1.2s infinite ease-in-out;
+transform-origin:top right;
+}
+
+@keyframes wave{
+0%{transform:rotate(0)}
+25%{transform:rotate(8deg)}
+50%{transform:rotate(-8deg)}
+75%{transform:rotate(6deg)}
+100%{transform:rotate(0)}
+}
+
+.zk-bubble{
+background:#ffeb3b;
+color:#000;
+padding:14px 18px;
+font-weight:900;
+border-radius:12px;
+max-width:260px;
+position:relative;
+}
+
+.zk-tail{
+position:absolute;
+left:-12px;
+bottom:18px;
+width:0;
+height:0;
+border-left:12px solid #ffeb3b;
+border-top:12px solid transparent;
+border-bottom:12px solid transparent;
+}
+
+.zk-actions{
+margin-top:8px;
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+}
+
+.zk-actions a{
+background:#000;
+color:#ffeb3b;
+padding:6px 12px;
+border-radius:999px;
+font-size:13px;
+font-weight:900;
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="nav-inner">
-      <div class="logo-wrap">
-        <a href="index.html" aria-label="KornDog Records Home">
-          <div class="logo-circle">
-            <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
-          </div>
-        </a>
-        <span class="debug-pill">KITTY TEST v3</span>
-      </div>
-    </div>
-  </header>
 
-  <main>
-    <div class="card">
-      <h1>Payment Complete ✅</h1>
-      <p>
-        Order received. Vinyl therapy is officially scheduled.<br>
-        Joey’s packing it up and getting it out the door.
-      </p>
+<header>
+<div class="nav-inner">
+<div class="logo-circle">
+<img src="images/Screenshot_20250831-144625.png">
+</div>
+</div>
+</header>
 
-      <a class="btn" href="shop.html">Back to Shop</a>
-      <div class="small" id="redirectHint">Zombie Kitty is about to walk you back to the shop…</div>
+<main>
+<div class="card">
 
-      <div class="js-ok" id="jsOk">JS status: <strong>waiting…</strong></div>
-    </div>
-  </main>
+<h1>Payment Complete ✅</h1>
 
-  <footer>
-    © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
-  </footer>
+<p>
+Your order has been received.<br>
+Joey is packing your vinyl now.
+</p>
 
-  <!-- ZOMBIE KITTY -->
-  <div id="zkOverlay" class="zk-overlay">
-    <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
-    <div class="zk-bubble" id="zkBubble">
-      <div class="zk-tail"></div>
-    </div>
-  </div>
+<a class="btn" href="shop.html">Back to Shop</a>
 
-  <script>
-(function () {
-  let hasRun = false;
+<div class="small">
+Zombie Kitty will escort you back in a moment…
+</div>
 
-  function runKitty() {
-    if (hasRun) return;
-    hasRun = true;
+</div>
+</main>
 
-    const overlay = document.getElementById('zkOverlay');
-    const bubble  = document.getElementById('zkBubble');
-    const hint    = document.getElementById('redirectHint');
+<footer>
+© 2025 <strong>Korndog Records</strong> • Vinyl Therapy Never Dies
+</footer>
 
-    if (!overlay || !bubble) return;
+<!-- Zombie Kitty -->
 
-    const REDIRECT_TO = "shop.html";
-    let seconds = 6;
+<div id="zkOverlay" class="zk-overlay">
 
-    function render() {
-      bubble.innerHTML =
-        '<div class="zk-tail"></div>' +
-        'Yo! I’m <strong>Zombie Kitty</strong> 🧟‍🐱<br><br>' +
-        '<strong>THANK YOU</strong> for your order.<br>' +
-        'Taking you back to the shop in <strong>' + seconds + 's</strong>…' +
-        '<div class="zk-actions">' +
-          '<a href="shop.html">Shop More Wax</a>' +
-          '<a href="index.html">Home</a>' +
-        '</div>';
-    }
+<img src="images/3817.png" class="zk-kitty">
 
-    overlay.classList.add('active');
-    render();
+<div class="zk-bubble" id="zkBubble">
+<div class="zk-tail"></div>
+</div>
 
-    const timer = setInterval(() => {
-      seconds--;
-      if (seconds <= 0) {
-        clearInterval(timer);
-        overlay.classList.remove('active');
-        if (hint) hint.textContent = "Taking you back to the shop…";
-        setTimeout(() => {
-          window.location.replace(REDIRECT_TO);
-        }, 600);
-      } else {
-        render();
-      }
-    }, 1000);
-  }
+</div>
 
-  // 🔥 THIS IS THE SECRET SAUCE
-  runKitty();                         // immediate
-  window.addEventListener('pageshow', runKitty); // PayPal/mobile-safe
+<script>
+
+(function(){
+
+const overlay=document.getElementById("zkOverlay");
+const bubble=document.getElementById("zkBubble");
+
+let seconds=6;
+
+function render(){
+
+bubble.innerHTML=
+'<div class="zk-tail"></div>'+
+'Yo! I’m <strong>Zombie Kitty</strong> 🧟‍🐱<br><br>'+
+'<strong>THANK YOU</strong> for your order!<br>'+
+'Heading back to the shop in <strong>'+seconds+'s</strong>'+
+'<div class="zk-actions">'+
+'<a href="shop.html">Shop More Wax</a>'+
+'<a href="index.html">Home</a>'+
+'</div>';
+
+}
+
+function runKitty(){
+
+overlay.classList.add("active");
+
+render();
+
+const timer=setInterval(()=>{
+
+seconds--;
+
+if(seconds<=0){
+
+clearInterval(timer);
+
+overlay.classList.remove("active");
+
+setTimeout(()=>{
+
+window.location.replace("shop.html");
+
+},600);
+
+}
+
+else{
+
+render();
+
+}
+
+},1000);
+
+}
+
+runKitty();
+
+window.addEventListener("pageshow",runKitty);
+
 })();
+
 </script>
-  
+
 </body>
 </html>
