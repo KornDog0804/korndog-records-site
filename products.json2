@@ -125,14 +125,14 @@
     "title": "Boston 1",
     "price": 10,
     "grade": "VG/VG+",
-    "image": "images/Boston-1764230862646.jpg",
+    "image": "images/1773603989304-13703.png",
     "description": "The Single Best Guitar Tone in The History Of Rock. Very nice (in my Borat voice).",
     "available": true,
     "quantity": 1,
-    "imageFront": "images/Boston-1764230862646.jpg",
+    "imageFront": "images/1773603989304-13703.png",
     "imageBack": "images/Boston-1764230862646.jpg",
     "images": [
-      "images/Boston-1764230862646.jpg",
+      "images/1773603989304-13703.png",
       "images/Boston-1764230862646.jpg"
     ],
     "tier": "tenbin",
@@ -141,7 +141,7 @@
     "featured": true,
     "joeysPick": true,
     "imagesObj": {
-      "front": "images/Boston-1764230862646.jpg",
+      "front": "images/1773603989304-13703.png",
       "back": "images/Boston-1764230862646.jpg"
     },
     "originalId": "boston-1"
