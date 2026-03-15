@@ -582,12 +582,26 @@ async function loadProducts(){
 }
 
 async function saveProducts(products, sha, msg){
-  // Always fetch a fresh SHA right before writing to avoid 409 conflicts
-  try {
-    const fresh = await getFile(PRODUCTS_PATH);
-    sha = fresh.sha;
-  } catch(e) { /* use passed-in sha as fallback */ }
-  await putText(PRODUCTS_PATH, JSON.stringify(products,null,2), msg, sha);
+  const MAX_RETRIES = 4;
+  const RETRY_DELAY = 700;
+  for(let attempt = 0; attempt < MAX_RETRIES; attempt++){
+    // Always fetch a fresh SHA right before every attempt to avoid 409 conflicts
+    try {
+      const fresh = await getFile(PRODUCTS_PATH);
+      sha = fresh.sha;
+    } catch(e) { /* use passed-in sha as fallback */ }
+    try {
+      await putText(PRODUCTS_PATH, JSON.stringify(products,null,2), msg, sha);
+      return; // success — exit loop
+    } catch(e) {
+      if(e.message.includes("409") && attempt < MAX_RETRIES - 1){
+        // SHA conflict from rapid back-to-back saves — wait then retry with fresh SHA
+        await new Promise(r => setTimeout(r, RETRY_DELAY * (attempt + 1)));
+        continue;
+      }
+      throw e; // non-409 error or final attempt — surface to caller
+    }
+  }
 }
 
 let cache = null;
