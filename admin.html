@@ -194,6 +194,27 @@ small.code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospa
         (Some phones force camera first if you only have a capture input.)
       </div>
 
+      <!-- Current image previews — shown in edit mode only -->
+      <div id="currentPhotos" style="display:none;margin-top:10px">
+        <div class="hint" style="margin-bottom:8px"><b>Current photos</b> — upload a new one below to replace, or tap Clear to remove it:</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div style="text-align:center">
+            <div class="hint" style="margin-bottom:4px">FRONT</div>
+            <img id="previewFront" src="" alt="Front" style="width:110px;height:110px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05)"/>
+            <div style="margin-top:6px">
+              <button type="button" class="btn btn-danger" id="btnClearFront" style="font-size:.65rem;padding:5px 10px">Clear Front</button>
+            </div>
+          </div>
+          <div style="text-align:center">
+            <div class="hint" style="margin-bottom:4px">BACK</div>
+            <img id="previewBack" src="" alt="Back" style="width:110px;height:110px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05)"/>
+            <div style="margin-top:6px">
+              <button type="button" class="btn btn-danger" id="btnClearBack" style="font-size:.65rem;padding:5px 10px">Clear Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="row" style="margin-top:10px">
         <div class="field">
           <label>Front Photo (Library Picker)</label>
@@ -697,6 +718,36 @@ function enterEditMode(p){
   $("back").value="";
   $("backCam").value="";
 
+  // Show current photo previews
+  const frontSrc = p.imageFront || p.image || "";
+  const backSrc  = p.imageBack  || frontSrc || "";
+  if(frontSrc || backSrc){
+    $("currentPhotos").style.display = "block";
+    $("previewFront").src = frontSrc || "";
+    $("previewBack").src  = backSrc  || "";
+    $("previewFront").style.opacity = frontSrc ? "1" : "0.2";
+    $("previewBack").style.opacity  = backSrc  ? "1" : "0.2";
+    editMode.clearFront = false;
+    editMode.clearBack  = false;
+  } else {
+    $("currentPhotos").style.display = "none";
+  }
+
+  $("btnClearFront").onclick = function(){
+    if(!confirm("Remove the front photo? You should upload a new one before saving.")) return;
+    $("previewFront").src = "";
+    $("previewFront").style.opacity = "0.2";
+    editMode.clearFront = true;
+    setStatus("Front photo marked for removal — upload a replacement or save to clear it.", "warn");
+  };
+  $("btnClearBack").onclick = function(){
+    if(!confirm("Remove the back photo?")) return;
+    $("previewBack").src = "";
+    $("previewBack").style.opacity = "0.2";
+    editMode.clearBack = true;
+    setStatus("Back photo marked for removal.", "warn");
+  };
+
   $("sec2").scrollIntoView({behavior:"smooth",block:"start"});
   setStatus("Editing: " + (p.artist?p.artist+" — ":"") + (p.title||(p.pid||p.id)));
 }
@@ -714,6 +765,9 @@ function exitEditMode(){
   $("featured").checked=false;
   $("joeysPick").checked=false;
   $("rid").disabled=false;
+  $("currentPhotos").style.display="none";
+  editMode.clearFront = false;
+  editMode.clearBack  = false;
   setStatus("Ready for a new record.");
 }
 $("btnCancel").onclick=exitEditMode;
@@ -778,6 +832,9 @@ $("form").addEventListener("submit", async (e)=>{
 
     let frontPath = existing.imageFront || existing.image || "";
     let backPath  = existing.imageBack  || frontPath;
+
+    if(editMode.clearFront) frontPath = "";
+    if(editMode.clearBack)  backPath  = "";
 
     if(frontFile) frontPath = await uploadImage(frontFile);
     if(backFile)  backPath  = await uploadImage(backFile);
