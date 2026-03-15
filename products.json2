@@ -784,14 +784,14 @@
     "pid": "sleep-token-even-in-arcadia",
     "featured": true,
     "imageFront": "images/Screenshot_20250826-210248.png",
-    "imageBack": "images/Screenshot_20250826-210248.png",
+    "imageBack": "images/1773602062652-13699.jpg",
     "images": [
       "images/Screenshot_20250826-210248.png",
-      "images/Screenshot_20250826-210248.png"
+      "images/1773602062652-13699.jpg"
     ],
     "imagesObj": {
       "front": "images/Screenshot_20250826-210248.png",
-      "back": "images/Screenshot_20250826-210248.png"
+      "back": "images/1773602062652-13699.jpg"
     },
     "originalId": "sleep-token-even-in-arcadia",
     "joeysPick": true
