@@ -4,15 +4,11 @@
   <meta charset="utf-8" />
   <title>Shop Vinyl • KornDog Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Prevents Discogs CDN from blocking hotlinked images on desktop -->
   <meta name="referrer" content="no-referrer" />
 
-  <!-- IMPORTANT: Your repo uses styles.css (plural). -->
   <link rel="stylesheet" href="styles.css?v=1210">
-  <!-- Shop-only fixes (modal + flip) -->
   <link rel="stylesheet" href="shop.css?v=1210">
 
-  <!-- 🔒 SHOP-ONLY HEADER LOGO FIX (DO NOT MOVE) -->
   <style>
     header .logo-link{
       display:inline-flex;
@@ -20,26 +16,65 @@
       justify-content:center;
       height:100%;
     }
-
     header .logo-circle{
       display:flex;
       align-items:center;
       justify-content:center;
     }
-
-    header .logo-circle img{
-      display:block;
+    header .logo-circle img{ display:block; }
+    @media (max-width:768px){
+      header .logo-circle{ transform: translateY(-1px); }
     }
 
-    /* Mobile Chrome micro-offset fix */
-    @media (max-width:768px){
-      header .logo-circle{
-        transform: translateY(-1px);
-      }
+    /* ── GRADING GUIDE ── */
+    .grade-guide{
+      margin:14px 0 22px;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid rgba(123,255,90,.18);
+      background:rgba(123,255,90,.04);
+    }
+    .grade-guide-title{
+      font-size:.72rem;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--accent);
+      font-weight:900;
+      margin-bottom:10px;
+    }
+    .grade-rows{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:6px 14px;
+    }
+    @media(min-width:600px){
+      .grade-rows{ grid-template-columns:repeat(3,1fr); }
+    }
+    .grade-row{
+      display:flex;
+      align-items:baseline;
+      gap:6px;
+      font-size:.82rem;
+    }
+    .grade-key{
+      font-family:'DM Mono',ui-monospace,monospace;
+      color:var(--accent);
+      font-weight:700;
+      white-space:nowrap;
+      min-width:38px;
+    }
+    .grade-val{
+      color:var(--muted);
+      line-height:1.3;
+    }
+    .grade-note{
+      margin-top:10px;
+      font-size:.78rem;
+      color:var(--muted);
+      font-style:italic;
     }
   </style>
 
-  <!-- Load order matters -->
   <script defer src="script.js?v=1210"></script>
   <script defer src="shop-ui.js?v=1210"></script>
   <script defer src="share-links.js?v=1210"></script>
@@ -54,7 +89,6 @@
           <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
         </div>
       </a>
-
       <nav>
         <a href="index.html" class="nav-link">Home</a>
         <a href="shop.html" class="nav-link active">Shop</a>
@@ -69,6 +103,19 @@
     <h2>Shop Vinyl</h2>
     <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
 
+    <div class="grade-guide">
+      <div class="grade-guide-title">📋 Grading Guide — Sleeve / Vinyl</div>
+      <div class="grade-rows">
+        <div class="grade-row"><span class="grade-key">M</span><span class="grade-val">Mint — perfect, unplayed</span></div>
+        <div class="grade-row"><span class="grade-key">NM</span><span class="grade-val">Near Mint — like new</span></div>
+        <div class="grade-row"><span class="grade-key">VG+</span><span class="grade-val">Very Good Plus — light marks, plays great</span></div>
+        <div class="grade-row"><span class="grade-key">VG</span><span class="grade-val">Very Good — some surface noise</span></div>
+        <div class="grade-row"><span class="grade-key">G+</span><span class="grade-val">Good Plus — plays through, noticeable wear</span></div>
+        <div class="grade-row"><span class="grade-key">G</span><span class="grade-val">Good — heavy wear, plays with noise</span></div>
+      </div>
+      <div class="grade-note">Format is always Sleeve / Vinyl — e.g. VG+/NM means VG+ sleeve, Near Mint vinyl.</div>
+    </div>
+
     <div id="products" class="products-grid" aria-live="polite"></div>
     <div id="pagination" class="pagination" aria-label="Shop pagination"></div>
   </main>
@@ -77,10 +124,8 @@
     © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
 
-  <!-- Floating Contact -->
   <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
 
-  <!-- Zombie Kitty Assistant -->
   <div id="zkOverlay" class="zk-overlay">
     <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
     <div class="zk-bubble" id="zkBubble">
@@ -90,10 +135,7 @@
     </div>
   </div>
 
-  <!-- Quick View Modal is injected by shop-ui.js -->
-
   <script>
-    // Fix Discogs images on desktop — set referrerpolicy on every img as it's added to DOM
     (function(){
       function patchImgs(root){
         root.querySelectorAll("img").forEach(function(img){
@@ -102,9 +144,7 @@
           }
         });
       }
-      // Patch any imgs already in the DOM
       patchImgs(document);
-      // Watch for dynamically added imgs (product cards, modal, etc.)
       new MutationObserver(function(mutations){
         mutations.forEach(function(m){
           m.addedNodes.forEach(function(node){
