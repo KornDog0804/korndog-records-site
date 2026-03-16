@@ -2,83 +2,221 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Shop Vinyl • KornDog Records</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="referrer" content="no-referrer" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>KornDog Records</title>
+  <meta name="description" content="KornDog Records — real records, real stories, vinyl therapy never dies." />
 
-  <link rel="stylesheet" href="styles.css?v=1210">
-  <link rel="stylesheet" href="shop.css?v=1210">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css?v=homefix3" />
+  <script defer src="zk.js?v=homefix3"></script>
 
   <style>
-    header .logo-link{
+    .hero-banner{
+      width:100%;
+      border-radius:28px;
+      display:block;
+      margin-bottom:22px;
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:
+        0 18px 44px rgba(0,0,0,.35),
+        0 0 30px rgba(155,255,90,.25),
+        0 0 60px rgba(155,255,90,.15);
+      transition:transform .25s ease, box-shadow .25s ease;
+    }
+    .hero-banner:hover{
+      transform:scale(1.01);
+      box-shadow:
+        0 22px 50px rgba(0,0,0,.45),
+        0 0 40px rgba(155,255,90,.35),
+        0 0 80px rgba(155,255,90,.20);
+    }
+    .hero-card{
+      background:linear-gradient(180deg, rgba(24,6,58,.92), rgba(14,2,38,.96));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:28px;
+      padding:28px 22px;
+      box-shadow:0 18px 44px rgba(0,0,0,.28);
+      margin-bottom:26px;
+    }
+    .hero-card h1{
+      font-family: 'Bebas Neue', sans-serif;
+      font-size:clamp(2.2rem, 7vw, 3.7rem);
+      line-height:1.02;
+      margin:0 0 18px;
+      letter-spacing:.08em;
+    }
+    .hero-card h1 .accent{ color:var(--accent); }
+    .hero-card p{
+      font-family: 'Barlow', sans-serif;
+      font-size:1.05rem;
+      line-height:1.65;
+      color:var(--muted);
+      margin:0 0 22px;
+      max-width:760px;
+    }
+    .hero-panel{
+      margin-top:12px;
+      border:1px solid rgba(123,255,90,.26);
+      border-radius:24px;
+      padding:18px;
+      background:rgba(255,255,255,.03);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+    .hero-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .btn-home{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      height:100%;
+      min-height:54px;
+      padding:0 22px;
+      border-radius:999px;
+      font-family: 'Barlow', sans-serif;
+      font-weight:900;
+      font-size:1rem;
+      text-decoration:none;
+      transition:transform .15s ease, filter .15s ease, background .15s ease;
     }
-    header .logo-circle{
+    .btn-home:active{ transform:translateY(1px); }
+    .btn-home-primary{
+      background:var(--accent);
+      color:#0a0714;
+      box-shadow:0 8px 28px rgba(123,255,90,.22);
+    }
+    .btn-home-outline{
+      background:rgba(123,255,90,.10);
+      color:var(--accent);
+      border:1px solid rgba(123,255,90,.40);
+    }
+    .hero-proof{
+      font-family: 'Barlow', sans-serif;
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.55;
+      margin:0;
+    }
+    .home-section{ margin:30px 0 18px; }
+    .home-section h2{
+      font-family: 'Bebas Neue', sans-serif;
+      margin:0 0 8px;
+      font-size:1.8rem;
+      letter-spacing:.1em;
+    }
+    .home-section .subtitle{
+      margin:0 0 18px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+    .featured-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+    }
+    @media (min-width:900px){
+      .featured-grid{ grid-template-columns:repeat(4, minmax(0,1fr)); }
+    }
+    .featured-card{
       display:flex;
+      flex-direction:column;
+      min-height:100%;
+      background:linear-gradient(180deg, rgba(51,21,104,.82), rgba(26,7,65,.96));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:24px;
+      padding:14px;
+      box-shadow:0 16px 38px rgba(0,0,0,.25);
+      overflow:hidden;
+      position:relative;
+    }
+    .featured-card a{ text-decoration:none; color:inherit; }
+    .featured-image-wrap{
+      display:block;
+      width:100%;
+      aspect-ratio:1 / 1;
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      margin-bottom:14px;
+    }
+    .featured-image-wrap img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .featured-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      width:max-content;
+      margin:0 0 10px;
+      padding:7px 12px;
+      border-radius:999px;
+      background:rgba(255,215,0,.12);
+      color:#ffd95a;
+      border:1px solid rgba(255,215,0,.35);
+      font-size:.82rem;
+      font-weight:900;
+      letter-spacing:.04em;
+      box-shadow:0 0 18px rgba(255,215,0,.12);
+    }
+    .featured-title{
+      font-family: 'Bebas Neue', sans-serif;
+      font-size:1.1rem;
+      line-height:1.14;
+      font-weight:900;
+      letter-spacing:.06em;
+      margin:0 0 10px;
+      min-height:2.5em;
+    }
+    .featured-grade{ font-family: 'Barlow', sans-serif; color:var(--muted); font-size:.98rem; margin:0 0 12px; }
+    .featured-price{ font-family: 'DM Mono', monospace; font-size:1.2rem; font-weight:900; margin:0 0 16px; }
+    .featured-actions{
+      margin-top:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .featured-btn{
+      display:inline-flex;
       align-items:center;
       justify-content:center;
-    }
-    header .logo-circle img{ display:block; }
-    @media (max-width:768px){
-      header .logo-circle{ transform: translateY(-1px); }
-    }
-
-    /* ── GRADING GUIDE ── */
-    .grade-guide{
-      margin:14px 0 22px;
-      padding:14px 16px;
-      border-radius:16px;
-      border:1px solid rgba(123,255,90,.18);
-      background:rgba(123,255,90,.04);
-    }
-    .grade-guide-title{
-      font-size:.72rem;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      color:var(--accent);
+      min-height:48px;
+      padding:0 16px;
+      border-radius:999px;
+      font-family: 'Barlow', sans-serif;
       font-weight:900;
-      margin-bottom:10px;
+      text-decoration:none;
+      cursor:pointer;
+      border:none;
     }
-    .grade-rows{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:6px 14px;
-    }
-    @media(min-width:600px){
-      .grade-rows{ grid-template-columns:repeat(3,1fr); }
-    }
-    .grade-row{
-      display:flex;
-      align-items:baseline;
-      gap:6px;
-      font-size:.82rem;
-    }
-    .grade-key{
-      font-family:'DM Mono',ui-monospace,monospace;
+    .featured-btn-primary{ background:var(--accent); color:#0a0714; }
+    .featured-btn-outline{
+      background:rgba(123,255,90,.09);
       color:var(--accent);
-      font-weight:700;
-      white-space:nowrap;
-      min-width:38px;
+      border:1px solid rgba(123,255,90,.35);
     }
-    .grade-val{
-      color:var(--muted);
-      line-height:1.3;
+    .home-bottom-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:18px;
     }
-    .grade-note{
-      margin-top:10px;
-      font-size:.78rem;
+    .empty-featured{
+      padding:18px;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
       color:var(--muted);
-      font-style:italic;
     }
   </style>
-
-  <script defer src="script.js?v=1210"></script>
-  <script defer src="shop-ui.js?v=1210"></script>
-  <script defer src="share-links.js?v=1210"></script>
-  <script defer src="zk.js?v=1210"></script>
 </head>
 
 <body>
@@ -90,39 +228,54 @@
         </div>
       </a>
       <nav>
-        <a href="index.html" class="nav-link">Home</a>
-        <a href="shop.html" class="nav-link active">Shop</a>
-        <a href="cart.html" class="nav-link cart-pill">
-          Cart <span data-cart-count>0</span>
-        </a>
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="cart.html" class="nav-link cart-pill">Cart <span data-cart-count>0</span></a>
       </nav>
     </div>
   </header>
 
   <main class="page">
-    <h2>Shop Vinyl</h2>
-    <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
+    <img
+      id="heroBanner"
+      class="hero-banner"
+      src="images/korndog-banner.png"
+      alt="KornDog Records banner"
+    />
 
-    <div class="grade-guide">
-      <div class="grade-guide-title">📋 Grading Guide — Sleeve / Vinyl</div>
-      <div class="grade-rows">
-        <div class="grade-row"><span class="grade-key">M</span><span class="grade-val">Mint — perfect, unplayed</span></div>
-        <div class="grade-row"><span class="grade-key">NM</span><span class="grade-val">Near Mint — like new</span></div>
-        <div class="grade-row"><span class="grade-key">VG+</span><span class="grade-val">Very Good Plus — light marks, plays great</span></div>
-        <div class="grade-row"><span class="grade-key">VG</span><span class="grade-val">Very Good — some surface noise</span></div>
-        <div class="grade-row"><span class="grade-key">G+</span><span class="grade-val">Good Plus — plays through, noticeable wear</span></div>
-        <div class="grade-row"><span class="grade-key">G</span><span class="grade-val">Good — heavy wear, plays with noise</span></div>
+    <section class="hero-card">
+      <h1>Turn the noise <span class="accent">into therapy.</span></h1>
+
+      <p>
+        KornDog Records is where grief, grit, and groove collide. No fake hype. No algorithms.
+        Just real records, real stories, and that needle-drop that makes the world slow down.
+      </p>
+
+      <div class="hero-panel">
+        <div class="hero-buttons">
+          <a class="btn-home btn-home-primary" href="https://whatnot.com/s/hENMpjej" target="_blank" rel="noopener noreferrer">
+            Whatnot
+          </a>
+          <a class="btn-home btn-home-outline" href="https://www.discogs.com/seller/korndog0804" target="_blank" rel="noopener noreferrer">
+            Discogs
+          </a>
+        </div>
       </div>
-      <div class="grade-note">Format is always Sleeve / Vinyl — e.g. VG+/NM means VG+ sleeve, Near Mint vinyl.</div>
-    </div>
+    </section>
 
-    <div id="products" class="products-grid" aria-live="polite"></div>
-    <div id="pagination" class="pagination" aria-label="Shop pagination"></div>
+    <section class="home-section" id="featuredSection">
+      <h2>Featured Records of the Week</h2>
+      <p class="subtitle">Hand-picked heat from the stack. When they're gone, they're gone.</p>
+
+      <div id="featuredGrid" class="featured-grid"></div>
+
+      <div class="home-bottom-actions">
+        <a class="btn-home btn-home-primary" href="shop.html">Shop all vinyl</a>
+      </div>
+    </section>
   </main>
 
-  <footer>
-    © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
-  </footer>
+  <footer>© 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.</footer>
 
   <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
 
@@ -136,26 +289,174 @@
   </div>
 
   <script>
-    (function(){
-      function patchImgs(root){
-        root.querySelectorAll("img").forEach(function(img){
-          if(!img.referrerPolicy || img.referrerPolicy !== "no-referrer"){
-            img.referrerPolicy = "no-referrer";
-          }
+    const CART_KEY = "korndog_cart_v1";
+
+    function updateCartCount() {
+      try {
+        const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+        const count = cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+        document.querySelectorAll("[data-cart-count]").forEach(el => {
+          el.textContent = String(count);
+        });
+      } catch (err) {
+        document.querySelectorAll("[data-cart-count]").forEach(el => {
+          el.textContent = "0";
         });
       }
-      patchImgs(document);
-      new MutationObserver(function(mutations){
-        mutations.forEach(function(m){
-          m.addedNodes.forEach(function(node){
-            if(node.nodeType === 1){
-              if(node.tagName === "IMG") node.referrerPolicy = "no-referrer";
-              else patchImgs(node);
-            }
-          });
+    }
+
+    function formatPrice(price) {
+      const n = Number(price) || 0;
+      return "$" + n.toFixed(2);
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getProductPid(product) {
+      return product.id || product.pid || product.slug || "";
+    }
+
+    function getProductImage(product) {
+      return (
+        product.imageFront ||
+        (Array.isArray(product.images) ? product.images[0] : "") ||
+        (product.images && product.images.front) ||
+        product.image ||
+        ""
+      );
+    }
+
+    function getQty(product) {
+      return Number(product.quantity ?? product.qty ?? 1);
+    }
+
+    function isAvailable(product) {
+      if (product.sold === true) return false;
+      if (product.available === false) return false;
+      if (getQty(product) <= 0) return false;
+      return true;
+    }
+
+    function isJoeysPick(product) {
+      return product.joeysPick === true || product.joeys_pick === true;
+    }
+
+    function addToCart(product) {
+      const pid = getProductPid(product);
+      if (!pid) return;
+
+      const cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+      const maxQty = getQty(product);
+      const existing = cart.find(item => String(item.id) === String(pid));
+
+      if (existing) {
+        if ((Number(existing.qty) || 0) >= maxQty) {
+          alert(maxQty === 1 ? "You only have 1 copy in stock." : `You only have ${maxQty} copies in stock.`);
+          return;
+        }
+        existing.qty += 1;
+      } else {
+        cart.push({
+          id: pid,
+          title: product.title || "",
+          artist: product.artist || "",
+          price: Number(product.price) || 0,
+          grade: product.grade || "",
+          tier: String(product.tier || "premium").toLowerCase(),
+          image: getProductImage(product),
+          qty: 1
         });
-      }).observe(document.body, { childList: true, subtree: true });
-    })();
+      }
+
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      updateCartCount();
+      alert("Dropped in the cart.");
+    }
+
+    function buildFeaturedCard(product) {
+      const pid = getProductPid(product);
+      const image = getProductImage(product);
+      const titleText = [product.artist, product.title].filter(Boolean).join(" – ");
+      const title = escapeHtml(titleText || "Record");
+      const grade = escapeHtml(product.grade || "—");
+      const price = formatPrice(product.price);
+      const productUrl = "product.html?pid=" + encodeURIComponent(pid);
+      const joeysPickMarkup = isJoeysPick(product)
+        ? `<div class="featured-badge">⭐ Joey's Pick</div>`
+        : "";
+
+      const card = document.createElement("article");
+      card.className = "featured-card";
+
+      card.innerHTML = `
+        <a href="${productUrl}" class="featured-image-wrap" aria-label="Open ${title}">
+          <img src="${escapeHtml(image)}" alt="${title}" loading="lazy" />
+        </a>
+
+        ${joeysPickMarkup}
+
+        <a href="${productUrl}">
+          <h3 class="featured-title">${title}</h3>
+        </a>
+
+        <div class="featured-grade">Grade: ${grade}</div>
+        <div class="featured-price">${price}</div>
+
+        <div class="featured-actions">
+          <a class="featured-btn featured-btn-outline" href="${productUrl}">View Record</a>
+          <button class="featured-btn featured-btn-primary" type="button">Add to Cart</button>
+        </div>
+      `;
+
+      const addBtn = card.querySelector("button");
+      addBtn.addEventListener("click", () => addToCart(product));
+
+      return card;
+    }
+
+    async function loadFeaturedRecords() {
+      const grid = document.getElementById("featuredGrid");
+      if (!grid) return;
+
+      grid.innerHTML = `<div class="empty-featured">Loading featured records…</div>`;
+
+      try {
+        const res = await fetch("products.json2?v=homefix3", { cache: "no-store" });
+        if (!res.ok) throw new Error("Could not load products.json2");
+
+        const data = await res.json();
+        const products = Array.isArray(data) ? data : [];
+
+        const featured = products
+          .filter(product => product.featured === true && isAvailable(product))
+          .slice(0, 4);
+
+        grid.innerHTML = "";
+
+        if (!featured.length) {
+          grid.innerHTML = `<div class="empty-featured">No featured records are set yet.</div>`;
+          return;
+        }
+
+        featured.forEach(product => {
+          grid.appendChild(buildFeaturedCard(product));
+        });
+      } catch (err) {
+        grid.innerHTML = `<div class="empty-featured">Couldn't load featured records right now.</div>`;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateCartCount();
+      loadFeaturedRecords();
+    });
   </script>
 </body>
 </html>
