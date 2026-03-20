@@ -18,7 +18,7 @@
       "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg"
     ],
     "pid": "acdc-back-in-black",
-    "featured": true,
+    "featured": false,
     "joeysPick": false,
     "imagesObj": {
       "front": "images/rn-image_picker_lib_temp_08b6c307-ee7d-45ae-960e-6616c67df8e7.jpg",
