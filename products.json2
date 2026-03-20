@@ -230,14 +230,19 @@
     "tier": "threefor25",
     "imageFront": "images/David_Lee_Roth_EP-1764230391826.jpg",
     "imageBack": "images/David_Lee_Roth_EP-1764230391826.jpg",
-    "images": {
+    "images": [
+      "images/David_Lee_Roth_EP-1764230391826.jpg",
+      "images/David_Lee_Roth_EP-1764230391826.jpg"
+    ],
+    "sold": false,
+    "pid": "david-lee-roth-crazy-from-the-heat-ep",
+    "featured": true,
+    "joeysPick": false,
+    "imagesObj": {
       "front": "images/David_Lee_Roth_EP-1764230391826.jpg",
       "back": "images/David_Lee_Roth_EP-1764230391826.jpg"
     },
-    "sold": false,
-    "pid": "david-lee-roth-crazy-from-the-heat-ep",
-    "featured": false,
-    "joeysPick": false
+    "originalId": "david-lee-roth-crazy-from-the-heat-ep"
   },
   {
     "id": "dazz-band-keep-it-live",
