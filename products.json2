@@ -280,7 +280,18 @@
     "sold": false,
     "pid": "dokken-back-for-the-attack",
     "featured": false,
-    "joeysPick": false
+    "joeysPick": false,
+    "imageFront": "images/Dokken-1764298922683.jpg",
+    "imageBack": "images/Dokken-1764298922683.jpg",
+    "images": [
+      "images/Dokken-1764298922683.jpg",
+      "images/Dokken-1764298922683.jpg"
+    ],
+    "imagesObj": {
+      "front": "images/Dokken-1764298922683.jpg",
+      "back": "images/Dokken-1764298922683.jpg"
+    },
+    "originalId": "dokken-back-for-the-attack"
   },
   {
     "id": "foreigner-4",
