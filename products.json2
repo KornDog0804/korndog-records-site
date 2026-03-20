@@ -279,7 +279,7 @@
     "tier": "premium",
     "sold": false,
     "pid": "dokken-back-for-the-attack",
-    "featured": false,
+    "featured": true,
     "joeysPick": false,
     "imageFront": "images/Dokken-1764298922683.jpg",
     "imageBack": "images/Dokken-1764298922683.jpg",
