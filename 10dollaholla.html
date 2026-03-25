@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>$10 Dolla Holla • KornDog Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="script.js"></script>
+
+  <style>
+    body {
+      background:#060010;
+      color:#fff;
+      font-family:Barlow, sans-serif;
+    }
+
+    .wrap {
+      max-width:1100px;
+      margin:auto;
+      padding:2rem 1rem;
+    }
+
+    h1 {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:3rem;
+      color:#7bff5a;
+      text-align:center;
+      letter-spacing:.1em;
+      margin-bottom:.5rem;
+    }
+
+    .sub {
+      text-align:center;
+      color:#aaa;
+      margin-bottom:2rem;
+      font-size:.9rem;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+      gap:1.2rem;
+    }
+
+    .card {
+      background:#110028;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:14px;
+      overflow:hidden;
+      transition:.2s;
+    }
+
+    .card:hover {
+      transform:translateY(-4px);
+      box-shadow:0 10px 30px rgba(0,0,0,.4);
+    }
+
+    .card img {
+      width:100%;
+      aspect-ratio:1/1;
+      object-fit:cover;
+    }
+
+    .info {
+      padding:.7rem;
+    }
+
+    .title {
+      font-size:.85rem;
+      font-weight:600;
+    }
+
+    .price {
+      color:#7bff5a;
+      font-weight:700;
+      margin-top:.3rem;
+    }
+
+    .btn {
+      display:block;
+      text-align:center;
+      margin-top:.6rem;
+      padding:.4rem;
+      border-radius:999px;
+      background:#7bff5a;
+      color:#000;
+      font-size:.8rem;
+      font-weight:700;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <h1>$10 DOLLA HOLLA</h1>
+  <div class="sub">
+    No overthinking. No excuses. Just $10 records. 💿🔥
+  </div>
+
+  <div class="grid" id="bin"></div>
+
+</div>
+
+<script>
+  fetch("products.json")
+    .then(res => res.json())
+    .then(products => {
+
+      const bin = document.getElementById("bin");
+
+      const filtered = products.filter(p => Number(p.price) === 10);
+
+      if (!filtered.length) {
+        bin.innerHTML = "<p style='text-align:center;color:#888;'>No $10 heat right now… check back soon 🔥</p>";
+        return;
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+          <a href="product.html?pid=${p.id}">
+            <img src="${p.imageFront}" alt="">
+            <div class="info">
+              <div class="title">${p.title}</div>
+              <div class="price">$10</div>
+              <div class="btn">View Record</div>
+            </div>
+          </a>
+        `;
+
+        bin.appendChild(card);
+      });
+
+    });
+</script>
+
+</body>
+</html>
