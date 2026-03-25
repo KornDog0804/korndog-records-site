@@ -26,6 +26,49 @@
       header .logo-circle{ transform: translateY(-1px); }
     }
 
+    /* 🔥 $10 BIN CTA */
+    .bin-cta{
+      display:block;
+      margin:10px 0 16px;
+      padding:14px;
+      text-align:center;
+      border-radius:999px;
+      font-family:'Bebas Neue',sans-serif;
+      font-size:1.4rem;
+      letter-spacing:.08em;
+      background:linear-gradient(135deg,#7bff5a,#00d632);
+      color:#000;
+      text-decoration:none;
+      box-shadow:0 10px 30px rgba(0,214,50,.3);
+    }
+
+    /* 💰 DEAL BAR */
+    .deal-bar{
+      margin:12px 0 18px;
+      padding:10px;
+      border-radius:12px;
+      background:rgba(123,255,90,.08);
+      border:1px solid rgba(123,255,90,.25);
+      text-align:center;
+      font-size:.85rem;
+      color:var(--accent);
+      font-family:'DM Mono',monospace;
+    }
+
+    /* 🏷️ $10 BADGE */
+    .ten-badge{
+      position:absolute;
+      top:8px;
+      left:8px;
+      background:#7bff5a;
+      color:#000;
+      font-size:.7rem;
+      font-weight:900;
+      padding:4px 8px;
+      border-radius:999px;
+      z-index:2;
+    }
+
     /* ── GRADING GUIDE ── */
     .grade-guide{
       margin:14px 0 22px;
@@ -84,14 +127,15 @@
 <body>
   <header>
     <div class="nav-inner">
-      <a href="index.html" class="logo-link" aria-label="KornDog Records Home">
+      <a href="index.html" class="logo-link">
         <div class="logo-circle">
-          <img src="images/Screenshot_20250831-144625.png" alt="KornDog Records logo" />
+          <img src="images/Screenshot_20250831-144625.png" />
         </div>
       </a>
       <nav>
         <a href="index.html" class="nav-link">Home</a>
         <a href="shop.html" class="nav-link active">Shop</a>
+        <a href="10dollaholla.html" class="nav-link">$10 Bin</a>
         <a href="cart.html" class="nav-link cart-pill">
           Cart <span data-cart-count>0</span>
         </a>
@@ -103,6 +147,16 @@
     <h2>Shop Vinyl</h2>
     <p class="subtitle">Hand-picked records. Graded honestly. First paid gets it.</p>
 
+    <!-- 🔥 BIN CTA -->
+    <a href="10dollaholla.html" class="bin-cta">
+      💿 ENTER THE $10 DOLLA HOLLA BIN
+    </a>
+
+    <!-- 💰 DEAL BAR -->
+    <div class="deal-bar">
+      Any 3 records priced at $10 → automatically becomes $25 in cart 💰
+    </div>
+
     <div class="grade-guide">
       <div class="grade-guide-title">📋 Grading Guide — Sleeve / Vinyl</div>
       <div class="grade-rows">
@@ -113,49 +167,43 @@
         <div class="grade-row"><span class="grade-key">G+</span><span class="grade-val">Good Plus — plays through, noticeable wear</span></div>
         <div class="grade-row"><span class="grade-key">G</span><span class="grade-val">Good — heavy wear, plays with noise</span></div>
       </div>
-      <div class="grade-note">Format is always Sleeve / Vinyl — e.g. VG+/NM means VG+ sleeve, Near Mint vinyl.</div>
+      <div class="grade-note">Format is always Sleeve / Vinyl</div>
     </div>
 
-    <div id="products" class="products-grid" aria-live="polite"></div>
-    <div id="pagination" class="pagination" aria-label="Shop pagination"></div>
+    <div id="products" class="products-grid"></div>
+    <div id="pagination" class="pagination"></div>
   </main>
 
   <footer>
     © 2025 <strong>KornDog Records</strong> · Vinyl Therapy Never Dies.
   </footer>
 
-  <a id="floatingJoey" class="floating-message" aria-label="Contact Joey">💬</a>
+  <a id="floatingJoey" class="floating-message">💬</a>
 
   <div id="zkOverlay" class="zk-overlay">
-    <img src="images/3817.png" class="zk-kitty" alt="Zombie Kitty" />
-    <div class="zk-bubble" id="zkBubble">
-      <div class="zk-tail"></div>
+    <img src="images/3817.png" class="zk-kitty" />
+    <div class="zk-bubble">
       Hi! I'm Zombie Kitty — your crate-digging assistant.<br><br>
       Tap here to text KornDog.
     </div>
   </div>
 
   <script>
-    (function(){
-      function patchImgs(root){
-        root.querySelectorAll("img").forEach(function(img){
-          if(!img.referrerPolicy || img.referrerPolicy !== "no-referrer"){
-            img.referrerPolicy = "no-referrer";
+    // 🏷️ Inject $10 badge after render
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        document.querySelectorAll(".product-card").forEach(card => {
+          const priceEl = card.querySelector(".price");
+          if(priceEl && priceEl.textContent.includes("$10")){
+            const badge = document.createElement("div");
+            badge.className = "ten-badge";
+            badge.textContent = "$10 BIN";
+            card.style.position = "relative";
+            card.appendChild(badge);
           }
         });
-      }
-      patchImgs(document);
-      new MutationObserver(function(mutations){
-        mutations.forEach(function(m){
-          m.addedNodes.forEach(function(node){
-            if(node.nodeType === 1){
-              if(node.tagName === "IMG") node.referrerPolicy = "no-referrer";
-              else patchImgs(node);
-            }
-          });
-        });
-      }).observe(document.body, { childList: true, subtree: true });
-    })();
+      }, 500);
+    });
   </script>
 </body>
 </html>
