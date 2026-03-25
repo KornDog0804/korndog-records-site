@@ -57,7 +57,7 @@
     "id": "blessthefall-hollow-bodies",
     "artist": "BlessTheFall",
     "title": "Hollow Bodies",
-    "price": 16.99,
+    "price": 15,
     "grade": "NM/NM",
     "image": "images/PXL_20250907_203733675.jpg",
     "description": "10th Anniversary Edition. Modern metalcore with melody, breakdowns, and emotional punch.",
@@ -67,13 +67,18 @@
     "sold": false,
     "imageFront": "images/PXL_20250907_203733675.jpg",
     "imageBack": "images/PXL_20250907_203733675.jpg",
-    "images": {
+    "images": [
+      "images/PXL_20250907_203733675.jpg",
+      "images/PXL_20250907_203733675.jpg"
+    ],
+    "pid": "blessthefall-hollow-bodies",
+    "featured": false,
+    "joeysPick": false,
+    "imagesObj": {
       "front": "images/PXL_20250907_203733675.jpg",
       "back": "images/PXL_20250907_203733675.jpg"
     },
-    "pid": "blessthefall-hollow-bodies",
-    "featured": false,
-    "joeysPick": false
+    "originalId": "blessthefall-hollow-bodies"
   },
   {
     "id": "bob-seger-night-moves",
