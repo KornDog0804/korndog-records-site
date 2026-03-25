@@ -57,6 +57,71 @@
       margin:0 0 22px;
       max-width:760px;
     }
+
+    /* $10 Dolla Holla additions */
+    .dolla-soft-sell{
+      margin:-6px 0 18px;
+      color:var(--accent);
+      font-family:'DM Mono', monospace;
+      font-size:.9rem;
+      line-height:1.5;
+      letter-spacing:.02em;
+      text-shadow:0 0 12px rgba(123,255,90,.12);
+    }
+    .dolla-cta{
+      display:block;
+      width:100%;
+      text-align:center;
+      text-decoration:none;
+      margin-top:4px;
+      padding:1rem 1.1rem;
+      border-radius:999px;
+      font-family:'Bebas Neue', sans-serif;
+      letter-spacing:.08em;
+      font-size:1.28rem;
+      line-height:1;
+      color:#071006;
+      background:linear-gradient(135deg, #7bff5a, #00d632);
+      box-shadow:
+        0 10px 30px rgba(0,214,50,.30),
+        0 0 22px rgba(123,255,90,.16);
+      transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+      position:relative;
+      overflow:hidden;
+      animation:dollaPulse 2.6s infinite ease-in-out;
+    }
+    .dolla-cta span{
+      display:block;
+      margin-top:6px;
+      font-size:.72rem;
+      line-height:1.2;
+      font-family:'DM Mono', monospace;
+      letter-spacing:.04em;
+      color:rgba(7,16,6,.78);
+    }
+    .dolla-cta:hover{
+      transform:translateY(-3px) scale(1.01);
+      filter:brightness(1.02);
+      box-shadow:
+        0 14px 40px rgba(0,214,50,.38),
+        0 0 28px rgba(123,255,90,.24);
+    }
+    .dolla-cta:active{
+      transform:translateY(1px);
+    }
+    @keyframes dollaPulse{
+      0%,100%{
+        box-shadow:
+          0 10px 30px rgba(0,214,50,.30),
+          0 0 22px rgba(123,255,90,.16);
+      }
+      50%{
+        box-shadow:
+          0 14px 42px rgba(0,214,50,.42),
+          0 0 34px rgba(123,255,90,.28);
+      }
+    }
+
     .hero-panel{
       margin-top:12px;
       border:1px solid rgba(123,255,90,.26);
@@ -230,6 +295,7 @@
       <nav>
         <a href="index.html" class="nav-link active">Home</a>
         <a href="shop.html" class="nav-link">Shop</a>
+        <a href="10dollaholla.html" class="nav-link">$10 Bin</a>
         <a href="cart.html" class="nav-link cart-pill">Cart <span data-cart-count>0</span></a>
       </nav>
     </div>
@@ -251,6 +317,10 @@
         Just real records, real stories, and that needle-drop that makes the world slow down.
       </p>
 
+      <div class="dolla-soft-sell">
+        New in the crate: <strong>$10 Dolla Holla</strong> is live. Any 3 records → $25. Discount auto-applies in cart.
+      </div>
+
       <div class="hero-panel">
         <div class="hero-buttons">
           <a class="btn-home btn-home-primary" href="https://whatnot.com/s/hENMpjej" target="_blank" rel="noopener noreferrer">
@@ -260,6 +330,11 @@
             Discogs
           </a>
         </div>
+
+        <a class="dolla-cta" href="10dollaholla.html">
+          💿 $10 DOLLA HOLLA
+          <span>Any 3 → $25 • Dig the bin →</span>
+        </a>
       </div>
     </section>
 
