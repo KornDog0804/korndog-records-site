@@ -634,7 +634,7 @@
     "id": "night-ranger-7-wishes",
     "artist": "Night Ranger",
     "title": "7 Wishes",
-    "price": 8,
+    "price": 10,
     "grade": "VG/VG",
     "image": "images/Night_Ranger-1764233043019.jpg",
     "description": "Very nice copy.",
@@ -642,15 +642,20 @@
     "quantity": 1,
     "imageFront": "images/Night_Ranger-1764233043019.jpg",
     "imageBack": "images/1766355648240-17663556404784899065600496867440.jpg",
-    "images": {
-      "front": "images/Night_Ranger-1764233043019.jpg",
-      "back": "images/1766355648240-17663556404784899065600496867440.jpg"
-    },
+    "images": [
+      "images/Night_Ranger-1764233043019.jpg",
+      "images/1766355648240-17663556404784899065600496867440.jpg"
+    ],
     "tier": "budget",
     "sold": false,
     "pid": "night-ranger-7-wishes",
     "featured": false,
-    "joeysPick": false
+    "joeysPick": false,
+    "imagesObj": {
+      "front": "images/Night_Ranger-1764233043019.jpg",
+      "back": "images/1766355648240-17663556404784899065600496867440.jpg"
+    },
+    "originalId": "night-ranger-7-wishes"
   },
   {
     "id": "pantera-history-of-hostility",
