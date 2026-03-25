@@ -394,7 +394,7 @@
     "id": "Jefferson Starship",
     "artist": "Jefferson Starship",
     "title": "Red Octopus",
-    "price": 8,
+    "price": 10,
     "grade": "VG/VG",
     "quantity": 1,
     "tier": "budget",
@@ -404,13 +404,18 @@
     "image": "images/1766353771830-17663536301594697180019756225476.jpg",
     "imageFront": "images/1766353771830-17663536301594697180019756225476.jpg",
     "imageBack": "images/1766353773951-17663536562795494676876831638089.jpg",
-    "images": {
+    "images": [
+      "images/1766353771830-17663536301594697180019756225476.jpg",
+      "images/1766353773951-17663536562795494676876831638089.jpg"
+    ],
+    "pid": "Jefferson Starship",
+    "featured": false,
+    "joeysPick": false,
+    "imagesObj": {
       "front": "images/1766353771830-17663536301594697180019756225476.jpg",
       "back": "images/1766353773951-17663536562795494676876831638089.jpg"
     },
-    "pid": "Jefferson Starship",
-    "featured": false,
-    "joeysPick": false
+    "originalId": "Jefferson Starship"
   },
   {
     "id": "jimi-hendrix-smash-hits",
