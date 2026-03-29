@@ -529,18 +529,18 @@
       <div class="row">
         <div class="field">
           <label>Artist</label>
-          <input type="text" id="artist" placeholder="e.g. Fleetwood Mac" />
+          <input type="text" id="artist" placeholder="e.g. Killswitch Engage" />
         </div>
         <div class="field">
           <label>Album</label>
-          <input type="text" id="album" placeholder="e.g. Rumours" />
+          <input type="text" id="album" placeholder="e.g. The End Of Heartache" />
         </div>
       </div>
 
       <div class="row">
         <div class="field">
           <label>Pressing / Variant</label>
-          <input type="text" id="pressing" placeholder="e.g. splatter, OG press, numbered copy" />
+          <input type="text" id="pressing" placeholder="e.g. Bloody Mary edition / splatter / numbered copy" />
         </div>
         <div class="field">
           <label>For Sale?</label>
@@ -600,15 +600,18 @@
     let composedDataUrl = null;
     let lastTemplateIdx = -1;
 
-    // Locked to your repo structure
     const TEMPLATE_SRC = './images/zombie-kitty-template.png';
 
-    // Tuned for your current Zombie Kitty frame
     const FRAME_RECT = {
       x: 365,
       y: 305,
       width: 285,
       height: 285
+    };
+
+    const BORDER = {
+      color: '#b7ff00',
+      width: 8
     };
 
     const dropZone = document.getElementById('dropZone');
@@ -706,6 +709,10 @@
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Draw full template first
+      ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
+
+      // Draw uploaded record into the box area
       drawContainImage(
         ctx,
         recordImg,
@@ -715,7 +722,16 @@
         FRAME_RECT.height
       );
 
-      ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
+      // Redraw border on top so it stays crisp
+      drawFrameBorder(
+        ctx,
+        FRAME_RECT.x,
+        FRAME_RECT.y,
+        FRAME_RECT.width,
+        FRAME_RECT.height,
+        BORDER.color,
+        BORDER.width
+      );
 
       return canvas.toDataURL('image/png');
     }
@@ -725,10 +741,6 @@
       const boxRatio = w / h;
 
       let drawW, drawH, dx, dy;
-
-      ctx.save();
-      ctx.fillStyle = '#1a0827';
-      ctx.fillRect(x, y, w, h);
 
       if (imgRatio > boxRatio) {
         drawW = w;
@@ -742,7 +754,18 @@
         dy = y;
       }
 
+      ctx.save();
+      ctx.fillStyle = '#14051f';
+      ctx.fillRect(x, y, w, h);
       ctx.drawImage(img, dx, dy, drawW, drawH);
+      ctx.restore();
+    }
+
+    function drawFrameBorder(ctx, x, y, w, h, color, lineWidth) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.strokeRect(x, y, w, h);
       ctx.restore();
     }
 
