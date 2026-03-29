@@ -602,11 +602,12 @@
 
     const TEMPLATE_SRC = './images/zombie-kitty-template.png';
 
+    // Adjusted for your current blank template screenshot
     const FRAME_RECT = {
-      x: 365,
-      y: 305,
-      width: 285,
-      height: 285
+      x: 455,
+      y: 394,
+      width: 280,
+      height: 280
     };
 
     const BORDER = {
@@ -709,10 +710,8 @@
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw full template first
       ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-      // Draw uploaded record into the box area
       drawContainImage(
         ctx,
         recordImg,
@@ -722,7 +721,6 @@
         FRAME_RECT.height
       );
 
-      // Redraw border on top so it stays crisp
       drawFrameBorder(
         ctx,
         FRAME_RECT.x,
