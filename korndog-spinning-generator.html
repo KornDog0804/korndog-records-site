@@ -735,36 +735,12 @@ const FRAME_RECT = {
     }
 
     function drawContainImage(ctx, img, x, y, w, h) {
-  const imgRatio = img.width / img.height;
-  const boxRatio = w / h;
-
-  let drawW, drawH, dx, dy;
-
-  // cover: fill the box completely, crop overflow
-  if (imgRatio > boxRatio) {
-    drawH = h;
-    drawW = h * imgRatio;
-    dx = x + (w - drawW) / 2;
-    dy = y;
-  } else {
-    drawW = w;
-    drawH = w / imgRatio;
-    dx = x;
-    dy = y + (h - drawH) / 2;
-  }
-
+  // Stretch image to exactly fill the frame — no gaps, no bars, ever.
   ctx.save();
-
-  // 🔥 THIS IS THE CRITICAL FIX
   ctx.beginPath();
   ctx.rect(x, y, w, h);
   ctx.clip();
-
-  ctx.fillStyle = '#14051f';
-  ctx.fillRect(x, y, w, h);
-
-  ctx.drawImage(img, dx, dy, drawW, drawH);
-
+  ctx.drawImage(img, x, y, w, h);
   ctx.restore();
     }
 
