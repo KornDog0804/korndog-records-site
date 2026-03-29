@@ -740,16 +740,17 @@ const FRAME_RECT = {
 
   let drawW, drawH, dx, dy;
 
+  // cover: fill the box completely, crop overflow
   if (imgRatio > boxRatio) {
-    drawW = w;
-    drawH = w / imgRatio;
-    dx = x;
-    dy = y + (h - drawH) / 2;
-  } else {
     drawH = h;
     drawW = h * imgRatio;
     dx = x + (w - drawW) / 2;
     dy = y;
+  } else {
+    drawW = w;
+    drawH = w / imgRatio;
+    dx = x;
+    dy = y + (h - drawH) / 2;
   }
 
   ctx.save();
