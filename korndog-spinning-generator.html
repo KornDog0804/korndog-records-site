@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KornDog Records – What's Spinning Today?</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #aaff00;
+    --purple: #5a0fa0;
+    --pink: #ff2d78;
+    --bg: #0d0018;
+    --surface: rgba(26,0,48,0.88);
+    --border: rgba(90,15,160,0.5);
+    --text: #f0e8ff;
+    --muted: #9a80bb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at 12% 18%, rgba(90,15,160,0.28) 0%, transparent 55%),
+                radial-gradient(ellipse at 88% 80%, rgba(170,255,0,0.07) 0%, transparent 50%);
+  }
+  .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(80px); }
+  .b1 { width: 340px; height: 200px; background: var(--green); top: -90px; right: -70px; opacity: 0.09; }
+  .b2 { width: 240px; height: 320px; background: var(--purple); bottom: -50px; left: -70px; opacity: 0.14; }
+
+  .wrap { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 26px 18px 70px; }
+
+  /* HEADER */
+  .hd { text-align: center; margin-bottom: 30px; animation: fadeDown .5s ease; }
+  .hd-logo { font-family: 'Bebas Neue'; font-size: clamp(42px,10vw,64px); color: var(--green); letter-spacing: 2px; text-shadow: 3px 3px 0 #000, 0 0 40px rgba(170,255,0,.35); line-height: 1; }
+  .hd-sub { font-family: 'Bebas Neue'; font-size: clamp(13px,3vw,17px); letter-spacing: 7px; color: var(--muted); margin-top: -4px; }
+  .hd-tag { font-family: 'Bebas Neue'; font-size: clamp(17px,4.5vw,26px); color: #000; background: var(--green); display: inline-block; padding: 5px 22px; margin-top: 13px; letter-spacing: 2px; box-shadow: 4px 4px 0 #000; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px 22px; backdrop-filter: blur(14px); margin-bottom: 20px; animation: fadeUp .6s ease both; }
+  .card:nth-child(2) { animation-delay:.05s; } .card:nth-child(3) { animation-delay:.1s; } .card:nth-child(4) { animation-delay:.15s; }
+  .ctitle { font-family: 'Bebas Neue'; font-size: 18px; color: var(--green); letter-spacing: 2px; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+  .ctitle::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, rgba(170,255,0,.3), transparent); }
+
+  /* UPLOAD */
+  .upload-zone { border: 2px dashed rgba(170,255,0,.35); border-radius: 10px; padding: 30px 20px; text-align: center; cursor: pointer; transition: all .2s; position: relative; overflow: hidden; background: rgba(0,0,0,.2); }
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--green); background: rgba(170,255,0,.04); }
+  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { font-size: 38px; display: block; margin-bottom: 10px; }
+  .upload-label { font-family: 'Bebas Neue'; font-size: 18px; color: var(--green); letter-spacing: 2px; }
+  .upload-hint { font-family: 'DM Mono'; font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+  .preview-wrap { display: none; margin-top: 16px; position: relative; border-radius: 10px; overflow: hidden; }
+  .preview-wrap.show { display: block; }
+  .preview-wrap img { width: 100%; max-height: 320px; object-fit: cover; display: block; border: 2px solid rgba(170,255,0,.3); border-radius: 10px; }
+  .preview-change { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,.85); border: 1px solid var(--green); color: var(--green); border-radius: 6px; padding: 5px 13px; font-family: 'DM Mono'; font-size: 11px; cursor: pointer; transition: all .2s; letter-spacing: 1px; }
+  .preview-change:hover { background: var(--green); color: #000; }
+
+  /* FIELDS */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  label { display: block; font-family: 'DM Mono'; font-size: 11px; color: var(--green); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 7px; }
+  input, select, textarea { width: 100%; background: rgba(0,0,0,.4); border: 1px solid rgba(90,15,160,.6); border-radius: 6px; color: var(--text); font-family: 'Barlow'; font-size: 15px; padding: 11px 14px; transition: border-color .2s, box-shadow .2s; outline: none; -webkit-appearance: none; }
+  input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(170,255,0,.14); }
+  select option { background: #1a0030; }
+  textarea { resize: vertical; min-height: 70px; }
+
+  /* TONE */
+  .tone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .tone-btn { background: rgba(0,0,0,.3); border: 1px solid rgba(90,15,160,.5); color: var(--muted); border-radius: 6px; padding: 10px; font-family: 'DM Mono'; font-size: 11px; cursor: pointer; transition: all .2s; text-align: center; user-select: none; letter-spacing: .5px; }
+  .tone-btn:hover { border-color: var(--green); color: var(--text); }
+  .tone-btn.active { background: rgba(170,255,0,.12); border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(170,255,0,.18); }
+
+  /* GENERATE */
+  .btn-gen { width: 100%; background: var(--green); color: #000; border: none; border-radius: 8px; padding: 17px; font-family: 'Bebas Neue'; font-size: 26px; letter-spacing: 3px; cursor: pointer; transition: all .2s; box-shadow: 4px 4px 0 #000; animation: fadeUp .6s ease .2s both; }
+  .btn-gen:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #000; }
+  .btn-gen:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 #000; }
+
+  .err { color: var(--pink); font-family: 'DM Mono'; font-size: 12px; margin-top: 10px; display: none; }
+  .err.show { display: block; }
+
+  /* OUTPUT */
+  .out-card { background: var(--surface); border: 1px solid var(--green); border-radius: 12px; overflow: hidden; display: none; margin-top: 22px; box-shadow: 0 0 32px rgba(170,255,0,.1); animation: fadeUp .5s ease; }
+  .out-card.show { display: block; }
+  .out-img-wrap { position: relative; display: none; }
+  .out-img-wrap.show { display: block; }
+  .out-img-wrap img { width: 100%; max-height: 400px; object-fit: cover; display: block; }
+  .out-img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(13,0,24,.97) 100%); }
+  .out-body { padding: 22px; }
+  .out-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .out-title { font-family: 'Bebas Neue'; font-size: 18px; color: var(--green); letter-spacing: 2px; }
+  .btn-row { display: flex; gap: 8px; }
+  .copy-btn, .regen-btn { border-radius: 6px; padding: 6px 14px; font-family: 'DM Mono'; font-size: 11px; cursor: pointer; letter-spacing: 1px; transition: all .2s; }
+  .copy-btn { background: transparent; border: 1px solid var(--green); color: var(--green); }
+  .copy-btn:hover, .copy-btn.done { background: var(--green); color: #000; }
+  .regen-btn { background: transparent; border: 1px solid var(--muted); color: var(--muted); }
+  .regen-btn:hover { border-color: var(--green); color: var(--green); }
+  .out-text { font-family: 'Barlow'; font-size: 15px; line-height: 1.85; color: var(--text); white-space: pre-wrap; background: rgba(0,0,0,.3); border-radius: 8px; padding: 18px; border: 1px solid rgba(90,15,160,.4); }
+  .out-tags { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(90,15,160,.3); font-family: 'DM Mono'; font-size: 11px; color: var(--muted); line-height: 1.9; word-break: break-all; }
+
+  .deco { text-align: center; margin: 20px 0 4px; }
+  .vinyl { font-size: 54px; display: inline-block; animation: spin 10s linear infinite; opacity: .22; }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:translateY(0)} }
+  @keyframes spin     { to{transform:rotate(360deg)} }
+
+  @media(max-width:480px) { .row { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="wrap">
+
+  <div class="hd">
+    <div class="hd-logo">KornDog Records</div>
+    <div class="hd-sub">Bowling Green, KY</div>
+    <div class="hd-tag">&#127925; What's Spinning Today? Generator</div>
+  </div>
+
+  <!-- PHOTO -->
+  <div class="card">
+    <div class="ctitle">&#128247; Step 1 &mdash; Drop Your Record Photo</div>
+    <div class="upload-zone" id="dropZone">
+      <input type="file" id="photoInput" accept="image/*" />
+      <span class="upload-icon">&#128444;&#65039;</span>
+      <div class="upload-label">Tap or Drag to Upload Photo</div>
+      <div class="upload-hint">JPG, PNG, HEIC &mdash; sleeve, record, or both</div>
+    </div>
+    <div class="preview-wrap" id="previewWrap">
+      <img id="previewImg" src="" alt="Record preview" />
+      <button class="preview-change" onclick="resetPhoto()">&#8617; Change Photo</button>
+    </div>
+  </div>
+
+  <!-- DETAILS -->
+  <div class="card">
+    <div class="ctitle">&#128191; Step 2 &mdash; Record Details</div>
+    <div class="row">
+      <div class="field"><label>Artist</label><input type="text" id="artist" placeholder="e.g. Slaves" /></div>
+      <div class="field"><label>Album</label><input type="text" id="album" placeholder="e.g. To Better Days" /></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Pressing / Variant</label><input type="text" id="pressing" placeholder="e.g. black &amp; gold splatter" /></div>
+      <div class="field">
+        <label>For Sale?</label>
+        <select id="forSale">
+          <option value="no">No &mdash; Personal Collection</option>
+          <option value="yes">Yes &mdash; Shop (korndogrecords.com)</option>
+          <option value="discogs">Yes &mdash; Discogs (korndog0804)</option>
+          <option value="whatnot">Yes &mdash; Whatnot</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Extra Details (optional)</label><textarea id="extra" placeholder="Limited press, personal story, what makes this one special..."></textarea></div>
+  </div>
+
+  <!-- VIBE -->
+  <div class="card">
+    <div class="ctitle">&#127912; Step 3 &mdash; Post Vibe</div>
+    <div class="tone-grid">
+      <div class="tone-btn active" data-tone="emotional">&#128156; Raw &amp; Emotional</div>
+      <div class="tone-btn" data-tone="hype">&#128293; Hype &amp; Energetic</div>
+      <div class="tone-btn" data-tone="collector">&#127942; Collector Flex</div>
+      <div class="tone-btn" data-tone="community">&#129309; Community Convo</div>
+    </div>
+  </div>
+
+  <button class="btn-gen" onclick="generatePost()">&#127925; Generate Post</button>
+  <div class="err" id="errMsg">Please fill in at least the Artist and Album.</div>
+
+  <div class="deco"><span class="vinyl">&#128191;</span></div>
+
+  <!-- OUTPUT -->
+  <div class="out-card" id="outCard">
+    <div class="out-img-wrap" id="outImgWrap">
+      <img id="outImg" src="" alt="Record" />
+      <div class="out-img-overlay"></div>
+    </div>
+    <div class="out-body">
+      <div class="out-header">
+        <div class="out-title">&#128203; Your Facebook Post</div>
+        <div class="btn-row">
+          <button class="regen-btn" onclick="generatePost()">&#8635; Remix</button>
+          <button class="copy-btn" id="copyBtn" onclick="copyPost()">Copy All</button>
+        </div>
+      </div>
+      <div class="out-text" id="outText"></div>
+      <div class="out-tags" id="outTags"></div>
+    </div>
+  </div>
+
+</div>
+<script>
+  let selectedTone = 'emotional';
+  let photoDataUrl = null;
+
+  // Tone selection
+  document.querySelectorAll('.tone-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedTone = btn.dataset.tone;
+    });
+  });
+
+  // Drag & drop
+  const dropZone = document.getElementById('dropZone');
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+  dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+  document.getElementById('photoInput').addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+
+  function handleFile(file) {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      photoDataUrl = e.target.result;
+      document.getElementById('previewImg').src = photoDataUrl;
+      document.getElementById('previewWrap').classList.add('show');
+      dropZone.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function resetPhoto() {
+    photoDataUrl = null;
+    document.getElementById('previewWrap').classList.remove('show');
+    dropZone.style.display = 'block';
+    document.getElementById('photoInput').value = '';
+    document.getElementById('outImgWrap').classList.remove('show');
+  }
+
+  // ─── TEMPLATES ───────────────────────────────────────────────────────────────
+  const templates = {
+    emotional: [
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+${a} – ${al}${pr ? '\n' + pr : ''}
+
+Some records you flip.
+Some records you feel all the way through.
+This one? It gets under your skin and stays there.
+
+${ex ? ex + '\n\n' : ''}Raw. Honest. The kind of music that reminds you why vinyl exists.
+Not just to hear it — to *feel* it.
+
+That's vinyl therapy, and this right here is a perfect dose.
+
+${sale}
+👇 What's spinning on YOUR table today?
+
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`,
+
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+Dropping the needle on ${a} – ${al} today.${pr ? '\n' + pr : ''}
+
+There are records you play when you need noise.
+And then there are records you play when you need *truth*.
+
+This one speaks.
+Every groove. Every note. Every quiet moment between the loud ones.
+
+${ex ? ex + '\n\n' : ''}Vinyl therapy isn't a phrase — it's a prescription.
+And this is exactly what the doctor ordered.
+
+${sale}
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`,
+
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+${a} – ${al}${pr ? ' // ' + pr : ''}
+
+Some days the records choose you.
+Today this one reached off the shelf and said: *play me.*
+
+${ex ? ex + '\n\n' : ''}Heavy. Real. The kind of wax that reminds you music still means something.
+
+This is why we do this. Every spin is a story.
+Every needle drop is intentional.
+
+${sale}
+👇 Drop your spin below — let's talk about it.
+
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`
+    ],
+
+    hype: [
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+${a} – ${al}${pr ? '\n🎨 ' + pr : ''}
+
+YO. This pressing is FIRE. 🔥
+
+${ex ? ex + '\n\n' : ''}Cranked loud. Windows shaking. Neighbors aware.
+This is not background music — this is FOREGROUND music.
+Full send. No skip.
+
+${sale}
+👇 What are YOU blasting right now?!
+
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`,
+
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+TURN. IT. UP. 🔊
+
+${a} – ${al}${pr ? '\n' + pr : ''}
+
+${ex ? ex + '\n\n' : ''}This one goes HARD. Every single track.
+The kind of record that makes you air guitar in your living room at full volume.
+
+No shame. Only vibes.
+
+${sale}
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`,
+
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+${a} – ${al} is ON THE PLATTER AND IT'S SENDING ME. 🚀${pr ? '\n🎨 ' + pr : ''}
+
+${ex ? ex + '\n\n' : ''}This pressing looks as incredible as it sounds.
+Loud. Chaotic. Perfect.
+
+If your needle isn't dropping right now — what are you even doing?
+
+${sale}
+👇 What's on your turntable today?!
+
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`
+    ],
+
+    collector: [
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+${a} – ${al}${pr ? '\nVariant: ' + pr : ''}
+
+Let me talk to the collectors for a second. 👇
+
+${ex ? ex + '\n\n' : ''}This pressing is the real deal. The kind of variant that makes you hesitate before you even open the sleeve.
+Played it carefully. Cleaned it first. Obviously.
+
+The way this sounds on wax vs. streaming?
+Night and day. No contest.
+
+${sale}
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`,
+
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+For the record nerds. You'll know. 😏
+
+${a} – ${al}${pr ? '\n' + pr : ''}
+
+${ex ? ex + '\n\n' : ''}Not every press sounds like this.
+The warmth. The depth. The way the bass sits in the groove.
+This is the version you actually want.
+
+Every collector has that one record they'd never sell.
+This is in that conversation.
+
+${sale}
+👇 What's your untouchable record? Drop it below.
+
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`,
+
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+${a} – ${al}${pr ? '\n✨ Variant: ' + pr : ''}
+
+Okay collectors — this one's worth talking about.
+
+${ex ? ex + '\n\n' : ''}The pressing quality on this is exceptional.
+Quiet surfaces. Wide soundstage. Zero regrets.
+
+If you've been sleeping on ${a} on wax — wake up.
+This is the one.
+
+${sale}
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`
+    ],
+
+    community: [
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+Sunday spin: ${a} – ${al}${pr ? ' (' + pr + ')' : ''}
+
+Alright vinyl fam — what's making it onto your turntable today?
+
+${ex ? ex + '\n\n' : ''}There's something special about sharing what's spinning.
+It's not just a record — it's a conversation starter.
+
+This one's been in heavy rotation at KornDog HQ and I wanna know:
+Have you heard it? What do you think?
+
+${sale}
+👇 Drop your spin below — let's talk wax!
+
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`,
+
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+Weekly check-in time! 🎵
+
+${a} – ${al}${pr ? '\n' + pr : ''}
+
+${ex ? ex + '\n\n' : ''}The vinyl community is the best community. Period.
+Where else do people get THIS excited about a needle on a groove?
+
+This record has been a conversation piece all week.
+Wanna know what everyone keeps asking? *Where can I find that pressing?*
+
+${sale}
+👇 What's in rotation for you this week? Tell us everything.
+
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`,
+
+      (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶
+
+Good ${getDayName()} vibes incoming ☀️
+
+${a} – ${al}${pr ? '\n' + pr : ''}
+
+${ex ? ex + '\n\n' : ''}One of my favorite things about running KornDog Records?
+Talking records with you all. Every week. No exceptions.
+
+This one's been the soundtrack to the day and I'm not mad about it.
+
+${sale}
+👇 What's your Sunday soundtrack? Let's swap recommendations!
+
+🟣🟢 KornDog Records — Where vinyl therapy hits different.`
+    ]
+  };
+
+  function getDayName() {
+    return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+  }
+
+  function getSaleText(val, artist) {
+    const urls = {
+      no: null,
+      yes: '🛒 Find it at korndogrecords.com',
+      discogs: '🛒 Listed on Discogs — search korndog0804',
+      whatnot: '📺 Catch it live on our Whatnot channel!'
+    };
+    if (val === 'no') return `This one isn't for sale — it's in the personal collection. Some records you just keep. 🖤`;
+    return urls[val] || '';
+  }
+
+  function buildHashtags(artist, album, pressing) {
+    const tags = ['#WhatsSpinningToday','#KorndogRecords','#VinylTherapy','#NowSpinning','#SpinThatWax','#VinylCommunity','#RecordCollector','#VinylLife'];
+    const clean = s => '#' + s.replace(/[^a-zA-Z0-9]/g, '');
+    tags.push(clean(artist), clean(album));
+    if (pressing && /splatter/i.test(pressing)) tags.push('#SplatterVinyl');
+    if (pressing && /color|colour|colored|coloured/i.test(pressing)) tags.push('#ColoredVinyl');
+    if (pressing && /limit/i.test(pressing)) tags.push('#LimitedEdition');
+    return tags.join(' ');
+  }
+
+  let lastTemplateIdx = -1;
+
+  function generatePost() {
+    const artist = document.getElementById('artist').value.trim();
+    const album = document.getElementById('album').value.trim();
+    const pressing = document.getElementById('pressing').value.trim();
+    const forSale = document.getElementById('forSale').value;
+    const extra = document.getElementById('extra').value.trim();
+    const err = document.getElementById('errMsg');
+
+    if (!artist || !album) { err.classList.add('show'); return; }
+    err.classList.remove('show');
+
+    const pool = templates[selectedTone];
+    let idx;
+    do { idx = Math.floor(Math.random() * pool.length); } while (idx === lastTemplateIdx && pool.length > 1);
+    lastTemplateIdx = idx;
+
+    const saleText = getSaleText(forSale, artist);
+    const pressLine = pressing ? `\n🎨 Pressing: ${pressing}` : '';
+    const post = pool[idx](artist, album, pressLine, extra, saleText);
+
+    document.getElementById('outText').textContent = post;
+    document.getElementById('outTags').textContent = buildHashtags(artist, album, pressing);
+
+    if (photoDataUrl) {
+      document.getElementById('outImg').src = photoDataUrl;
+      document.getElementById('outImgWrap').classList.add('show');
+    } else {
+      document.getElementById('outImgWrap').classList.remove('show');
+    }
+
+    document.getElementById('copyBtn').textContent = 'Copy All';
+    document.getElementById('copyBtn').classList.remove('done');
+    const card = document.getElementById('outCard');
+    card.classList.add('show');
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function copyPost() {
+    const text = document.getElementById('outText').textContent;
+    const tags = document.getElementById('outTags').textContent;
+    navigator.clipboard.writeText(text + '\n\n' + tags).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✓ Copied!'; btn.classList.add('done');
+      setTimeout(() => { btn.textContent = 'Copy All'; btn.classList.remove('done'); }, 2500);
+    });
+  }
+</script>
+</body>
+</html>
