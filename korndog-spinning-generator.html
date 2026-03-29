@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KornDog Records – What's Spinning Today?</title>
+  <title>KornDog Records | What's Spinning Today?</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -199,7 +199,7 @@
 
     .preview-wrap img {
       width: 100%;
-      max-height: 900px;
+      max-height: 950px;
       object-fit: contain;
       display: block;
       border: 2px solid rgba(170,255,0,.3);
@@ -236,10 +236,6 @@
 
     .field {
       margin-bottom: 16px;
-    }
-
-    .field:last-child {
-      margin-bottom: 0;
     }
 
     label {
@@ -390,7 +386,7 @@
 
     .out-img-wrap img {
       width: 100%;
-      max-height: 1100px;
+      max-height: 1200px;
       object-fit: contain;
       display: block;
       background: #12001f;
@@ -477,26 +473,14 @@
       word-break: break-word;
     }
 
-    .path-note {
-      margin-top: 10px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      line-height: 1.7;
-      background: rgba(0,0,0,.2);
-      border: 1px solid rgba(90,15,160,.35);
-      border-radius: 8px;
-      padding: 10px 12px;
-    }
-
     @keyframes fadeDown {
       from { opacity: 0; transform: translateY(-16px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes spin {
@@ -523,12 +507,12 @@
     </div>
 
     <div class="card">
-      <div class="ctitle">&#128247; Step 1 — Drop Your Record Photo</div>
+      <div class="ctitle">&#128247; Step 1 | Drop Your Record Photo</div>
       <div class="upload-zone" id="dropZone">
         <input type="file" id="photoInput" accept="image/*" />
         <span class="upload-icon">&#128444;&#65039;</span>
         <div class="upload-label">Tap or Drag to Upload Photo</div>
-        <div class="upload-hint">Upload your sleeve, vinyl, or record pic and it’ll get dropped into the Zombie Kitty frame automatically.</div>
+        <div class="upload-hint">Upload your sleeve, vinyl, or turntable pic and it gets dropped into the Zombie Kitty frame automatically.</div>
       </div>
 
       <div class="preview-wrap" id="previewWrap">
@@ -537,50 +521,46 @@
       </div>
 
       <canvas id="composerCanvas" style="display:none;"></canvas>
-
-      <div class="path-note">
-        Template image path is set inside the code with <strong>TEMPLATE_SRC</strong>. If your template lives somewhere else in the repo, change that one line and you’re golden.
-      </div>
     </div>
 
     <div class="card">
-      <div class="ctitle">&#128191; Step 2 — Record Details</div>
+      <div class="ctitle">&#128191; Step 2 | Record Details</div>
 
       <div class="row">
         <div class="field">
           <label>Artist</label>
-          <input type="text" id="artist" placeholder="e.g. Killswitch Engage" />
+          <input type="text" id="artist" placeholder="e.g. Fleetwood Mac" />
         </div>
         <div class="field">
           <label>Album</label>
-          <input type="text" id="album" placeholder="e.g. The End Of Heartache" />
+          <input type="text" id="album" placeholder="e.g. Rumours" />
         </div>
       </div>
 
       <div class="row">
         <div class="field">
           <label>Pressing / Variant</label>
-          <input type="text" id="pressing" placeholder="e.g. Bloody Mary Edition #635" />
+          <input type="text" id="pressing" placeholder="e.g. splatter, OG press, numbered copy" />
         </div>
         <div class="field">
           <label>For Sale?</label>
           <select id="forSale">
-            <option value="no">No — Personal Collection</option>
-            <option value="yes">Yes — Shop (korndogrecords.com)</option>
-            <option value="discogs">Yes — Discogs (korndog0804)</option>
-            <option value="whatnot">Yes — Whatnot</option>
+            <option value="no">No | Personal Collection</option>
+            <option value="yes">Yes | Shop (korndogrecords.com)</option>
+            <option value="discogs">Yes | Discogs (korndog0804)</option>
+            <option value="whatnot">Yes | Whatnot</option>
           </select>
         </div>
       </div>
 
       <div class="field">
         <label>Extra Details (optional)</label>
-        <textarea id="extra" placeholder="Limited press, personal story, what makes this one hit different..."></textarea>
+        <textarea id="extra" placeholder="Personal story, why it matters, what makes this one hit different..."></textarea>
       </div>
     </div>
 
     <div class="card">
-      <div class="ctitle">&#127912; Step 3 — Pick The Vibe</div>
+      <div class="ctitle">&#127912; Step 3 | Pick The Vibe</div>
       <div class="tone-grid">
         <div class="tone-btn active" data-tone="joey">🟣 Joey / KornDog Voice</div>
         <div class="tone-btn" data-tone="hype">🔥 Loud & Hype</div>
@@ -596,7 +576,7 @@
 
     <div class="out-card" id="outCard">
       <div class="out-img-wrap" id="outImgWrap">
-        <img id="outImg" src="" alt="Generated record poster" />
+        <img id="outImg" src="" alt="Generated poster" />
       </div>
 
       <div class="out-body">
@@ -620,17 +600,23 @@
     let composedDataUrl = null;
     let lastTemplateIdx = -1;
 
-    // CHANGE THIS PATH IF NEEDED
-    const TEMPLATE_SRC = './zombie-kitty-template.png';
+    // Locked to your repo structure
+    const TEMPLATE_SRC = './images/zombie-kitty-template.png';
 
-    // Fine-tuned for your empty green box template image
-    // Adjust ONLY if needed after testing
+    // Tuned for your current Zombie Kitty frame
     const FRAME_RECT = {
-      x: 383,
-      y: 360,
-      width: 252,
+      x: 365,
+      y: 305,
+      width: 285,
       height: 285
     };
+
+    const dropZone = document.getElementById('dropZone');
+    const photoInput = document.getElementById('photoInput');
+    const previewWrap = document.getElementById('previewWrap');
+    const previewImg = document.getElementById('previewImg');
+    const outImg = document.getElementById('outImg');
+    const outImgWrap = document.getElementById('outImgWrap');
 
     document.querySelectorAll('.tone-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -639,8 +625,6 @@
         selectedTone = btn.dataset.tone;
       });
     });
-
-    const dropZone = document.getElementById('dropZone');
 
     dropZone.addEventListener('dragover', e => {
       e.preventDefault();
@@ -654,11 +638,15 @@
     dropZone.addEventListener('drop', e => {
       e.preventDefault();
       dropZone.classList.remove('drag');
-      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFile(e.dataTransfer.files[0]);
+      }
     });
 
-    document.getElementById('photoInput').addEventListener('change', e => {
-      if (e.target.files[0]) handleFile(e.target.files[0]);
+    photoInput.addEventListener('change', e => {
+      if (e.target.files && e.target.files[0]) {
+        handleFile(e.target.files[0]);
+      }
     });
 
     function handleFile(file) {
@@ -670,14 +658,14 @@
 
         try {
           composedDataUrl = await composeZombieKittyGraphic(photoDataUrl);
-          document.getElementById('previewImg').src = composedDataUrl;
+          previewImg.src = composedDataUrl;
         } catch (err) {
-          console.error('Template compose failed:', err);
+          console.error('Compose failed:', err);
           composedDataUrl = null;
-          document.getElementById('previewImg').src = photoDataUrl;
+          previewImg.src = photoDataUrl;
         }
 
-        document.getElementById('previewWrap').classList.add('show');
+        previewWrap.classList.add('show');
         dropZone.style.display = 'none';
       };
 
@@ -687,19 +675,19 @@
     function resetPhoto() {
       photoDataUrl = null;
       composedDataUrl = null;
-      document.getElementById('previewWrap').classList.remove('show');
+      previewWrap.classList.remove('show');
+      previewImg.src = '';
+      outImg.src = '';
+      outImgWrap.classList.remove('show');
+      photoInput.value = '';
       dropZone.style.display = 'block';
-      document.getElementById('photoInput').value = '';
-      document.getElementById('outImgWrap').classList.remove('show');
-      document.getElementById('previewImg').src = '';
-      document.getElementById('outImg').src = '';
     }
 
     function loadImage(src) {
       return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = () => resolve(img);
-        img.onerror = reject;
+        img.onerror = () => reject(new Error('Could not load image: ' + src));
         img.src = src;
       });
     }
@@ -718,8 +706,7 @@
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw record photo into the box first
-      drawCoverImage(
+      drawContainImage(
         ctx,
         recordImg,
         FRAME_RECT.x,
@@ -728,31 +715,35 @@
         FRAME_RECT.height
       );
 
-      // Then draw template on top so the green frame stays crisp
       ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
       return canvas.toDataURL('image/png');
     }
 
-    function drawCoverImage(ctx, img, x, y, w, h) {
+    function drawContainImage(ctx, img, x, y, w, h) {
       const imgRatio = img.width / img.height;
       const boxRatio = w / h;
 
-      let sx, sy, sw, sh;
+      let drawW, drawH, dx, dy;
+
+      ctx.save();
+      ctx.fillStyle = '#1a0827';
+      ctx.fillRect(x, y, w, h);
 
       if (imgRatio > boxRatio) {
-        sh = img.height;
-        sw = sh * boxRatio;
-        sx = (img.width - sw) / 2;
-        sy = 0;
+        drawW = w;
+        drawH = w / imgRatio;
+        dx = x;
+        dy = y + (h - drawH) / 2;
       } else {
-        sw = img.width;
-        sh = sw / boxRatio;
-        sx = 0;
-        sy = (img.height - sh) / 2;
+        drawH = h;
+        drawW = h * imgRatio;
+        dx = x + (w - drawW) / 2;
+        dy = y;
       }
 
-      ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+      ctx.drawImage(img, dx, dy, drawW, drawH);
+      ctx.restore();
     }
 
     function getDayName() {
@@ -771,29 +762,21 @@
       ];
 
       const clean = s => '#' + s.replace(/[^a-zA-Z0-9]/g, '');
+
       if (artist) tags.push(clean(artist));
       if (album) tags.push(clean(album));
-
       if (pressing && /splatter/i.test(pressing)) tags.push('#SplatterVinyl');
       if (pressing && /limited|numbered|edition/i.test(pressing)) tags.push('#LimitedEdition');
-      if (pressing && /color|coloured|colored|variant/i.test(pressing)) tags.push('#ColoredVinyl');
+      if (pressing && /color|colour|colored|coloured|variant/i.test(pressing)) tags.push('#ColoredVinyl');
 
       return tags.join(' ');
     }
 
     function getSaleText(forSale) {
-      if (forSale === 'no') {
-        return `This one ain't for sale. This is what KornDog brings to the table.`;
-      }
-      if (forSale === 'yes') {
-        return `Want it? Hit korndogrecords.com and see what's live.`;
-      }
-      if (forSale === 'discogs') {
-        return `Want it? Check Discogs and search korndog0804.`;
-      }
-      if (forSale === 'whatnot') {
-        return `Might hit the Whatnot table too, so keep your eyes open.`;
-      }
+      if (forSale === 'no') return `This one ain't for sale. This is what KornDog brings to the table.`;
+      if (forSale === 'yes') return `If it’s live, grab it at korndogrecords.com.`;
+      if (forSale === 'discogs') return `If it’s listed, hit Discogs and search korndog0804.`;
+      if (forSale === 'whatnot') return `Keep an eye on Whatnot too. It may show up there.`;
       return '';
     }
 
@@ -803,12 +786,12 @@
 
 Today it’s ${a} – ${al}${pr ? `\n${pr}` : ''}
 
-This one ain’t just playing…
-it’s saying something.
+This one ain’t just music.
+This one carries something.
 
-${ex ? ex + `\n\n` : ''}Some records are for flipping.
-Some records are for feeling.
-This right here is why KornDog Records exists in the first place.
+${ex ? ex + `\n\n` : ''}Some records you buy.
+Some records become part of your life.
+That’s the lane this one lives in.
 
 ${sale}
 
@@ -822,34 +805,34 @@ Where vinyl therapy hits different.
 Now spinning:
 ${a} – ${al}${pr ? `\n${pr}` : ''}
 
-This is one of those records that grabs the room and tells everything else to hush for a minute.
+Needle down.
+Brain locked in.
+Mood set.
 
-${ex ? ex + `\n\n` : ''}Needle down.
-Brain locks in.
-World gets a little quieter and a little louder at the same time.
+${ex ? ex + `\n\n` : ''}This is the kind of record that reminds me why I started all this in the first place.
+Not just to sell wax.
+To live in it.
 
 ${sale}
 
-That’s the whole KornDog vibe right there.
-
-👇 What are you spinning today?`,
+👇 What are y’all spinning today?`,
 
         (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
 
 ${a} – ${al}${pr ? `\n${pr}` : ''}
 
-Some days you throw on whatever.
-Some days the record picks you.
+Some days you throw something on.
+Some days the record chooses you.
 
 ${ex ? ex + `\n\n` : ''}Today this one was the move.
-Raw where it needs to be.
-Real where it counts.
-Exactly the kind of spin that reminds me why I love this whole thing.
+Real music.
+Real feeling.
+No fake plastic nonsense.
 
 ${sale}
 
 🟣🟢 Korndog Records
-Not just selling records. Living them.
+Not just a record shop. A whole mood.
 
 👇 What’s on your turntable today?`
       ],
@@ -859,31 +842,26 @@ Not just selling records. Living them.
 
 ${a} – ${al}${pr ? `\n${pr}` : ''}
 
-This one is NOT background music.
-This is full-volume, wake-the-walls-up kind of stuff. 🔥
+This one came in loud and kicked the door open. 🔥
 
-${ex ? ex + `\n\n` : ''}${sale}
+${ex ? ex + `\n\n` : ''}No background music energy here.
+This is front-and-center, let-the-neighbors-hear-it type stuff.
 
-Turn it up.
-Let it rip.
-Annoy the furniture.
+${sale}
 
-👇 What’s spinning over your way?`,
+👇 What are you blasting today?`,
 
         (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
 
 ${a} – ${al}${pr ? `\n${pr}` : ''}
 
-This record came in swinging and I respect that.
+Big volume. Big mood. Big record.
 
-${ex ? ex + `\n\n` : ''}Loud.
-Mean.
-Beautiful.
-Exactly how it should be.
+${ex ? ex + `\n\n` : ''}If your walls ain’t nervous, you’re not spinning it right.
 
 ${sale}
 
-👇 Drop what you're spinning today before your speakers file a complaint.`
+👇 Drop your spin below.`
       ],
 
       collector: [
@@ -891,26 +869,25 @@ ${sale}
 
 ${a} – ${al}${pr ? `\nVariant: ${pr}` : ''}
 
-Collector talk for a second...
+Collector talk for a second.
 
-${ex ? ex + `\n\n` : ''}This is the kind of press that makes you pause before you even touch it.
-Then you spin it anyway, because records were made to live, not just sit there looking pretty.
+${ex ? ex + `\n\n` : ''}This is the kind of piece that makes you stop and admire it before the needle even drops.
+Then you spin it anyway, because records were made to live.
 
 ${sale}
 
-👇 What’s one record in your collection that you’ll never let go of?`,
+👇 What’s one record in your collection you’ll never let go of?`,
 
         (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
 
 ${a} – ${al}${pr ? `\n${pr}` : ''}
 
-This one is for the people who notice the details.
+This one is for the folks who notice the little stuff.
 
-${ex ? ex + `\n\n` : ''}The look.
-The press.
-The feel of it in hand.
-That whole little ritual before the needle drops.
-That’s the good stuff.
+${ex ? ex + `\n\n` : ''}The press.
+The look.
+The ritual.
+The whole thing matters.
 
 ${sale}
 
@@ -923,22 +900,23 @@ ${sale}
 ${getDayName()} spin:
 ${a} – ${al}${pr ? `\n${pr}` : ''}
 
-${ex ? ex + `\n\n` : ''}One of my favorite parts of this whole thing is seeing what everybody else has on the table too.
+${ex ? ex + `\n\n` : ''}One of the best parts of doing KornDog Records is seeing what everybody else is spinning too.
 
 ${sale}
 
-👇 So what’s spinning in your house today? Let’s talk wax.`,
+👇 So what’s on your turntable today? Let’s talk wax.`,
 
         (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
 
-Today’s pick is ${a} – ${al}${pr ? `\n${pr}` : ''}
+Today’s pick:
+${a} – ${al}${pr ? `\n${pr}` : ''}
 
-${ex ? ex + `\n\n` : ''}Records always start conversations, and that’s half the fun.
-You find out what people love real quick when you ask what’s spinning.
+${ex ? ex + `\n\n` : ''}Records start conversations fast.
+You learn a lot about somebody by what they keep in rotation.
 
 ${sale}
 
-👇 Drop yours below. I wanna see what everybody’s got cooking.`
+👇 Drop yours below.`
       ]
     };
 
@@ -964,24 +942,24 @@ ${sale}
       } while (idx === lastTemplateIdx && pool.length > 1);
       lastTemplateIdx = idx;
 
-      const saleText = getSaleText(forSale);
-      const post = pool[idx](artist, album, pressing, extra, saleText);
+      const post = pool[idx](artist, album, pressing, extra, getSaleText(forSale));
 
       document.getElementById('outText').textContent = post;
       document.getElementById('outTags').textContent = buildHashtags(artist, album, pressing);
 
       if (composedDataUrl) {
-        document.getElementById('outImg').src = composedDataUrl;
-        document.getElementById('outImgWrap').classList.add('show');
+        outImg.src = composedDataUrl;
+        outImgWrap.classList.add('show');
       } else if (photoDataUrl) {
-        document.getElementById('outImg').src = photoDataUrl;
-        document.getElementById('outImgWrap').classList.add('show');
+        outImg.src = photoDataUrl;
+        outImgWrap.classList.add('show');
       } else {
-        document.getElementById('outImgWrap').classList.remove('show');
+        outImgWrap.classList.remove('show');
       }
 
-      document.getElementById('copyBtn').textContent = 'Copy All';
-      document.getElementById('copyBtn').classList.remove('done');
+      const copyBtn = document.getElementById('copyBtn');
+      copyBtn.textContent = 'Copy All';
+      copyBtn.classList.remove('done');
 
       const card = document.getElementById('outCard');
       card.classList.add('show');
