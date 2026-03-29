@@ -493,6 +493,121 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ── CALIBRATION MODE ─────────────────────────────── */
+    .calib-banner {
+      background: var(--pink);
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-align: center;
+      padding: 8px 14px;
+      border-radius: 8px 8px 0 0;
+      display: none;
+    }
+    .calib-banner.show { display: block; }
+
+    .calib-container {
+      position: relative;
+      display: none;
+      user-select: none;
+      border-radius: 0 0 12px 12px;
+      overflow: hidden;
+      border: 2px solid var(--pink);
+    }
+    .calib-container.show { display: block; }
+
+    .calib-template {
+      width: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    .calib-box {
+      position: absolute;
+      border: 3px solid var(--pink);
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.55);
+      cursor: move;
+      box-sizing: border-box;
+    }
+    .calib-box .handle {
+      position: absolute;
+      width: 18px; height: 18px;
+      background: var(--pink);
+      border-radius: 3px;
+    }
+    .calib-box .handle.br { bottom: -9px; right: -9px; cursor: se-resize; }
+    .calib-box .handle.bl { bottom: -9px; left: -9px; cursor: sw-resize; }
+    .calib-box .handle.tr { top: -9px; right: -9px; cursor: ne-resize; }
+    .calib-box .handle.tl { top: -9px; left: -9px; cursor: nw-resize; }
+
+    .calib-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      color: var(--pink);
+      letter-spacing: 2px;
+      pointer-events: none;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .calib-actions {
+      display: none;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .calib-actions.show { display: flex; }
+    .calib-save { flex: 1; background: var(--green); color: #000; border: none; border-radius: 8px; padding: 13px; font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 2px; cursor: pointer; box-shadow: 3px 3px 0 #000; }
+    .calib-cancel { background: transparent; border: 1px solid var(--muted); color: var(--muted); border-radius: 8px; padding: 13px 18px; font-family: 'DM Mono'; font-size: 11px; cursor: pointer; letter-spacing: 1px; }
+    .calib-cancel:hover { border-color: var(--pink); color: var(--pink); }
+
+    .btn-calib {
+      width: 100%;
+      margin-bottom: 12px;
+      background: transparent;
+      border: 1px solid var(--muted);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: 'DM Mono';
+      font-size: 11px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-calib:hover { border-color: var(--pink); color: var(--pink); }
+
+    /* ── CSS OVERLAY COMPOSITE ────────────────────────── */
+    .composite-wrap {
+      position: relative;
+      width: 100%;
+      border: 2px solid rgba(170,255,0,.3);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0d0018;
+    }
+    .composite-wrap .template-img {
+      width: 100%;
+      display: block;
+      border-radius: 10px;
+    }
+    .composite-wrap .record-overlay {
+      position: absolute;
+      overflow: hidden;
+    }
+    .composite-wrap .record-overlay img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
   </style>
 </head>
 <body>
@@ -515,12 +630,35 @@
         <div class="upload-hint">Upload your sleeve, vinyl, or turntable pic and it gets dropped into the Zombie Kitty frame automatically.</div>
       </div>
 
+      <!-- CALIBRATION MODE -->
+      <div class="calib-banner" id="calibBanner">&#9881;&#65039; DRAG THE PINK BOX TO MATCH THE RECORD FRAME</div>
+      <div class="calib-container" id="calibContainer">
+        <img class="calib-template" id="calibTemplate" src="https://korndogrecords.com/images/zombie-kitty-template.png" alt="Template" />
+        <div class="calib-box" id="calibBox">
+          <div class="handle tl" data-handle="tl"></div>
+          <div class="handle tr" data-handle="tr"></div>
+          <div class="handle bl" data-handle="bl"></div>
+          <div class="handle br" data-handle="br"></div>
+          <div class="calib-label">DRAG ME<br>TO FIT<br>THE FRAME</div>
+        </div>
+      </div>
+      <div class="calib-actions" id="calibActions">
+        <button class="calib-cancel" onclick="cancelCalib()">Cancel</button>
+        <button class="calib-save" onclick="saveCalib()">&#10003; Save Frame Position</button>
+      </div>
+
+      <!-- NORMAL UPLOAD PREVIEW -->
       <div class="preview-wrap" id="previewWrap">
-        <img id="previewImg" src="" alt="Composited preview" />
+        <div class="composite-wrap" id="compositeWrap">
+          <img class="template-img" id="templateImg" src="https://korndogrecords.com/images/zombie-kitty-template.png" alt="Template" />
+          <div class="record-overlay" id="recordOverlay">
+            <img id="previewImg" src="" alt="Your record" />
+          </div>
+        </div>
         <button class="preview-change" onclick="resetPhoto()">&#8617; Change Photo</button>
       </div>
 
-      <canvas id="composerCanvas" style="display:none;"></canvas>
+      <button class="btn-calib" onclick="startCalib()">&#9881;&#65039; Calibrate Frame Position</button>
     </div>
 
     <div class="card">
@@ -576,7 +714,12 @@
 
     <div class="out-card" id="outCard">
       <div class="out-img-wrap" id="outImgWrap">
-        <img id="outImg" src="" alt="Generated poster" />
+        <div class="composite-wrap">
+          <img class="template-img out-template" src="https://korndogrecords.com/images/zombie-kitty-template.png" alt="Template" />
+          <div class="record-overlay" id="outOverlay">
+            <img id="outImg" src="" alt="Your record" />
+          </div>
+        </div>
       </div>
 
       <div class="out-body">
@@ -595,31 +738,186 @@
   </div>
 
   <script>
-    let selectedTone = 'joey';
-    let photoDataUrl = null;
-    let composedDataUrl = null;
+    /* ═══════════════════════════════════════════════════
+       FRAME POSITIONING
+       Stored as percentages of template natural size.
+       Default = saved in localStorage, else fallback guess.
+    ═══════════════════════════════════════════════════ */
+    const STORAGE_KEY = 'kd_frame_pct';
+    const FALLBACK_FRAME = { left: 50.5, top: 47.5, width: 36.5, height: 29.5 };
+
+    function getFramePct() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch(e) {}
+      return FALLBACK_FRAME;
+    }
+
+    function applyFrameToOverlay(el) {
+      if (!el) return;
+      const f = getFramePct();
+      el.style.left   = f.left   + '%';
+      el.style.top    = f.top    + '%';
+      el.style.width  = f.width  + '%';
+      el.style.height = f.height + '%';
+    }
+
+    function applyFrameToAll() {
+      applyFrameToOverlay(document.getElementById('recordOverlay'));
+      applyFrameToOverlay(document.getElementById('outOverlay'));
+    }
+
+    applyFrameToAll();
+
+    /* ═══════════════════════════════════════════════════
+       CALIBRATION
+    ═══════════════════════════════════════════════════ */
+    let calibActive = false;
+    let calibDrag   = null; // { type:'move'|handle, startX, startY, startBox }
+
+    function startCalib() {
+      calibActive = true;
+      const container = document.getElementById('calibContainer');
+      const box       = document.getElementById('calibBox');
+      const template  = document.getElementById('calibTemplate');
+      const banner    = document.getElementById('calibBanner');
+      const actions   = document.getElementById('calibActions');
+
+      banner.classList.add('show');
+      container.classList.add('show');
+      actions.classList.add('show');
+
+      // Position calibBox using current saved frame pct
+      const f = getFramePct();
+      const cw = container.offsetWidth;
+      const ch = template.offsetHeight || template.naturalHeight || 500;
+
+      box.style.left   = f.left   + '%';
+      box.style.top    = f.top    + '%';
+      box.style.width  = f.width  + '%';
+      box.style.height = f.height + '%';
+
+      // Scroll to calibration area
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function cancelCalib() {
+      calibActive = false;
+      document.getElementById('calibBanner').classList.remove('show');
+      document.getElementById('calibContainer').classList.remove('show');
+      document.getElementById('calibActions').classList.remove('show');
+    }
+
+    function saveCalib() {
+      const container = document.getElementById('calibContainer');
+      const box       = document.getElementById('calibBox');
+      const cw = container.offsetWidth;
+      const ch = container.offsetHeight;
+
+      const f = {
+        left:   parseFloat(box.style.left),
+        top:    parseFloat(box.style.top),
+        width:  parseFloat(box.style.width),
+        height: parseFloat(box.style.height)
+      };
+
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(f)); } catch(e) {}
+      applyFrameToAll();
+      cancelCalib();
+
+      // Flash confirmation
+      const btn = document.querySelector('.calib-save');
+      if (btn) { btn.textContent = '✓ Saved!'; setTimeout(() => { btn.textContent = '✓ Save Frame Position'; }, 1500); }
+    }
+
+    /* Drag logic for calibration box */
+    const calibContainer = document.getElementById('calibContainer');
+    const calibBox       = document.getElementById('calibBox');
+
+    function getBoxPct() {
+      return {
+        left:   parseFloat(calibBox.style.left   || 0),
+        top:    parseFloat(calibBox.style.top    || 0),
+        width:  parseFloat(calibBox.style.width  || 10),
+        height: parseFloat(calibBox.style.height || 10)
+      };
+    }
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    function onCalibPointerDown(e) {
+      if (!calibActive) return;
+      const handle = e.target.dataset.handle;
+      const cw = calibContainer.offsetWidth;
+      const ch = calibContainer.offsetHeight;
+      calibDrag = {
+        type: handle || 'move',
+        startX: e.clientX,
+        startY: e.clientY,
+        startBox: getBoxPct(),
+        cw, ch
+      };
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    document.addEventListener('pointermove', e => {
+      if (!calibDrag) return;
+      const dx = (e.clientX - calibDrag.startX) / calibDrag.cw * 100;
+      const dy = (e.clientY - calibDrag.startY) / calibDrag.ch * 100;
+      const b  = calibDrag.startBox;
+      let { left, top, width, height } = b;
+
+      if (calibDrag.type === 'move') {
+        left  = clamp(b.left  + dx, 0, 100 - width);
+        top   = clamp(b.top   + dy, 0, 100 - height);
+      } else if (calibDrag.type === 'br') {
+        width  = clamp(b.width  + dx, 5, 100 - left);
+        height = clamp(b.height + dy, 5, 100 - top);
+      } else if (calibDrag.type === 'bl') {
+        const newLeft  = clamp(b.left + dx, 0, b.left + b.width - 5);
+        width  = clamp(b.width  - dx, 5, b.left + b.width);
+        left   = newLeft;
+        height = clamp(b.height + dy, 5, 100 - top);
+      } else if (calibDrag.type === 'tr') {
+        width  = clamp(b.width  + dx, 5, 100 - left);
+        const newTop = clamp(b.top + dy, 0, b.top + b.height - 5);
+        height = clamp(b.height - dy, 5, b.top + b.height);
+        top = newTop;
+      } else if (calibDrag.type === 'tl') {
+        const newLeft = clamp(b.left + dx, 0, b.left + b.width - 5);
+        width  = clamp(b.width  - dx, 5, b.left + b.width);
+        left   = newLeft;
+        const newTop = clamp(b.top + dy, 0, b.top + b.height - 5);
+        height = clamp(b.height - dy, 5, b.top + b.height);
+        top = newTop;
+      }
+
+      calibBox.style.left   = left   + '%';
+      calibBox.style.top    = top    + '%';
+      calibBox.style.width  = width  + '%';
+      calibBox.style.height = height + '%';
+    });
+
+    document.addEventListener('pointerup',   () => { calibDrag = null; });
+    document.addEventListener('pointercancel', () => { calibDrag = null; });
+
+    calibBox.addEventListener('pointerdown', onCalibPointerDown);
+    calibBox.querySelectorAll('.handle').forEach(h => h.addEventListener('pointerdown', onCalibPointerDown));
+
+    /* ═══════════════════════════════════════════════════
+       PHOTO UPLOAD
+    ═══════════════════════════════════════════════════ */
+    let selectedTone  = 'joey';
+    let photoDataUrl  = null;
     let lastTemplateIdx = -1;
 
-    const TEMPLATE_SRC = 'https://korndogrecords.com/images/zombie-kitty-template.png';
-
-    // Adjusted for your current blank template screenshot
-const FRAME_RECT = {
-  x: 512,
-  y: 642,
-  width: 392,
-  height: 392
-};
-
-    const BORDER = {
-      color: '#b7ff00',
-      width: 8
-    };
-
-    const dropZone = document.getElementById('dropZone');
+    const dropZone   = document.getElementById('dropZone');
     const photoInput = document.getElementById('photoInput');
-    const previewWrap = document.getElementById('previewWrap');
+    const previewWrap= document.getElementById('previewWrap');
     const previewImg = document.getElementById('previewImg');
-    const outImg = document.getElementById('outImg');
+    const outImg     = document.getElementById('outImg');
     const outImgWrap = document.getElementById('outImgWrap');
 
     document.querySelectorAll('.tone-btn').forEach(btn => {
@@ -630,341 +928,106 @@ const FRAME_RECT = {
       });
     });
 
-    dropZone.addEventListener('dragover', e => {
-      e.preventDefault();
-      dropZone.classList.add('drag');
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.classList.remove('drag');
-    });
-
+    dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
     dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.classList.remove('drag');
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        handleFile(e.dataTransfer.files[0]);
-      }
+      e.preventDefault(); dropZone.classList.remove('drag');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
     });
-
     photoInput.addEventListener('change', e => {
-      if (e.target.files && e.target.files[0]) {
-        handleFile(e.target.files[0]);
-      }
+      if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
     });
 
     function handleFile(file) {
       if (!file.type.startsWith('image/')) return;
-
       const reader = new FileReader();
-      reader.onload = async e => {
+      reader.onload = e => {
         photoDataUrl = e.target.result;
-
-        // Show raw photo immediately so there's no blank wait
         previewImg.src = photoDataUrl;
+        outImg.src     = photoDataUrl;
         previewWrap.classList.add('show');
         dropZone.style.display = 'none';
-
-        // Then try to compose with Zombie Kitty template
-        try {
-          composedDataUrl = await composeZombieKittyGraphic(photoDataUrl);
-          previewImg.src = composedDataUrl; // swap preview to the composed graphic
-        } catch (err) {
-          console.warn('Template compose failed:', err.message);
-          composedDataUrl = null;
-        }
       };
-
       reader.readAsDataURL(file);
     }
 
     function resetPhoto() {
       photoDataUrl = null;
-      composedDataUrl = null;
       previewWrap.classList.remove('show');
       previewImg.src = '';
-      outImg.src = '';
+      outImg.src     = '';
       outImgWrap.classList.remove('show');
       photoInput.value = '';
       dropZone.style.display = 'block';
     }
 
-    function loadImage(src) {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => resolve(img);
-        img.onerror = () => reject(new Error('Could not load image: ' + src));
-        img.src = src;
-      });
-    }
-
-    async function composeZombieKittyGraphic(recordSrc) {
-      const [templateImg, recordImg] = await Promise.all([
-        loadImage(TEMPLATE_SRC),
-        loadImage(recordSrc)
-      ]);
-
-      const canvas = document.getElementById('composerCanvas');
-      const ctx = canvas.getContext('2d');
-
-      canvas.width = templateImg.width;
-      canvas.height = templateImg.height;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
-
-      drawContainImage(
-        ctx,
-        recordImg,
-        FRAME_RECT.x,
-        FRAME_RECT.y,
-        FRAME_RECT.width,
-        FRAME_RECT.height
-      );
-
-      drawFrameBorder(
-        ctx,
-        FRAME_RECT.x,
-        FRAME_RECT.y,
-        FRAME_RECT.width,
-        FRAME_RECT.height,
-        BORDER.color,
-        BORDER.width
-      );
-
-      return canvas.toDataURL('image/png');
-    }
-
-    function drawContainImage(ctx, img, x, y, w, h) {
-      // Hard stretch to fill frame exactly — no gaps ever
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(x, y, w, h);
-      ctx.clip();
-      ctx.drawImage(img, x, y, w, h);
-      ctx.restore();
-    }
-
-    function drawFrameBorder(ctx, x, y, w, h, color, lineWidth) {
-      ctx.save();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = lineWidth;
-      ctx.strokeRect(x, y, w, h);
-      ctx.restore();
-    }
-
+    /* ═══════════════════════════════════════════════════
+       POST GENERATION
+    ═══════════════════════════════════════════════════ */
     function getDayName() {
       return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
     }
 
     function buildHashtags(artist, album, pressing) {
-      const tags = [
-        '#WhatsSpinningToday',
-        '#KorndogRecords',
-        '#VinylTherapy',
-        '#NowSpinning',
-        '#SpinThatWax',
-        '#VinylCommunity',
-        '#RecordCollector'
-      ];
-
+      const tags = ['#WhatsSpinningToday','#KorndogRecords','#VinylTherapy','#NowSpinning','#SpinThatWax','#VinylCommunity','#RecordCollector'];
       const clean = s => '#' + s.replace(/[^a-zA-Z0-9]/g, '');
-
-      if (artist) tags.push(clean(artist));
-      if (album) tags.push(clean(album));
-      if (pressing && /splatter/i.test(pressing)) tags.push('#SplatterVinyl');
+      if (artist)  tags.push(clean(artist));
+      if (album)   tags.push(clean(album));
+      if (pressing && /splatter/i.test(pressing))              tags.push('#SplatterVinyl');
       if (pressing && /limited|numbered|edition/i.test(pressing)) tags.push('#LimitedEdition');
       if (pressing && /color|colour|colored|coloured|variant/i.test(pressing)) tags.push('#ColoredVinyl');
-
       return tags.join(' ');
     }
 
     function getSaleText(forSale) {
-      if (forSale === 'no') return `This one ain't for sale. This is what KornDog brings to the table.`;
-      if (forSale === 'yes') return `If it’s live, grab it at korndogrecords.com.`;
-      if (forSale === 'discogs') return `If it’s listed, hit Discogs and search korndog0804.`;
+      if (forSale === 'no')      return `This one ain't for sale. This is what KornDog brings to the table.`;
+      if (forSale === 'yes')     return `If it's live, grab it at korndogrecords.com.`;
+      if (forSale === 'discogs') return `If it's listed, hit Discogs and search korndog0804.`;
       if (forSale === 'whatnot') return `Keep an eye on Whatnot too. It may show up there.`;
       return '';
     }
 
     const templates = {
       joey: [
-        (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
-
-Today it’s ${a} – ${al}${pr ? `\n${pr}` : ''}
-
-This one ain’t just music.
-This one carries something.
-
-${ex ? ex + `\n\n` : ''}Some records you buy.
-Some records become part of your life.
-That’s the lane this one lives in.
-
-${sale}
-
-🟣🟢 Korndog Records
-Where vinyl therapy hits different.
-
-👇 What’s spinning on your table today?`,
-
-        (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
-
-Now spinning:
-${a} – ${al}${pr ? `\n${pr}` : ''}
-
-Needle down.
-Brain locked in.
-Mood set.
-
-${ex ? ex + `\n\n` : ''}This is the kind of record that reminds me why I started all this in the first place.
-Not just to sell wax.
-To live in it.
-
-${sale}
-
-👇 What are y’all spinning today?`,
-
-        (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
-
-${a} – ${al}${pr ? `\n${pr}` : ''}
-
-Some days you throw something on.
-Some days the record chooses you.
-
-${ex ? ex + `\n\n` : ''}Today this one was the move.
-Real music.
-Real feeling.
-No fake plastic nonsense.
-
-${sale}
-
-🟣🟢 Korndog Records
-Not just a record shop. A whole mood.
-
-👇 What’s on your turntable today?`
+        (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶\n\nToday it's ${a} – ${al}${pr?'\n'+pr:''}\n\nThis one ain't just music.\nThis one carries something.\n\n${ex?ex+'\n\n':''}Some records you buy.\nSome records become part of your life.\nThat's the lane this one lives in.\n\n${sale}\n\n🟣🟢 Korndog Records\nWhere vinyl therapy hits different.\n\n👇 What's spinning on your table today?`,
+        (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶\n\nNow spinning:\n${a} – ${al}${pr?'\n'+pr:''}\n\nNeedle down.\nBrain locked in.\nMood set.\n\n${ex?ex+'\n\n':''}This is the kind of record that reminds me why I started all this in the first place.\nNot just to sell wax.\nTo live in it.\n\n${sale}\n\n👇 What are y'all spinning today?`,
+        (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶\n\n${a} – ${al}${pr?'\n'+pr:''}\n\nSome days you throw something on.\nSome days the record chooses you.\n\n${ex?ex+'\n\n':''}Today this one was the move.\nReal music.\nReal feeling.\nNo fake plastic nonsense.\n\n${sale}\n\n🟣🟢 Korndog Records\nNot just a record shop. A whole mood.\n\n👇 What's on your turntable today?`
       ],
-
       hype: [
-        (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
-
-${a} – ${al}${pr ? `\n${pr}` : ''}
-
-This one came in loud and kicked the door open. 🔥
-
-${ex ? ex + `\n\n` : ''}No background music energy here.
-This is front-and-center, let-the-neighbors-hear-it type stuff.
-
-${sale}
-
-👇 What are you blasting today?`,
-
-        (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
-
-${a} – ${al}${pr ? `\n${pr}` : ''}
-
-Big volume. Big mood. Big record.
-
-${ex ? ex + `\n\n` : ''}If your walls ain’t nervous, you’re not spinning it right.
-
-${sale}
-
-👇 Drop your spin below.`
+        (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶\n\n${a} – ${al}${pr?'\n'+pr:''}\n\nThis one came in loud and kicked the door open. 🔥\n\n${ex?ex+'\n\n':''}No background music energy here.\nThis is front-and-center, let-the-neighbors-hear-it type stuff.\n\n${sale}\n\n👇 What are you blasting today?`,
+        (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶\n\n${a} – ${al}${pr?'\n'+pr:''}\n\nBig volume. Big mood. Big record.\n\n${ex?ex+'\n\n':''}If your walls ain't nervous, you're not spinning it right.\n\n${sale}\n\n👇 Drop your spin below.`
       ],
-
       collector: [
-        (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
-
-${a} – ${al}${pr ? `\nVariant: ${pr}` : ''}
-
-Collector talk for a second.
-
-${ex ? ex + `\n\n` : ''}This is the kind of piece that makes you stop and admire it before the needle even drops.
-Then you spin it anyway, because records were made to live.
-
-${sale}
-
-👇 What’s one record in your collection you’ll never let go of?`,
-
-        (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
-
-${a} – ${al}${pr ? `\n${pr}` : ''}
-
-This one is for the folks who notice the little stuff.
-
-${ex ? ex + `\n\n` : ''}The press.
-The look.
-The ritual.
-The whole thing matters.
-
-${sale}
-
-👇 What’s your favorite pressing you own right now?`
+        (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶\n\n${a} – ${al}${pr?'\nVariant: '+pr:''}\n\nCollector talk for a second.\n\n${ex?ex+'\n\n':''}This is the kind of piece that makes you stop and admire it before the needle even drops.\nThen you spin it anyway, because records were made to live.\n\n${sale}\n\n👇 What's one record in your collection you'll never let go of?`,
+        (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶\n\n${a} – ${al}${pr?'\n'+pr:''}\n\nThis one is for the folks who notice the little stuff.\n\n${ex?ex+'\n\n':''}The press.\nThe look.\nThe ritual.\nThe whole thing matters.\n\n${sale}\n\n👇 What's your favorite pressing you own right now?`
       ],
-
       community: [
-        (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
-
-${getDayName()} spin:
-${a} – ${al}${pr ? `\n${pr}` : ''}
-
-${ex ? ex + `\n\n` : ''}One of the best parts of doing KornDog Records is seeing what everybody else is spinning too.
-
-${sale}
-
-👇 So what’s on your turntable today? Let’s talk wax.`,
-
-        (a, al, pr, ex, sale) => `🎶 What’s Spinning Today? 🎶
-
-Today’s pick:
-${a} – ${al}${pr ? `\n${pr}` : ''}
-
-${ex ? ex + `\n\n` : ''}Records start conversations fast.
-You learn a lot about somebody by what they keep in rotation.
-
-${sale}
-
-👇 Drop yours below.`
+        (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶\n\n${getDayName()} spin:\n${a} – ${al}${pr?'\n'+pr:''}\n\n${ex?ex+'\n\n':''}One of the best parts of doing KornDog Records is seeing what everybody else is spinning too.\n\n${sale}\n\n👇 So what's on your turntable today? Let's talk wax.`,
+        (a,al,pr,ex,sale) => `🎶 What's Spinning Today? 🎶\n\nToday's pick:\n${a} – ${al}${pr?'\n'+pr:''}\n\n${ex?ex+'\n\n':''}Records start conversations fast.\nYou learn a lot about somebody by what they keep in rotation.\n\n${sale}\n\n👇 Drop yours below.`
       ]
     };
 
     function generatePost() {
-      const artist = document.getElementById('artist').value.trim();
-      const album = document.getElementById('album').value.trim();
-      const pressing = document.getElementById('pressing').value.trim();
+      const artist  = document.getElementById('artist').value.trim();
+      const album   = document.getElementById('album').value.trim();
+      const pressing= document.getElementById('pressing').value.trim();
       const forSale = document.getElementById('forSale').value;
-      const extra = document.getElementById('extra').value.trim();
-      const err = document.getElementById('errMsg');
+      const extra   = document.getElementById('extra').value.trim();
+      const err     = document.getElementById('errMsg');
 
-      if (!artist || !album) {
-        err.classList.add('show');
-        return;
-      }
-
+      if (!artist || !album) { err.classList.add('show'); return; }
       err.classList.remove('show');
 
       const pool = templates[selectedTone];
       let idx;
-      do {
-        idx = Math.floor(Math.random() * pool.length);
-      } while (idx === lastTemplateIdx && pool.length > 1);
+      do { idx = Math.floor(Math.random() * pool.length); } while (idx === lastTemplateIdx && pool.length > 1);
       lastTemplateIdx = idx;
 
-      const post = pool[idx](artist, album, pressing, extra, getSaleText(forSale));
-
-      document.getElementById('outText').textContent = post;
+      document.getElementById('outText').textContent = pool[idx](artist, album, pressing, extra, getSaleText(forSale));
       document.getElementById('outTags').textContent = buildHashtags(artist, album, pressing);
 
-      if (composedDataUrl) {
-        outImg.src = composedDataUrl;
-        outImgWrap.classList.add('show');
-      } else if (photoDataUrl) {
-        outImg.src = photoDataUrl;
-        outImgWrap.classList.add('show');
-      } else {
-        outImgWrap.classList.remove('show');
-      }
+      if (photoDataUrl) outImgWrap.classList.add('show');
+      else              outImgWrap.classList.remove('show');
 
       const copyBtn = document.getElementById('copyBtn');
       copyBtn.textContent = 'Copy All';
@@ -978,16 +1041,11 @@ ${sale}
     function copyPost() {
       const text = document.getElementById('outText').textContent;
       const tags = document.getElementById('outTags').textContent;
-
       navigator.clipboard.writeText(text + '\n\n' + tags).then(() => {
         const btn = document.getElementById('copyBtn');
         btn.textContent = '✓ Copied!';
         btn.classList.add('done');
-
-        setTimeout(() => {
-          btn.textContent = 'Copy All';
-          btn.classList.remove('done');
-        }, 2500);
+        setTimeout(() => { btn.textContent = 'Copy All'; btn.classList.remove('done'); }, 2500);
       });
     }
   </script>
