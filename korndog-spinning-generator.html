@@ -199,13 +199,12 @@
 
     .preview-wrap img {
       width: 100%;
-      height: 340px;
-      object-fit: cover;
-      object-position: center;
+      max-height: 950px;
+      object-fit: contain;
       display: block;
       border: 2px solid rgba(170,255,0,.3);
       border-radius: 12px;
-      background: #12001f;
+      background: rgba(0,0,0,.25);
     }
 
     .preview-change {
@@ -601,7 +600,7 @@
     let composedDataUrl = null;
     let lastTemplateIdx = -1;
 
-    const TEMPLATE_SRC = './images/zombie-kitty-template.png';
+    const TEMPLATE_SRC = 'https://korndogrecords.com/images/zombie-kitty-template.png';
 
     // Adjusted for your current blank template screenshot
 const FRAME_RECT = {
@@ -661,16 +660,17 @@ const FRAME_RECT = {
       reader.onload = async e => {
         photoDataUrl = e.target.result;
 
-        // Always show raw photo instantly — works locally and on Netlify
+        // Show raw photo immediately so there's no blank wait
         previewImg.src = photoDataUrl;
         previewWrap.classList.add('show');
         dropZone.style.display = 'none';
 
-        // Try to compose with zombie kitty template for the output graphic
+        // Then try to compose with Zombie Kitty template
         try {
           composedDataUrl = await composeZombieKittyGraphic(photoDataUrl);
+          previewImg.src = composedDataUrl; // swap preview to the composed graphic
         } catch (err) {
-          console.warn('Template compose skipped (normal when testing locally):', err.message);
+          console.warn('Template compose failed:', err.message);
           composedDataUrl = null;
         }
       };
@@ -692,6 +692,7 @@ const FRAME_RECT = {
     function loadImage(src) {
       return new Promise((resolve, reject) => {
         const img = new Image();
+        img.crossOrigin = 'anonymous';
         img.onload = () => resolve(img);
         img.onerror = () => reject(new Error('Could not load image: ' + src));
         img.src = src;
@@ -737,7 +738,7 @@ const FRAME_RECT = {
     }
 
     function drawContainImage(ctx, img, x, y, w, h) {
-      // Hard stretch to fill frame exactly — no gaps, no letterbox, ever
+      // Hard stretch to fill frame exactly — no gaps ever
       ctx.save();
       ctx.beginPath();
       ctx.rect(x, y, w, h);
