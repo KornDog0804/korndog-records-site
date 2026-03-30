@@ -197,16 +197,6 @@
       display: block;
     }
 
-    .preview-wrap img {
-      width: 100%;
-      max-height: 950px;
-      object-fit: contain;
-      display: block;
-      border: 2px solid rgba(170,255,0,.3);
-      border-radius: 12px;
-      background: rgba(0,0,0,.25);
-    }
-
     .preview-change {
       position: absolute;
       bottom: 10px;
@@ -221,6 +211,7 @@
       cursor: pointer;
       transition: all .2s;
       letter-spacing: 1px;
+      z-index: 4;
     }
 
     .preview-change:hover {
@@ -384,14 +375,6 @@
       display: block;
     }
 
-    .out-img-wrap img {
-      width: 100%;
-      max-height: 1200px;
-      object-fit: contain;
-      display: block;
-      background: #12001f;
-    }
-
     .out-body {
       padding: 22px;
     }
@@ -415,9 +398,10 @@
     .btn-row {
       display: flex;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .copy-btn, .regen-btn {
+    .copy-btn, .regen-btn, .dl-btn {
       border-radius: 7px;
       padding: 7px 14px;
       font-family: 'DM Mono', monospace;
@@ -425,10 +409,10 @@
       cursor: pointer;
       letter-spacing: 1px;
       transition: all .2s;
+      background: transparent;
     }
 
     .copy-btn {
-      background: transparent;
       border: 1px solid var(--green);
       color: var(--green);
     }
@@ -440,7 +424,6 @@
     }
 
     .regen-btn {
-      background: transparent;
       border: 1px solid var(--muted);
       color: var(--muted);
     }
@@ -448,6 +431,16 @@
     .regen-btn:hover {
       border-color: var(--green);
       color: var(--green);
+    }
+
+    .dl-btn {
+      border: 1px solid var(--pink);
+      color: var(--pink);
+    }
+
+    .dl-btn:hover {
+      background: var(--pink);
+      color: #fff;
     }
 
     .out-text {
@@ -599,6 +592,7 @@
     .composite-wrap .record-overlay {
       position: absolute;
       overflow: hidden;
+      z-index: 2;
     }
     .composite-wrap .record-overlay img {
       width: 100%;
@@ -607,7 +601,6 @@
       object-position: center;
       display: block;
     }
-
   </style>
 </head>
 <body>
@@ -630,7 +623,6 @@
         <div class="upload-hint">Upload your sleeve, vinyl, or turntable pic and it gets dropped into the Zombie Kitty frame automatically.</div>
       </div>
 
-      <!-- CALIBRATION MODE -->
       <div class="calib-banner" id="calibBanner">&#9881;&#65039; DRAG THE PINK BOX TO MATCH THE RECORD FRAME</div>
       <div class="calib-container" id="calibContainer">
         <img class="calib-template" id="calibTemplate" src="https://korndogrecords.com/images/zombie-kitty-template.png" alt="Template" />
@@ -647,7 +639,6 @@
         <button class="calib-save" onclick="saveCalib()">&#10003; Save Frame Position</button>
       </div>
 
-      <!-- NORMAL UPLOAD PREVIEW -->
       <div class="preview-wrap" id="previewWrap">
         <div class="composite-wrap" id="compositeWrap">
           <img class="template-img" id="templateImg" src="https://korndogrecords.com/images/zombie-kitty-template.png" alt="Template" />
@@ -658,7 +649,10 @@
         <button class="preview-change" onclick="resetPhoto()">&#8617; Change Photo</button>
       </div>
 
-      <button class="btn-calib" onclick="startCalib()">&#9881;&#65039; Calibrate Frame Position</button>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="btn-calib" onclick="startCalib()">&#9881;&#65039; Calibrate Frame Position</button>
+        <button class="dl-btn" onclick="downloadCleanImage()">⬇️ Download Clean Image</button>
+      </div>
     </div>
 
     <div class="card">
@@ -715,7 +709,7 @@
     <div class="out-card" id="outCard">
       <div class="out-img-wrap" id="outImgWrap">
         <div class="composite-wrap">
-          <img class="template-img out-template" src="https://korndogrecords.com/images/zombie-kitty-template.png" alt="Template" />
+          <img class="template-img out-template" id="outTemplateImg" src="https://korndogrecords.com/images/zombie-kitty-template.png" alt="Template" />
           <div class="record-overlay" id="outOverlay">
             <img id="outImg" src="" alt="Your record" />
           </div>
@@ -728,6 +722,7 @@
           <div class="btn-row">
             <button class="regen-btn" onclick="generatePost()">&#8635; Remix</button>
             <button class="copy-btn" id="copyBtn" onclick="copyPost()">Copy All</button>
+            <button class="dl-btn" onclick="downloadFacebookGraphic()">⬇️ Download Facebook Graphic</button>
           </div>
         </div>
 
@@ -738,11 +733,6 @@
   </div>
 
   <script>
-    /* ═══════════════════════════════════════════════════
-       FRAME POSITIONING
-       Stored as percentages of template natural size.
-       Default = saved in localStorage, else fallback guess.
-    ═══════════════════════════════════════════════════ */
     const STORAGE_KEY = 'kd_frame_pct';
     const FALLBACK_FRAME = { left: 50.5, top: 47.5, width: 36.5, height: 29.5 };
 
@@ -757,9 +747,9 @@
     function applyFrameToOverlay(el) {
       if (!el) return;
       const f = getFramePct();
-      el.style.left   = f.left   + '%';
-      el.style.top    = f.top    + '%';
-      el.style.width  = f.width  + '%';
+      el.style.left   = f.left + '%';
+      el.style.top    = f.top + '%';
+      el.style.width  = f.width + '%';
       el.style.height = f.height + '%';
     }
 
@@ -770,35 +760,26 @@
 
     applyFrameToAll();
 
-    /* ═══════════════════════════════════════════════════
-       CALIBRATION
-    ═══════════════════════════════════════════════════ */
     let calibActive = false;
-    let calibDrag   = null; // { type:'move'|handle, startX, startY, startBox }
+    let calibDrag = null;
 
     function startCalib() {
       calibActive = true;
       const container = document.getElementById('calibContainer');
-      const box       = document.getElementById('calibBox');
-      const template  = document.getElementById('calibTemplate');
-      const banner    = document.getElementById('calibBanner');
-      const actions   = document.getElementById('calibActions');
+      const box = document.getElementById('calibBox');
+      const banner = document.getElementById('calibBanner');
+      const actions = document.getElementById('calibActions');
 
       banner.classList.add('show');
       container.classList.add('show');
       actions.classList.add('show');
 
-      // Position calibBox using current saved frame pct
       const f = getFramePct();
-      const cw = container.offsetWidth;
-      const ch = template.offsetHeight || template.naturalHeight || 500;
-
-      box.style.left   = f.left   + '%';
-      box.style.top    = f.top    + '%';
-      box.style.width  = f.width  + '%';
+      box.style.left   = f.left + '%';
+      box.style.top    = f.top + '%';
+      box.style.width  = f.width + '%';
       box.style.height = f.height + '%';
 
-      // Scroll to calibration area
       container.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -810,41 +791,33 @@
     }
 
     function saveCalib() {
-      const container = document.getElementById('calibContainer');
-      const box       = document.getElementById('calibBox');
-      const cw = container.offsetWidth;
-      const ch = container.offsetHeight;
-
+      const box = document.getElementById('calibBox');
       const f = {
-        left:   parseFloat(box.style.left),
-        top:    parseFloat(box.style.top),
-        width:  parseFloat(box.style.width),
+        left: parseFloat(box.style.left),
+        top: parseFloat(box.style.top),
+        width: parseFloat(box.style.width),
         height: parseFloat(box.style.height)
       };
-
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(f)); } catch(e) {}
       applyFrameToAll();
       cancelCalib();
-
-      // Flash confirmation
-      const btn = document.querySelector('.calib-save');
-      if (btn) { btn.textContent = '✓ Saved!'; setTimeout(() => { btn.textContent = '✓ Save Frame Position'; }, 1500); }
     }
 
-    /* Drag logic for calibration box */
     const calibContainer = document.getElementById('calibContainer');
-    const calibBox       = document.getElementById('calibBox');
+    const calibBox = document.getElementById('calibBox');
 
     function getBoxPct() {
       return {
-        left:   parseFloat(calibBox.style.left   || 0),
-        top:    parseFloat(calibBox.style.top    || 0),
-        width:  parseFloat(calibBox.style.width  || 10),
+        left: parseFloat(calibBox.style.left || 0),
+        top: parseFloat(calibBox.style.top || 0),
+        width: parseFloat(calibBox.style.width || 10),
         height: parseFloat(calibBox.style.height || 10)
       };
     }
 
-    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
 
     function onCalibPointerDown(e) {
       if (!calibActive) return;
@@ -866,58 +839,58 @@
       if (!calibDrag) return;
       const dx = (e.clientX - calibDrag.startX) / calibDrag.cw * 100;
       const dy = (e.clientY - calibDrag.startY) / calibDrag.ch * 100;
-      const b  = calibDrag.startBox;
+      const b = calibDrag.startBox;
+
       let { left, top, width, height } = b;
 
       if (calibDrag.type === 'move') {
-        left  = clamp(b.left  + dx, 0, 100 - width);
-        top   = clamp(b.top   + dy, 0, 100 - height);
+        left = clamp(b.left + dx, 0, 100 - width);
+        top = clamp(b.top + dy, 0, 100 - height);
       } else if (calibDrag.type === 'br') {
-        width  = clamp(b.width  + dx, 5, 100 - left);
+        width = clamp(b.width + dx, 5, 100 - left);
         height = clamp(b.height + dy, 5, 100 - top);
       } else if (calibDrag.type === 'bl') {
-        const newLeft  = clamp(b.left + dx, 0, b.left + b.width - 5);
-        width  = clamp(b.width  - dx, 5, b.left + b.width);
-        left   = newLeft;
+        const newLeft = clamp(b.left + dx, 0, b.left + b.width - 5);
+        width = clamp(b.width - dx, 5, b.left + b.width);
+        left = newLeft;
         height = clamp(b.height + dy, 5, 100 - top);
       } else if (calibDrag.type === 'tr') {
-        width  = clamp(b.width  + dx, 5, 100 - left);
+        width = clamp(b.width + dx, 5, 100 - left);
         const newTop = clamp(b.top + dy, 0, b.top + b.height - 5);
         height = clamp(b.height - dy, 5, b.top + b.height);
         top = newTop;
       } else if (calibDrag.type === 'tl') {
         const newLeft = clamp(b.left + dx, 0, b.left + b.width - 5);
-        width  = clamp(b.width  - dx, 5, b.left + b.width);
-        left   = newLeft;
+        width = clamp(b.width - dx, 5, b.left + b.width);
+        left = newLeft;
         const newTop = clamp(b.top + dy, 0, b.top + b.height - 5);
         height = clamp(b.height - dy, 5, b.top + b.height);
         top = newTop;
       }
 
-      calibBox.style.left   = left   + '%';
-      calibBox.style.top    = top    + '%';
-      calibBox.style.width  = width  + '%';
+      calibBox.style.left = left + '%';
+      calibBox.style.top = top + '%';
+      calibBox.style.width = width + '%';
       calibBox.style.height = height + '%';
     });
 
-    document.addEventListener('pointerup',   () => { calibDrag = null; });
+    document.addEventListener('pointerup', () => { calibDrag = null; });
     document.addEventListener('pointercancel', () => { calibDrag = null; });
 
     calibBox.addEventListener('pointerdown', onCalibPointerDown);
     calibBox.querySelectorAll('.handle').forEach(h => h.addEventListener('pointerdown', onCalibPointerDown));
 
-    /* ═══════════════════════════════════════════════════
-       PHOTO UPLOAD
-    ═══════════════════════════════════════════════════ */
-    let selectedTone  = 'joey';
-    let photoDataUrl  = null;
+    let selectedTone = 'joey';
+    let photoDataUrl = null;
     let lastTemplateIdx = -1;
 
-    const dropZone   = document.getElementById('dropZone');
+    const TEMPLATE_SRC = 'https://korndogrecords.com/images/zombie-kitty-template.png';
+
+    const dropZone = document.getElementById('dropZone');
     const photoInput = document.getElementById('photoInput');
-    const previewWrap= document.getElementById('previewWrap');
+    const previewWrap = document.getElementById('previewWrap');
     const previewImg = document.getElementById('previewImg');
-    const outImg     = document.getElementById('outImg');
+    const outImg = document.getElementById('outImg');
     const outImgWrap = document.getElementById('outImgWrap');
 
     document.querySelectorAll('.tone-btn').forEach(btn => {
@@ -928,12 +901,21 @@
       });
     });
 
-    dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('drag');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag');
+    });
+
     dropZone.addEventListener('drop', e => {
-      e.preventDefault(); dropZone.classList.remove('drag');
+      e.preventDefault();
+      dropZone.classList.remove('drag');
       if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
     });
+
     photoInput.addEventListener('change', e => {
       if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
     });
@@ -944,7 +926,7 @@
       reader.onload = e => {
         photoDataUrl = e.target.result;
         previewImg.src = photoDataUrl;
-        outImg.src     = photoDataUrl;
+        outImg.src = photoDataUrl;
         previewWrap.classList.add('show');
         dropZone.style.display = 'none';
       };
@@ -955,15 +937,12 @@
       photoDataUrl = null;
       previewWrap.classList.remove('show');
       previewImg.src = '';
-      outImg.src     = '';
+      outImg.src = '';
       outImgWrap.classList.remove('show');
       photoInput.value = '';
       dropZone.style.display = 'block';
     }
 
-    /* ═══════════════════════════════════════════════════
-       POST GENERATION
-    ═══════════════════════════════════════════════════ */
     function getDayName() {
       return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
     }
@@ -971,17 +950,17 @@
     function buildHashtags(artist, album, pressing) {
       const tags = ['#WhatsSpinningToday','#KorndogRecords','#VinylTherapy','#NowSpinning','#SpinThatWax','#VinylCommunity','#RecordCollector'];
       const clean = s => '#' + s.replace(/[^a-zA-Z0-9]/g, '');
-      if (artist)  tags.push(clean(artist));
-      if (album)   tags.push(clean(album));
-      if (pressing && /splatter/i.test(pressing))              tags.push('#SplatterVinyl');
+      if (artist) tags.push(clean(artist));
+      if (album) tags.push(clean(album));
+      if (pressing && /splatter/i.test(pressing)) tags.push('#SplatterVinyl');
       if (pressing && /limited|numbered|edition/i.test(pressing)) tags.push('#LimitedEdition');
       if (pressing && /color|colour|colored|coloured|variant/i.test(pressing)) tags.push('#ColoredVinyl');
       return tags.join(' ');
     }
 
     function getSaleText(forSale) {
-      if (forSale === 'no')      return `This one ain't for sale. This is what KornDog brings to the table.`;
-      if (forSale === 'yes')     return `If it's live, grab it at korndogrecords.com.`;
+      if (forSale === 'no') return `This one ain't for sale. This is what KornDog brings to the table.`;
+      if (forSale === 'yes') return `If it's live, grab it at korndogrecords.com.`;
       if (forSale === 'discogs') return `If it's listed, hit Discogs and search korndog0804.`;
       if (forSale === 'whatnot') return `Keep an eye on Whatnot too. It may show up there.`;
       return '';
@@ -1008,14 +987,18 @@
     };
 
     function generatePost() {
-      const artist  = document.getElementById('artist').value.trim();
-      const album   = document.getElementById('album').value.trim();
-      const pressing= document.getElementById('pressing').value.trim();
+      const artist = document.getElementById('artist').value.trim();
+      const album = document.getElementById('album').value.trim();
+      const pressing = document.getElementById('pressing').value.trim();
       const forSale = document.getElementById('forSale').value;
-      const extra   = document.getElementById('extra').value.trim();
-      const err     = document.getElementById('errMsg');
+      const extra = document.getElementById('extra').value.trim();
+      const err = document.getElementById('errMsg');
 
-      if (!artist || !album) { err.classList.add('show'); return; }
+      if (!artist || !album) {
+        err.classList.add('show');
+        return;
+      }
+
       err.classList.remove('show');
 
       const pool = templates[selectedTone];
@@ -1027,7 +1010,7 @@
       document.getElementById('outTags').textContent = buildHashtags(artist, album, pressing);
 
       if (photoDataUrl) outImgWrap.classList.add('show');
-      else              outImgWrap.classList.remove('show');
+      else outImgWrap.classList.remove('show');
 
       const copyBtn = document.getElementById('copyBtn');
       copyBtn.textContent = 'Copy All';
@@ -1045,8 +1028,206 @@
         const btn = document.getElementById('copyBtn');
         btn.textContent = '✓ Copied!';
         btn.classList.add('done');
-        setTimeout(() => { btn.textContent = 'Copy All'; btn.classList.remove('done'); }, 2500);
+        setTimeout(() => {
+          btn.textContent = 'Copy All';
+          btn.classList.remove('done');
+        }, 2500);
       });
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Could not load image: ' + src));
+        img.src = src;
+      });
+    }
+
+    function getFramePx(templateWidth, templateHeight) {
+      const f = getFramePct();
+      return {
+        x: (f.left / 100) * templateWidth,
+        y: (f.top / 100) * templateHeight,
+        w: (f.width / 100) * templateWidth,
+        h: (f.height / 100) * templateHeight
+      };
+    }
+
+    function drawCoverImage(ctx, img, x, y, w, h) {
+      const scale = Math.max(w / img.width, h / img.height);
+      const drawWidth = img.width * scale;
+      const drawHeight = img.height * scale;
+      const offsetX = x + (w - drawWidth) / 2;
+      const offsetY = y + (h - drawHeight) / 2;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x, y, w, h);
+      ctx.clip();
+      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+      ctx.restore();
+    }
+
+    async function buildPosterCanvas() {
+      if (!photoDataUrl) return null;
+
+      const [templateImg, recordImg] = await Promise.all([
+        loadImage(TEMPLATE_SRC),
+        loadImage(photoDataUrl)
+      ]);
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = templateImg.naturalWidth || templateImg.width;
+      canvas.height = templateImg.naturalHeight || templateImg.height;
+
+      ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
+
+      const frame = getFramePx(canvas.width, canvas.height);
+      drawCoverImage(ctx, recordImg, frame.x, frame.y, frame.w, frame.h);
+
+      return canvas;
+    }
+
+    async function downloadCleanImage() {
+      if (!photoDataUrl) return;
+
+      try {
+        const canvas = await buildPosterCanvas();
+        if (!canvas) return;
+
+        const link = document.createElement('a');
+        link.download = 'korndog-clean-image.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function wrapText(ctx, text, maxWidth) {
+      const paragraphs = text.split('\n');
+      const lines = [];
+
+      paragraphs.forEach(paragraph => {
+        if (!paragraph.trim()) {
+          lines.push('');
+          return;
+        }
+        const words = paragraph.split(' ');
+        let line = '';
+
+        words.forEach(word => {
+          const testLine = line ? line + ' ' + word : word;
+          if (ctx.measureText(testLine).width > maxWidth && line) {
+            lines.push(line);
+            line = word;
+          } else {
+            line = testLine;
+          }
+        });
+
+        if (line) lines.push(line);
+      });
+
+      return lines;
+    }
+
+    async function downloadFacebookGraphic() {
+      if (!photoDataUrl) return;
+
+      const artist = document.getElementById('artist').value.trim();
+      const album = document.getElementById('album').value.trim();
+      const outText = document.getElementById('outText').textContent.trim();
+      const outTags = document.getElementById('outTags').textContent.trim();
+
+      if (!artist || !album || !outText) {
+        generatePost();
+      }
+
+      try {
+        const posterCanvas = await buildPosterCanvas();
+        if (!posterCanvas) return;
+
+        const width = posterCanvas.width;
+        const padding = 48;
+        const textWidth = width - padding * 2;
+
+        const scratch = document.createElement('canvas');
+        const sctx = scratch.getContext('2d');
+
+        sctx.font = 'bold 38px Barlow, Arial, sans-serif';
+        const bodyLines = wrapText(sctx, document.getElementById('outText').textContent.trim(), textWidth);
+
+        sctx.font = '24px DM Mono, monospace';
+        const tagLines = wrapText(sctx, document.getElementById('outTags').textContent.trim(), textWidth);
+
+        const lineHeightBody = 50;
+        const lineHeightTags = 34;
+        const headerHeight = 100;
+        const bodyHeight = bodyLines.length * lineHeightBody;
+        const tagsHeight = tagLines.length * lineHeightTags;
+        const footerGap = 36;
+
+        const totalHeight = posterCanvas.height + headerHeight + bodyHeight + tagsHeight + padding * 2 + footerGap;
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = width;
+        canvas.height = totalHeight;
+
+        const grad = ctx.createLinearGradient(0, 0, 0, totalHeight);
+        grad.addColorStop(0, '#0d0018');
+        grad.addColorStop(1, '#22003a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, totalHeight);
+
+        ctx.drawImage(posterCanvas, 0, 0);
+
+        let y = posterCanvas.height + padding;
+
+        ctx.fillStyle = '#aaff00';
+        ctx.font = 'bold 54px "Bebas Neue", Arial, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('What’s Spinning Today?', padding, y);
+
+        y += 60;
+
+        ctx.fillStyle = '#f0e8ff';
+        ctx.font = 'bold 38px Barlow, Arial, sans-serif';
+        bodyLines.forEach(line => {
+          if (line === '') y += lineHeightBody * 0.6;
+          else {
+            ctx.fillText(line, padding, y);
+            y += lineHeightBody;
+          }
+        });
+
+        y += 16;
+
+        ctx.fillStyle = '#9a80bb';
+        ctx.font = '24px "DM Mono", monospace';
+        tagLines.forEach(line => {
+          if (line === '') y += lineHeightTags * 0.6;
+          else {
+            ctx.fillText(line, padding, y);
+            y += lineHeightTags;
+          }
+        });
+
+        const safeArtist = (artist || 'record').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+        const safeAlbum = (album || 'post').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+
+        const link = document.createElement('a');
+        link.download = `${safeArtist}-${safeAlbum}-facebook-graphic.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        console.error(err);
+      }
     }
   </script>
 </body>
