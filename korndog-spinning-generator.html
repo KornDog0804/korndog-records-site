@@ -487,7 +487,6 @@
       }
     }
 
-    /* ── CALIBRATION MODE ─────────────────────────────── */
     .calib-banner {
       background: var(--pink);
       color: #fff;
@@ -526,7 +525,8 @@
     }
     .calib-box .handle {
       position: absolute;
-      width: 18px; height: 18px;
+      width: 18px;
+      height: 18px;
       background: var(--pink);
       border-radius: 3px;
     }
@@ -555,13 +555,40 @@
       margin-top: 12px;
     }
     .calib-actions.show { display: flex; }
-    .calib-save { flex: 1; background: var(--green); color: #000; border: none; border-radius: 8px; padding: 13px; font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 2px; cursor: pointer; box-shadow: 3px 3px 0 #000; }
-    .calib-cancel { background: transparent; border: 1px solid var(--muted); color: var(--muted); border-radius: 8px; padding: 13px 18px; font-family: 'DM Mono'; font-size: 11px; cursor: pointer; letter-spacing: 1px; }
-    .calib-cancel:hover { border-color: var(--pink); color: var(--pink); }
+
+    .calib-save {
+      flex: 1;
+      background: var(--green);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      font-family: 'Bebas Neue';
+      font-size: 20px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 #000;
+    }
+
+    .calib-cancel {
+      background: transparent;
+      border: 1px solid var(--muted);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 13px 18px;
+      font-family: 'DM Mono';
+      font-size: 11px;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+
+    .calib-cancel:hover {
+      border-color: var(--pink);
+      color: var(--pink);
+    }
 
     .btn-calib {
-      width: 100%;
-      margin-bottom: 12px;
+      flex: 1;
       background: transparent;
       border: 1px solid var(--muted);
       color: var(--muted);
@@ -573,9 +600,12 @@
       cursor: pointer;
       transition: all .2s;
     }
-    .btn-calib:hover { border-color: var(--pink); color: var(--pink); }
 
-    /* ── CSS OVERLAY COMPOSITE ────────────────────────── */
+    .btn-calib:hover {
+      border-color: var(--pink);
+      color: var(--pink);
+    }
+
     .composite-wrap {
       position: relative;
       width: 100%;
@@ -584,16 +614,19 @@
       overflow: hidden;
       background: #0d0018;
     }
+
     .composite-wrap .template-img {
       width: 100%;
       display: block;
       border-radius: 10px;
     }
+
     .composite-wrap .record-overlay {
       position: absolute;
       overflow: hidden;
       z-index: 2;
     }
+
     .composite-wrap .record-overlay img {
       width: 100%;
       height: 100%;
@@ -634,6 +667,7 @@
           <div class="calib-label">DRAG ME<br>TO FIT<br>THE FRAME</div>
         </div>
       </div>
+
       <div class="calib-actions" id="calibActions">
         <button class="calib-cancel" onclick="cancelCalib()">Cancel</button>
         <button class="calib-save" onclick="saveCalib()">&#10003; Save Frame Position</button>
@@ -721,8 +755,8 @@
           <div class="out-title">&#128203; Your Facebook Post</div>
           <div class="btn-row">
             <button class="regen-btn" onclick="generatePost()">&#8635; Remix</button>
-            <button class="copy-btn" id="copyBtn" onclick="copyPost()">Copy All</button>
-            <button class="dl-btn" onclick="downloadFacebookGraphic()">⬇️ Download Facebook Graphic</button>
+            <button class="copy-btn" id="copyBtn" onclick="copyFacebookCaption()">Copy Facebook Caption</button>
+            <button class="dl-btn" onclick="downloadPromoFlyer()">⬇️ Download Promo Flyer</button>
           </div>
         </div>
 
@@ -747,9 +781,9 @@
     function applyFrameToOverlay(el) {
       if (!el) return;
       const f = getFramePct();
-      el.style.left   = f.left + '%';
-      el.style.top    = f.top + '%';
-      el.style.width  = f.width + '%';
+      el.style.left = f.left + '%';
+      el.style.top = f.top + '%';
+      el.style.width = f.width + '%';
       el.style.height = f.height + '%';
     }
 
@@ -775,9 +809,9 @@
       actions.classList.add('show');
 
       const f = getFramePct();
-      box.style.left   = f.left + '%';
-      box.style.top    = f.top + '%';
-      box.style.width  = f.width + '%';
+      box.style.left = f.left + '%';
+      box.style.top = f.top + '%';
+      box.style.width = f.width + '%';
       box.style.height = f.height + '%';
 
       container.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1013,7 +1047,7 @@
       else outImgWrap.classList.remove('show');
 
       const copyBtn = document.getElementById('copyBtn');
-      copyBtn.textContent = 'Copy All';
+      copyBtn.textContent = 'Copy Facebook Caption';
       copyBtn.classList.remove('done');
 
       const card = document.getElementById('outCard');
@@ -1021,15 +1055,15 @@
       card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function copyPost() {
+    function copyFacebookCaption() {
       const text = document.getElementById('outText').textContent;
       const tags = document.getElementById('outTags').textContent;
       navigator.clipboard.writeText(text + '\n\n' + tags).then(() => {
         const btn = document.getElementById('copyBtn');
-        btn.textContent = '✓ Copied!';
+        btn.textContent = '✓ Caption Copied!';
         btn.classList.add('done');
         setTimeout(() => {
-          btn.textContent = 'Copy All';
+          btn.textContent = 'Copy Facebook Caption';
           btn.classList.remove('done');
         }, 2500);
       });
@@ -1117,6 +1151,7 @@
           lines.push('');
           return;
         }
+
         const words = paragraph.split(' ');
         let line = '';
 
@@ -1136,15 +1171,13 @@
       return lines;
     }
 
-    async function downloadFacebookGraphic() {
+    async function downloadPromoFlyer() {
       if (!photoDataUrl) return;
 
       const artist = document.getElementById('artist').value.trim();
       const album = document.getElementById('album').value.trim();
-      const outText = document.getElementById('outText').textContent.trim();
-      const outTags = document.getElementById('outTags').textContent.trim();
 
-      if (!artist || !album || !outText) {
+      if (!artist || !album || !document.getElementById('outText').textContent.trim()) {
         generatePost();
       }
 
@@ -1222,7 +1255,7 @@
         const safeAlbum = (album || 'post').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
 
         const link = document.createElement('a');
-        link.download = `${safeArtist}-${safeAlbum}-facebook-graphic.png`;
+        link.download = `${safeArtist}-${safeAlbum}-promo-flyer.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
       } catch (err) {
