@@ -13,6 +13,15 @@
   <link rel="stylesheet" href="styles.css?v=homefix3" />
   <script defer src="zk.js?v=homefix3"></script>
 
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#7bff5a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KornDog" />
+  <link rel="apple-touch-icon" href="images/Screenshot_20250831-144625.png" />
+
   <style>
     .hero-banner{
       width:100%;
@@ -532,6 +541,11 @@
       updateCartCount();
       loadFeaturedRecords();
     });
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
   </script>
 </body>
 </html>
