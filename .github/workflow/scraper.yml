@@ -1,0 +1,33 @@
+name: KornDog Deal Scraper
+
+on:
+  schedule:
+    - cron: '0 12,18,0 * * *'  # 7am, 1pm, 7pm Central
+  workflow_dispatch:  # allows manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 lxml
+
+      - name: Run scraper
+        run: python live_pull.py
+
+      - name: Commit outputs
+        run: |
+          git config user.name "KornDog Bot"
+          git config user.email "korndogrecords@gmail.com"
+          git add live_deals.json buy_signals.json upcoming_releases.json debug_live_pull.txt || true
+          git diff --staged --quiet || git commit -m "chore: scraper run $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
