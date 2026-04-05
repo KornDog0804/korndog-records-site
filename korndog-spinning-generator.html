@@ -1288,11 +1288,13 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, SIZE, SIZE);
 
-        // Scale poster to fill width, center vertically
-        const scale = SIZE / posterCanvas.width;
+        // Contain: scale poster so entire image fits inside the square
+        const scale = Math.min(SIZE / posterCanvas.width, SIZE / posterCanvas.height);
+        const scaledW = posterCanvas.width * scale;
         const scaledH = posterCanvas.height * scale;
+        const offsetX = (SIZE - scaledW) / 2;
         const offsetY = (SIZE - scaledH) / 2;
-        ctx.drawImage(posterCanvas, 0, offsetY, SIZE, scaledH);
+        ctx.drawImage(posterCanvas, offsetX, offsetY, scaledW, scaledH);
 
         // KornDog watermark bottom right
         ctx.fillStyle = 'rgba(170,255,0,0.85)';
