@@ -757,6 +757,8 @@
             <button class="regen-btn" onclick="generatePost()">&#8635; Remix</button>
             <button class="copy-btn" id="copyBtn" onclick="copyFacebookCaption()">Copy Facebook Caption</button>
             <button class="dl-btn" onclick="downloadPromoFlyer()">⬇️ Download Promo Flyer</button>
+            <button class="dl-btn" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border:none;" onclick="downloadInstagramFeed()">📸 Instagram Feed</button>
+            <button class="dl-btn" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border:none;" onclick="downloadInstagramStory()">📱 Instagram Story</button>
           </div>
         </div>
 
@@ -1262,6 +1264,105 @@
         console.error(err);
       }
     }
+    // ── INSTAGRAM FEED (1080x1080 square) ─────────────────────────────────────
+    async function downloadInstagramFeed() {
+      if (!photoDataUrl) { alert('Upload a record photo first!'); return; }
+      const artist = document.getElementById('artist').value.trim();
+      const album  = document.getElementById('album').value.trim();
+      if (!artist || !album) { alert('Fill in Artist and Album first!'); return; }
+
+      try {
+        const posterCanvas = await buildPosterCanvas();
+        if (!posterCanvas) return;
+
+        const SIZE = 1080;
+        const canvas = document.createElement('canvas');
+        canvas.width  = SIZE;
+        canvas.height = SIZE;
+        const ctx = canvas.getContext('2d');
+
+        // Dark gradient background
+        const grad = ctx.createLinearGradient(0, 0, 0, SIZE);
+        grad.addColorStop(0, '#0d0018');
+        grad.addColorStop(1, '#22003a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, SIZE, SIZE);
+
+        // Scale poster to fill width, center vertically
+        const scale = SIZE / posterCanvas.width;
+        const scaledH = posterCanvas.height * scale;
+        const offsetY = (SIZE - scaledH) / 2;
+        ctx.drawImage(posterCanvas, 0, offsetY, SIZE, scaledH);
+
+        // KornDog watermark bottom right
+        ctx.fillStyle = 'rgba(170,255,0,0.85)';
+        ctx.font = 'bold 28px "Bebas Neue", Arial, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('korndogrecords.com', SIZE - 24, SIZE - 24);
+
+        const safeArtist = (artist || 'record').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+        const safeAlbum  = (album  || 'post'  ).replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+        const link = document.createElement('a');
+        link.download = `${safeArtist}-${safeAlbum}-instagram-feed.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) { console.error(err); }
+    }
+
+    // ── INSTAGRAM STORY (1080x1920 vertical) ──────────────────────────────────
+    async function downloadInstagramStory() {
+      if (!photoDataUrl) { alert('Upload a record photo first!'); return; }
+      const artist = document.getElementById('artist').value.trim();
+      const album  = document.getElementById('album').value.trim();
+      if (!artist || !album) { alert('Fill in Artist and Album first!'); return; }
+
+      try {
+        const posterCanvas = await buildPosterCanvas();
+        if (!posterCanvas) return;
+
+        const W = 1080, H = 1920;
+        const canvas = document.createElement('canvas');
+        canvas.width  = W;
+        canvas.height = H;
+        const ctx = canvas.getContext('2d');
+
+        // Dark gradient background
+        const grad = ctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, '#0d0018');
+        grad.addColorStop(1, '#22003a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Place poster in upper 60% of story
+        const scale = W / posterCanvas.width;
+        const scaledH = posterCanvas.height * scale;
+        const topPad = 140;
+        ctx.drawImage(posterCanvas, 0, topPad, W, scaledH);
+
+        // Artist / Album text below poster
+        const textY = topPad + scaledH + 60;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#aaff00';
+        ctx.font = 'bold 72px "Bebas Neue", Arial, sans-serif';
+        ctx.fillText(artist.toUpperCase(), W / 2, textY);
+
+        ctx.fillStyle = '#f0e8ff';
+        ctx.font = 'bold 48px "Bebas Neue", Arial, sans-serif';
+        ctx.fillText(album.toUpperCase(), W / 2, textY + 76);
+
+        ctx.fillStyle = 'rgba(170,255,0,0.7)';
+        ctx.font = '32px "Bebas Neue", Arial, sans-serif';
+        ctx.fillText('WHAT\'S SPINNING TODAY? • KORNDOGRECORDS.COM', W / 2, H - 60);
+
+        const safeArtist = (artist || 'record').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+        const safeAlbum  = (album  || 'post'  ).replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+        const link = document.createElement('a');
+        link.download = `${safeArtist}-${safeAlbum}-instagram-story.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) { console.error(err); }
+    }
+
   </script>
 </body>
 </html>
