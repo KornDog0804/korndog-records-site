@@ -759,11 +759,18 @@
             <button class="dl-btn" onclick="downloadPromoFlyer()">⬇️ Download Promo Flyer</button>
             <button class="dl-btn" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border:none;" onclick="downloadInstagramFeed()">📸 Instagram Feed</button>
             <button class="dl-btn" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border:none;" onclick="downloadInstagramStory()">📱 Instagram Story</button>
+            <button class="copy-btn" id="copyIgBtn" onclick="copyInstagramCaption()" style="background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border:none;color:#fff;">📋 Copy Instagram Caption</button>
           </div>
         </div>
 
         <div class="out-text" id="outText"></div>
         <div class="out-tags" id="outTags"></div>
+
+        <div style="margin-top:18px;padding:14px;background:rgba(131,58,180,0.18);border:1px solid rgba(131,58,180,0.4);border-radius:14px;">
+          <div style="font-size:.75rem;letter-spacing:.1em;color:#fd1d1d;font-family:'Bebas Neue',sans-serif;margin-bottom:8px;">📱 INSTAGRAM CAPTION</div>
+          <div id="outIgText" style="font-size:.95rem;line-height:1.6;color:#f0e8ff;white-space:pre-wrap;"></div>
+          <div id="outIgTags" style="margin-top:8px;font-size:.8rem;color:#9a80bb;word-break:break-word;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -1045,6 +1052,13 @@
       document.getElementById('outText').textContent = pool[idx](artist, album, pressing, extra, getSaleText(forSale));
       document.getElementById('outTags').textContent = buildHashtags(artist, album, pressing);
 
+      // ── Instagram caption ──────────────────────────────────────────────────
+      const igPool = igTemplates[selectedTone] || igTemplates.joey;
+      let igIdx;
+      do { igIdx = Math.floor(Math.random() * igPool.length); } while (igIdx === idx && igPool.length > 1);
+      document.getElementById('outIgText').textContent = igPool[igIdx](artist, album, pressing, extra, getSaleText(forSale));
+      document.getElementById('outIgTags').textContent = buildInstagramHashtags(artist, album, pressing);
+
       if (photoDataUrl) outImgWrap.classList.add('show');
       else outImgWrap.classList.remove('show');
 
@@ -1264,6 +1278,46 @@
         console.error(err);
       }
     }
+    // ── INSTAGRAM TEMPLATES ────────────────────────────────────────────────────
+    const igTemplates = {
+      joey: [
+        (a,al,pr,ex,sale) => `Needle down. 🎶\n\n${a} – ${al}${pr?'\n'+pr:''}\n\n${ex?ex+'\n\n':''}Some records choose you.\nThis was the move today.\n\n${sale}`,
+        (a,al,pr,ex,sale) => `What's spinning at KornDog today?\n\n${a} – ${al}${pr?'\n'+pr:''}\n\n${ex?ex+'\n\n':''}Real music. Real feeling.\nVinyl therapy never dies.\n\n${sale}`,
+        (a,al,pr,ex,sale) => `${a} – ${al} 🖤\n${pr?pr+'\n':''}\n${ex?ex+'\n\n':''}This is why I do what I do.\n\n${sale}`
+      ],
+      hype: [
+        (a,al,pr,ex,sale) => `🔥 ${a} – ${al}\n${pr?pr+'\n':''}\nThis one came in LOUD.\n${ex?ex+'\n\n':''}${sale}`,
+        (a,al,pr,ex,sale) => `Walls better be nervous. 🔥\n\n${a} – ${al}${pr?'\n'+pr:''}\n\n${ex?ex+'\n':''}${sale}`
+      ],
+      collector: [
+        (a,al,pr,ex,sale) => `For the collectors. 💿\n\n${a} – ${al}${pr?'\nVariant: '+pr:''}\n\n${ex?ex+'\n\n':''}The press. The look. The ritual.\nEverything matters.\n\n${sale}`,
+        (a,al,pr,ex,sale) => `${a} – ${al}${pr?'\n'+pr:''}\n\n${ex?ex+'\n\n':''}One you admire before the needle even drops.\n\n${sale}`
+      ],
+      community: [
+        (a,al,pr,ex,sale) => `${a} – ${al} spinning at KornDog today 🎶\n${pr?pr+'\n':''}\n${ex?ex+'\n\n':''}${sale}\n\nWhat's on your turntable?`,
+        (a,al,pr,ex,sale) => `Today's spin:\n${a} – ${al}${pr?'\n'+pr:''}\n\n${ex?ex+'\n':''}${sale}\n\nDrop yours below 👇`
+      ]
+    };
+
+    function buildInstagramHashtags(artist, album, pressing) {
+      const clean = s => '#' + s.replace(/[^a-zA-Z0-9]/g, '');
+      const tags = ['#KorndogRecords', '#VinylTherapy', '#NowSpinning', '#VinylCommunity'];
+      if (artist) tags.push(clean(artist));
+      else tags.push('#RecordCollector');
+      return tags.join(' ');
+    }
+
+    function copyInstagramCaption() {
+      const text = document.getElementById('outIgText').textContent;
+      const tags = document.getElementById('outIgTags').textContent;
+      if (!text) return;
+      navigator.clipboard.writeText(text + '\n\n' + tags).then(() => {
+        const btn = document.getElementById('copyIgBtn');
+        btn.textContent = '✓ Instagram Caption Copied!';
+        setTimeout(() => { btn.textContent = '📋 Copy Instagram Caption'; }, 2500);
+      });
+    }
+
     // ── INSTAGRAM FEED (1080x1080 square) ─────────────────────────────────────
     async function downloadInstagramFeed() {
       if (!photoDataUrl) { alert('Upload a record photo first!'); return; }
