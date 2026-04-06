@@ -657,7 +657,6 @@
     }
 
     async function buildPosterCanvas(format) {
-      // format: 'fb' = tall poster, 'feed' = 1080x1080, 'story' = 1080x1920
       let W, H;
       if (format === 'feed') { W = 1080; H = 1080; }
       else if (format === 'story') { W = 1080; H = 1920; }
@@ -674,120 +673,123 @@
       const genre = document.getElementById('genre').value.trim();
       const whyNow = document.getElementById('whyNow').value.trim();
 
-      // Background
-      const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-      bgGrad.addColorStop(0, '#0a0000');
-      bgGrad.addColorStop(0.5, '#110000');
-      bgGrad.addColorStop(1, '#080808');
-      ctx.fillStyle = bgGrad;
+      const PAD = 64;
+
+      // ── Background ──────────────────────────────────────────────────────────
+      ctx.fillStyle = '#080808';
       ctx.fillRect(0, 0, W, H);
 
-      // Red accent bar left
-      ctx.fillStyle = '#cc0000';
-      ctx.fillRect(0, 0, 8, H);
-
-      // Red glow top left
-      const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, W * 0.8);
-      glow.addColorStop(0, 'rgba(204,0,0,0.12)');
-      glow.addColorStop(1, 'transparent');
-      ctx.fillStyle = glow;
+      // Subtle red vignette top
+      const vignette = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, W);
+      vignette.addColorStop(0, 'rgba(180,0,0,0.18)');
+      vignette.addColorStop(1, 'transparent');
+      ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, W, H);
 
-      const PAD = 72;
-
-      // SPOTLIGHT label
+      // Left red bar
       ctx.fillStyle = '#cc0000';
-      ctx.font = `500 ${W * 0.028}px "DM Mono", monospace`;
+      ctx.fillRect(0, 0, 7, H);
+
+      let y = PAD;
+
+      // ── Header row: KORNDOG SPOTLIGHT label + year/genre ────────────────────
+      ctx.fillStyle = '#cc0000';
+      ctx.font = `500 ${W * 0.026}px "DM Mono", monospace`;
       ctx.textAlign = 'left';
-      ctx.fillText('▮ KORNDOG SPOTLIGHT', PAD, PAD + 10);
+      ctx.fillText('▮ KORNDOG SPOTLIGHT', PAD, y);
 
-      // Horizontal rule
-      ctx.fillStyle = 'rgba(204,0,0,0.4)';
-      ctx.fillRect(PAD, PAD + 26, W - PAD * 2, 1);
+      if (year || genre) {
+        ctx.fillStyle = 'rgba(232,224,208,0.4)';
+        ctx.font = `400 ${W * 0.022}px "DM Mono", monospace`;
+        ctx.textAlign = 'right';
+        ctx.fillText([year, genre].filter(Boolean).join(' · '), W - PAD, y);
+      }
 
-      // Album art if uploaded
-      let artY = PAD + 60;
+      ctx.textAlign = 'left';
+      y += 20;
+
+      // Thin red line under header
+      ctx.fillStyle = 'rgba(204,0,0,0.5)';
+      ctx.fillRect(PAD, y, W - PAD * 2, 1);
+      y += 36;
+
+      // ── Album art — full width, centered, contained ──────────────────────────
       if (artDataUrl) {
         try {
           const artImg = await loadImage(artDataUrl);
-          const artSize = format === 'feed' ? W * 0.48 : W * 0.52;
-          const artX = W - PAD - artSize;
-          const artH = artSize;
+          const maxArtH = format === 'feed' ? H * 0.36 : H * 0.32;
+          const maxArtW = W - PAD * 2;
+          const scale = Math.min(maxArtW / artImg.width, maxArtH / artImg.height);
+          const artW = artImg.width * scale;
+          const artH = artImg.height * scale;
+          const artX = (W - artW) / 2;
 
-          // Slight red border glow
-          ctx.shadowColor = 'rgba(204,0,0,0.6)';
-          ctx.shadowBlur = 30;
-          ctx.drawImage(artImg, artX, artY, artSize, artH);
-          ctx.shadowBlur = 0;
-        } catch(e) {}
+          // Subtle red border
+          ctx.strokeStyle = 'rgba(204,0,0,0.5)';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(artX - 2, y - 2, artW + 4, artH + 4);
+
+          ctx.drawImage(artImg, artX, y, artW, artH);
+          y += artH + 36;
+        } catch(e) { y += 20; }
       }
 
-      // Band name
-      const bandFontSize = Math.min(W * 0.115, 120);
-      ctx.fillStyle = '#e8e0d0';
+      // ── Band name ────────────────────────────────────────────────────────────
+      const bandFontSize = Math.min(W * 0.105, 110);
       ctx.font = `normal ${bandFontSize}px "Bebas Neue", serif`;
+      ctx.fillStyle = '#e8e0d0';
       ctx.textAlign = 'left';
-      ctx.letterSpacing = '4px';
-
-      const bandLines = wrapText(ctx, band.toUpperCase(), artDataUrl ? W * 0.52 : W - PAD * 2);
-      let textY = artY + bandFontSize;
+      const bandLines = wrapText(ctx, band.toUpperCase(), W - PAD * 2);
       bandLines.forEach(line => {
-        ctx.fillText(line, PAD, textY);
-        textY += bandFontSize * 1.0;
+        ctx.fillText(line, PAD, y + bandFontSize);
+        y += bandFontSize * 0.95;
       });
+      y += 8;
 
       // Red divider
       ctx.fillStyle = '#cc0000';
-      ctx.fillRect(PAD, textY + 10, W * 0.15, 5);
-      textY += 36;
+      ctx.fillRect(PAD, y, 120, 5);
+      y += 24;
 
-      // Song name
-      const songFontSize = Math.min(W * 0.072, 78);
-      ctx.fillStyle = '#cc0000';
+      // ── Song name ────────────────────────────────────────────────────────────
+      const songFontSize = Math.min(W * 0.065, 68);
       ctx.font = `italic 700 ${songFontSize}px "Barlow Condensed", sans-serif`;
-      ctx.fillText(`"${song}"`, PAD, textY + songFontSize);
-      textY += songFontSize + 20;
+      ctx.fillStyle = '#cc0000';
+      ctx.fillText(`"${song}"`, PAD, y + songFontSize);
+      y += songFontSize + 32;
 
-      // Year / Genre
-      if (year || genre) {
-        ctx.fillStyle = 'rgba(232,224,208,0.45)';
-        ctx.font = `400 ${W * 0.026}px "DM Mono", monospace`;
-        ctx.fillText([year, genre].filter(Boolean).join(' · '), PAD, textY);
-        textY += 44;
-      }
-
-      // Why now text
+      // ── Why Now text ─────────────────────────────────────────────────────────
       if (whyNow) {
-        textY += 16;
-        ctx.fillStyle = 'rgba(232,224,208,0.75)';
-        ctx.font = `400 ${W * 0.032}px "Barlow Condensed", sans-serif`;
-        const maxW = artDataUrl ? W * 0.55 : W - PAD * 2;
-        const whyLines = wrapText(ctx, whyNow, maxW);
-        const maxLines = format === 'feed' ? 5 : 8;
+        const bodySize = W * 0.034;
+        ctx.font = `400 ${bodySize}px "Barlow Condensed", sans-serif`;
+        ctx.fillStyle = 'rgba(232,224,208,0.80)';
+        const whyLines = wrapText(ctx, whyNow, W - PAD * 2 - 80);
+        const maxLines = format === 'feed' ? 4 : 7;
         whyLines.slice(0, maxLines).forEach(line => {
-          ctx.fillText(line, PAD, textY);
-          textY += W * 0.038;
+          ctx.fillText(line, PAD, y);
+          y += bodySize * 1.45;
         });
+        y += 16;
       }
 
-      // Zombie Kitty — bottom right
+      // ── Zombie Kitty — bottom right, never overlapping text ──────────────────
       try {
         const kitty = await loadImage('https://korndogrecords.com/images/3817.png');
-        const kSize = format === 'story' ? W * 0.32 : W * 0.26;
-        ctx.globalAlpha = 0.85;
-        ctx.drawImage(kitty, W - kSize - 20, H - kSize - 20, kSize, kSize);
+        const kSize = format === 'story' ? W * 0.28 : W * 0.22;
+        ctx.globalAlpha = 0.9;
+        ctx.drawImage(kitty, W - kSize - PAD/2, H - kSize - 40, kSize, kSize);
         ctx.globalAlpha = 1;
       } catch(e) {}
 
-      // Bottom bar
+      // ── Bottom bar ───────────────────────────────────────────────────────────
       ctx.fillStyle = '#cc0000';
       ctx.fillRect(0, H - 6, W, 6);
 
-      // KornDog Records watermark
-      ctx.fillStyle = 'rgba(232,224,208,0.35)';
+      // Watermark
+      ctx.fillStyle = 'rgba(232,224,208,0.3)';
       ctx.font = `normal ${W * 0.022}px "Bebas Neue", serif`;
       ctx.textAlign = 'right';
-      ctx.fillText('KORNDOGRECORDS.COM', W - PAD, H - 28);
+      ctx.fillText('KORNDOGRECORDS.COM', W - PAD, H - 22);
 
       return canvas;
     }
